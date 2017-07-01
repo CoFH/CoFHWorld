@@ -1,0 +1,19 @@
+[
+	{
+		"modid": "cofhworld",
+		"name": "CoFH World",
+		"description": "Provides advanced and highly customizable world generation capabilities.",
+		"version": "${version}",
+		"credits": "Team CoFH",
+		"logoFile": "assets/cofhworld/textures/logo.png",
+		"mcversion": "${mc_version}",
+		"url": "http://www.teamcofh.com",
+		"updateUrl": "",
+		"authorList": [ "Team CoFH" ],
+		"parent": "",
+		"screenshots": [],
+		"dependencies": [
+			"forge"
+		]
+	}
+]
