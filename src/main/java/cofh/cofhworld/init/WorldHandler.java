@@ -77,13 +77,16 @@ public class WorldHandler implements IWorldGenerator {
 		return apis;
 	}
 
-	public static void initialize() {
+	public static void register() {
 
 		GameRegistry.registerWorldGenerator(instance, 0);
 		GameRegistry.registerWorldGenerator((random, chunkX, chunkZ, world, chunkGenerator, chunkProvider) -> populatingChunks.remove(new ChunkReference(world.provider.getDimension(), chunkX, chunkZ)), Integer.MAX_VALUE);
 
 		MinecraftForge.EVENT_BUS.register(instance);
 		MinecraftForge.ORE_GEN_BUS.register(instance);
+	}
+
+	public static void initialize() {
 
 		if (WorldProps.enableFlatBedrock & WorldProps.enableRetroactiveFlatBedrock | WorldProps.enableRetroactiveGeneration) {
 			// TODO: remove this condition when pregen works? (see handler for alternate)
@@ -167,7 +170,6 @@ public class WorldHandler implements IWorldGenerator {
 					genFeatures |= list.tagCount() != features.size();
 				}
 			}
-
 			if (bedrock) {
 				CoFHWorld.log.debug("Queuing RetroGen for flattening bedrock for the chunk at " + cCoord.toString() + ".");
 				regen = true;
@@ -179,7 +181,6 @@ public class WorldHandler implements IWorldGenerator {
 		} else {
 			regen = WorldProps.enableRetroactiveFlatBedrock & WorldProps.enableFlatBedrock | WorldProps.enableRetroactiveGeneration;
 		}
-
 		if (regen) {
 			// TODO: this is threaded. should we synchronize?
 			ArrayDeque<RetroChunkCoord> chunks = WorldTickHandler.chunksToGen.get(dim);

@@ -35,6 +35,8 @@ public class CoFHWorld {
 	public CoFHWorld() {
 
 		super();
+
+		WorldHandler.register();
 	}
 
 	/* INIT */
