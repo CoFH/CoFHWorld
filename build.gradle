@@ -7,7 +7,7 @@ buildscript {
 		}
 	}
 	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
 	}
 }
 
@@ -16,7 +16,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 
 group = "cofh"
-archivesBaseName = "CoFHCore"
+archivesBaseName = "CoFHWorld"
 
 targetCompatibility = "1.8"
 sourceCompatibility = "1.8"
@@ -31,15 +31,13 @@ configFile.withReader {
 	project.ext.config = new ConfigSlurper().parse prop
 }
 
-repositories {
-	maven {
-		name = "JEI Maven"
-		url = "http://dvs1.progwml6.com/files/maven"
-	}
+configurations {
+	shade
+	compile.extendsFrom shade
 }
 
 dependencies {
-	compile "mezz.jei:jei_${config.mc_version}:${config.jei_version}"
+	shade "com.typesafe:config:1.2.1"
 }
 
 version = "${project.config.mod_version}." + (System.getenv("BUILD_NUMBER") ?: "1")
@@ -66,27 +64,29 @@ processResources {
 }
 
 version = "${project.minecraft.version}-${project.version}"
-def commonManifest = {
-	attributes 'FMLAT': 'cofh_at.cfg'
-	attributes 'FMLCorePlugin': 'cofh.asm.LoadingPlugin'
-	attributes 'FMLCorePluginContainsFMLMod': 'true'
-}
 
 jar {
 	classifier = 'universal'
-	manifest commonManifest
+
+	configurations.shade.each { dep ->
+		from(project.zipTree(dep)) {
+			exclude 'META-INF', 'META-INF/**'
+		}
+	}
+}
+
+reobfJar {
+	addExtraSrgLine "PK: com/typesafe/config cofh/shade/com/typesafe/config"
 }
 
 task deobfJar(type: Jar) {
 	from sourceSets.main.output
 	classifier = 'deobf'
-	manifest commonManifest
 }
 
 task srcJar(type: Jar) {
 	from sourceSets.main.allSource
 	classifier = 'sources'
-	manifest commonManifest
 }
 
 // Tell the artifact system about our extra jars
@@ -94,12 +94,6 @@ artifacts {
 	archives deobfJar
 	archives srcJar
 }
-
-// Set custom sourceSets, allows us to pack Lib inside Core.
-def CoFHLibDir = new File(project.projectDir, "CoFHLib/")
-
-sourceSets.main.java.srcDir new File(CoFHLibDir, "src/main/java")
-sourceSets.main.resources.srcDir new File(CoFHLibDir, 'src/main/resources')
 
 // Configure an upload task.
 uploadArchives {
