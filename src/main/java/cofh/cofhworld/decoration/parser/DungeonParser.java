@@ -1,9 +1,9 @@
 package cofh.cofhworld.decoration.parser;
 
+import cofh.cofhworld.decoration.IGeneratorParser;
+import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.WeightedRandomNBTTag;
-import cofh.cofhworld.init.FeatureParser;
-import cofh.cofhworld.decoration.IGeneratorParser;
 import com.typesafe.config.Config;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.gen.feature.WorldGenerator;

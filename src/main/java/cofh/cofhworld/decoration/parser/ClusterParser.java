@@ -1,9 +1,9 @@
 package cofh.cofhworld.decoration.parser;
 
+import cofh.cofhworld.decoration.IGeneratorParser;
+import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.world.generator.WorldGenMinableCluster;
 import cofh.cofhworld.world.generator.WorldGenSparseMinableCluster;
-import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.decoration.IGeneratorParser;
 import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;

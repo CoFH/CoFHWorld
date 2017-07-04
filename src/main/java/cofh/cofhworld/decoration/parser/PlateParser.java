@@ -1,9 +1,9 @@
 package cofh.cofhworld.decoration.parser;
 
-import cofh.cofhworld.world.generator.WorldGenMinablePlate;
-import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.decoration.IGeneratorParser;
+import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.world.generator.WorldGenMinablePlate;
 import com.typesafe.config.Config;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.gen.feature.WorldGenerator;

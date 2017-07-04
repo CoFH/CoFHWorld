@@ -1,8 +1,8 @@
 package cofh.cofhworld.decoration.parser;
 
-import cofh.cofhworld.world.generator.WorldGenMinableLargeVein;
-import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.decoration.IGeneratorParser;
+import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.world.generator.WorldGenMinableLargeVein;
 import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;

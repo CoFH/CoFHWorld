@@ -1,9 +1,9 @@
 package cofh.cofhworld.feature.parser;
 
-import cofh.cofhworld.world.generator.WorldGenDecoration;
-import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.decoration.IGeneratorParser;
+import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.world.generator.WorldGenDecoration;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import net.minecraft.init.Blocks;

@@ -137,9 +137,13 @@ public class WorldHandler implements IWorldGenerator {
 	}
 
 	@SubscribeEvent
-	public void handlePopulateChunkEvent(PopulateChunkEvent.Post event) {
+	public void populateChunkEvent(PopulateChunkEvent.Post event) {
 
-		populatingChunks.get(new ChunkReference(event.getWorld().provider.getDimension(), event.getChunkX(), event.getChunkZ())).hasVillage = event.isHasVillageGenerated();
+		ChunkReference pos = populatingChunks.get(new ChunkReference(event.getWorld().provider.getDimension(), event.getChunkX(), event.getChunkZ()));
+
+		if (pos != null) {
+			pos.hasVillage = event.isHasVillageGenerated();
+		}
 	}
 
 	@SubscribeEvent
