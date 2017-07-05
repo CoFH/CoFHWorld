@@ -24,7 +24,7 @@ public class ClusterParser implements IGeneratorParser {
 
 		int clusterSize = genObject.getInt("cluster-size");
 		if (clusterSize <= 0) {
-			log.warn("Invalid cluster size for generator '%s'", name);
+			log.warn("Invalid cluster size for generator '{}'", name);
 			return null;
 		}
 

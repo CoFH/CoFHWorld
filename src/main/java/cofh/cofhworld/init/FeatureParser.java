@@ -66,7 +66,7 @@ public class FeatureParser {
 			templateHandlers.put(template, handler);
 			return true;
 		}
-		log.error("Attempted to register duplicate template '%s'!", template);
+		log.error("Attempted to register duplicate template '{}'!", template);
 		return false;
 	}
 
@@ -77,7 +77,7 @@ public class FeatureParser {
 			generatorHandlers.put(generator, handler);
 			return true;
 		}
-		log.error("Attempted to register duplicate generator '%s'!", generator);
+		log.error("Attempted to register duplicate generator '{}'!", generator);
 		return false;
 	}
 
@@ -97,11 +97,11 @@ public class FeatureParser {
 
 		Object o = folder == WorldProps.worldGenDir ? folder : WorldProps.worldGenPath.relativize(Paths.get(folder.getPath()));
 		if (fList == null || fList.length <= 0) {
-			log.debug("There are no World Generation files present in %s.", o);
+			log.debug("There are no World Generation files present in {}.", o);
 			return;
 		}
 		int d = dirs.get();
-		log.info("Found %d World Generation files and %d folders present in %s.", (fList.length - d), d, o);
+		log.info("Found {} World Generation files and {} folders present in {}.", (fList.length - d), d, o);
 		list.addAll(Arrays.asList(fList));
 	}
 
@@ -141,47 +141,47 @@ public class FeatureParser {
 			try {
 				genList = ConfigFactory.parseFile(genFile, Includer.options).resolve(Includer.resolveOptions);
 			} catch (Throwable t) {
-				log.error(String.format("Critical error reading from a world generation file: \"%s\" > Please be sure the file is correct!", genFile), t);
+				log.error("Critical error reading from a world generation file: \"{}\" > Please be sure the file is correct!", genFile, t);
 				continue;
 			}
 
 			if (genList.hasPath("dependencies") && !processDependencies(genList.getValue("dependencies"))) {
-				log.info("Unmet dependencies to load %s", file);
+				log.info("Unmet dependencies to load {}", file);
 				continue;
 			}
 
 			if (genList.hasPath("populate")) {
-				log.info("Reading world generation info from: %s:", file);
+				log.info("Reading world generation info from: {}:", file);
 				Config genData = genList.getConfig("populate");
 				for (Entry<String, ConfigValue> genEntry : genData.root().entrySet()) {
 					String key = genEntry.getKey();
 					try {
 						if (genEntry.getValue().valueType() != ConfigValueType.OBJECT) {
-							log.error("Error parsing generation entry: '%s' > This must be an object and is not.", key);
+							log.error("Error parsing generation entry: '{}' > This must be an object and is not.", key);
 						} else {
 							switch (parseGenerationEntry(key, genData.getConfig(key))) {
 								case SUCCESS:
-									log.debug("Generation entry successfully parsed: '%s'", key);
+									log.debug("Generation entry successfully parsed: '{}'", key);
 									break;
 								case FAIL:
-									log.error("Error parsing generation entry: '%s' > Please check the parameters.", key);
+									log.error("Error parsing generation entry: '{}' > Please check the parameters.", key);
 									break;
 								case PASS:
-									log.error("Error parsing generation entry: '%s' > It is a duplicate.", key);
+									log.error("Error parsing generation entry: '{}' > It is a duplicate.", key);
 							}
 						}
 					} catch (ConfigException ex) {
 						String line = "";
 						if (ex.origin() != null) {
-							line = String.format(" on line %d", ex.origin().lineNumber());
+							line = String.format(" on line %s", ex.origin().lineNumber());
 						}
-						log.error(String.format("Error parsing entry '%s'%s: %s", key, line, ex.getMessage()));
+						log.error("Error parsing entry '{}'{}: {}", key, line, ex.getMessage());
 						continue;
 					} catch (Throwable t) {
-						log.fatal(String.format("There was a severe error parsing '%s'!", key), t);
+						log.fatal("There was a severe error parsing '{}'!", key, t);
 					}
 				}
-				log.info("Finished reading %s", file);
+				log.info("Finished reading {}", file);
 			} else {
 
 			}
@@ -229,24 +229,24 @@ public class FeatureParser {
 				}
 				break;
 			default:
-				log.fatal("Invalid dependency at line %d!", value.origin().lineNumber());
+				log.fatal("Invalid dependency at line {}!", value.origin().lineNumber());
 				return false;
 		}
 		if (con == null) {
 			con = WorldHandler.getLoadedAPIs().get(id);
 			if (con == null) {
-				log.debug("Dependency '%s' is not loaded.", id);
+				log.debug("Dependency '{}' is not loaded.", id);
 				return false == retComp;
 			}
 		}
 		LoaderState.ModState state = Loader.instance().getModState(con);
 		if (state == LoaderState.ModState.DISABLED || state == LoaderState.ModState.ERRORED) {
-			log.debug("Dependency '%s' is disabled or crashed.", id);
+			log.debug("Dependency '{}' is disabled or crashed.", id);
 			return false == retComp;
 		}
 		if (vers != null) {
 			if (retComp != vers.containsVersion(con.getProcessedVersion())) {
-				log.debug("Dependency '%s' has an incompatible version.", id);
+				log.debug("Dependency '{}' has an incompatible version.", id);
 				return false;
 			} else {
 				return true;
@@ -314,7 +314,7 @@ public class FeatureParser {
 		if (genObject.hasPath("type")) {
 			name = genObject.getString("type");
 			if (!generatorHandlers.containsKey(name)) {
-				log.warn("Unknown generator '%s'! using '%s'", name, def);
+				log.warn("Unknown generator '{}'! using '{}'", name, def);
 				name = def;
 			}
 		}
@@ -448,7 +448,7 @@ public class FeatureParser {
 				info = new BiomeInfo((String) element.unwrapped());
 				break;
 			default:
-				log.error("Unknown biome type in at line %d", element.origin().lineNumber());
+				log.error("Unknown biome type in at line {}", element.origin().lineNumber());
 		}
 		return info;
 	}
@@ -486,10 +486,10 @@ public class FeatureParser {
 
 						IProperty<?> prop = blockstatecontainer.getProperty(propEntry.getKey());
 						if (prop == null) {
-							log.warn("Block '%s' does not have property '%s'.", blockName, propEntry.getKey());
+							log.warn("Block '{}' does not have property '{}'.", blockName, propEntry.getKey());
 						}
 						if (propEntry.getValue().valueType() != ConfigValueType.STRING) {
-							log.error("Property '%s' is not a string. All block properties must be strings.", propEntry.getKey());
+							log.error("Property '{}' is not a string. All block properties must be strings.", propEntry.getKey());
 							prop = null;
 						}
 
@@ -561,11 +561,11 @@ public class FeatureParser {
 					try {
 						data = JsonToNBT.getTagFromJson(genObject.getString("spawner-tag"));
 					} catch (NBTException e) {
-						log.error(String.format("Invalid entity entry at line %d!", genElement.origin().lineNumber()), e);
+						log.error("Invalid entity entry at line {}!", genElement.origin().lineNumber(), e);
 						return null;
 					}
 				} else if (!genObject.hasPath("entity")) {
-					log.error("Invalid entity entry at line %d!", genElement.origin().lineNumber());
+					log.error("Invalid entity entry at line {}!", genElement.origin().lineNumber());
 					return null;
 				} else {
 					data = new NBTTagCompound();
@@ -584,7 +584,7 @@ public class FeatureParser {
 				tag.setString("EntityId", type);
 				return new WeightedRandomNBTTag(100, tag);
 			default:
-				log.warn("Invalid entity entry type at line %d", genElement.origin().lineNumber());
+				log.warn("Invalid entity entry type at line {}", genElement.origin().lineNumber());
 				return null;
 		}
 	}
@@ -617,17 +617,17 @@ public class FeatureParser {
 		String type = null;
 		switch (genElement.valueType()) {
 			case LIST:
-				log.warn("Lists are not supported for string values at line %d.", genElement.origin().lineNumber());
+				log.warn("Lists are not supported for string values at line {}.", genElement.origin().lineNumber());
 				return null;
 			case NULL:
-				log.warn("Null string entry at line %d", genElement.origin().lineNumber());
+				log.warn("Null string entry at line {}", genElement.origin().lineNumber());
 				return null;
 			case OBJECT:
 				Config genObject = ((ConfigObject) genElement).toConfig();
 				if (genObject.hasPath("type")) {
 					type = genObject.getString("name");
 				} else {
-					log.warn("Value missing 'type' field at line %d", genElement.origin().lineNumber());
+					log.warn("Value missing 'type' field at line {}", genElement.origin().lineNumber());
 				}
 				if (genObject.hasPath("weight")) {
 					weight = genObject.getInt("weight");
@@ -696,14 +696,14 @@ public class FeatureParser {
 			if (item.hasPath("ore-name")) {
 				String oreName = item.getString("ore-name");
 				if (!Utils.oreNameExists(oreName)) {
-					log.error("Invalid ore name for item at line %d!", genElement.origin().lineNumber());
+					log.error("Invalid ore name for item at line {}!", genElement.origin().lineNumber());
 					return null;
 				}
 				ItemStack oreStack = OreDictionary.getOres(oreName, false).get(0);
 				stack = Utils.cloneStack(oreStack, stackSize);
 			} else {
 				if (!item.hasPath("name")) {
-					log.error("Item entry missing valid name or ore name at line %d!", genElement.origin().lineNumber());
+					log.error("Item entry missing valid name or ore name at line {}!", genElement.origin().lineNumber());
 					return null;
 				}
 				stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item.getString("name"))), stackSize, metadata);

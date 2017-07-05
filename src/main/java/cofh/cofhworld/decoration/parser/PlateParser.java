@@ -18,7 +18,7 @@ public class PlateParser implements IGeneratorParser {
 
 		int clusterSize = genObject.getInt("radius");
 		if (clusterSize <= 0) {
-			log.warn("Invalid radius for generator '%s'", name);
+			log.warn("Invalid radius for generator '{}'", name);
 			return null;
 		}
 

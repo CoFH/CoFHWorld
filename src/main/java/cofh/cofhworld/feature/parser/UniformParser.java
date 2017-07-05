@@ -78,7 +78,7 @@ public class UniformParser implements IFeatureParser {
 
 		WorldGenerator generator = FeatureParser.parseGenerator(getDefaultGenerator(), genObject, defaultMaterial);
 		if (generator == null) {
-			log.warn("Invalid generator for '%s'!", featureName);
+			log.warn("Invalid generator for '{}'!", featureName);
 			return null;
 		}
 		FeatureBase feature = getFeature(featureName, genObject, generator, numClusters, biomeRes, retrogen, dimRes, log);

@@ -16,7 +16,7 @@ public class BoulderParser implements IGeneratorParser {
 
 		int clusterSize = genObject.getInt("diameter");
 		if (clusterSize <= 0) {
-			log.warn("Invalid diameter for generator '%s'", name);
+			log.warn("Invalid diameter for generator '{}'", name);
 			return null;
 		}
 
