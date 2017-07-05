@@ -16,7 +16,7 @@ import java.util.Random;
 
 public class WorldTickHandler {
 
-	public static WorldTickHandler instance = new WorldTickHandler();
+	public static final WorldTickHandler INSTANCE = new WorldTickHandler();
 
 	public static TIntObjectHashMap<ArrayDeque<RetroChunkCoord>> chunksToGen = new TIntObjectHashMap<>();
 	public static TIntObjectHashMap<ArrayDeque<ChunkCoord>> chunksToPreGen = new TIntObjectHashMap<>();
@@ -52,7 +52,7 @@ public class WorldTickHandler {
 				long xSeed = rand.nextLong() >> 2 + 1L;
 				long zSeed = rand.nextLong() >> 2 + 1L;
 				rand.setSeed(xSeed * c.chunkX + zSeed * c.chunkZ ^ worldSeed);
-				WorldHandler.instance.generateWorld(rand, r, world, false);
+				WorldHandler.INSTANCE.generateWorld(rand, r, world, false);
 				chunksToGen.put(dim, chunks);
 			} else if (chunks != null) {
 				chunksToGen.remove(dim);

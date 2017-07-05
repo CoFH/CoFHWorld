@@ -36,7 +36,7 @@ import java.util.*;
 
 public class WorldHandler implements IWorldGenerator {
 
-	public static WorldHandler instance = new WorldHandler();
+	public static final WorldHandler INSTANCE = new WorldHandler();
 
 	private static List<IFeatureGenerator> features = new ArrayList<>();
 	private static Set<String> featureNames = new THashSet<>();
@@ -79,18 +79,18 @@ public class WorldHandler implements IWorldGenerator {
 
 	public static void register() {
 
-		GameRegistry.registerWorldGenerator(instance, 0);
+		GameRegistry.registerWorldGenerator(INSTANCE, 0);
 		GameRegistry.registerWorldGenerator((random, chunkX, chunkZ, world, chunkGenerator, chunkProvider) -> populatingChunks.remove(new ChunkReference(world.provider.getDimension(), chunkX, chunkZ)), Integer.MAX_VALUE);
 
-		MinecraftForge.EVENT_BUS.register(instance);
-		MinecraftForge.ORE_GEN_BUS.register(instance);
+		MinecraftForge.EVENT_BUS.register(INSTANCE);
+		MinecraftForge.ORE_GEN_BUS.register(INSTANCE);
 	}
 
 	public static void initialize() {
 
 		if (WorldProps.enableFlatBedrock & WorldProps.enableRetroactiveFlatBedrock | WorldProps.enableRetroactiveGeneration) {
 			// TODO: remove this condition when pregen works? (see handler for alternate)
-			MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
+			MinecraftForge.EVENT_BUS.register(WorldTickHandler.INSTANCE);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class WorldHandler implements IWorldGenerator {
 		return true;
 	}
 
-	/* EVENT HANDLERS */
+	/* EVENT HANDLING */
 	@SubscribeEvent
 	public void handlePopulateChunkEvent(PopulateChunkEvent.Pre event) {
 
