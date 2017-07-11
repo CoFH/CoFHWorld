@@ -499,7 +499,7 @@ public class FeatureParser {
 					}
 					return new WeightedRandomBlock(state, weight);
 				} else {
-					int metadata = blockElement.hasPath("metadata") ? MathHelper.clamp(blockElement.getInt("metadata"), min, 15) : min;
+					int metadata = blockElement.hasPath("data") ? MathHelper.clamp(blockElement.getInt("data"), min, 15) : blockElement.hasPath("metadata") ? MathHelper.clamp(blockElement.getInt("metadata"), min, 15) : min;
 					return new WeightedRandomBlock(block, metadata, weight);
 				}
 			case STRING:
