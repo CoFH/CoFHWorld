@@ -42,9 +42,9 @@ public class WorldTickHandler {
 				RetroChunkCoord r = chunks.pollFirst();
 				ChunkCoord c = r.coord;
 				if (retroC++ == 0 || chunks.size() < 3) {
-					CoFHWorld.log.info("RetroGening " + c.toString() + ".");
+					CoFHWorld.log.info("Retro-Generating " + c.toString() + ".");
 				} else {
-					CoFHWorld.log.debug("RetroGening " + c.toString() + ".");
+					CoFHWorld.log.debug("Retro-Generating " + c.toString() + ".");
 				}
 				retroC &= 31;
 				long worldSeed = world.getSeed();
@@ -63,9 +63,9 @@ public class WorldTickHandler {
 			if (chunks != null && chunks.size() > 0) {
 				ChunkCoord c = chunks.pollFirst();
 				if (pregenC++ == 0 || chunks.size() < 5) {
-					CoFHWorld.log.info("PreGening " + c.toString() + ".");
+					CoFHWorld.log.info("Pre-Generating " + c.toString() + ".");
 				} else {
-					CoFHWorld.log.debug("PreGening " + c.toString() + ".");
+					CoFHWorld.log.debug("Pre-Generating " + c.toString() + ".");
 				}
 				pregenC &= 31;
 				world.getChunkFromChunkCoords(c.chunkX, c.chunkZ);
