@@ -24,6 +24,7 @@ import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.ChunkDataEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.ModAPIManager;
 import net.minecraftforge.fml.common.ModContainer;
@@ -130,6 +131,24 @@ public class WorldHandler implements IWorldGenerator {
 	}
 
 	/* EVENT HANDLERS */
+	@SubscribeEvent
+ 	public void handleWorldLoadEvent(WorldEvent.Load event) {
+		if (WorldProps.dynamicConfigReload) {
+			CoFHWorld.log.info("Reloading feature config...");
+
+			// Reset all features so that config will reload properly
+			features.clear();
+			featureNames.clear();
+
+			// Parse all the generation files into features
+			try {
+				FeatureParser.parseGenerationFiles();
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+	}
+
 	@SubscribeEvent
 	public void handlePopulateChunkEvent(PopulateChunkEvent.Pre event) {
 

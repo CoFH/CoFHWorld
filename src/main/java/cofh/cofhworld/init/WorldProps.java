@@ -41,6 +41,9 @@ public class WorldProps {
 		comment = "This adjusts the % chance that a tree will grow as normal when it is meant to. Reducing this value will mean that trees take longer to grow, on average.";
 		chanceTreeGrowth = CoFHWorld.config.getInt("TreeGrowthChance", category, chanceTreeGrowth, 1, 100, comment);
 
+		comment = "If TRUE, configuration will be reloaded when the world is loaded.";
+		dynamicConfigReload = CoFHWorld.config.getBoolean("DynamicConfigReload", category, dynamicConfigReload, comment);
+
 		category = "World.Bedrock";
 
 		comment = "If TRUE, the bedrock layer will be flattened.";
@@ -128,6 +131,8 @@ public class WorldProps {
 
 	public static boolean disableStandardGeneration = false;
 	public static boolean enableRetroactiveGeneration = false;
+
+	public static boolean dynamicConfigReload = false;
 
 	public static boolean enableFlatBedrock = false;
 	public static boolean enableRetroactiveFlatBedrock = false;
