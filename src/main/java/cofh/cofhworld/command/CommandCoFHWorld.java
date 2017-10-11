@@ -34,15 +34,15 @@ public class CommandCoFHWorld extends CommandTreeBase {
 
         @Override
         public String getUsage(ICommandSender sender) {
-            return "reload.usage";
+            return "cofhworld.reload.usage";
         }
 
         @Override
         public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
             if (WorldHandler.reloadConfig()) {
-                notifyCommandListener(sender, this, "reload.successful");
+                notifyCommandListener(sender, this, "cofhworld.reload.successful");
             } else {
-                notifyCommandListener(sender, this, "reload.failed");
+                notifyCommandListener(sender, this, "cofhworld.reload.failed");
             }
         }
     }
@@ -57,7 +57,7 @@ public class CommandCoFHWorld extends CommandTreeBase {
 
         @Override
         public String getUsage(ICommandSender sender) {
-            return "list.usage";
+            return "cofhworld.list.usage";
         }
 
         @Override
@@ -67,7 +67,7 @@ public class CommandCoFHWorld extends CommandTreeBase {
             for (IFeatureGenerator feature: WorldHandler.getFeatures()) {
                 b.append("* " + feature.getFeatureName() + "\n");
             }
-            notifyCommandListener(sender, this, "list", b.toString());
+            notifyCommandListener(sender, this, "cofhworld.list", b.toString());
         }
     }
 }
