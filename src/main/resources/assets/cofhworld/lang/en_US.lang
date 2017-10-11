@@ -1,0 +1,6 @@
+
+reload.usage=Reloads CoFHWorld configuration
+reload.successful=Configuration reloaded.
+reload.failed=Failed to reload config; check your logs.
+list.usage=Lists all CoFHWorld features
+list=Available CoFHWorld features: %s
