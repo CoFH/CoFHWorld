@@ -1,14 +1,17 @@
 package cofh.cofhworld;
 
+import cofh.cofhworld.command.CommandCoFHWorld;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.init.WorldHandler;
 import cofh.cofhworld.init.WorldProps;
+import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,14 +60,15 @@ public class CoFHWorld {
 	@EventHandler
 	public void loadComplete(FMLLoadCompleteEvent event) {
 
-		try {
-			FeatureParser.parseGenerationFiles();
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
+		WorldHandler.reloadConfig();
 		config.save();
 
 		log.info(MOD_NAME + ": Load Complete.");
 	}
 
+	@Mod.EventHandler
+	public void onServerStarted(FMLServerStartingEvent event)
+	{
+		event.registerServerCommand(new CommandCoFHWorld());
+	}
 }
