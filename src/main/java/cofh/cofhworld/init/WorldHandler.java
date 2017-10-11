@@ -98,6 +98,21 @@ public class WorldHandler implements IWorldGenerator {
 
 	}
 
+	public static boolean reloadConfig() {
+		// Reset all features so that config will reload properly
+		features.clear();
+		featureNames.clear();
+
+		// Parse all the generation files into features
+		try {
+			FeatureParser.parseGenerationFiles();
+			return true;
+		} catch (Throwable t) {
+			t.printStackTrace();
+			return false;
+		}
+	}
+
 	public static boolean registerFeature(IFeatureGenerator feature) {
 
 		String featureName = feature.getFeatureName();
@@ -129,6 +144,19 @@ public class WorldHandler implements IWorldGenerator {
 		return true;
 	}
 
+	public static IFeatureGenerator findFeature(String name) {
+		for (IFeatureGenerator feature : features) {
+				if (feature.getFeatureName().equals(name)) {
+					return feature;
+				}
+			}
+			return null;
+		}
+	
+	public static List<IFeatureGenerator> getFeatures() {
+		return features;
+	}
+	
 	/* EVENT HANDLING */
 	@SubscribeEvent
 	public void handlePopulateChunkEvent(PopulateChunkEvent.Pre event) {
