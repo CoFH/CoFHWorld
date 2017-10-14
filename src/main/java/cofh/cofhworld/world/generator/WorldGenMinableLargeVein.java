@@ -1,14 +1,17 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.decoration.IGeneratorParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
+import com.typesafe.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Random;
@@ -158,4 +161,22 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 		return r;
 	}
 
+	public static class Parser implements IGeneratorParser {
+		@Override
+		public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+
+			int clusterSize = genObject.getInt("cluster-size");
+			if (clusterSize <= 0) {
+				log.warn("Invalid cluster size for generator '{}'", name);
+				return null;
+			}
+
+			boolean sparse = true;
+			{
+				sparse = genObject.hasPath("sparse") ? genObject.getBoolean("sparse") : sparse;
+			}
+			return new WorldGenMinableLargeVein(resList, clusterSize, matList, sparse);
+		}
+
+	}
 }
