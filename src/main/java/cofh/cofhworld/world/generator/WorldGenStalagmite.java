@@ -1,10 +1,16 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.decoration.IGeneratorParser;
+import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
+import com.typesafe.config.Config;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -12,7 +18,7 @@ public class WorldGenStalagmite extends WorldGenerator {
 
 	protected final List<WeightedRandomBlock> cluster;
 	protected final WeightedRandomBlock[] baseBlock;
-	protected final WeightedRandomBlock[] genBlock;
+	protected WeightedRandomBlock[] genBlock;
 	public int minHeight = 7;
 	public int heightVariance = 4;
 	public int sizeVariance = 2;
@@ -22,11 +28,10 @@ public class WorldGenStalagmite extends WorldGenerator {
 	public boolean fat = true;
 	public boolean altSinc = false;
 
-	public WorldGenStalagmite(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block, List<WeightedRandomBlock> gblock) {
+	public WorldGenStalagmite(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
 
 		cluster = resource;
 		baseBlock = block.toArray(new WeightedRandomBlock[block.size()]);
-		genBlock = gblock.toArray(new WeightedRandomBlock[gblock.size()]);
 	}
 
 	protected int getHeight(int x, int z, int size, Random rand, int height) {
@@ -95,5 +100,59 @@ public class WorldGenStalagmite extends WorldGenerator {
 			}
 		}
 		return r;
+	}
+
+	public static class Parser implements IGeneratorParser {
+
+		@Override
+		public WorldGenerator parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+
+			return commonParse(new WorldGenStalagmite(resList, matList), generatorName, genObject, log);
+		}
+
+		protected WorldGenerator commonParse(WorldGenStalagmite r, String generatorName, Config genObject, Logger log) {
+
+			// TODO: these names need revised
+			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
+			if (!genObject.hasPath("gen-body")) {
+				log.info("Entry does not specify gen body for 'stalagmite' generator. Using air.");
+				list.add(new WeightedRandomBlock(Blocks.AIR));
+			} else {
+				if (!FeatureParser.parseResList(genObject.root().get("gen-body"), list, false)) {
+					log.warn("Entry specifies invalid gen body for 'stalagmite' generator! Using air!");
+					list.clear();
+					list.add(new WeightedRandomBlock(Blocks.AIR));
+				}
+			}
+
+			r.genBlock = list.toArray(new WeightedRandomBlock[list.size()]);
+
+			if (genObject.hasPath("min-height")) {
+				r.minHeight = genObject.getInt("min-height");
+			}
+			if (genObject.hasPath("height-variance")) {
+				r.heightVariance = genObject.getInt("height-variance");
+			}
+			if (genObject.hasPath("size-variance")) {
+				r.sizeVariance = genObject.getInt("size-variance");
+			}
+			if (genObject.hasPath("height-mod")) {
+				r.heightMod = genObject.getInt("height-mod");
+			}
+			if (genObject.hasPath("gen-size")) {
+				r.genSize = genObject.getInt("gen-size");
+			}
+			if (genObject.hasPath("smooth")) {
+				r.smooth = genObject.getBoolean("smooth");
+			}
+			if (genObject.hasPath("fat")) {
+				r.fat = genObject.getBoolean("fat");
+			}
+			if (genObject.hasPath("alt-sinc")) {
+				r.altSinc = genObject.getBoolean("alt-sinc");
+			}
+
+			return r;
+		}
 	}
 }

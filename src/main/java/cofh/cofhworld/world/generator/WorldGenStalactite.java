@@ -1,17 +1,24 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.decoration.IGeneratorParser;
+import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
+import com.typesafe.config.Config;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.feature.WorldGenerator;
+import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class WorldGenStalactite extends WorldGenStalagmite {
 
-	public WorldGenStalactite(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block, List<WeightedRandomBlock> gblock) {
+	public WorldGenStalactite(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
 
-		super(resource, block, gblock);
+		super(resource, block);
 	}
 
 	@Override
@@ -46,5 +53,13 @@ public class WorldGenStalactite extends WorldGenStalagmite {
 			}
 		}
 		return r;
+	}
+
+	public static class Parser extends WorldGenStalagmite.Parser {
+		@Override
+		public WorldGenerator parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+
+			return commonParse(new WorldGenStalactite(resList, matList), generatorName, genObject, log);
+		}
 	}
 }

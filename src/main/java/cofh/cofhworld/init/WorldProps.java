@@ -79,8 +79,8 @@ public class WorldProps {
 		FeatureParser.registerGenerator("spike", new WorldGenSpike.Parser());
 		FeatureParser.registerGenerator("boulder", new WorldGenBoulder.Parser());
 		FeatureParser.registerGenerator("dungeon", new DungeonParser());
-		FeatureParser.registerGenerator("stalagmite", new StalagmiteParser(false));
-		FeatureParser.registerGenerator("stalactite", new StalagmiteParser(true));
+		FeatureParser.registerGenerator("stalagmite", new WorldGenStalagmite.Parser());
+		FeatureParser.registerGenerator("stalactite", new WorldGenStalactite.Parser());
 		FeatureParser.registerGenerator("small-tree", new WorldGenSmallTree.Parser());
 
 		log.info("Verifying or creating base world generation directory...");
