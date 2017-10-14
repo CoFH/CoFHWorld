@@ -5,6 +5,7 @@ import cofh.cofhworld.decoration.parser.*;
 import cofh.cofhworld.feature.parser.*;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.world.generator.WorldGenBoulder;
+import cofh.cofhworld.world.generator.WorldGenGeode;
 import cofh.cofhworld.world.generator.WorldGenMinableCluster;
 import cofh.cofhworld.world.generator.WorldGenSparseMinableCluster;
 
@@ -77,7 +78,7 @@ public class WorldProps {
 		FeatureParser.registerGenerator("decoration", new DecorationParser());
 		FeatureParser.registerGenerator("lake", new LakeParser());
 		FeatureParser.registerGenerator("plate", new PlateParser());
-		FeatureParser.registerGenerator("geode", new GeodeParser());
+		FeatureParser.registerGenerator("geode", new WorldGenGeode.Parser());
 		FeatureParser.registerGenerator("spike", new SpikeParser());
 		FeatureParser.registerGenerator("boulder", new WorldGenBoulder.Parser());
 		FeatureParser.registerGenerator("dungeon", new DungeonParser());
