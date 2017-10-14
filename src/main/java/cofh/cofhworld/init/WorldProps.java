@@ -74,7 +74,7 @@ public class WorldProps {
 		FeatureParser.registerGenerator("large-vein", new WorldGenMinableLargeVein.Parser());
 		FeatureParser.registerGenerator("decoration", new DecorationParser());
 		FeatureParser.registerGenerator("lake", new WorldGenAdvLakes.Parser());
-		FeatureParser.registerGenerator("plate", new PlateParser());
+		FeatureParser.registerGenerator("plate", new WorldGenMinablePlate.Parser());
 		FeatureParser.registerGenerator("geode", new WorldGenGeode.Parser());
 		FeatureParser.registerGenerator("spike", new SpikeParser());
 		FeatureParser.registerGenerator("boulder", new WorldGenBoulder.Parser());
