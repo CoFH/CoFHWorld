@@ -4,6 +4,7 @@ import cofh.cofhworld.CoFHWorld;
 import cofh.cofhworld.decoration.parser.*;
 import cofh.cofhworld.feature.parser.*;
 import cofh.cofhworld.util.Utils;
+import cofh.cofhworld.world.generator.WorldGenBoulder;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -76,7 +77,7 @@ public class WorldProps {
 		FeatureParser.registerGenerator("plate", new PlateParser());
 		FeatureParser.registerGenerator("geode", new GeodeParser());
 		FeatureParser.registerGenerator("spike", new SpikeParser());
-		FeatureParser.registerGenerator("boulder", new BoulderParser());
+		FeatureParser.registerGenerator("boulder", new WorldGenBoulder.Parser());
 		FeatureParser.registerGenerator("dungeon", new DungeonParser());
 		FeatureParser.registerGenerator("stalagmite", new StalagmiteParser(false));
 		FeatureParser.registerGenerator("stalactite", new StalagmiteParser(true));
