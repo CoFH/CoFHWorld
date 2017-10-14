@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.decoration.IGeneratorParser;
+import cofh.cofhworld.feature.IGeneratorParser;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import com.typesafe.config.Config;

@@ -3,7 +3,7 @@ package cofh.cofhworld.init;
 import cofh.cofhworld.biome.BiomeInfo;
 import cofh.cofhworld.biome.BiomeInfoRarity;
 import cofh.cofhworld.biome.BiomeInfoSet;
-import cofh.cofhworld.decoration.IGeneratorParser;
+import cofh.cofhworld.feature.IGeneratorParser;
 import cofh.cofhworld.feature.IFeatureGenerator;
 import cofh.cofhworld.feature.IFeatureParser;
 import cofh.cofhworld.util.*;
