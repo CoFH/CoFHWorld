@@ -1,8 +1,10 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.decoration.IGeneratorParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
+import com.typesafe.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockMatcher;
@@ -13,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -219,4 +222,17 @@ public class WorldGenMinableCluster extends WorldGenerator {
 		return o.get(0);
 	}
 
+	public static class Parser implements IGeneratorParser {
+
+		@Override
+		public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+			int clusterSize = genObject.getInt("cluster-size");
+			if (clusterSize <= 0) {
+				log.warn("Invalid cluster size for generator '{}'", name);
+				return null;
+			}
+
+			return new WorldGenMinableCluster(resList, clusterSize, matList);
+		}
+	}
 }
