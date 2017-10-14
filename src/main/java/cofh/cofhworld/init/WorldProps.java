@@ -4,10 +4,7 @@ import cofh.cofhworld.CoFHWorld;
 import cofh.cofhworld.decoration.parser.*;
 import cofh.cofhworld.feature.parser.*;
 import cofh.cofhworld.util.Utils;
-import cofh.cofhworld.world.generator.WorldGenBoulder;
-import cofh.cofhworld.world.generator.WorldGenGeode;
-import cofh.cofhworld.world.generator.WorldGenMinableCluster;
-import cofh.cofhworld.world.generator.WorldGenSparseMinableCluster;
+import cofh.cofhworld.world.generator.*;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -76,7 +73,7 @@ public class WorldProps {
 		FeatureParser.registerGenerator("sparse-cluster", new WorldGenSparseMinableCluster.Parser());
 		FeatureParser.registerGenerator("large-vein", new LargeVeinParser());
 		FeatureParser.registerGenerator("decoration", new DecorationParser());
-		FeatureParser.registerGenerator("lake", new LakeParser());
+		FeatureParser.registerGenerator("lake", new WorldGenAdvLakes.Parser());
 		FeatureParser.registerGenerator("plate", new PlateParser());
 		FeatureParser.registerGenerator("geode", new WorldGenGeode.Parser());
 		FeatureParser.registerGenerator("spike", new SpikeParser());
