@@ -78,7 +78,6 @@ public class WorldProps {
 		FeatureParser.registerGenerator("geode", new WorldGenGeode.Parser());
 		FeatureParser.registerGenerator("spike", new WorldGenSpike.Parser());
 		FeatureParser.registerGenerator("boulder", new WorldGenBoulder.Parser());
-		FeatureParser.registerGenerator("dungeon", new DungeonParser());
 		FeatureParser.registerGenerator("stalagmite", new WorldGenStalagmite.Parser());
 		FeatureParser.registerGenerator("stalactite", new WorldGenStalactite.Parser());
 		FeatureParser.registerGenerator("small-tree", new WorldGenSmallTree.Parser());
