@@ -81,7 +81,7 @@ public class WorldProps {
 		FeatureParser.registerGenerator("dungeon", new DungeonParser());
 		FeatureParser.registerGenerator("stalagmite", new StalagmiteParser(false));
 		FeatureParser.registerGenerator("stalactite", new StalagmiteParser(true));
-		FeatureParser.registerGenerator("small-tree", new SmallTreeParser());
+		FeatureParser.registerGenerator("small-tree", new WorldGenSmallTree.Parser());
 
 		log.info("Verifying or creating base world generation directory...");
 
