@@ -1,7 +1,6 @@
 package cofh.cofhworld.init;
 
 import cofh.cofhworld.CoFHWorld;
-import cofh.cofhworld.decoration.parser.*;
 import cofh.cofhworld.feature.parser.*;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.world.generator.*;
