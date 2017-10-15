@@ -1,4 +1,4 @@
-package cofh.cofhworld.feature.generator;
+package cofh.cofhworld.feature.distribution;
 
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.WeightedRandomBlock;

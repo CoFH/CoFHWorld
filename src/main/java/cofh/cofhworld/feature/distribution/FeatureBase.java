@@ -1,4 +1,4 @@
-package cofh.cofhworld.feature.generator;
+package cofh.cofhworld.feature.distribution;
 
 import cofh.cofhworld.biome.BiomeInfo;
 import cofh.cofhworld.biome.BiomeInfoSet;

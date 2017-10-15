@@ -1,4 +1,4 @@
-package cofh.cofhworld.feature.generator;
+package cofh.cofhworld.feature.distribution;
 
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;

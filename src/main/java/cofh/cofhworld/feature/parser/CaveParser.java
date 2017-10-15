@@ -1,8 +1,8 @@
 package cofh.cofhworld.feature.parser;
 
-import cofh.cofhworld.feature.generator.FeatureBase;
-import cofh.cofhworld.feature.generator.FeatureBase.GenRestriction;
-import cofh.cofhworld.feature.generator.FeatureGenCave;
+import cofh.cofhworld.feature.distribution.FeatureBase;
+import cofh.cofhworld.feature.distribution.FeatureBase.GenRestriction;
+import cofh.cofhworld.feature.distribution.FeatureGenCave;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
