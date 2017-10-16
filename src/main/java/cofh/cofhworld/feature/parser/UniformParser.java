@@ -1,7 +1,7 @@
 package cofh.cofhworld.feature.parser;
 
 import cofh.cofhworld.feature.IFeatureGenerator;
-import cofh.cofhworld.feature.IFeatureParser;
+import cofh.cofhworld.feature.IDistributionParser;
 import cofh.cofhworld.feature.distribution.FeatureBase;
 import cofh.cofhworld.feature.distribution.FeatureBase.GenRestriction;
 import cofh.cofhworld.feature.distribution.FeatureGenUniform;
@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-public class UniformParser implements IFeatureParser {
+public class UniformParser implements IDistributionParser {
 
 	protected final List<WeightedRandomBlock> defaultMaterial;
 
@@ -36,7 +36,7 @@ public class UniformParser implements IFeatureParser {
 	}
 
 	@Override
-	public IFeatureGenerator parseFeature(String featureName, Config genObject, Logger log) {
+	public IFeatureGenerator parse(String featureName, Config genObject, Logger log) {
 
 		INumberProvider numClusters = FeatureParser.parseNumberValue(genObject.getValue("cluster-count"), 0, Long.MAX_VALUE);
 		boolean retrogen = false;

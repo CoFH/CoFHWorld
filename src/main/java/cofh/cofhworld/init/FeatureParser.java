@@ -5,7 +5,7 @@ import cofh.cofhworld.biome.BiomeInfoRarity;
 import cofh.cofhworld.biome.BiomeInfoSet;
 import cofh.cofhworld.feature.IGeneratorParser;
 import cofh.cofhworld.feature.IFeatureGenerator;
-import cofh.cofhworld.feature.IFeatureParser;
+import cofh.cofhworld.feature.IDistributionParser;
 import cofh.cofhworld.util.*;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
@@ -51,7 +51,7 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class FeatureParser {
 
-	private static HashMap<String, IFeatureParser> distributionParsers = new HashMap<>();
+	private static HashMap<String, IDistributionParser> distributionParsers = new HashMap<>();
 	private static HashMap<String, IGeneratorParser> generatorParsers = new HashMap<>();
 	public static ArrayList<IFeatureGenerator> parsedFeatures = new ArrayList<>();
 
@@ -59,7 +59,7 @@ public class FeatureParser {
 
 	}
 
-	public static boolean registerDistribution(String name, IFeatureParser handler) {
+	public static boolean registerDistribution(String name, IDistributionParser handler) {
 
 		// TODO: provide this function through IFeatureHandler?
 		if (!distributionParsers.containsKey(name)) {
@@ -266,9 +266,9 @@ public class FeatureParser {
 
 		String distributionName = genObject.getString("distribution");
 
-		IFeatureParser template = distributionParsers.get(distributionName);
+		IDistributionParser template = distributionParsers.get(distributionName);
 		if (template != null) {
-			IFeatureGenerator feature = template.parseFeature(featureName, genObject, log);
+			IFeatureGenerator feature = template.parse(featureName, genObject, log);
 			if (feature != null) {
 				parsedFeatures.add(feature);
 				return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
