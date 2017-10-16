@@ -44,31 +44,7 @@ public class Feature {
     private IGenerator generator;
     private IDistribution distribution;
 
-    /**
-     * Shortcut to add a Feature with no biome or dimension restriction.
-     */
-    public Feature(String name, boolean regen) {
-
-        this(name, GenRestriction.NONE, regen, GenRestriction.NONE);
-    }
-
-    /**
-     * Shortcut to add a Feature with a dimension restriction but no biome restriction.
-     */
-    public Feature(String name, boolean regen, GenRestriction dimRes) {
-
-        this(name, GenRestriction.NONE, regen, dimRes);
-    }
-
-    /**
-     * Shortcut to add a Feature with a biome restriction but no dimension restriction.
-     */
-    public Feature(String name, GenRestriction biomeRes, boolean regen) {
-
-        this(name, biomeRes, regen, GenRestriction.NONE);
-    }
-
-    public Feature(String name, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+    public Feature(String name, GenRestriction biomeRes, GenRestriction dimRes, boolean regen) {
 
         this.name = name;
         this.biomeRestriction = biomeRes;
