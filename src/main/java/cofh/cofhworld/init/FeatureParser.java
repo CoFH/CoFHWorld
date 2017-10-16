@@ -51,30 +51,30 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class FeatureParser {
 
-	private static HashMap<String, IFeatureParser> templateHandlers = new HashMap<>();
-	private static HashMap<String, IGeneratorParser> generatorHandlers = new HashMap<>();
+	private static HashMap<String, IFeatureParser> distributionParsers = new HashMap<>();
+	private static HashMap<String, IGeneratorParser> generatorParsers = new HashMap<>();
 	public static ArrayList<IFeatureGenerator> parsedFeatures = new ArrayList<>();
 
 	private FeatureParser() {
 
 	}
 
-	public static boolean registerTemplate(String template, IFeatureParser handler) {
+	public static boolean registerDistribution(String name, IFeatureParser handler) {
 
 		// TODO: provide this function through IFeatureHandler?
-		if (!templateHandlers.containsKey(template)) {
-			templateHandlers.put(template, handler);
+		if (!distributionParsers.containsKey(name)) {
+			distributionParsers.put(name, handler);
 			return true;
 		}
-		log.error("Attempted to register duplicate template '{}'!", template);
+		log.error("Attempted to register duplicate distribution '{}'!", name);
 		return false;
 	}
 
 	public static boolean registerGenerator(String generator, IGeneratorParser handler) {
 
 		// TODO: provide this function through IFeatureHandler?
-		if (!generatorHandlers.containsKey(generator)) {
-			generatorHandlers.put(generator, handler);
+		if (!generatorParsers.containsKey(generator)) {
+			generatorParsers.put(generator, handler);
 			return true;
 		}
 		log.error("Attempted to register duplicate generator '{}'!", generator);
@@ -264,25 +264,21 @@ public class FeatureParser {
 			}
 		}
 
-		String templateName = parseTemplate(genObject);
-		IFeatureParser template = templateHandlers.get(templateName);
+		String distributionName = genObject.getString("distribution");
+
+		IFeatureParser template = distributionParsers.get(distributionName);
 		if (template != null) {
 			IFeatureGenerator feature = template.parseFeature(featureName, genObject, log);
 			if (feature != null) {
 				parsedFeatures.add(feature);
 				return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
 			}
-			log.warn("Template '" + templateName + "' failed to parse its entry!");
+			log.warn("Template '" + distributionName + "' failed to parse its entry!");
 		} else {
-			log.warn("Unknown template + '" + templateName + "'.");
+			log.warn("Unknown template + '" + distributionName + "'.");
 		}
 
 		return EnumActionResult.FAIL;
-	}
-
-	public static String parseTemplate(Config genObject) {
-
-		return genObject.getString("distribution");
 	}
 
 	public static WorldGenerator parseGenerator(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
@@ -313,7 +309,7 @@ public class FeatureParser {
 		String name = def;
 		if (genObject.hasPath("type")) {
 			name = genObject.getString("type");
-			if (!generatorHandlers.containsKey(name)) {
+			if (!generatorParsers.containsKey(name)) {
 				log.warn("Unknown generator '{}'! using '{}'", name, def);
 				name = def;
 			}
@@ -330,7 +326,7 @@ public class FeatureParser {
 			log.warn("Invalid material list! Using default list.");
 			matList = defaultMaterial;
 		}
-		IGeneratorParser parser = generatorHandlers.get(name);
+		IGeneratorParser parser = generatorParsers.get(name);
 		if (parser == null) {
 			throw new IllegalStateException("Generator '" + name + "' is not registered!");
 		}

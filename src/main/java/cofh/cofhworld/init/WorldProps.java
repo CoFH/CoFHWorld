@@ -56,14 +56,14 @@ public class WorldProps {
 	private static void init() {
 
 		log.info("Registering default Feature Templates...");
-		FeatureParser.registerTemplate("gaussian", new GaussianParser());
-		FeatureParser.registerTemplate("uniform", new UniformParser());
-		FeatureParser.registerTemplate("surface", new SurfaceParser());
-		FeatureParser.registerTemplate("fractal", new FractalParser());
-		FeatureParser.registerTemplate("decoration", new DecorationParser());
-		FeatureParser.registerTemplate("underwater", new UnderfluidParser(true));
-		FeatureParser.registerTemplate("underfluid", new UnderfluidParser(false));
-		FeatureParser.registerTemplate("cave", new CaveParser());
+		FeatureParser.registerDistribution("gaussian", new GaussianParser());
+		FeatureParser.registerDistribution("uniform", new UniformParser());
+		FeatureParser.registerDistribution("surface", new SurfaceParser());
+		FeatureParser.registerDistribution("fractal", new FractalParser());
+		FeatureParser.registerDistribution("decoration", new DecorationParser());
+		FeatureParser.registerDistribution("underwater", new UnderfluidParser(true));
+		FeatureParser.registerDistribution("underfluid", new UnderfluidParser(false));
+		FeatureParser.registerDistribution("cave", new CaveParser());
 
 		log.info("Registering default World Generators...");
 		FeatureParser.registerGenerator(null, new WorldGenMinableCluster.Parser());
