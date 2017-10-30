@@ -64,9 +64,9 @@ public class CommandCoFHWorld extends CommandTreeBase {
         public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
             StringBuilder b = new StringBuilder();
             b.append("\n");
-            for (IFeatureGenerator feature: WorldHandler.getFeatures()) {
-                b.append("* " + feature.getFeatureName() + "\n");
-            }
+//            for (IFeatureGenerator feature: WorldHandler.getFeatures()) {
+//                b.append("* " + feature.getFeatureName() + "\n");
+//            }
             notifyCommandListener(sender, this, "cofhworld.list", b.toString());
         }
     }

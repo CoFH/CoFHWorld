@@ -1,10 +1,8 @@
 package cofh.cofhworld;
 
 import cofh.cofhworld.command.CommandCoFHWorld;
-import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.init.WorldHandler;
 import cofh.cofhworld.init.WorldProps;
-import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;

@@ -1,32 +1,31 @@
 package cofh.cofhworld.feature.distribution;
 
-import cofh.cofhworld.util.numbers.ConstantProvider;
+import cofh.cofhworld.feature.Feature;
+import cofh.cofhworld.feature.IDistribution;
+import cofh.cofhworld.feature.IDistributionParser;
+import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.INumberProvider;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigObject;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
+import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
-public class FeatureGenLargeVein extends FeatureBase {
+public class FeatureGenLargeVein implements IDistribution {
 
-	final WorldGenerator worldGen;
-	final INumberProvider count;
 	final INumberProvider minY;
-	private INumberProvider veinHeight, veinDiameter;
-	private INumberProvider verticalDensity;
-	private INumberProvider horizontalDensity;
+	final INumberProvider veinHeight, veinDiameter;
+	final INumberProvider verticalDensity;
+	final INumberProvider horizontalDensity;
 
-	public FeatureGenLargeVein(String name, WorldGenerator worldGen, int count, int minY, GenRestriction biomeRes, boolean regen, GenRestriction dimRes, int height, int diameter, int vDensity, int hDensity) {
+	public FeatureGenLargeVein(INumberProvider minY, INumberProvider height, INumberProvider diameter, INumberProvider vDensity, INumberProvider hDensity) {
 
-		this(name, worldGen, new ConstantProvider(count), new ConstantProvider(minY), biomeRes, regen, dimRes, new ConstantProvider(height), new ConstantProvider(diameter), new ConstantProvider(vDensity), new ConstantProvider(hDensity));
-	}
-
-	public FeatureGenLargeVein(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, GenRestriction biomeRes, boolean regen, GenRestriction dimRes, INumberProvider height, INumberProvider diameter, INumberProvider vDensity, INumberProvider hDensity) {
-
-		super(name, biomeRes, regen, dimRes);
-		this.worldGen = worldGen;
-		this.count = count;
 		this.minY = minY;
 		this.veinHeight = height;
 		this.veinDiameter = diameter;
@@ -50,11 +49,11 @@ public class FeatureGenLargeVein extends FeatureBase {
 	}
 
 	@Override
-	public boolean generateFeature(Random random, int blockX, int blockZ, World world) {
+	public boolean apply(Feature f, Random random, int blockX, int blockZ, World world) {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
-		final int count = this.count.intValue(world, random, pos);
+		final int count = f.getChunkCount().intValue(world, random, pos);
 		final int blockY = minY.intValue(world, random, pos);
 		final int veinDiameter = this.veinDiameter.intValue(world, random, pos);
 		final int horizontalDensity = this.horizontalDensity.intValue(world, random, pos);
@@ -72,13 +71,45 @@ public class FeatureGenLargeVein extends FeatureBase {
 			int x = blockX + getDensity(dRand, veinDiameter, horizontalDensity);
 			int y = blockY + getDensity(dRand, veinHeight, verticalDensity);
 			int z = blockZ + getDensity(dRand, veinDiameter, horizontalDensity);
-			if (!canGenerateInBiome(world, x, z, random)) {
+			if (!f.canGenerateInBiome(world, x, z, random)) {
 				continue;
 			}
 
-			generated |= worldGen.generate(world, random, new BlockPos(x, y, z));
+			generated |= f.applyGenerator(world, random, new BlockPos(x, y, z));
 		}
 		return generated;
 	}
 
+	@Override
+	public List<WeightedRandomBlock> defaultMaterials() {
+		return Arrays.asList(new WeightedRandomBlock(Blocks.STONE, -1));
+	}
+
+	public static class Parser implements IDistributionParser {
+
+		@Override
+		public IDistribution parse(String name, Config genObject, Logger log) {
+			if (!(genObject.hasPath("min-height") && genObject.hasPath("vein-height"))) {
+				log.error("Height parameters for 'fractal' template not specified in \"" + name + "\"");
+				return null;
+			}
+			if (!(genObject.hasPath("vein-diameter"))) {
+				log.error("veinDiameter parameter for 'fractal' template not specified in \"" + name + "\"");
+				return null;
+			}
+			if (!(genObject.hasPath("vertical-density") && genObject.hasPath("horizontal-density"))) {
+				log.error("Density parameters for 'fractal' template not specified in \"" + name + "\"");
+				return null;
+			}
+			ConfigObject genData = genObject.root();
+			INumberProvider minY = FeatureParser.parseNumberValue(genData.get("min-height"));
+			INumberProvider h = FeatureParser.parseNumberValue(genData.get("vein-height"));
+			INumberProvider d = FeatureParser.parseNumberValue(genData.get("vein-diameter"));
+			INumberProvider vD = FeatureParser.parseNumberValue(genData.get("vertical-density"), 0, 100);
+			INumberProvider hD = FeatureParser.parseNumberValue(genData.get("horizontal-density"), 0, 100);
+
+			return new FeatureGenLargeVein(minY, h, d, vD, hD);
+		}
+	}
 }
+

@@ -1,6 +1,5 @@
 package cofh.cofhworld.feature;
 
-import cofh.cofhworld.feature.IFeatureGenerator;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;

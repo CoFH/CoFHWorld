@@ -1,47 +1,42 @@
 package cofh.cofhworld.feature.distribution;
 
-import cofh.cofhworld.util.numbers.ConstantProvider;
-import cofh.cofhworld.util.numbers.INumberProvider;
+import cofh.cofhworld.feature.Feature;
+import cofh.cofhworld.feature.IDistribution;
+import cofh.cofhworld.feature.IDistributionParser;
+import cofh.cofhworld.util.WeightedRandomBlock;
+import com.typesafe.config.Config;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
+import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
-public class FeatureGenCave extends FeatureBase {
+public class FeatureGenCave implements IDistribution {
 
-	final WorldGenerator worldGen;
-	final INumberProvider count;
 	final boolean ceiling;
 
-	public FeatureGenCave(String name, WorldGenerator worldGen, boolean ceiling, int count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public FeatureGenCave(boolean ceiling) {
 
-		this(name, worldGen, ceiling, new ConstantProvider(count), biomeRes, regen, dimRes);
-	}
-
-	public FeatureGenCave(String name, WorldGenerator worldGen, boolean ceiling, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
-
-		super(name, biomeRes, regen, dimRes);
-		this.worldGen = worldGen;
-		this.count = count;
 		this.ceiling = ceiling;
 	}
 
 	@Override
-	protected boolean generateFeature(Random random, int blockX, int blockZ, World world) {
-
+	public boolean apply(Feature f, Random random, int blockX, int blockZ, World world) {
 		int averageSeaLevel = world.provider.getAverageGroundLevel() + 1;
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
-		final int count = this.count.intValue(world, random, pos);
+		final int count = f.getChunkCount().intValue(world, random, pos);
 
 		boolean generated = false;
 		for (int i = 0; i < count; i++) {
 			int x = blockX + random.nextInt(16);
 			int z = blockZ + random.nextInt(16);
-			if (!canGenerateInBiome(world, x, z, random)) {
+			if (!f.canGenerateInBiome(world, x, z, random)) {
 				continue;
 			}
 			int seaLevel = averageSeaLevel;
@@ -87,9 +82,23 @@ public class FeatureGenCave extends FeatureBase {
 				}
 			}
 
-			generated |= worldGen.generate(world, random, new BlockPos(x, y, z));
+			generated |= f.applyGenerator(world, random, new BlockPos(x, y, z));
 		}
 		return generated;
 	}
 
+	@Override
+	public List<WeightedRandomBlock> defaultMaterials() {
+		return Arrays.asList(new WeightedRandomBlock(Blocks.STONE, -1));
+	}
+
+	public static class Parser implements IDistributionParser {
+
+		@Override
+		public IDistribution parse(String name, Config config, Logger log) {
+
+			boolean ceiling = config.hasPath("ceiling") && config.getBoolean("ceiling");
+			return new FeatureGenCave(ceiling);
+		}
+	}
 }

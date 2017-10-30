@@ -1,7 +1,7 @@
 package cofh.cofhworld.init;
 
 import cofh.cofhworld.CoFHWorld;
-import cofh.cofhworld.feature.parser.*;
+import cofh.cofhworld.feature.distribution.*;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.world.generator.*;
 
@@ -56,14 +56,14 @@ public class WorldProps {
 	private static void init() {
 
 		log.info("Registering default Feature Templates...");
-		FeatureParser.registerDistribution("gaussian", new GaussianParser());
-		FeatureParser.registerDistribution("uniform", new UniformParser());
-		FeatureParser.registerDistribution("surface", new SurfaceParser());
-		FeatureParser.registerDistribution("fractal", new FractalParser());
-		FeatureParser.registerDistribution("decoration", new DecorationParser());
-		FeatureParser.registerDistribution("underwater", new UnderfluidParser(true));
-		FeatureParser.registerDistribution("underfluid", new UnderfluidParser(false));
-		FeatureParser.registerDistribution("cave", new CaveParser());
+		FeatureParser.registerDistribution("gaussian", new FeatureGenGaussian.Parser());
+		FeatureParser.registerDistribution("uniform", new FeatureGenUniform.Parser());
+		FeatureParser.registerDistribution("surface", new FeatureGenSurface.Parser());
+		FeatureParser.registerDistribution("fractal", new FeatureGenLargeVein.Parser());
+		FeatureParser.registerDistribution("decoration", new FeatureGenDecoration.Parser());
+		FeatureParser.registerDistribution("underwater", new FeatureGenUnderfluid.Parser());
+		FeatureParser.registerDistribution("underfluid", new FeatureGenUnderfluid.Parser());
+		FeatureParser.registerDistribution("cave", new FeatureGenCave.Parser());
 
 		log.info("Registering default World Generators...");
 		FeatureParser.registerGenerator(null, new WorldGenMinableCluster.Parser());
@@ -71,7 +71,7 @@ public class WorldProps {
 		FeatureParser.registerGenerator("cluster", new WorldGenMinableCluster.Parser());
 		FeatureParser.registerGenerator("sparse-cluster", new WorldGenSparseMinableCluster.Parser());
 		FeatureParser.registerGenerator("large-vein", new WorldGenMinableLargeVein.Parser());
-		FeatureParser.registerGenerator("decoration", new DecorationParser());
+		FeatureParser.registerGenerator("decoration", new WorldGenDecoration.Parser());
 		FeatureParser.registerGenerator("lake", new WorldGenAdvLakes.Parser());
 		FeatureParser.registerGenerator("plate", new WorldGenMinablePlate.Parser());
 		FeatureParser.registerGenerator("geode", new WorldGenGeode.Parser());

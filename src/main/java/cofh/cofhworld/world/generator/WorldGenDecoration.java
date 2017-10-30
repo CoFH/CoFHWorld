@@ -1,13 +1,20 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.feature.IGeneratorParser;
+import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import cofh.cofhworld.util.numbers.SkellamRandomProvider;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigObject;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -24,15 +31,10 @@ public class WorldGenDecoration extends WorldGenerator {
 	private INumberProvider yVar;
 	private INumberProvider zVar;
 
-	public WorldGenDecoration(List<WeightedRandomBlock> blocks, int count, List<WeightedRandomBlock> material, List<WeightedRandomBlock> on) {
+	public WorldGenDecoration(List<WeightedRandomBlock> blocks, INumberProvider clusterSize, List<WeightedRandomBlock> material, List<WeightedRandomBlock> on) {
 
-		this(blocks, new ConstantProvider(count), material, on);
-	}
-
-	public WorldGenDecoration(List<WeightedRandomBlock> blocks, INumberProvider count, List<WeightedRandomBlock> material, List<WeightedRandomBlock> on) {
-
-		cluster = blocks;
-		clusterSize = count;
+		this.cluster = blocks;
+		this.clusterSize = clusterSize;
 		genBlock = material == null ? null : material.toArray(new WeightedRandomBlock[material.size()]);
 		onBlock = on == null ? null : on.toArray(new WeightedRandomBlock[on.size()]);
 		this.setStackHeight(1);
@@ -138,4 +140,50 @@ public class WorldGenDecoration extends WorldGenerator {
 		return this;
 	}
 
+	public static class Parser implements IGeneratorParser {
+
+		@Override
+		public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+
+			int clusterSize = genObject.getInt("cluster-size"); // TODO: another name?
+			if (clusterSize <= 0) {
+				log.warn("Invalid cluster size for generator '{}'", name);
+				return null;
+			}
+
+			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
+			ConfigObject genData = genObject.root();
+			if (!genObject.hasPath("surface")) {
+				log.info("Entry does not specify surface for 'decoration' generator. Using grass.");
+				list.add(new WeightedRandomBlock(Blocks.GRASS));
+			} else {
+				if (!FeatureParser.parseResList(genData.get("surface"), list, false)) {
+					log.warn("Entry specifies invalid surface for 'decoration' generator! Using grass!");
+					list.clear();
+					list.add(new WeightedRandomBlock(Blocks.GRASS));
+				}
+			}
+
+			WorldGenDecoration r = new WorldGenDecoration(resList, new ConstantProvider(clusterSize), matList, list);
+			if (genObject.hasPath("see-sky")) {
+				r.seeSky = genObject.getBoolean("see-sky");
+			}
+			if (genObject.hasPath("check-stay")) {
+				r.checkStay = genObject.getBoolean("check-stay");
+			}
+			if (genObject.hasPath("stack-height")) {
+				r.stackHeight = FeatureParser.parseNumberValue(genData.get("stack-height"));
+			}
+			if (genObject.hasPath("x-variance")) {
+				r.xVar = FeatureParser.parseNumberValue(genData.get("x-variance"), 1, 15);
+			}
+			if (genObject.hasPath("y-variance")) {
+				r.yVar = FeatureParser.parseNumberValue(genData.get("y-variance"), 0, 15);
+			}
+			if (genObject.hasPath("z-variance")) {
+				r.zVar = FeatureParser.parseNumberValue(genData.get("z-variance"), 1, 15);
+			}
+			return r;
+		}
+	}
 }

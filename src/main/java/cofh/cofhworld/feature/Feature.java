@@ -1,14 +1,23 @@
 package cofh.cofhworld.feature;
 
-import cofh.cofhworld.biome.BiomeInfo;
 import cofh.cofhworld.biome.BiomeInfoSet;
+import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.util.numbers.INumberProvider;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigList;
+import com.typesafe.config.ConfigValue;
+import com.typesafe.config.ConfigValueType;
 import gnu.trove.set.hash.THashSet;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 import java.util.Set;
+
+import static cofh.cofhworld.CoFHWorld.log;
 
 public class Feature {
 
@@ -27,34 +36,29 @@ public class Feature {
         }
     }
 
-    private final String name;
+    private String name;
 
-    private final GenRestriction biomeRestriction;
-    private final GenRestriction dimensionRestriction;
+    private boolean enabled = true;
 
-    private final boolean regen;
+    private GenRestriction biomeRestriction = GenRestriction.NONE;
+    private GenRestriction dimensionRestriction = GenRestriction.NONE;
+
+    private boolean retrogen = false;
 
     private boolean withVillage = true;
 
     private int rarity;
+    private INumberProvider chunkCount;
 
     private final BiomeInfoSet biomes = new BiomeInfoSet(1);
     private final Set<Integer> dimensions = new THashSet<>();
 
-    private IGenerator generator;
+
+    private WorldGenerator generator;
     private IDistribution distribution;
 
-    public Feature(String name, GenRestriction biomeRes, GenRestriction dimRes, boolean regen) {
-
-        this.name = name;
-        this.biomeRestriction = biomeRes;
-        this.dimensionRestriction = dimRes;
-        this.regen = regen;
-    }
-
-    public void setRarity(int rarity) {
-
-        this.rarity = rarity;
+    public Feature(String name, Config config) {
+        loadFromConfig(config);
     }
 
     public void setDistribution(IDistribution d) {
@@ -62,27 +66,17 @@ public class Feature {
         this.distribution = d;
     }
 
-    public void setGenerator(IGenerator g) {
+    public void setGenerator(WorldGenerator g) {
 
         this.generator = g;
     }
 
-    public Feature addBiome(BiomeInfo biome) {
-
-        biomes.add(biome);
-        return this;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public Feature addBiomes(BiomeInfoSet biomes) {
-
-        this.biomes.addAll(biomes);
-        return this;
-    }
-
-    public Feature addDimension(int dimID) {
-
-        dimensions.add(dimID);
-        return this;
+    public INumberProvider getChunkCount() {
+        return chunkCount;
     }
 
     public final String getName() {
@@ -92,7 +86,7 @@ public class Feature {
 
     public boolean generate(Random random, int chunkX, int chunkZ, World world, boolean hasVillage, boolean newGen) {
 
-        if (!newGen && !regen) {
+        if (!newGen && !retrogen) {
             return false;
         }
         if (hasVillage && !withVillage) {
@@ -105,7 +99,7 @@ public class Feature {
             return false;
         }
 
-        return distribution.apply(this, random, chunkX, chunkZ, world, generator);
+        return distribution.apply(this, random, chunkX, chunkZ, world);
     }
 
     public boolean canGenerateInBiome(World world, int x, int z, Random rand) {
@@ -115,5 +109,74 @@ public class Feature {
             return !(biomeRestriction == GenRestriction.BLACKLIST == biomes.contains(biome, rand));
         }
         return true;
+    }
+
+    public boolean applyGenerator(World world, Random rand, BlockPos p) {
+        return this.generator.generate(world, rand, p);
+    }
+
+    private void loadFromConfig(Config config) {
+        // If the feature is disabled, quick bail
+        if (config.hasPath("enabled") && !config.getBoolean("enabled")) {
+            this.enabled = false;
+            return;
+        }
+
+        this.retrogen = config.hasPath("retrogen") && config.getBoolean("retrogen");
+
+        // Identify the type of biome restriction; ensure it's an object
+        if (config.hasPath("biome")) {
+            ConfigValue data = config.getValue("biome");
+            if (data.valueType() == ConfigValueType.OBJECT) {
+                this.biomeRestriction = GenRestriction.get(config.getString("biome.restriction"));
+                this.biomes.addAll(FeatureParser.parseBiomeRestrictions(config.getConfig("biome")));
+            } else {
+                // Invalid biome restriction entry; default is already NONE, so just log a warning
+                log.error("Invalid biome restriction %s on feature %s; needs to be an object.", data, name);
+            }
+        }
+
+        // Identify type of dimension restriction; it should be an object, list or number
+        if (config.hasPath("dimension")) {
+            String field = "dimension";
+            ConfigValue data = config.getValue("dimension");
+            switch (data.valueType()) {
+                case OBJECT:
+                    this.dimensionRestriction = GenRestriction.get(config.getString("dimension.restriction"));
+                    field += ".value"; // 'ware the explicit fall through to next case
+                case LIST:
+                    // Force to whitelist if no restriction was specified
+                    if (this.dimensionRestriction == GenRestriction.NONE) {
+                        this.dimensionRestriction = GenRestriction.WHITELIST;
+                    }
+
+                    // Process all dimensions in the list
+                    ConfigList restrictionList = config.getList(field);
+                    for (int i = 0; i < restrictionList.size(); i++) {
+                        ConfigValue val = restrictionList.get(i);
+                        if (val.valueType() == ConfigValueType.NUMBER) {
+                            dimensions.add(((Number) val.unwrapped()).intValue());
+                        }
+                    }
+                    break;
+                case NUMBER:
+                    this.dimensionRestriction = GenRestriction.WHITELIST;
+                    this.dimensions.add(((Number)data.unwrapped()).intValue());
+                    break;
+                default:
+                    log.error("Invalid dimension restriction %s on feature %s; needs to be an object, list or number.", data, name);
+            }
+        }
+
+        // Get other feature specific values
+        this.chunkCount = FeatureParser.parseNumberValue(config.getValue("cluster-count"), 0, Long.MAX_VALUE);
+
+        if (config.hasPath("chunk-chance")) {
+            this.rarity = MathHelper.clamp(config.getInt("chunk-chance"), 1, 1000000000);
+        }
+
+        if (config.hasPath("in-village")) {
+            this.withVillage = config.getBoolean("in-village");
+        }
     }
 }

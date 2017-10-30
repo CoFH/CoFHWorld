@@ -3,9 +3,10 @@ package cofh.cofhworld.init;
 import cofh.cofhworld.biome.BiomeInfo;
 import cofh.cofhworld.biome.BiomeInfoRarity;
 import cofh.cofhworld.biome.BiomeInfoSet;
-import cofh.cofhworld.feature.IGeneratorParser;
-import cofh.cofhworld.feature.IFeatureGenerator;
+import cofh.cofhworld.feature.Feature;
+import cofh.cofhworld.feature.IDistribution;
 import cofh.cofhworld.feature.IDistributionParser;
+import cofh.cofhworld.feature.IGeneratorParser;
 import cofh.cofhworld.util.*;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
@@ -53,7 +54,6 @@ public class FeatureParser {
 
 	private static HashMap<String, IDistributionParser> distributionParsers = new HashMap<>();
 	private static HashMap<String, IGeneratorParser> generatorParsers = new HashMap<>();
-	public static ArrayList<IFeatureGenerator> parsedFeatures = new ArrayList<>();
 
 	private FeatureParser() {
 
@@ -159,7 +159,7 @@ public class FeatureParser {
 						if (genEntry.getValue().valueType() != ConfigValueType.OBJECT) {
 							log.error("Error parsing generation entry: '{}' > This must be an object and is not.", key);
 						} else {
-							switch (parseGenerationEntry(key, genData.getConfig(key))) {
+							switch (parseFeature(key, genData.getConfig(key))) {
 								case SUCCESS:
 									log.debug("Generation entry successfully parsed: '{}'", key);
 									break;
@@ -255,51 +255,72 @@ public class FeatureParser {
 		return true == retComp;
 	}
 
-	public static EnumActionResult parseGenerationEntry(String featureName, Config genObject) {
+	public static EnumActionResult parseFeature(String name, Config genObject) {
 
-		if (genObject.hasPath("enabled")) {
-			if (!genObject.getBoolean("enabled")) {
-				log.info('"' + featureName + "\" is disabled.");
-				return EnumActionResult.SUCCESS;
-			}
+		// Setup the base Feature object
+		Feature feature = new Feature(name, genObject);
+		if (!feature.isEnabled()) {
+			return EnumActionResult.SUCCESS;
 		}
 
-		String distributionName = genObject.getString("distribution");
-
-		IDistributionParser template = distributionParsers.get(distributionName);
-		if (template != null) {
-			IFeatureGenerator feature = template.parse(featureName, genObject, log);
-			if (feature != null) {
-				parsedFeatures.add(feature);
-				return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
-			}
-			log.warn("Template '" + distributionName + "' failed to parse its entry!");
-		} else {
-			log.warn("Unknown template + '" + distributionName + "'.");
+		// Try to parse the distribution and world generators; if either fails, we'll bail
+		IDistribution distribution = parseDistribution(name, genObject);
+		if (distribution == null) {
+			log.warn("Failed to instantiate distribution for feature %s.", name);
+			return EnumActionResult.FAIL;
 		}
 
-		return EnumActionResult.FAIL;
+		WorldGenerator generator = parseGenerator(name, genObject, distribution.defaultMaterials());
+		if (generator == null) {
+			log.warn("Failed to instantiate generator for feature %s.", name);
+			return EnumActionResult.FAIL;
+		}
+
+		// Hook the distribution and generator into our Feature
+		feature.setDistribution(distribution);
+		feature.setGenerator(generator);
+
+		// Register the finalized feature
+		return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
 	}
 
-	public static WorldGenerator parseGenerator(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
+	public static IDistribution parseDistribution(String featureName, Config genObject) {
+		String distName = genObject.getString("distribution");
+		IDistributionParser distParser = distributionParsers.get(distName);
+		if (distParser != null) {
+			return distParser.parse(featureName, genObject, log);
+		} else {
+			log.warn("Unable to find distribution %s for feature %s.", distName, featureName);
+			return null;
+		}
+	}
+
+	public static WorldGenerator parseGenerator(String featureName, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
 
 		if (!genObject.hasPath("generator")) {
 			return null;
 		}
+
 		ConfigValue genData = genObject.root().get("generator");
-		if (genData.valueType() == ConfigValueType.LIST) {
+		ConfigValueType genDataType = genData.valueType();
+
+		if (genDataType == ConfigValueType.OBJECT) {
+			// Single generator def
+			return parseGeneratorData(featureName, genObject.getConfig("generator"), defaultMaterial);
+
+		} else if (genDataType == ConfigValueType.LIST) {
+			// We have a weighted array of generators; walk the list and wrap with a WorldGenMulti
 			List<? extends Config> list = genObject.getConfigList("generator");
 			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
-				WorldGenerator gen = parseGeneratorData(def, genElement, defaultMaterial);
+				WorldGenerator gen = parseGeneratorData(featureName, genElement, defaultMaterial);
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedRandomWorldGenerator(gen, weight));
 			}
 			return new WorldGenMulti(gens);
-		} else if (genData.valueType() == ConfigValueType.OBJECT) {
-			return parseGeneratorData(def, genObject.getConfig("generator"), defaultMaterial);
+
 		} else {
-			log.error("Invalid data type for field 'generator'. > It must be an object or list.");
+			log.error("Invalid generator data type for %s; must be an object or list.", featureName);
 			return null;
 		}
 	}

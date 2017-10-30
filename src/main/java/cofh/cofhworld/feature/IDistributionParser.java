@@ -14,6 +14,6 @@ public interface IDistributionParser {
 	 * @param log         The {@link Logger} to log debug/error/etc. messages to.
 	 * @return The {@link IFeatureGenerator} to be registered with an IFeatureHandler
 	 */
-	IFeatureGenerator parse(String name, Config genObject, Logger log);
+	IDistribution parse(String name, Config genObject, Logger log);
 
 }
