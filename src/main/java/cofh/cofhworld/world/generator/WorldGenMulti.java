@@ -1,16 +1,17 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.feature.Feature;
+import cofh.cofhworld.feature.IGenerator;
 import cofh.cofhworld.util.WeightedRandomWorldGenerator;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenMulti extends WorldGenerator {
+public class WorldGenMulti implements IGenerator {
 
 	private final List<WeightedRandomWorldGenerator> generators;
 
@@ -20,10 +21,10 @@ public class WorldGenMulti extends WorldGenerator {
 	}
 
 	@Override
-	public boolean generate(World world, Random random, BlockPos pos) {
+	public boolean generate(Feature feature, World world, Random random, BlockPos pos) {
 
 		WeightedRandomWorldGenerator gen = WeightedRandom.getRandomItem(random, generators);
-		return gen.generator.generate(world, random, pos);
+		return gen.generator.generate(feature, world, random, pos);
 	}
 
 }

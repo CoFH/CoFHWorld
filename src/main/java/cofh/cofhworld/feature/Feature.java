@@ -12,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 import java.util.Set;
@@ -54,7 +53,7 @@ public class Feature {
     private final Set<Integer> dimensions = new THashSet<>();
 
 
-    private WorldGenerator generator;
+    private IGenerator generator;
     private IDistribution distribution;
 
     public Feature(String name, Config config) {
@@ -66,7 +65,7 @@ public class Feature {
         this.distribution = d;
     }
 
-    public void setGenerator(WorldGenerator g) {
+    public void setGenerator(IGenerator g) {
 
         this.generator = g;
     }
@@ -112,7 +111,7 @@ public class Feature {
     }
 
     public boolean applyGenerator(World world, Random rand, BlockPos p) {
-        return this.generator.generate(world, rand, p);
+        return this.generator.generate(this, world, rand, p);
     }
 
     private void loadFromConfig(Config config) {

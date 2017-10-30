@@ -3,10 +3,7 @@ package cofh.cofhworld.init;
 import cofh.cofhworld.biome.BiomeInfo;
 import cofh.cofhworld.biome.BiomeInfoRarity;
 import cofh.cofhworld.biome.BiomeInfoSet;
-import cofh.cofhworld.feature.Feature;
-import cofh.cofhworld.feature.IDistribution;
-import cofh.cofhworld.feature.IDistributionParser;
-import cofh.cofhworld.feature.IGeneratorParser;
+import cofh.cofhworld.feature.*;
 import cofh.cofhworld.util.*;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
@@ -27,7 +24,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.biome.Biome.TempCategory;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.DungeonHooks.DungeonMob;
 import net.minecraftforge.fml.common.Loader;
@@ -270,7 +266,7 @@ public class FeatureParser {
 			return EnumActionResult.FAIL;
 		}
 
-		WorldGenerator generator = parseGenerator(name, genObject, distribution.defaultMaterials());
+		IGenerator generator = parseGenerator(name, genObject, distribution.defaultMaterials());
 		if (generator == null) {
 			log.warn("Failed to instantiate generator for feature %s.", name);
 			return EnumActionResult.FAIL;
@@ -295,7 +291,7 @@ public class FeatureParser {
 		}
 	}
 
-	public static WorldGenerator parseGenerator(String featureName, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
+	public static IGenerator parseGenerator(String featureName, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
 
 		if (!genObject.hasPath("generator")) {
 			return null;
@@ -313,7 +309,7 @@ public class FeatureParser {
 			List<? extends Config> list = genObject.getConfigList("generator");
 			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
-				WorldGenerator gen = parseGeneratorData(featureName, genElement, defaultMaterial);
+				IGenerator gen = parseGeneratorData(featureName, genElement, defaultMaterial);
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedRandomWorldGenerator(gen, weight));
 			}
@@ -325,7 +321,7 @@ public class FeatureParser {
 		}
 	}
 
-	public static WorldGenerator parseGeneratorData(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
+	public static IGenerator parseGeneratorData(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
 
 		String name = def;
 		if (genObject.hasPath("type")) {

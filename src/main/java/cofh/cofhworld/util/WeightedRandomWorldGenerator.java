@@ -1,18 +1,18 @@
 package cofh.cofhworld.util;
 
+import cofh.cofhworld.feature.IGenerator;
 import net.minecraft.util.WeightedRandom;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 public final class WeightedRandomWorldGenerator extends WeightedRandom.Item {
 
-	public final WorldGenerator generator;
+	public final IGenerator generator;
 
-	public WeightedRandomWorldGenerator(WorldGenerator worldgen) {
+	public WeightedRandomWorldGenerator(IGenerator worldgen) {
 
 		this(worldgen, 100);
 	}
 
-	public WeightedRandomWorldGenerator(WorldGenerator worldgen, int weight) {
+	public WeightedRandomWorldGenerator(IGenerator worldgen, int weight) {
 
 		super(weight);
 		generator = worldgen;

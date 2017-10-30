@@ -1,5 +1,7 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.feature.Feature;
+import cofh.cofhworld.feature.IGenerator;
 import cofh.cofhworld.feature.IGeneratorParser;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
@@ -9,14 +11,13 @@ import com.typesafe.config.Config;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenGeode extends WorldGenerator {
+public class WorldGenGeode implements IGenerator {
 
 	private final List<WeightedRandomBlock> cluster;
 	private final List<WeightedRandomBlock> outline;
@@ -38,7 +39,7 @@ public class WorldGenGeode extends WorldGenerator {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos pos) {
+	public boolean generate(Feature feature, World world, Random rand, BlockPos pos) {
 
 		int xStart = pos.getX();
 		int yStart = pos.getY();
@@ -178,7 +179,7 @@ public class WorldGenGeode extends WorldGenerator {
 
 	public static class Parser implements IGeneratorParser {
 		@Override
-		public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+		public IGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 
 			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
 			if (!genObject.hasPath("crust")) {
