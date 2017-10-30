@@ -20,12 +20,12 @@ import java.util.Random;
 
 import static cofh.cofhworld.world.generator.WorldGenMinableCluster.canGenerateInBlock;
 
-public class FeatureGenSurface implements IDistribution {
+public class SurfaceDist implements IDistribution {
 
 	final WeightedRandomBlock[] matList;
 	final boolean useTopBlock;
 
-	public FeatureGenSurface(List<WeightedRandomBlock> matList, boolean useTopBlock) {
+	public SurfaceDist(List<WeightedRandomBlock> matList, boolean useTopBlock) {
 
 		this.matList = matList.toArray(new WeightedRandomBlock[matList.size()]);
 		this.useTopBlock = useTopBlock;
@@ -92,7 +92,7 @@ public class FeatureGenSurface implements IDistribution {
 			}
 			// TODO: clarity on follow-terrain field
 			boolean useTopBlock = (config.hasPath("follow-terrain") && config.getBoolean("follow-terrain"));
-			return new FeatureGenSurface(matList, useTopBlock);
+			return new SurfaceDist(matList, useTopBlock);
 		}
 	}
 }

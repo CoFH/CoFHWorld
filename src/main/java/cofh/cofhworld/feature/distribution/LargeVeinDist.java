@@ -17,14 +17,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class FeatureGenLargeVein implements IDistribution {
+public class LargeVeinDist implements IDistribution {
 
 	final INumberProvider minY;
 	final INumberProvider veinHeight, veinDiameter;
 	final INumberProvider verticalDensity;
 	final INumberProvider horizontalDensity;
 
-	public FeatureGenLargeVein(INumberProvider minY, INumberProvider height, INumberProvider diameter, INumberProvider vDensity, INumberProvider hDensity) {
+	public LargeVeinDist(INumberProvider minY, INumberProvider height, INumberProvider diameter, INumberProvider vDensity, INumberProvider hDensity) {
 
 		this.minY = minY;
 		this.veinHeight = height;
@@ -108,7 +108,7 @@ public class FeatureGenLargeVein implements IDistribution {
 			INumberProvider vD = FeatureParser.parseNumberValue(genData.get("vertical-density"), 0, 100);
 			INumberProvider hD = FeatureParser.parseNumberValue(genData.get("horizontal-density"), 0, 100);
 
-			return new FeatureGenLargeVein(minY, h, d, vD, hD);
+			return new LargeVeinDist(minY, h, d, vD, hD);
 		}
 	}
 }

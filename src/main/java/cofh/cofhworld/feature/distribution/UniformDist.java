@@ -16,12 +16,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class FeatureGenUniform implements IDistribution {
+public class UniformDist implements IDistribution {
 
 	final INumberProvider minY;
 	final INumberProvider maxY;
 
-	public FeatureGenUniform(INumberProvider minY, INumberProvider maxY) {
+	public UniformDist(INumberProvider minY, INumberProvider maxY) {
 
 		this.minY = minY;
 		this.maxY = maxY;
@@ -68,7 +68,7 @@ public class FeatureGenUniform implements IDistribution {
 			INumberProvider minHeight = FeatureParser.parseNumberValue(config.root().get("min-height"));
 			INumberProvider maxHeight = FeatureParser.parseNumberValue(config.root().get("max-height"));
 
-			return new FeatureGenUniform(minHeight, maxHeight);
+			return new UniformDist(minHeight, maxHeight);
 		}
 	}
 

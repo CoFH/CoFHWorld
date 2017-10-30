@@ -20,13 +20,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-public class FeatureGenUnderfluid implements IDistribution {
+public class UnderfluidDist implements IDistribution {
 
 	final boolean water;
 	final List<WeightedRandomBlock> matList;
 	final String[] fluidList;
 
-	public FeatureGenUnderfluid(List<WeightedRandomBlock> matList, String[] fluidList) {
+	public UnderfluidDist(List<WeightedRandomBlock> matList, String[] fluidList) {
 
 		this.matList = matList;
 		this.water = (fluidList.length == 0); // TODO: Also check for single water block in list?
@@ -127,7 +127,7 @@ public class FeatureGenUnderfluid implements IDistribution {
 				}
 			}
 
-			return new FeatureGenUnderfluid(matList, fluidList.toArray(new String[0]));
+			return new UnderfluidDist(matList, fluidList.toArray(new String[0]));
 		}
 	}
 }

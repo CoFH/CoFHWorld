@@ -15,11 +15,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class FeatureGenCave implements IDistribution {
+public class CaveDist implements IDistribution {
 
 	final boolean ceiling;
 
-	public FeatureGenCave(boolean ceiling) {
+	public CaveDist(boolean ceiling) {
 
 		this.ceiling = ceiling;
 	}
@@ -98,7 +98,7 @@ public class FeatureGenCave implements IDistribution {
 		public IDistribution parse(String name, Config config, Logger log) {
 
 			boolean ceiling = config.hasPath("ceiling") && config.getBoolean("ceiling");
-			return new FeatureGenCave(ceiling);
+			return new CaveDist(ceiling);
 		}
 	}
 }

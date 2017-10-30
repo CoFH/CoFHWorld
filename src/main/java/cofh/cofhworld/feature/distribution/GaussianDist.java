@@ -18,13 +18,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class FeatureGenGaussian implements IDistribution {
+public class GaussianDist implements IDistribution {
 
 	final INumberProvider rolls;
 	final INumberProvider meanY;
 	final INumberProvider maxVar;
 
-	public FeatureGenGaussian(INumberProvider smoothness, INumberProvider meanY, INumberProvider maxVar) {
+	public GaussianDist(INumberProvider smoothness, INumberProvider meanY, INumberProvider maxVar) {
 
 		this.rolls = smoothness;
 		this.meanY = meanY;
@@ -78,7 +78,7 @@ public class FeatureGenGaussian implements IDistribution {
 			INumberProvider spread = FeatureParser.parseNumberValue(genData.get("spread"));
 			INumberProvider rolls = genObject.hasPath("smoothness") ? FeatureParser.parseNumberValue(genData.get("smoothness")) : new ConstantProvider(2);
 
-			return new FeatureGenGaussian(rolls, centerHeight, spread);
+			return new GaussianDist(rolls, centerHeight, spread);
 		}
 	}
 

@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FeatureGenDecoration extends FeatureGenSurface {
+public class DecorationDist extends SurfaceDist {
 
-    public FeatureGenDecoration(List<WeightedRandomBlock> matList, boolean useTopBlock) {
+    public DecorationDist(List<WeightedRandomBlock> matList, boolean useTopBlock) {
         super(matList, useTopBlock);
     }
 
@@ -37,7 +37,7 @@ public class FeatureGenDecoration extends FeatureGenSurface {
             }
             // TODO: clarity on follow-terrain field
             boolean useTopBlock = (config.hasPath("follow-terrain") && config.getBoolean("follow-terrain"));
-            return new FeatureGenDecoration(matList, useTopBlock);
+            return new DecorationDist(matList, useTopBlock);
         }
     }
 }

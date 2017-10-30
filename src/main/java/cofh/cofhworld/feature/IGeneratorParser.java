@@ -10,7 +10,7 @@ import java.util.List;
 public interface IGeneratorParser {
 
 	/**
-	 * Parse a {@link Config} for usage with an {@link IFeatureGenerator}.
+	 * Parse a {@link Config} for usage with an {@link IDistribution}.
 	 *
 	 * @param name      The name of the generator entry.
 	 * @param genObject The JsonObject to parse.
