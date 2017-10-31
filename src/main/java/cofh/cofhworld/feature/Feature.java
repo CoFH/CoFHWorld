@@ -99,7 +99,7 @@ public class Feature {
             return false;
         }
 
-        return distribution.apply(this, random, chunkX, chunkZ, world);
+        return distribution.apply(this, random, chunkX * 16 + 8, chunkZ * 16 + 8, world);
     }
 
     public boolean canGenerateInBiome(World world, int x, int z, Random rand) {
