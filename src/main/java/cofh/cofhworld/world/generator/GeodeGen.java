@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenGeode implements IGenerator {
+public class GeodeGen implements IGenerator {
 
 	private final List<WeightedRandomBlock> cluster;
 	private final List<WeightedRandomBlock> outline;
@@ -27,7 +27,7 @@ public class WorldGenGeode implements IGenerator {
 	private INumberProvider width = new ConstantProvider(16);
 	private INumberProvider height = new ConstantProvider(8);
 
-	public WorldGenGeode(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> material, List<WeightedRandomBlock> cover) {
+	public GeodeGen(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> material, List<WeightedRandomBlock> cover) {
 
 		cluster = resource;
 		genBlock = material.toArray(new WeightedRandomBlock[material.size()]);
@@ -98,7 +98,7 @@ public class WorldGenGeode implements IGenerator {
 				for (y = 0; y < height; ++y) {
 					boolean flag = (fillBlock != null && hollowBlock[(x * width + z) * height + y]) || spawnBlock[(x * width + z) * height + y] || ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
-					if (flag && !WorldGenMinableCluster.canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
+					if (flag && !ClusterGen.canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
 						return false;
 					}
 				}
@@ -110,7 +110,7 @@ public class WorldGenGeode implements IGenerator {
 			for (z = 0; z < width; ++z) {
 				for (y = 0; y < height; ++y) {
 					if (spawnBlock[(x * width + z) * height + y]) {
-						boolean t = WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, cluster);
+						boolean t = ClusterGen.generateBlock(world, xStart + x, yStart + y, zStart + z, cluster);
 						r |= t;
 						if (!t) {
 							spawnBlock[(x * width + z) * height + y] = false;
@@ -124,12 +124,12 @@ public class WorldGenGeode implements IGenerator {
 			for (z = 0; z < width; ++z) {
 				for (y = 0; y < height; ++y) {
 					if (fillBlock != null && hollowBlock[(x * width + z) * height + y]) {
-						r |= WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, fillBlock);
+						r |= ClusterGen.generateBlock(world, xStart + x, yStart + y, zStart + z, fillBlock);
 					} else {
 						boolean flag = !spawnBlock[(x * width + z) * height + y] && ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
 						if (flag) {
-							r |= WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, outline);
+							r |= ClusterGen.generateBlock(world, xStart + x, yStart + y, zStart + z, outline);
 						}
 					}
 				}
@@ -154,7 +154,7 @@ public class WorldGenGeode implements IGenerator {
 					list.add(new WeightedRandomBlock(Blocks.OBSIDIAN));
 				}
 			}
-			WorldGenGeode r = new WorldGenGeode(resList, matList, list);
+			GeodeGen r = new GeodeGen(resList, matList, list);
 			if (genObject.hasPath("hollow")) {
 				r.hollow = genObject.getBoolean("hollow");
 			}

@@ -7,9 +7,6 @@ import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import com.typesafe.config.Config;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Logger;
@@ -17,14 +14,14 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenMinableLargeVein implements IGenerator {
+public class LargeVeinGen implements IGenerator {
 
 	private final List<WeightedRandomBlock> cluster;
 	private final WeightedRandomBlock[] genBlock;
 	private final INumberProvider genVeinSize;
 	private final boolean sparse;
 
-	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block, boolean sparze) {
+	public LargeVeinGen(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block, boolean sparze) {
 
 		cluster = resource;
 		genVeinSize = new ConstantProvider(clusterSize);
@@ -98,7 +95,7 @@ public class WorldGenMinableLargeVein implements IGenerator {
 							posZ2 += rand.nextInt(2) * directionZ2;
 						}
 
-						r |= WorldGenMinableCluster.generateBlock(world, posX2, posY2, posZ2, genBlock, cluster);
+						r |= ClusterGen.generateBlock(world, posX2, posY2, posZ2, genBlock, cluster);
 
 						if (sparse) {
 							blocksVein++;
@@ -108,7 +105,7 @@ public class WorldGenMinableLargeVein implements IGenerator {
 					}
 				}
 
-				r |= WorldGenMinableCluster.generateBlock(world, posX, posY, posZ, genBlock, cluster);
+				r |= ClusterGen.generateBlock(world, posX, posY, posZ, genBlock, cluster);
 
 				blocksBranch++;
 			}
@@ -133,7 +130,7 @@ public class WorldGenMinableLargeVein implements IGenerator {
 			}
 
 			boolean sparse = genObject.hasPath("sparse") ? genObject.getBoolean("sparse") : true;
-			return new WorldGenMinableLargeVein(resList, clusterSize, matList, sparse);
+			return new LargeVeinGen(resList, clusterSize, matList, sparse);
 		}
 
 	}

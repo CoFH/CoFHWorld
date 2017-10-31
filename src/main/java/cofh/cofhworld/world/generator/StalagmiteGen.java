@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenStalagmite implements IGenerator {
+public class StalagmiteGen implements IGenerator {
 
 	protected final List<WeightedRandomBlock> cluster;
 	protected final WeightedRandomBlock[] baseBlock;
@@ -29,7 +29,7 @@ public class WorldGenStalagmite implements IGenerator {
 	public boolean fat = true;
 	public boolean altSinc = false;
 
-	public WorldGenStalagmite(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
+	public StalagmiteGen(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
 
 		cluster = resource;
 		baseBlock = block.toArray(new WeightedRandomBlock[block.size()]);
@@ -78,7 +78,7 @@ public class WorldGenStalagmite implements IGenerator {
 			--yStart;
 		}
 
-		if (!WorldGenMinableCluster.canGenerateInBlock(world, xStart, yStart++, zStart, baseBlock)) {
+		if (!ClusterGen.canGenerateInBlock(world, xStart, yStart++, zStart, baseBlock)) {
 			return false;
 		}
 
@@ -91,12 +91,12 @@ public class WorldGenStalagmite implements IGenerator {
 		boolean r = false;
 		for (int x = -size; x <= size; ++x) {
 			for (int z = -size; z <= size; ++z) {
-				if (!WorldGenMinableCluster.canGenerateInBlock(world, xStart + x, yStart - 1, zStart + z, baseBlock)) {
+				if (!ClusterGen.canGenerateInBlock(world, xStart + x, yStart - 1, zStart + z, baseBlock)) {
 					continue;
 				}
 				int height = getHeight(x, z, size, rand, maxHeight);
 				for (int y = 0; y < height; ++y) {
-					r |= WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, genBlock, cluster);
+					r |= ClusterGen.generateBlock(world, xStart + x, yStart + y, zStart + z, genBlock, cluster);
 				}
 			}
 		}
@@ -108,10 +108,10 @@ public class WorldGenStalagmite implements IGenerator {
 		@Override
 		public IGenerator parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 
-			return commonParse(new WorldGenStalagmite(resList, matList), generatorName, genObject, log);
+			return commonParse(new StalagmiteGen(resList, matList), generatorName, genObject, log);
 		}
 
-		protected IGenerator commonParse(WorldGenStalagmite r, String generatorName, Config genObject, Logger log) {
+		protected IGenerator commonParse(StalagmiteGen r, String generatorName, Config genObject, Logger log) {
 
 			// TODO: these names need revised
 			ArrayList<WeightedRandomBlock> list = new ArrayList<>();

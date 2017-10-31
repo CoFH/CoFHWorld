@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenMulti implements IGenerator {
+public class MultiGen implements IGenerator {
 
 	private final List<WeightedRandomWorldGenerator> generators;
 
-	public WorldGenMulti(ArrayList<WeightedRandomWorldGenerator> values) {
+	public MultiGen(ArrayList<WeightedRandomWorldGenerator> values) {
 
 		generators = values;
 	}

@@ -9,7 +9,7 @@ import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import cofh.cofhworld.util.numbers.SkellamRandomProvider;
 import cofh.cofhworld.util.numbers.UniformRandomProvider;
-import cofh.cofhworld.world.generator.WorldGenMulti;
+import cofh.cofhworld.world.generator.MultiGen;
 import com.typesafe.config.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -310,7 +310,7 @@ public class FeatureParser {
 			return parseGeneratorData(defaultGenerator, midAir, genObject.getConfig("generator"), defaultMaterial);
 
 		} else if (genDataType == ConfigValueType.LIST) {
-			// We have a weighted array of generators; walk the list and wrap with a WorldGenMulti
+			// We have a weighted array of generators; walk the list and wrap with a MultiGen
 			List<? extends Config> list = genObject.getConfigList("generator");
 			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
@@ -318,7 +318,7 @@ public class FeatureParser {
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedRandomWorldGenerator(gen, weight));
 			}
-			return new WorldGenMulti(gens);
+			return new MultiGen(gens);
 
 		} else {
 			log.error("Invalid generator data type for %s; must be an object or list.", featureName);

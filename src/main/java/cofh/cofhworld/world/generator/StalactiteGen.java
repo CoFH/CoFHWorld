@@ -11,9 +11,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenStalactite extends WorldGenStalagmite {
+public class StalactiteGen extends StalagmiteGen {
 
-	public WorldGenStalactite(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
+	public StalactiteGen(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
 
 		super(resource, block);
 	}
@@ -30,7 +30,7 @@ public class WorldGenStalactite extends WorldGenStalagmite {
 			++yStart;
 		}
 
-		if (!WorldGenMinableCluster.canGenerateInBlock(world, xStart, yStart--, zStart, baseBlock)) {
+		if (!ClusterGen.canGenerateInBlock(world, xStart, yStart--, zStart, baseBlock)) {
 			return false;
 		}
 
@@ -40,23 +40,23 @@ public class WorldGenStalactite extends WorldGenStalagmite {
 		boolean r = false;
 		for (int x = -size; x <= size; ++x) {
 			for (int z = -size; z <= size; ++z) {
-				if (!WorldGenMinableCluster.canGenerateInBlock(world, xStart + x, yStart + 1, zStart + z, baseBlock)) {
+				if (!ClusterGen.canGenerateInBlock(world, xStart + x, yStart + 1, zStart + z, baseBlock)) {
 					continue;
 				}
 				int height = getHeight(x, z, size, rand, maxHeight);
 				for (int y = 0; y < height; ++y) {
-					r |= WorldGenMinableCluster.generateBlock(world, xStart + x, yStart - y, zStart + z, genBlock, cluster);
+					r |= ClusterGen.generateBlock(world, xStart + x, yStart - y, zStart + z, genBlock, cluster);
 				}
 			}
 		}
 		return r;
 	}
 
-	public static class Parser extends WorldGenStalagmite.Parser {
+	public static class Parser extends StalagmiteGen.Parser {
 		@Override
 		public IGenerator parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 
-			return commonParse(new WorldGenStalactite(resList, matList), generatorName, genObject, log);
+			return commonParse(new StalactiteGen(resList, matList), generatorName, genObject, log);
 		}
 	}
 }

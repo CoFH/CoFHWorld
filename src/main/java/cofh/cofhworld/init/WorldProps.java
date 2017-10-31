@@ -66,20 +66,20 @@ public class WorldProps {
 		FeatureParser.registerDistribution("cave", new CaveDist.Parser());
 
 		log.info("Registering default World Generators...");
-		FeatureParser.registerGenerator(null, new WorldGenMinableCluster.Parser());
-		FeatureParser.registerGenerator("", new WorldGenMinableCluster.Parser());
-		FeatureParser.registerGenerator("cluster", new WorldGenMinableCluster.Parser());
-		FeatureParser.registerGenerator("sparse-cluster", new WorldGenSparseMinableCluster.Parser());
-		FeatureParser.registerGenerator("large-vein", new WorldGenMinableLargeVein.Parser());
-		FeatureParser.registerGenerator("decoration", new WorldGenDecoration.Parser());
-		FeatureParser.registerGenerator("lake", new WorldGenAdvLakes.Parser());
-		FeatureParser.registerGenerator("plate", new WorldGenMinablePlate.Parser());
-		FeatureParser.registerGenerator("geode", new WorldGenGeode.Parser());
-		FeatureParser.registerGenerator("spike", new WorldGenSpike.Parser());
-		FeatureParser.registerGenerator("boulder", new WorldGenBoulder.Parser());
-		FeatureParser.registerGenerator("stalagmite", new WorldGenStalagmite.Parser());
-		FeatureParser.registerGenerator("stalactite", new WorldGenStalactite.Parser());
-		FeatureParser.registerGenerator("small-tree", new WorldGenSmallTree.Parser());
+		FeatureParser.registerGenerator(null, new ClusterGen.Parser());
+		FeatureParser.registerGenerator("", new ClusterGen.Parser());
+		FeatureParser.registerGenerator("cluster", new ClusterGen.Parser());
+		FeatureParser.registerGenerator("sparse-cluster", new SparseClusterGen.Parser());
+		FeatureParser.registerGenerator("large-vein", new LargeVeinGen.Parser());
+		FeatureParser.registerGenerator("decoration", new DecorationGen.Parser());
+		FeatureParser.registerGenerator("lake", new LakesGen.Parser());
+		FeatureParser.registerGenerator("plate", new PlateGen.Parser());
+		FeatureParser.registerGenerator("geode", new GeodeGen.Parser());
+		FeatureParser.registerGenerator("spike", new SpikeGen.Parser());
+		FeatureParser.registerGenerator("boulder", new BoulderGen.Parser());
+		FeatureParser.registerGenerator("stalagmite", new StalagmiteGen.Parser());
+		FeatureParser.registerGenerator("stalactite", new StalactiteGen.Parser());
+		FeatureParser.registerGenerator("small-tree", new SmallTreeGen.Parser());
 
 		log.info("Verifying or creating base world generation directory...");
 

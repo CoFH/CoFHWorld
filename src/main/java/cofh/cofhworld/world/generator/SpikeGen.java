@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenSpike implements IGenerator {
+public class SpikeGen implements IGenerator {
 
 	private final List<WeightedRandomBlock> cluster;
 	private final WeightedRandomBlock[] genBlock;
@@ -27,7 +27,7 @@ public class WorldGenSpike implements IGenerator {
 	public int largeSpikeHeightVariance = 30;
 	public int largeSpikeFillerSize = 1;
 
-	public WorldGenSpike(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
+	public SpikeGen(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
 
 		cluster = resource;
 		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
@@ -44,7 +44,7 @@ public class WorldGenSpike implements IGenerator {
 			--yStart;
 		}
 
-		if (!WorldGenMinableCluster.canGenerateInBlock(world, xStart, yStart, zStart, genBlock)) {
+		if (!ClusterGen.canGenerateInBlock(world, xStart, yStart, zStart, genBlock)) {
 			return false;
 		}
 
@@ -77,10 +77,10 @@ public class WorldGenSpike implements IGenerator {
 
 					if ((x == 0 && z == 0 || xDist * xDist + zDist * zDist <= layerSize * layerSize) && (x != -width && x != width && z != -width && z != width || rand.nextFloat() <= 0.75F)) {
 
-						WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, genBlock, cluster);
+						ClusterGen.generateBlock(world, xStart + x, yStart + y, zStart + z, genBlock, cluster);
 
 						if (y != 0 && width > 1) {
-							WorldGenMinableCluster.generateBlock(world, xStart + x, yStart - y + offsetHeight, zStart + z, genBlock, cluster);
+							ClusterGen.generateBlock(world, xStart + x, yStart - y + offsetHeight, zStart + z, genBlock, cluster);
 						}
 					}
 				}
@@ -93,7 +93,7 @@ public class WorldGenSpike implements IGenerator {
 		@Override
 		public IGenerator parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 
-			WorldGenSpike r = new WorldGenSpike(resList, matList);
+			SpikeGen r = new SpikeGen(resList, matList);
 			if (genObject.hasPath("min-height")) {
 				r.minHeight = genObject.getInt("min-height");
 			}

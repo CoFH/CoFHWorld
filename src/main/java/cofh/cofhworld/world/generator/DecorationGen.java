@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenDecoration implements IGenerator {
+public class DecorationGen implements IGenerator {
 
 	private final List<WeightedRandomBlock> cluster;
 	private final WeightedRandomBlock[] genBlock;
@@ -32,7 +32,7 @@ public class WorldGenDecoration implements IGenerator {
 	private INumberProvider yVar = new SkellamRandomProvider(4);
 	private INumberProvider zVar = new SkellamRandomProvider(8);
 
-	public WorldGenDecoration(List<WeightedRandomBlock> blocks, INumberProvider clusterSize, List<WeightedRandomBlock> material, List<WeightedRandomBlock> on) {
+	public DecorationGen(List<WeightedRandomBlock> blocks, INumberProvider clusterSize, List<WeightedRandomBlock> material, List<WeightedRandomBlock> on) {
 
 		this.cluster = blocks;
 		this.clusterSize = clusterSize;
@@ -60,9 +60,9 @@ public class WorldGenDecoration implements IGenerator {
 				continue;
 			}
 
-			if ((!seeSky || world.canSeeSky(new BlockPos(x, y, z))) && WorldGenMinableCluster.canGenerateInBlock(world, x, y - 1, z, onBlock) && WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
+			if ((!seeSky || world.canSeeSky(new BlockPos(x, y, z))) && ClusterGen.canGenerateInBlock(world, x, y - 1, z, onBlock) && ClusterGen.canGenerateInBlock(world, x, y, z, genBlock)) {
 
-				WeightedRandomBlock block = WorldGenMinableCluster.selectBlock(world, cluster);
+				WeightedRandomBlock block = ClusterGen.selectBlock(world, cluster);
 				int stack = stackHeight.intValue(world, rand, pos);
 				do {
 					// TODO: checkStay logic
@@ -72,7 +72,7 @@ public class WorldGenDecoration implements IGenerator {
 						break;
 					}
 					++y;
-					if (!WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
+					if (!ClusterGen.canGenerateInBlock(world, x, y, z, genBlock)) {
 						break;
 					}
 				} while (--stack > 0);
@@ -105,7 +105,7 @@ public class WorldGenDecoration implements IGenerator {
 				}
 			}
 
-			WorldGenDecoration r = new WorldGenDecoration(resList, new ConstantProvider(clusterSize), matList, list);
+			DecorationGen r = new DecorationGen(resList, new ConstantProvider(clusterSize), matList, list);
 			if (genObject.hasPath("see-sky")) {
 				r.seeSky = genObject.getBoolean("see-sky");
 			}

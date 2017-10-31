@@ -7,9 +7,6 @@ import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import com.typesafe.config.Config;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -18,13 +15,13 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenSparseMinableCluster implements IGenerator {
+public class SparseClusterGen implements IGenerator {
 
 	private final List<WeightedRandomBlock> cluster;
 	private final INumberProvider genClusterSize;
 	private final WeightedRandomBlock[] genBlock;
 
-	public WorldGenSparseMinableCluster(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
+	public SparseClusterGen(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
 
 		cluster = resource;
 		genClusterSize = new ConstantProvider(clusterSize);
@@ -106,7 +103,7 @@ public class WorldGenSparseMinableCluster implements IGenerator {
 							continue;
 						}
 
-						r |= WorldGenMinableCluster.generateBlock(world, blockX, blockY, blockZ, genBlock, cluster);
+						r |= ClusterGen.generateBlock(world, blockX, blockY, blockZ, genBlock, cluster);
 					}
 				}
 			}
@@ -125,7 +122,7 @@ public class WorldGenSparseMinableCluster implements IGenerator {
 				return null;
 			}
 
-			return new WorldGenSparseMinableCluster(resList, clusterSize, matList);
+			return new SparseClusterGen(resList, clusterSize, matList);
 		}
 	}
 }

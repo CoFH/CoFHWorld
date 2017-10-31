@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenBoulder implements IGenerator {
+public class BoulderGen implements IGenerator {
 
 	private final List<WeightedRandomBlock> cluster;
 	private final WeightedRandomBlock[] genBlock;
@@ -24,7 +24,7 @@ public class WorldGenBoulder implements IGenerator {
 	public float hollowAmt = 0.1665f;
 	public float hollowVar = 0;
 
-	public WorldGenBoulder(List<WeightedRandomBlock> resource, int minSize, List<WeightedRandomBlock> block) {
+	public BoulderGen(List<WeightedRandomBlock> resource, int minSize, List<WeightedRandomBlock> block) {
 
 		cluster = resource;
 		size = minSize;
@@ -49,7 +49,7 @@ public class WorldGenBoulder implements IGenerator {
 				return false;
 			}
 
-			if (WorldGenMinableCluster.canGenerateInBlock(world, xCenter, yCenter - 1, zCenter, genBlock)) {
+			if (ClusterGen.canGenerateInBlock(world, xCenter, yCenter - 1, zCenter, genBlock)) {
 
 				int xWidth = minSize + (var > 1 ? rand.nextInt(var) : 0);
 				int yWidth = minSize + (var > 1 ? rand.nextInt(var) : 0);
@@ -70,7 +70,7 @@ public class WorldGenBoulder implements IGenerator {
 
 							if (dist <= maxDist) {
 								if (dist >= minDist) {
-									r |= WorldGenMinableCluster.generateBlock(world, xCenter + x, yCenter + y, zCenter + z, cluster);
+									r |= ClusterGen.generateBlock(world, xCenter + x, yCenter + y, zCenter + z, cluster);
 								} else {
 									r |= world.setBlockToAir(new BlockPos(xCenter + x, yCenter + y, zCenter + z));
 								}
@@ -98,7 +98,7 @@ public class WorldGenBoulder implements IGenerator {
 				return null;
 			}
 
-			WorldGenBoulder r = new WorldGenBoulder(resList, clusterSize, matList);
+			BoulderGen r = new BoulderGen(resList, clusterSize, matList);
 			if (genObject.hasPath("size-variance")) {
 				r.sizeVariance = genObject.getInt("size-variance");
 			}

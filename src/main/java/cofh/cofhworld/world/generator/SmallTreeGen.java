@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenSmallTree implements IGenerator {
+public class SmallTreeGen implements IGenerator {
 
 	private final List<WeightedRandomBlock> leaves;
 	private final List<WeightedRandomBlock> trunk;
@@ -30,7 +30,7 @@ public class WorldGenSmallTree implements IGenerator {
 	public boolean relaxedGrowth = false;
 	public boolean waterLoving = false;
 
-	public WorldGenSmallTree(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> leaf, List<WeightedRandomBlock> block) {
+	public SmallTreeGen(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> leaf, List<WeightedRandomBlock> block) {
 
 		trunk = resource;
 		leaves = leaf;
@@ -71,7 +71,7 @@ public class WorldGenSmallTree implements IGenerator {
 			int yOffset;
 			int zOffset;
 
-			if (!WorldGenMinableCluster.canGenerateInBlock(world, x, y - 1, z, genSurface)) {
+			if (!ClusterGen.canGenerateInBlock(world, x, y - 1, z, genSurface)) {
 				return false;
 			}
 
@@ -85,7 +85,7 @@ public class WorldGenSmallTree implements IGenerator {
 							if (radius == 0) {
 								offsetPos = new BlockPos(x, yOffset, z);
 								state = world.getBlockState(offsetPos);
-								if (!(state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().isReplaceable(world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || WorldGenMinableCluster.canGenerateInBlock(world, offsetPos, genBlock))) {
+								if (!(state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().isReplaceable(world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || ClusterGen.canGenerateInBlock(world, offsetPos, genBlock))) {
 									return false;
 								}
 
@@ -108,7 +108,7 @@ public class WorldGenSmallTree implements IGenerator {
 										offsetPos = new BlockPos(xOffset, yOffset, zOffset);
 										state = world.getBlockState(offsetPos);
 
-										if (!(state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || WorldGenMinableCluster.canGenerateInBlock(world, offsetPos, genBlock))) {
+										if (!(state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || ClusterGen.canGenerateInBlock(world, offsetPos, genBlock))) {
 											return false;
 										}
 									}
@@ -119,7 +119,7 @@ public class WorldGenSmallTree implements IGenerator {
 						}
 					}
 
-					if (!WorldGenMinableCluster.canGenerateInBlock(world, x, y - 1, z, genSurface)) {
+					if (!ClusterGen.canGenerateInBlock(world, x, y - 1, z, genSurface)) {
 						return false;
 					}
 					offsetPos = new BlockPos(x, y - 1, z);
@@ -147,8 +147,8 @@ public class WorldGenSmallTree implements IGenerator {
 							offsetPos = new BlockPos(xOffset, yOffset, zOffset);
 							state = world.getBlockState(offsetPos);
 
-							if (((xPos != radius | zPos != radius) || (!leafVariance || (rand.nextInt(2) != 0 && var12 != 0))) && ((treeChecks && (state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos))) || WorldGenMinableCluster.canGenerateInBlock(world, offsetPos, genBlock))) {
-								r |= WorldGenMinableCluster.generateBlock(world, xOffset, yOffset, zOffset, leaves);
+							if (((xPos != radius | zPos != radius) || (!leafVariance || (rand.nextInt(2) != 0 && var12 != 0))) && ((treeChecks && (state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos))) || ClusterGen.canGenerateInBlock(world, offsetPos, genBlock))) {
+								r |= ClusterGen.generateBlock(world, xOffset, yOffset, zOffset, leaves);
 							}
 						}
 					}
@@ -158,8 +158,8 @@ public class WorldGenSmallTree implements IGenerator {
 					offsetPos = new BlockPos(x, y + yOffset, z);
 					state = world.getBlockState(offsetPos);
 
-					if ((treeChecks && (state.getBlock().isAir(state, world, offsetPos) || state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isReplaceable(world, offsetPos))) || WorldGenMinableCluster.canGenerateInBlock(world, offsetPos, genBlock)) {
-						r |= WorldGenMinableCluster.generateBlock(world, x, yOffset + y, z, trunk);
+					if ((treeChecks && (state.getBlock().isAir(state, world, offsetPos) || state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isReplaceable(world, offsetPos))) || ClusterGen.canGenerateInBlock(world, offsetPos, genBlock)) {
+						r |= ClusterGen.generateBlock(world, x, yOffset + y, z, trunk);
 					}
 				}
 
@@ -194,7 +194,7 @@ public class WorldGenSmallTree implements IGenerator {
 				log.info("Entry does not specify leaves for 'smalltree' generator! There are none!");
 			}
 
-			WorldGenSmallTree r = new WorldGenSmallTree(resList, list, matList);
+			SmallTreeGen r = new SmallTreeGen(resList, list, matList);
 
 			if (blocks.size() > 0) {
 				r.genSurface = blocks.toArray(new WeightedRandomBlock[blocks.size()]);

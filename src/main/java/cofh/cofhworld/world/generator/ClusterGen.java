@@ -10,7 +10,6 @@ import com.typesafe.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockMatcher;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenMinableCluster implements IGenerator {
+public class ClusterGen implements IGenerator {
 
 	public static List<WeightedRandomBlock> fabricateList(WeightedRandomBlock resource) {
 
@@ -42,7 +41,7 @@ public class WorldGenMinableCluster implements IGenerator {
 	private final INumberProvider genClusterSize;
 	private final WeightedRandomBlock[] genBlock;
 
-	public WorldGenMinableCluster(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
+	public ClusterGen(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
 
 		cluster = resource;
 		genClusterSize = new ConstantProvider(clusterSize);
@@ -198,7 +197,7 @@ public class WorldGenMinableCluster implements IGenerator {
 				return null;
 			}
 
-			return new WorldGenMinableCluster(resList, clusterSize, matList);
+			return new ClusterGen(resList, clusterSize, matList);
 		}
 	}
 }

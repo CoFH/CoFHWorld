@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static cofh.cofhworld.world.generator.WorldGenMinableCluster.canGenerateInBlock;
+import static cofh.cofhworld.world.generator.ClusterGen.canGenerateInBlock;
 
 public class SurfaceDist implements IDistribution {
 

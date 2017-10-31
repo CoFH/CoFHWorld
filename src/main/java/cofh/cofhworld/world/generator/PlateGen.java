@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenMinablePlate implements IGenerator {
+public class PlateGen implements IGenerator {
 
 	private final List<WeightedRandomBlock> cluster;
 	private final WeightedRandomBlock[] genBlock;
@@ -25,7 +25,7 @@ public class WorldGenMinablePlate implements IGenerator {
 	private INumberProvider height = new ConstantProvider(1);
 	private boolean slim = false;
 
-	public WorldGenMinablePlate(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
+	public PlateGen(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
 
 		cluster = resource;
 		radius = new UniformRandomProvider(clusterSize, clusterSize+2);
@@ -53,7 +53,7 @@ public class WorldGenMinablePlate implements IGenerator {
 
 				if (zSize * zSize + xDist <= dist) {
 					for (int posY = y - height; slim ? posY < y + height : posY <= y + height; ++posY) {
-						r |= WorldGenMinableCluster.generateBlock(world, posX, posY, posZ, genBlock, cluster);
+						r |= ClusterGen.generateBlock(world, posX, posY, posZ, genBlock, cluster);
 					}
 				}
 			}
@@ -72,7 +72,7 @@ public class WorldGenMinablePlate implements IGenerator {
 				return null;
 			}
 
-			WorldGenMinablePlate r = new WorldGenMinablePlate(resList, MathHelper.clamp(clusterSize, 0, 32), matList);
+			PlateGen r = new PlateGen(resList, MathHelper.clamp(clusterSize, 0, 32), matList);
 			if (genObject.hasPath("height")) {
 				r.height = FeatureParser.parseNumberValue(genObject.root().get("height"), 0, 64);
 			}

@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenAdvLakes implements IGenerator {
+public class LakesGen implements IGenerator {
 
 	private static final List<WeightedRandomBlock> GAP_BLOCK = Arrays.asList(new WeightedRandomBlock(Blocks.AIR, 0));
 	private final List<WeightedRandomBlock> cluster;
@@ -33,7 +33,7 @@ public class WorldGenAdvLakes implements IGenerator {
 	private INumberProvider width = new ConstantProvider(16);
 	private INumberProvider height = new ConstantProvider(9);
 
-	public WorldGenAdvLakes(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
+	public LakesGen(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
 
 		cluster = resource;
 		if (block == null) {
@@ -112,7 +112,7 @@ public class WorldGenAdvLakes implements IGenerator {
 								return false;
 							}
 						} else {
-							if (!WorldGenMinableCluster.canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
+							if (!ClusterGen.canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
 								return false;
 							}
 						}
@@ -126,9 +126,9 @@ public class WorldGenAdvLakes implements IGenerator {
 				for (y = 0; y < height; ++y) {
 					if (spawnBlock[(x * width + z) * height + y]) {
 						if (y < heightOff) {
-							WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, genBlock, cluster);
-						} else if (WorldGenMinableCluster.canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
-							WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, gapBlock);
+							ClusterGen.generateBlock(world, xStart + x, yStart + y, zStart + z, genBlock, cluster);
+						} else if (ClusterGen.canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
+							ClusterGen.generateBlock(world, xStart + x, yStart + y, zStart + z, gapBlock);
 						}
 					}
 				}
@@ -153,7 +153,7 @@ public class WorldGenAdvLakes implements IGenerator {
 						boolean flag = !spawnBlock[(x * width + z) * height + y] && ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
 						if (flag && (solidOutline | y < heightOff || rand.nextInt(2) != 0) && (totalOutline || world.getBlockState(new BlockPos(xStart + x, yStart + y, zStart + z)).getMaterial().isSolid())) {
-							WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, outlineBlock);
+							ClusterGen.generateBlock(world, xStart + x, yStart + y, zStart + z, outlineBlock);
 						}
 					}
 				}
@@ -169,7 +169,7 @@ public class WorldGenAdvLakes implements IGenerator {
 
 			boolean useMaterial = genObject.hasPath("use-material") ? genObject.getBoolean("use-material") : false;
 
-			WorldGenAdvLakes r = new WorldGenAdvLakes(resList, useMaterial ? matList : null);
+			LakesGen r = new LakesGen(resList, useMaterial ? matList : null);
 			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
 			if (genObject.hasPath("outline-block")) {
 				if (!FeatureParser.parseResList(genObject.root().get("outline-block"), list, true)) {
