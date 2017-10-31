@@ -85,6 +85,11 @@ public class LargeVeinDist implements IDistribution {
 		return Arrays.asList(new WeightedRandomBlock(Blocks.STONE, -1));
 	}
 
+	@Override
+	public String defaultGenerator() {
+		return "large-vein";
+	}
+
 	public static class Parser implements IDistributionParser {
 
 		@Override

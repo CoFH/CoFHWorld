@@ -266,7 +266,7 @@ public class FeatureParser {
 			return EnumActionResult.FAIL;
 		}
 
-		IGenerator generator = parseGenerator(name, genObject, distribution.defaultMaterials());
+		IGenerator generator = parseGenerator(name, genObject, distribution.defaultGenerator(), distribution.defaultMaterials());
 		if (generator == null) {
 			log.warn("Failed to instantiate generator for feature %s.", name);
 			return EnumActionResult.FAIL;
@@ -291,7 +291,7 @@ public class FeatureParser {
 		}
 	}
 
-	public static IGenerator parseGenerator(String featureName, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
+	public static IGenerator parseGenerator(String featureName, Config genObject, String defaultGenerator, List<WeightedRandomBlock> defaultMaterial) {
 
 		if (!genObject.hasPath("generator")) {
 			return null;
@@ -302,14 +302,14 @@ public class FeatureParser {
 
 		if (genDataType == ConfigValueType.OBJECT) {
 			// Single generator def
-			return parseGeneratorData(featureName, genObject.getConfig("generator"), defaultMaterial);
+			return parseGeneratorData(defaultGenerator, genObject.getConfig("generator"), defaultMaterial);
 
 		} else if (genDataType == ConfigValueType.LIST) {
 			// We have a weighted array of generators; walk the list and wrap with a WorldGenMulti
 			List<? extends Config> list = genObject.getConfigList("generator");
 			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
-				IGenerator gen = parseGeneratorData(featureName, genElement, defaultMaterial);
+				IGenerator gen = parseGeneratorData(defaultGenerator, genElement, defaultMaterial);
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedRandomWorldGenerator(gen, weight));
 			}
@@ -321,14 +321,14 @@ public class FeatureParser {
 		}
 	}
 
-	public static IGenerator parseGeneratorData(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
+	public static IGenerator parseGeneratorData(String defaultGenerator, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
 
-		String name = def;
+		String name = defaultGenerator;
 		if (genObject.hasPath("type")) {
 			name = genObject.getString("type");
 			if (!generatorParsers.containsKey(name)) {
-				log.warn("Unknown generator '{}'! using '{}'", name, def);
-				name = def;
+				log.warn("Unknown generator '{}'! using '{}'", name, defaultGenerator);
+				name = defaultGenerator;
 			}
 		}
 

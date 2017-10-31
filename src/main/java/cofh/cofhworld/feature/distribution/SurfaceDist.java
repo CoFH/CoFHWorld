@@ -67,6 +67,11 @@ public class SurfaceDist implements IDistribution {
 		return Arrays.asList(matList);
 	}
 
+	@Override
+	public String defaultGenerator() {
+		return "cluster";
+	}
+
 	public static class Parser implements IDistributionParser {
 
 		@Override

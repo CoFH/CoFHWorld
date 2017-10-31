@@ -92,6 +92,11 @@ public class CaveDist implements IDistribution {
 		return Arrays.asList(new WeightedRandomBlock(Blocks.STONE, -1));
 	}
 
+	@Override
+	public String defaultGenerator() {
+		return "cluster";
+	}
+
 	public static class Parser implements IDistributionParser {
 
 		@Override

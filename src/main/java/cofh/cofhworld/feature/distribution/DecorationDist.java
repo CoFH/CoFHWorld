@@ -18,6 +18,11 @@ public class DecorationDist extends SurfaceDist {
         super(matList, useTopBlock);
     }
 
+    @Override
+    public String defaultGenerator() {
+        return "decoration";
+    }
+
     public static class Parser implements IDistributionParser {
 
         @Override

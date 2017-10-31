@@ -90,6 +90,11 @@ public class UnderfluidDist implements IDistribution {
 		return Arrays.asList(new WeightedRandomBlock(Blocks.DIRT, -1), new WeightedRandomBlock(Blocks.GRASS, -1));
 	}
 
+	@Override
+	public String defaultGenerator() {
+		return "cluster";
+	}
+
 	public static class Parser implements IDistributionParser {
 
 		@Override

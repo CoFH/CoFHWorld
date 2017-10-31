@@ -10,4 +10,6 @@ public interface IDistribution {
     boolean apply(Feature f, Random rand, int chunkX, int chunkZ, World world);
 
     List<WeightedRandomBlock> defaultMaterials();
+
+    String defaultGenerator();
 }
