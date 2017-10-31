@@ -57,6 +57,7 @@ public class Feature {
     private IDistribution distribution;
 
     public Feature(String name, Config config) {
+        this.name = name;
         loadFromConfig(config);
     }
 
@@ -129,9 +130,15 @@ public class Feature {
             if (data.valueType() == ConfigValueType.OBJECT) {
                 this.biomeRestriction = GenRestriction.get(config.getString("biome.restriction"));
                 this.biomes.addAll(FeatureParser.parseBiomeRestrictions(config.getConfig("biome")));
+            } else if (data.valueType() == ConfigValueType.STRING) {
+                if (config.getString("biome").equals("all")) {
+                    this.biomeRestriction = GenRestriction.NONE;
+                } else {
+                    log.error("Invalid biome restriction {} on feature {}", data, name);
+                }
             } else {
                 // Invalid biome restriction entry; default is already NONE, so just log a warning
-                log.error("Invalid biome restriction %s on feature %s; needs to be an object.", data, name);
+                log.error("Invalid biome restriction {} on feature {}; needs to be an object.", data, name);
             }
         }
 
