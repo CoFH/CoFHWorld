@@ -297,19 +297,24 @@ public class FeatureParser {
 			return null;
 		}
 
+		boolean midAir = genObject.hasPath("mid-air") && genObject.getBoolean("mid-air");
+		if (midAir) {
+			log.info("Enabling mid-air generation on {}", featureName);
+		}
+
 		ConfigValue genData = genObject.root().get("generator");
 		ConfigValueType genDataType = genData.valueType();
 
 		if (genDataType == ConfigValueType.OBJECT) {
 			// Single generator def
-			return parseGeneratorData(defaultGenerator, genObject.getConfig("generator"), defaultMaterial);
+			return parseGeneratorData(defaultGenerator, midAir, genObject.getConfig("generator"), defaultMaterial);
 
 		} else if (genDataType == ConfigValueType.LIST) {
 			// We have a weighted array of generators; walk the list and wrap with a WorldGenMulti
 			List<? extends Config> list = genObject.getConfigList("generator");
 			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
-				IGenerator gen = parseGeneratorData(defaultGenerator, genElement, defaultMaterial);
+				IGenerator gen = parseGeneratorData(defaultGenerator, midAir, genElement, defaultMaterial);
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedRandomWorldGenerator(gen, weight));
 			}
@@ -321,7 +326,7 @@ public class FeatureParser {
 		}
 	}
 
-	public static IGenerator parseGeneratorData(String defaultGenerator, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
+	public static IGenerator parseGeneratorData(String defaultGenerator, boolean midAir, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
 
 		String name = defaultGenerator;
 		if (genObject.hasPath("type")) {
@@ -347,6 +352,13 @@ public class FeatureParser {
 		if (parser == null) {
 			throw new IllegalStateException("Generator '" + name + "' is not registered!");
 		}
+
+		// If mid-air generation is enabled, make sure to add Air to the list of valid materials
+		// TODO: Verify that this works as expected with decoration & surface
+		if (midAir) {
+			matList.add(new WeightedRandomBlock(Blocks.AIR, -1));
+		}
+
 		return parser.parseGenerator(name, genObject, log, resList, matList);
 	}
 
