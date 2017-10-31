@@ -28,8 +28,8 @@ public class UniformDist implements IDistribution {
 	}
 
 	@Override
-	public boolean apply(Feature f, Random random, int chunkX, int chunkZ, World world) {
-		BlockPos pos = new BlockPos(chunkX, 64, chunkZ);
+	public boolean apply(Feature f, Random random, int blockX, int blockZ, World world) {
+		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
 		final int count = f.getChunkCount().intValue(world, random, pos);
 		final int minY = Math.max(this.minY.intValue(world, random, pos), 0), maxY = this.maxY.intValue(world, random, pos);
@@ -39,9 +39,9 @@ public class UniformDist implements IDistribution {
 
 		boolean generated = false;
 		for (int i = 0; i < count; i++) {
-			int x = chunkX + random.nextInt(16);
+			int x = blockX + random.nextInt(16);
 			int y = minY + (minY != maxY ? random.nextInt(maxY - minY) : 0);
-			int z = chunkZ + random.nextInt(16);
+			int z = blockZ + random.nextInt(16);
 			if (!f.canGenerateInBiome(world, x, z, random)) {
 				continue;
 			}
