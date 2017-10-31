@@ -99,25 +99,23 @@ public class WorldGenBoulder implements IGenerator {
 			}
 
 			WorldGenBoulder r = new WorldGenBoulder(resList, clusterSize, matList);
-			{
-				if (genObject.hasPath("size-variance")) {
-					r.sizeVariance = genObject.getInt("size-variance");
-				}
-				if (genObject.hasPath("count")) {
-					r.clusters = genObject.getInt("count");
-				}
-				if (genObject.hasPath("count-variance")) {
-					r.clusterVariance = genObject.getInt("count-variance");
-				}
-				if (genObject.hasPath("hollow")) {
-					r.hollow = genObject.getBoolean("hollow");
-				}
-				if (genObject.hasPath("hollow-size")) {
-					r.hollowAmt = (float) genObject.getDouble("hollow-size");
-				}
-				if (genObject.hasPath("hollow-variance")) {
-					r.hollowVar = (float) genObject.getDouble("hollow-variance");
-				}
+			if (genObject.hasPath("size-variance")) {
+				r.sizeVariance = genObject.getInt("size-variance");
+			}
+			if (genObject.hasPath("count")) {
+				r.clusters = genObject.getInt("count");
+			}
+			if (genObject.hasPath("count-variance")) {
+				r.clusterVariance = genObject.getInt("count-variance");
+			}
+			if (genObject.hasPath("hollow")) {
+				r.hollow = genObject.getBoolean("hollow");
+			}
+			if (genObject.hasPath("hollow-size")) {
+				r.hollowAmt = (float) genObject.getDouble("hollow-size");
+			}
+			if (genObject.hasPath("hollow-variance")) {
+				r.hollowVar = (float) genObject.getDouble("hollow-variance");
 			}
 			return r;
 		}

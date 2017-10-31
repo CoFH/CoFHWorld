@@ -42,45 +42,10 @@ public class WorldGenMinableCluster implements IGenerator {
 	private final INumberProvider genClusterSize;
 	private final WeightedRandomBlock[] genBlock;
 
-	public WorldGenMinableCluster(ItemStack ore, int clusterSize) {
-
-		this(new WeightedRandomBlock(ore), clusterSize);
-	}
-
-	public WorldGenMinableCluster(WeightedRandomBlock resource, int clusterSize) {
-
-		this(fabricateList(resource), clusterSize);
-	}
-
-	public WorldGenMinableCluster(List<WeightedRandomBlock> resource, int clusterSize) {
-
-		this(resource, clusterSize, Blocks.STONE);
-	}
-
-	public WorldGenMinableCluster(ItemStack ore, int clusterSize, Block block) {
-
-		this(new WeightedRandomBlock(ore, 1), clusterSize, block);
-	}
-
-	public WorldGenMinableCluster(WeightedRandomBlock resource, int clusterSize, Block block) {
-
-		this(fabricateList(resource), clusterSize, block);
-	}
-
-	public WorldGenMinableCluster(List<WeightedRandomBlock> resource, int clusterSize, Block block) {
-
-		this(resource, clusterSize, fabricateList(block));
-	}
-
 	public WorldGenMinableCluster(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
 
-		this(resource, new ConstantProvider(clusterSize), block);
-	}
-
-	public WorldGenMinableCluster(List<WeightedRandomBlock> resource, INumberProvider clusterSize, List<WeightedRandomBlock> block) {
-
 		cluster = resource;
-		genClusterSize = clusterSize;
+		genClusterSize = new ConstantProvider(clusterSize);
 		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
 	}
 

@@ -24,8 +24,8 @@ public class WorldGenGeode implements IGenerator {
 	private final WeightedRandomBlock[] genBlock;
 	private List<WeightedRandomBlock> fillBlock;
 	private boolean hollow;
-	private INumberProvider width;
-	private INumberProvider height;
+	private INumberProvider width = new ConstantProvider(16);
+	private INumberProvider height = new ConstantProvider(8);
 
 	public WorldGenGeode(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> material, List<WeightedRandomBlock> cover) {
 
@@ -34,8 +34,6 @@ public class WorldGenGeode implements IGenerator {
 		outline = cover;
 		fillBlock = null;
 		hollow = false;
-		this.setWidth(16);
-		this.setHeight(8);
 	}
 
 	@Override
@@ -141,42 +139,6 @@ public class WorldGenGeode implements IGenerator {
 		return r;
 	}
 
-	public WorldGenGeode setWidth(int width) {
-
-		this.width = new ConstantProvider(width);
-		return this;
-	}
-
-	public WorldGenGeode setWidth(INumberProvider width) {
-
-		this.width = width;
-		return this;
-	}
-
-	public WorldGenGeode setHeight(int height) {
-
-		this.height = new ConstantProvider(height);
-		return this;
-	}
-
-	public WorldGenGeode setHeight(INumberProvider height) {
-
-		this.height = height;
-		return this;
-	}
-
-	public WorldGenGeode setHollow(boolean hollow) {
-
-		this.hollow = hollow;
-		return this;
-	}
-
-	public WorldGenGeode setFillBlock(List<WeightedRandomBlock> blocks) {
-
-		this.fillBlock = blocks;
-		return this;
-	}
-
 	public static class Parser implements IGeneratorParser {
 		@Override
 		public IGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
@@ -193,17 +155,15 @@ public class WorldGenGeode implements IGenerator {
 				}
 			}
 			WorldGenGeode r = new WorldGenGeode(resList, matList, list);
-			{
-				if (genObject.hasPath("hollow")) {
-					r.setHollow(genObject.getBoolean("hollow"));
-				}
-				if (genObject.hasPath("filler")) {
-					list = new ArrayList<>();
-					if (!FeatureParser.parseResList(genObject.getValue("filler"), list, true)) {
-						log.warn("Entry specifies invalid filler for 'geode' generator! Not filling!");
-					} else {
-						r.setFillBlock(list);
-					}
+			if (genObject.hasPath("hollow")) {
+				r.hollow = genObject.getBoolean("hollow");
+			}
+			if (genObject.hasPath("filler")) {
+				list = new ArrayList<>();
+				if (!FeatureParser.parseResList(genObject.getValue("filler"), list, true)) {
+					log.warn("Entry specifies invalid filler for 'geode' generator! Not filling!");
+				} else {
+					r.fillBlock = list;
 				}
 			}
 			return r;

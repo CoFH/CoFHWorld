@@ -195,31 +195,31 @@ public class WorldGenSmallTree implements IGenerator {
 			}
 
 			WorldGenSmallTree r = new WorldGenSmallTree(resList, list, matList);
-			{
-				if (blocks.size() > 0) {
-					r.genSurface = blocks.toArray(new WeightedRandomBlock[blocks.size()]);
-				}
 
-				if (genObject.hasPath("min-height")) {
-					r.minHeight = genObject.getInt("min-height");
-				}
-				if (genObject.hasPath("height-variance")) {
-					r.heightVariance = genObject.getInt("height-variance");
-				}
-
-				if (genObject.hasPath("tree-checks")) {
-					r.treeChecks = genObject.getBoolean("tree-checks");
-				}
-				if (genObject.hasPath("relaxed-growth")) {
-					r.relaxedGrowth = genObject.getBoolean("relaxed-growth");
-				}
-				if (genObject.hasPath("water-loving")) {
-					r.waterLoving = genObject.getBoolean("water-loving");
-				}
-				if (genObject.hasPath("leaf-variance")) {
-					r.leafVariance = genObject.getBoolean("leaf-variance");
-				}
+			if (blocks.size() > 0) {
+				r.genSurface = blocks.toArray(new WeightedRandomBlock[blocks.size()]);
 			}
+
+			if (genObject.hasPath("min-height")) {
+				r.minHeight = genObject.getInt("min-height");
+			}
+			if (genObject.hasPath("height-variance")) {
+				r.heightVariance = genObject.getInt("height-variance");
+			}
+
+			if (genObject.hasPath("tree-checks")) {
+				r.treeChecks = genObject.getBoolean("tree-checks");
+			}
+			if (genObject.hasPath("relaxed-growth")) {
+				r.relaxedGrowth = genObject.getBoolean("relaxed-growth");
+			}
+			if (genObject.hasPath("water-loving")) {
+				r.waterLoving = genObject.getBoolean("water-loving");
+			}
+			if (genObject.hasPath("leaf-variance")) {
+				r.leafVariance = genObject.getBoolean("leaf-variance");
+			}
+
 			return r;
 		}
 	}

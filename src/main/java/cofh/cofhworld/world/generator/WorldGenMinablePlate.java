@@ -22,20 +22,14 @@ public class WorldGenMinablePlate implements IGenerator {
 	private final List<WeightedRandomBlock> cluster;
 	private final WeightedRandomBlock[] genBlock;
 	private final INumberProvider radius;
-	private INumberProvider height;
-	private boolean slim;
+	private INumberProvider height = new ConstantProvider(1);
+	private boolean slim = false;
 
 	public WorldGenMinablePlate(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
 
-		this(resource, new UniformRandomProvider(clusterSize, clusterSize + 2), block);
-	}
-
-	public WorldGenMinablePlate(List<WeightedRandomBlock> resource, INumberProvider clusterSize, List<WeightedRandomBlock> block) {
-
 		cluster = resource;
-		radius = clusterSize;
+		radius = new UniformRandomProvider(clusterSize, clusterSize+2);
 		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
-		setHeight(1).setSlim(false);
 	}
 
 	@Override
@@ -68,24 +62,6 @@ public class WorldGenMinablePlate implements IGenerator {
 		return r;
 	}
 
-	public WorldGenMinablePlate setSlim(boolean slim) {
-
-		this.slim = slim;
-		return this;
-	}
-
-	public WorldGenMinablePlate setHeight(int height) {
-
-		this.height = new ConstantProvider(height);
-		return this;
-	}
-
-	public WorldGenMinablePlate setHeight(INumberProvider height) {
-
-		this.height = height;
-		return this;
-	}
-
 	public static class Parser implements IGeneratorParser {
 		@Override
 		public IGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
@@ -97,13 +73,11 @@ public class WorldGenMinablePlate implements IGenerator {
 			}
 
 			WorldGenMinablePlate r = new WorldGenMinablePlate(resList, MathHelper.clamp(clusterSize, 0, 32), matList);
-			{
-				if (genObject.hasPath("height")) {
-					r.setHeight(FeatureParser.parseNumberValue(genObject.root().get("height"), 0, 64));
-				}
-				if (genObject.hasPath("slim")) {
-					r.setSlim(genObject.getBoolean("slim"));
-				}
+			if (genObject.hasPath("height")) {
+				r.height = FeatureParser.parseNumberValue(genObject.root().get("height"), 0, 64);
+			}
+			if (genObject.hasPath("slim")) {
+				r.slim = genObject.getBoolean("slim");
 			}
 			return r;
 		}

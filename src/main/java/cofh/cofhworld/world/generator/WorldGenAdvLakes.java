@@ -30,8 +30,8 @@ public class WorldGenAdvLakes implements IGenerator {
 	private List<WeightedRandomBlock> gapBlock = GAP_BLOCK;
 	private boolean solidOutline = false;
 	private boolean totalOutline = false;
-	private INumberProvider width;
-	private INumberProvider height;
+	private INumberProvider width = new ConstantProvider(16);
+	private INumberProvider height = new ConstantProvider(9);
 
 	public WorldGenAdvLakes(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
 
@@ -41,8 +41,6 @@ public class WorldGenAdvLakes implements IGenerator {
 		} else {
 			genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
 		}
-		this.setWidth(16);
-		this.setHeight(9);
 	}
 
 	@Override
@@ -165,86 +163,34 @@ public class WorldGenAdvLakes implements IGenerator {
 		return true;
 	}
 
-	public WorldGenAdvLakes setWidth(int width) {
-
-		this.width = new ConstantProvider(width);
-		return this;
-	}
-
-	public WorldGenAdvLakes setWidth(INumberProvider width) {
-
-		this.width = width;
-		return this;
-	}
-
-	public WorldGenAdvLakes setHeight(int height) {
-
-		this.height = new ConstantProvider(height);
-		return this;
-	}
-
-	public WorldGenAdvLakes setHeight(INumberProvider height) {
-
-		this.height = height;
-		return this;
-	}
-
-	public WorldGenAdvLakes setSolidOutline(boolean outline) {
-
-		this.solidOutline = outline;
-		return this;
-	}
-
-	public WorldGenAdvLakes setTotalOutline(boolean outline) {
-
-		this.totalOutline = outline;
-		return this;
-	}
-
-	public WorldGenAdvLakes setOutlineBlock(List<WeightedRandomBlock> blocks) {
-
-		this.outlineBlock = blocks;
-		return this;
-	}
-
-	public WorldGenAdvLakes setGapBlock(List<WeightedRandomBlock> blocks) {
-
-		this.gapBlock = blocks;
-		return this;
-	}
-
 	public static class Parser implements IGeneratorParser {
 		@Override
 		public IGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 
-			boolean useMaterial = false;
-			{
-				useMaterial = genObject.hasPath("use-material") ? genObject.getBoolean("use-material") : useMaterial;
-			}
+			boolean useMaterial = genObject.hasPath("use-material") ? genObject.getBoolean("use-material") : false;
+
 			WorldGenAdvLakes r = new WorldGenAdvLakes(resList, useMaterial ? matList : null);
-			{
-				ArrayList<WeightedRandomBlock> list = new ArrayList<>();
-				if (genObject.hasPath("outline-block")) {
-					if (!FeatureParser.parseResList(genObject.root().get("outline-block"), list, true)) {
-						log.warn("Entry specifies invalid outline-block for 'lake' generator! Not outlining!");
-					} else {
-						r.setOutlineBlock(list);
-					}
-					list = new ArrayList<>();
+			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
+			if (genObject.hasPath("outline-block")) {
+				if (!FeatureParser.parseResList(genObject.root().get("outline-block"), list, true)) {
+					log.warn("Entry specifies invalid outline-block for 'lake' generator! Not outlining!");
+				} else {
+					r.outlineBlock = list;
 				}
-				if (genObject.hasPath("gap-block")) {
-					if (!FeatureParser.parseResList(genObject.getValue("gap-block"), list, true)) {
-						log.warn("Entry specifies invalid gap block for 'lake' generator! Not filling!");
-					} else {
-						r.setGapBlock(list);
-					}
+				list = new ArrayList<>();
+			}
+			if (genObject.hasPath("gap-block")) {
+				if (!FeatureParser.parseResList(genObject.getValue("gap-block"), list, true)) {
+					log.warn("Entry specifies invalid gap block for 'lake' generator! Not filling!");
+				} else {
+					r.gapBlock = list;
 				}
-				if (genObject.hasPath("solid-outline")) {
-					r.setSolidOutline(genObject.getBoolean("solid-outline"));
-				}
-				if (genObject.hasPath("total-outline")) {
-					r.setTotalOutline(genObject.getBoolean("total-outline"));
-				}
+			}
+			if (genObject.hasPath("solid-outline")) {
+				r.solidOutline = genObject.getBoolean("solid-outline");
+			}
+			if (genObject.hasPath("total-outline")) {
+				r.totalOutline = genObject.getBoolean("total-outline");
 			}
 			return r;
 		}

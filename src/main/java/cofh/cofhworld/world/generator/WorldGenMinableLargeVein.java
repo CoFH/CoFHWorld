@@ -24,50 +24,10 @@ public class WorldGenMinableLargeVein implements IGenerator {
 	private final INumberProvider genVeinSize;
 	private final boolean sparse;
 
-	public WorldGenMinableLargeVein(ItemStack ore, int clusterSize) {
-
-		this(new WeightedRandomBlock(ore), clusterSize);
-	}
-
-	public WorldGenMinableLargeVein(WeightedRandomBlock resource, int clusterSize) {
-
-		this(WorldGenMinableCluster.fabricateList(resource), clusterSize);
-	}
-
-	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, int clusterSize) {
-
-		this(resource, clusterSize, Blocks.STONE);
-	}
-
-	public WorldGenMinableLargeVein(ItemStack ore, int clusterSize, Block block) {
-
-		this(new WeightedRandomBlock(ore, 1), clusterSize, block);
-	}
-
-	public WorldGenMinableLargeVein(WeightedRandomBlock resource, int clusterSize, Block block) {
-
-		this(WorldGenMinableCluster.fabricateList(resource), clusterSize, block);
-	}
-
-	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, int clusterSize, Block block) {
-
-		this(resource, clusterSize, WorldGenMinableCluster.fabricateList(block));
-	}
-
-	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
-
-		this(resource, clusterSize, block, true);
-	}
-
 	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block, boolean sparze) {
 
-		this(resource, new ConstantProvider(clusterSize), block, sparze);
-	}
-
-	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, INumberProvider clusterSize, List<WeightedRandomBlock> block, boolean sparze) {
-
 		cluster = resource;
-		genVeinSize = clusterSize;
+		genVeinSize = new ConstantProvider(clusterSize);
 		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
 		sparse = sparze;
 	}
@@ -172,10 +132,7 @@ public class WorldGenMinableLargeVein implements IGenerator {
 				return null;
 			}
 
-			boolean sparse = true;
-			{
-				sparse = genObject.hasPath("sparse") ? genObject.getBoolean("sparse") : sparse;
-			}
+			boolean sparse = genObject.hasPath("sparse") ? genObject.getBoolean("sparse") : true;
 			return new WorldGenMinableLargeVein(resList, clusterSize, matList, sparse);
 		}
 
