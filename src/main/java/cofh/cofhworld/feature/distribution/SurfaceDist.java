@@ -91,7 +91,7 @@ public class SurfaceDist implements IDistribution {
 			if (config.hasPath("material")) {
 				matList = new ArrayList<>();
 				if (!FeatureParser.parseResList(config.root().get("material"), matList, false)) {
-					log.warn("Invalid material list! Using default list.");
+					log.warn("Invalid material list in SurfaceDist {}! Using default list.", name);
 					matList = defaultMats;
 				}
 			}

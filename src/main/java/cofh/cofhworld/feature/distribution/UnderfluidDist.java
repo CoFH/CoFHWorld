@@ -127,7 +127,7 @@ public class UnderfluidDist implements IDistribution {
 			if (genObject.hasPath("material")) {
 				matList = new ArrayList<>();
 				if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
-					log.warn("Invalid material list! Using default list.");
+					log.warn("Invalid material list in UnderfluidDist {}! Using default list.", name);
 					matList = defaultMats;
 				}
 			}
