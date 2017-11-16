@@ -345,7 +345,7 @@ public class FeatureParser {
 		List<WeightedRandomBlock> matList = defaultMaterial;
 		matList = new ArrayList<>();
 		if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
-			log.warn("Invalid material list! Using default list.");
+			log.warn("Invalid material list on feature {}! Using default list.", name);
 			matList = defaultMaterial;
 		}
 		IGeneratorParser parser = generatorParsers.get(name);
