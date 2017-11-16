@@ -302,19 +302,25 @@ public class FeatureParser {
 			log.info("Enabling mid-air generation on {}", featureName);
 		}
 
+		List<WeightedRandomBlock> matList = new ArrayList<WeightedRandomBlock>(defaultMaterial);
+		if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
+			log.warn("Invalid material list on feature {}! Using default list.", featureName);
+			matList = defaultMaterial;
+		}
+
 		ConfigValue genData = genObject.root().get("generator");
 		ConfigValueType genDataType = genData.valueType();
 
 		if (genDataType == ConfigValueType.OBJECT) {
 			// Single generator def
-			return parseGeneratorData(defaultGenerator, midAir, genObject.getConfig("generator"), defaultMaterial);
+			return parseGeneratorData(defaultGenerator, midAir, genObject.getConfig("generator"), matList);
 
 		} else if (genDataType == ConfigValueType.LIST) {
 			// We have a weighted array of generators; walk the list and wrap with a MultiGen
 			List<? extends Config> list = genObject.getConfigList("generator");
 			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
-				IGenerator gen = parseGeneratorData(defaultGenerator, midAir, genElement, defaultMaterial);
+				IGenerator gen = parseGeneratorData(defaultGenerator, midAir, genElement, matList);
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedRandomWorldGenerator(gen, weight));
 			}
@@ -326,7 +332,7 @@ public class FeatureParser {
 		}
 	}
 
-	public static IGenerator parseGeneratorData(String defaultGenerator, boolean midAir, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
+	public static IGenerator parseGeneratorData(String defaultGenerator, boolean midAir, Config genObject, List<WeightedRandomBlock> matList) {
 
 		String name = defaultGenerator;
 		if (genObject.hasPath("type")) {
@@ -342,12 +348,6 @@ public class FeatureParser {
 			return null;
 		}
 
-		List<WeightedRandomBlock> matList = defaultMaterial;
-		matList = new ArrayList<>();
-		if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
-			log.warn("Invalid material list on feature {}! Using default list.", name);
-			matList = defaultMaterial;
-		}
 		IGeneratorParser parser = generatorParsers.get(name);
 		if (parser == null) {
 			throw new IllegalStateException("Generator '" + name + "' is not registered!");
