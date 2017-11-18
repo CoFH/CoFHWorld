@@ -262,13 +262,13 @@ public class FeatureParser {
 		// Try to parse the distribution and world generators; if either fails, we'll bail
 		IDistribution distribution = parseDistribution(name, genObject);
 		if (distribution == null) {
-			log.warn("Failed to instantiate distribution for feature %s.", name);
+			log.warn("Failed to instantiate distribution for feature {}.", name);
 			return EnumActionResult.FAIL;
 		}
 
 		IGenerator generator = parseGenerator(name, genObject, distribution.defaultGenerator(), distribution.defaultMaterials());
 		if (generator == null) {
-			log.warn("Failed to instantiate generator for feature %s.", name);
+			log.warn("Failed to instantiate generator for feature {}.", name);
 			return EnumActionResult.FAIL;
 		}
 
@@ -286,7 +286,7 @@ public class FeatureParser {
 		if (distParser != null) {
 			return distParser.parse(featureName, genObject, log);
 		} else {
-			log.warn("Unable to find distribution %s for feature %s.", distName, featureName);
+			log.warn("Unable to find distribution {} for feature {}.", distName, featureName);
 			return null;
 		}
 	}
@@ -304,7 +304,7 @@ public class FeatureParser {
 
 		List<WeightedRandomBlock> matList = new ArrayList<WeightedRandomBlock>(defaultMaterial);
 		if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
-			log.warn("Invalid material list on feature {}! Using default list.", featureName);
+			log.warn("Invalid material list on feature {}! Using default list: {}", featureName, defaultMaterial);
 			matList = defaultMaterial;
 		}
 
@@ -500,7 +500,7 @@ public class FeatureParser {
 				String blockName;
 				block = parseBlockName(blockName = blockElement.getString("name"));
 				if (block == Blocks.AIR && !blockName.equalsIgnoreCase("minecraft:air")) {
-					log.error("Invalid block entry!");
+					log.error("Invalid block entry: {}", blockName);
 					return null;
 				}
 				int weight = blockElement.hasPath("weight") ? MathHelper.clamp(blockElement.getInt("weight"), 1, 1000000) : 100;
@@ -531,7 +531,7 @@ public class FeatureParser {
 				String name = (String) genElement.unwrapped();
 				block = parseBlockName(name);
 				if (block == Blocks.AIR && !name.equalsIgnoreCase("minecraft:air")) {
-					log.error("Invalid block entry!");
+					log.error("Invalid block entry 2: {}", name);
 					return null;
 				}
 				return new WeightedRandomBlock(block, min);
