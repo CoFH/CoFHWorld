@@ -26,7 +26,7 @@ public class DecorationGen implements IGenerator {
 	private final WeightedRandomBlock[] onBlock;
 	private final INumberProvider clusterSize;
 	private boolean seeSky = true;
-	private boolean checkStay = true;
+	private boolean checkStay = false;
 	private INumberProvider stackHeight = new ConstantProvider(1);
 	private INumberProvider xVar = new SkellamRandomProvider(8);
 	private INumberProvider yVar = new SkellamRandomProvider(4);
