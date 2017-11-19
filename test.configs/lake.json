@@ -9,7 +9,7 @@
 				"outline-block": "gold_ore",
 				"cluster-size": 10
 			},
-			"cluster-count": 20,
+			"cluster-count": 1,
 			"min-height": 0,
 			"max-height": 128
 		},
@@ -21,10 +21,19 @@
 				"outline-block": "lapis_ore",
 				"cluster-size": 10
 			},
-			"cluster-count": 20,
+			"cluster-count": 1,
 			"min-height": 0,
 			"max-height": 128
+		},
+		"decolake": {
+			"distribution": "decoration",
+			"generator": {
+				"type": "lake",
+				"block": "lava",
+				"outline-block": "diamond_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 1
 		}
-
 	}
 }
