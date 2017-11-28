@@ -10,64 +10,75 @@ import net.minecraftforge.server.command.CommandTreeBase;
 
 public class CommandCoFHWorld extends CommandTreeBase {
 
-    @Override
-    public String getName() {
-        return "cofhworld";
-    }
+	@Override
+	public String getName() {
 
-    @Override
-    public String getUsage(ICommandSender sender) {
-        return "cofhworld.usage";
-    }
+		return "cofhworld";
+	}
 
-    public CommandCoFHWorld() {
-        addSubcommand(new CommandReload());
-        addSubcommand(new CommandList());
-    }
+	@Override
+	public String getUsage(ICommandSender sender) {
 
-    // Command to reload all feature definitions
-    public static class CommandReload extends CommandBase {
-        @Override
-        public String getName() {
-            return "reload";
-        }
+		return "cofhworld.usage";
+	}
 
-        @Override
-        public String getUsage(ICommandSender sender) {
-            return "cofhworld.reload.usage";
-        }
+	public CommandCoFHWorld() {
 
-        @Override
-        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-            if (WorldHandler.reloadConfig()) {
-                notifyCommandListener(sender, this, "cofhworld.reload.successful");
-            } else {
-                notifyCommandListener(sender, this, "cofhworld.reload.failed");
-            }
-        }
-    }
+		addSubcommand(new CommandReload());
+		addSubcommand(new CommandList());
+	}
 
-    // Command to list all feature definitions
-    public static class CommandList extends CommandBase {
+	// Command to reload all feature definitions
+	public static class CommandReload extends CommandBase {
 
-        @Override
-        public String getName() {
-            return "list";
-        }
+		@Override
+		public String getName() {
 
-        @Override
-        public String getUsage(ICommandSender sender) {
-            return "cofhworld.list.usage";
-        }
+			return "reload";
+		}
 
-        @Override
-        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-            StringBuilder b = new StringBuilder();
-            b.append("\n");
-            for (IFeatureGenerator feature: WorldHandler.getFeatures()) {
-                b.append("* " + feature.getFeatureName() + "\n");
-            }
-            notifyCommandListener(sender, this, "cofhworld.list", b.toString());
-        }
-    }
+		@Override
+		public String getUsage(ICommandSender sender) {
+
+			return "cofhworld.reload.usage";
+		}
+
+		@Override
+		public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+
+			if (WorldHandler.reloadConfig()) {
+				notifyCommandListener(sender, this, "cofhworld.reload.successful");
+			} else {
+				notifyCommandListener(sender, this, "cofhworld.reload.failed");
+			}
+		}
+	}
+
+	// Command to list all feature definitions
+	public static class CommandList extends CommandBase {
+
+		@Override
+		public String getName() {
+
+			return "list";
+		}
+
+		@Override
+		public String getUsage(ICommandSender sender) {
+
+			return "cofhworld.list.usage";
+		}
+
+		@Override
+		public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+
+			StringBuilder b = new StringBuilder();
+			b.append("\n");
+			for (IFeatureGenerator feature : WorldHandler.getFeatures()) {
+				b.append("* " + feature.getFeatureName() + "\n");
+			}
+			notifyCommandListener(sender, this, "cofhworld.list", b.toString());
+		}
+	}
+
 }
