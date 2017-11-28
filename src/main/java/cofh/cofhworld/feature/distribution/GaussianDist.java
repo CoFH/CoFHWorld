@@ -75,7 +75,7 @@ public class GaussianDist implements IDistribution {
 		@Override
 		public IDistribution parse(String name, Config genObject, Logger log) {
 			if (!(genObject.hasPath("center-height") && genObject.hasPath("spread"))) {
-				log.error("Height parameters for 'normal' template not specified in \"" + name + "\"");
+				log.error("Height parameters for 'gaussian' template not specified in \"" + name + "\"");
 				return null;
 			}
 			ConfigObject genData = genObject.root();
