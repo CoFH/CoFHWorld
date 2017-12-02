@@ -145,18 +145,21 @@ public class WorldHandler implements IWorldGenerator {
 	}
 
 	public static Feature findFeature(String name) {
+
 		for (Feature feature : features) {
-				if (feature.getName().equals(name)) {
-					return feature;
-				}
+			if (feature.getName().equals(name)) {
+				return feature;
 			}
-			return null;
 		}
-	
+
+		return null;
+	}
+
 	public static List<Feature> getFeatures() {
+
 		return features;
 	}
-	
+
 	/* EVENT HANDLING */
 	@SubscribeEvent
 	public void handlePopulateChunkEvent(PopulateChunkEvent.Pre event) {

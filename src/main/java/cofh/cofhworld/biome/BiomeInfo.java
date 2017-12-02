@@ -41,7 +41,7 @@ public class BiomeInfo {
 				default:
 					break;
 				case 0:
-					String name = biome.getBiomeName();
+					String name = biome.getRegistryName().toString();
 					r = name.hashCode() == hash && name.equals(data);
 					break;
 				case 1:
@@ -51,7 +51,7 @@ public class BiomeInfo {
 					r = BiomeDictionary.hasType(biome, (Type) data);
 					break;
 				case 4:
-					r = ((Collection<String>) data).contains(biome.getBiomeName());
+					r = ((Collection<String>) data).contains(biome.getRegistryName().toString());
 					break;
 				case 5:
 					r = ((Collection<TempCategory>) data).contains(biome.getTempCategory());
