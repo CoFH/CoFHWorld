@@ -3,13 +3,15 @@ package cofh.cofhworld.init;
 import cofh.cofhworld.biome.BiomeInfo;
 import cofh.cofhworld.biome.BiomeInfoRarity;
 import cofh.cofhworld.biome.BiomeInfoSet;
-import cofh.cofhworld.feature.*;
+import cofh.cofhworld.decoration.IGeneratorParser;
+import cofh.cofhworld.feature.IFeatureGenerator;
+import cofh.cofhworld.feature.IFeatureParser;
 import cofh.cofhworld.util.*;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import cofh.cofhworld.util.numbers.SkellamRandomProvider;
 import cofh.cofhworld.util.numbers.UniformRandomProvider;
-import cofh.cofhworld.world.generator.MultiGen;
+import cofh.cofhworld.world.generator.WorldGenMulti;
 import com.typesafe.config.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -24,6 +26,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.biome.Biome.TempCategory;
+import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.DungeonHooks.DungeonMob;
 import net.minecraftforge.fml.common.Loader;
@@ -48,29 +51,30 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class FeatureParser {
 
-	private static HashMap<String, IDistributionParser> distributionParsers = new HashMap<>();
-	private static HashMap<String, IGeneratorParser> generatorParsers = new HashMap<>();
+	private static HashMap<String, IFeatureParser> templateHandlers = new HashMap<>();
+	private static HashMap<String, IGeneratorParser> generatorHandlers = new HashMap<>();
+	public static ArrayList<IFeatureGenerator> parsedFeatures = new ArrayList<>();
 
 	private FeatureParser() {
 
 	}
 
-	public static boolean registerDistribution(String name, IDistributionParser handler) {
+	public static boolean registerTemplate(String template, IFeatureParser handler) {
 
 		// TODO: provide this function through IFeatureHandler?
-		if (!distributionParsers.containsKey(name)) {
-			distributionParsers.put(name, handler);
+		if (!templateHandlers.containsKey(template)) {
+			templateHandlers.put(template, handler);
 			return true;
 		}
-		log.error("Attempted to register duplicate distribution '{}'!", name);
+		log.error("Attempted to register duplicate template '{}'!", template);
 		return false;
 	}
 
 	public static boolean registerGenerator(String generator, IGeneratorParser handler) {
 
 		// TODO: provide this function through IFeatureHandler?
-		if (!generatorParsers.containsKey(generator)) {
-			generatorParsers.put(generator, handler);
+		if (!generatorHandlers.containsKey(generator)) {
+			generatorHandlers.put(generator, handler);
 			return true;
 		}
 		log.error("Attempted to register duplicate generator '{}'!", generator);
@@ -155,7 +159,7 @@ public class FeatureParser {
 						if (genEntry.getValue().valueType() != ConfigValueType.OBJECT) {
 							log.error("Error parsing generation entry: '{}' > This must be an object and is not.", key);
 						} else {
-							switch (parseFeature(key, genData.getConfig(key))) {
+							switch (parseGenerationEntry(key, genData.getConfig(key))) {
 								case SUCCESS:
 									log.debug("Generation entry successfully parsed: '{}'", key);
 									break;
@@ -251,95 +255,67 @@ public class FeatureParser {
 		return true == retComp;
 	}
 
-	public static EnumActionResult parseFeature(String name, Config genObject) {
+	public static EnumActionResult parseGenerationEntry(String featureName, Config genObject) {
 
-		// Setup the base Feature object
-		Feature feature = new Feature(name, genObject);
-		if (!feature.isEnabled()) {
-			return EnumActionResult.SUCCESS;
+		if (genObject.hasPath("enabled")) {
+			if (!genObject.getBoolean("enabled")) {
+				log.info('"' + featureName + "\" is disabled.");
+				return EnumActionResult.SUCCESS;
+			}
 		}
 
-		// Try to parse the distribution and world generators; if either fails, we'll bail
-		IDistribution distribution = parseDistribution(name, genObject);
-		if (distribution == null) {
-			log.warn("Failed to instantiate distribution for feature {}.", name);
-			return EnumActionResult.FAIL;
-		}
-
-		IGenerator generator = parseGenerator(name, genObject, distribution.defaultGenerator(), distribution.defaultMaterials());
-		if (generator == null) {
-			log.warn("Failed to instantiate generator for feature {}.", name);
-			return EnumActionResult.FAIL;
-		}
-
-		// Hook the distribution and generator into our Feature
-		feature.setDistribution(distribution);
-		feature.setGenerator(generator);
-
-		// Register the finalized feature
-		return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
-	}
-
-	public static IDistribution parseDistribution(String featureName, Config genObject) {
-		String distName = genObject.getString("distribution");
-		IDistributionParser distParser = distributionParsers.get(distName);
-		if (distParser != null) {
-			return distParser.parse(featureName, genObject, log);
+		String templateName = parseTemplate(genObject);
+		IFeatureParser template = templateHandlers.get(templateName);
+		if (template != null) {
+			IFeatureGenerator feature = template.parseFeature(featureName, genObject, log);
+			if (feature != null) {
+				parsedFeatures.add(feature);
+				return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
+			}
+			log.warn("Template '" + templateName + "' failed to parse its entry!");
 		} else {
-			log.warn("Unable to find distribution {} for feature {}.", distName, featureName);
-			return null;
+			log.warn("Unknown template + '" + templateName + "'.");
 		}
+
+		return EnumActionResult.FAIL;
 	}
 
-	public static IGenerator parseGenerator(String featureName, Config genObject, String defaultGenerator, List<WeightedRandomBlock> defaultMaterial) {
+	public static String parseTemplate(Config genObject) {
+
+		return genObject.getString("distribution");
+	}
+
+	public static WorldGenerator parseGenerator(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
 
 		if (!genObject.hasPath("generator")) {
 			return null;
 		}
-
-		boolean midAir = genObject.hasPath("mid-air") && genObject.getBoolean("mid-air");
-		if (midAir) {
-			log.info("Enabling mid-air generation on {}", featureName);
-		}
-
-		List<WeightedRandomBlock> matList = new ArrayList<WeightedRandomBlock>(defaultMaterial);
-		if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
-			log.warn("Invalid material list on feature {}! Using default list: {}", featureName, defaultMaterial);
-			matList = defaultMaterial;
-		}
-
 		ConfigValue genData = genObject.root().get("generator");
-		ConfigValueType genDataType = genData.valueType();
-
-		if (genDataType == ConfigValueType.OBJECT) {
-			// Single generator def
-			return parseGeneratorData(defaultGenerator, midAir, genObject.getConfig("generator"), matList);
-
-		} else if (genDataType == ConfigValueType.LIST) {
-			// We have a weighted array of generators; walk the list and wrap with a MultiGen
+		if (genData.valueType() == ConfigValueType.LIST) {
 			List<? extends Config> list = genObject.getConfigList("generator");
 			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
-				IGenerator gen = parseGeneratorData(defaultGenerator, midAir, genElement, matList);
+				WorldGenerator gen = parseGeneratorData(def, genElement, defaultMaterial);
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedRandomWorldGenerator(gen, weight));
 			}
-			return new MultiGen(gens);
-
+			return new WorldGenMulti(gens);
+		} else if (genData.valueType() == ConfigValueType.OBJECT) {
+			return parseGeneratorData(def, genObject.getConfig("generator"), defaultMaterial);
 		} else {
-			log.error("Invalid generator data type for %s; must be an object or list.", featureName);
+			log.error("Invalid data type for field 'generator'. > It must be an object or list.");
 			return null;
 		}
 	}
 
-	public static IGenerator parseGeneratorData(String defaultGenerator, boolean midAir, Config genObject, List<WeightedRandomBlock> matList) {
+	public static WorldGenerator parseGeneratorData(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
 
-		String name = defaultGenerator;
+		String name = def;
 		if (genObject.hasPath("type")) {
 			name = genObject.getString("type");
-			if (!generatorParsers.containsKey(name)) {
-				log.warn("Unknown generator '{}'! using '{}'", name, defaultGenerator);
-				name = defaultGenerator;
+			if (!generatorHandlers.containsKey(name)) {
+				log.warn("Unknown generator '{}'! using '{}'", name, def);
+				name = def;
 			}
 		}
 
@@ -348,17 +324,16 @@ public class FeatureParser {
 			return null;
 		}
 
-		IGeneratorParser parser = generatorParsers.get(name);
+		List<WeightedRandomBlock> matList = defaultMaterial;
+		matList = new ArrayList<>();
+		if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
+			log.warn("Invalid material list! Using default list.");
+			matList = defaultMaterial;
+		}
+		IGeneratorParser parser = generatorHandlers.get(name);
 		if (parser == null) {
 			throw new IllegalStateException("Generator '" + name + "' is not registered!");
 		}
-
-		// If mid-air generation is enabled, make sure to add Air to the list of valid materials
-		// TODO: Verify that this works as expected with decoration & surface
-		if (midAir) {
-			matList.add(new WeightedRandomBlock(Blocks.AIR, -1));
-		}
-
 		return parser.parseGenerator(name, genObject, log, resList, matList);
 	}
 
@@ -500,7 +475,7 @@ public class FeatureParser {
 				String blockName;
 				block = parseBlockName(blockName = blockElement.getString("name"));
 				if (block == Blocks.AIR && !blockName.equalsIgnoreCase("minecraft:air")) {
-					log.error("Invalid block entry: {}", blockName);
+					log.error("Invalid block entry!");
 					return null;
 				}
 				int weight = blockElement.hasPath("weight") ? MathHelper.clamp(blockElement.getInt("weight"), 1, 1000000) : 100;
@@ -531,7 +506,7 @@ public class FeatureParser {
 				String name = (String) genElement.unwrapped();
 				block = parseBlockName(name);
 				if (block == Blocks.AIR && !name.equalsIgnoreCase("minecraft:air")) {
-					log.error("Invalid block entry 2: {}", name);
+					log.error("Invalid block entry!");
 					return null;
 				}
 				return new WeightedRandomBlock(block, min);
