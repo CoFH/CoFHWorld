@@ -1,0 +1,39 @@
+{
+	"desc": "Lake tests",
+	"populate": {
+		"cavelake": {
+			"distribution": "cave",
+			"generator": {
+				"type": "lake",
+				"block": "lava",
+				"outline-block": "gold_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 1,
+			"min-height": 0,
+			"max-height": 128
+		},
+		"surfacelake": {
+			"distribution": "surface",
+			"generator": {
+				"type": "lake",
+				"block": "water",
+				"outline-block": "lapis_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 1,
+			"min-height": 0,
+			"max-height": 128
+		},
+		"decolake": {
+			"distribution": "decoration",
+			"generator": {
+				"type": "lake",
+				"block": "lava",
+				"outline-block": "diamond_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 1
+		}
+	}
+}

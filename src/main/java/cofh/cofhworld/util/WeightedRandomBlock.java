@@ -18,6 +18,11 @@ public final class WeightedRandomBlock extends WeightedRandom.Item {
 	public final int metadata;
 	public final IBlockState state;
 
+	@Override
+	public String toString() {
+		return "WeightedRandomBlock: " + block.getLocalizedName() + "(" + this.itemWeight + ")";
+	}
+
 	public WeightedRandomBlock(ItemStack ore) {
 
 		this(ore, 100);

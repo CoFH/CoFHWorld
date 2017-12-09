@@ -1,9 +1,9 @@
 package cofh.cofhworld.init;
 
 import cofh.cofhworld.CoFHWorld;
-import cofh.cofhworld.decoration.parser.*;
-import cofh.cofhworld.feature.parser.*;
+import cofh.cofhworld.feature.distribution.*;
 import cofh.cofhworld.util.Utils;
+import cofh.cofhworld.world.generator.*;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -56,31 +56,30 @@ public class WorldProps {
 	private static void init() {
 
 		log.info("Registering default Feature Templates...");
-		FeatureParser.registerTemplate("gaussian", new GaussianParser());
-		FeatureParser.registerTemplate("uniform", new UniformParser());
-		FeatureParser.registerTemplate("surface", new SurfaceParser());
-		FeatureParser.registerTemplate("fractal", new FractalParser());
-		FeatureParser.registerTemplate("decoration", new DecorationParser());
-		FeatureParser.registerTemplate("underwater", new UnderfluidParser(true));
-		FeatureParser.registerTemplate("underfluid", new UnderfluidParser(false));
-		FeatureParser.registerTemplate("cave", new CaveParser());
+		FeatureParser.registerDistribution("gaussian", new GaussianDist.Parser());
+		FeatureParser.registerDistribution("uniform", new UniformDist.Parser());
+		FeatureParser.registerDistribution("surface", new SurfaceDist.Parser());
+		FeatureParser.registerDistribution("fractal", new LargeVeinDist.Parser());
+		FeatureParser.registerDistribution("decoration", new DecorationDist.Parser());
+		FeatureParser.registerDistribution("underwater", new UnderfluidDist.Parser());
+		FeatureParser.registerDistribution("underfluid", new UnderfluidDist.Parser());
+		FeatureParser.registerDistribution("cave", new CaveDist.Parser());
 
 		log.info("Registering default World Generators...");
-		FeatureParser.registerGenerator(null, new ClusterParser(false));
-		FeatureParser.registerGenerator("", new ClusterParser(false));
-		FeatureParser.registerGenerator("cluster", new ClusterParser(false));
-		FeatureParser.registerGenerator("sparse-cluster", new ClusterParser(true));
-		FeatureParser.registerGenerator("large-vein", new LargeVeinParser());
-		FeatureParser.registerGenerator("decoration", new DecorationParser());
-		FeatureParser.registerGenerator("lake", new LakeParser());
-		FeatureParser.registerGenerator("plate", new PlateParser());
-		FeatureParser.registerGenerator("geode", new GeodeParser());
-		FeatureParser.registerGenerator("spike", new SpikeParser());
-		FeatureParser.registerGenerator("boulder", new BoulderParser());
-		FeatureParser.registerGenerator("dungeon", new DungeonParser());
-		FeatureParser.registerGenerator("stalagmite", new StalagmiteParser(false));
-		FeatureParser.registerGenerator("stalactite", new StalagmiteParser(true));
-		FeatureParser.registerGenerator("small-tree", new SmallTreeParser());
+		FeatureParser.registerGenerator(null, new ClusterGen.Parser());
+		FeatureParser.registerGenerator("", new ClusterGen.Parser());
+		FeatureParser.registerGenerator("cluster", new ClusterGen.Parser());
+		FeatureParser.registerGenerator("sparse-cluster", new SparseClusterGen.Parser());
+		FeatureParser.registerGenerator("large-vein", new LargeVeinGen.Parser());
+		FeatureParser.registerGenerator("decoration", new DecorationGen.Parser());
+		FeatureParser.registerGenerator("lake", new LakesGen.Parser());
+		FeatureParser.registerGenerator("plate", new PlateGen.Parser());
+		FeatureParser.registerGenerator("geode", new GeodeGen.Parser());
+		FeatureParser.registerGenerator("spike", new SpikeGen.Parser());
+		FeatureParser.registerGenerator("boulder", new BoulderGen.Parser());
+		FeatureParser.registerGenerator("stalagmite", new StalagmiteGen.Parser());
+		FeatureParser.registerGenerator("stalactite", new StalactiteGen.Parser());
+		FeatureParser.registerGenerator("small-tree", new SmallTreeGen.Parser());
 
 		log.info("Verifying or creating base world generation directory...");
 

@@ -1,0 +1,61 @@
+{
+	"desc": "Cluster tests with all distributions (most common case)",
+	"populate": {
+		"coal": {
+			"distribution": "cave",
+			"generator": {
+				"type": "cluster",
+				"block": "coal_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 20,
+			"min-height": 0,
+			"max-height": 128
+		},
+
+		"iron": {
+			"distribution": "gaussian",
+			"generator": {
+				"type": "cluster",
+				"block": "iron_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 20,
+			"center-height": 40,
+			"spread": 10
+		},
+
+		"gold": {
+			"distribution": "surface",
+			"generator": {
+				"block": "gold_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 20,
+			"min-height": 0,
+			"max-height": 128
+		},
+
+		"redstone": {
+			"distribution": "underfluid",
+			"generator": {
+				"block": "redstone_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 20,
+			"min-height": 0,
+			"max-height": 128
+		},
+
+		"diamond": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "diamond_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 20,
+			"min-height": 0,
+			"max-height": 128,
+		}
+	}
+}

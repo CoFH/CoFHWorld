@@ -1,7 +1,7 @@
 package cofh.cofhworld.init;
 
 import cofh.cofhworld.CoFHWorld;
-import cofh.cofhworld.feature.IFeatureGenerator;
+import cofh.cofhworld.feature.Feature;
 import cofh.cofhworld.init.WorldTickHandler.RetroChunkCoord;
 import cofh.cofhworld.util.ChunkCoord;
 import cofh.cofhworld.util.LinkedHashList;
@@ -38,7 +38,7 @@ public class WorldHandler implements IWorldGenerator {
 
 	public static final WorldHandler INSTANCE = new WorldHandler();
 
-	private static List<IFeatureGenerator> features = new ArrayList<>();
+	private static List<Feature> features = new ArrayList<>();
 	private static Set<String> featureNames = new THashSet<>();
 	private static Set<EventType> standardGenEvents = new THashSet<>();
 	private static LinkedHashList<ChunkReference> populatingChunks = new LinkedHashList<>();
@@ -113,9 +113,9 @@ public class WorldHandler implements IWorldGenerator {
 		}
 	}
 
-	public static boolean registerFeature(IFeatureGenerator feature) {
+	public static boolean registerFeature(Feature feature) {
 
-		String featureName = feature.getFeatureName();
+		String featureName = feature.getName();
 		if (featureName == null) {
 			CoFHWorld.log.error("A feature attempted to register without providing a valid name... ignoring.");
 			return false;
@@ -130,9 +130,9 @@ public class WorldHandler implements IWorldGenerator {
 		return true;
 	}
 
-	public static boolean removeFeature(IFeatureGenerator feature) {
+	public static boolean removeFeature(Feature feature) {
 
-		String featureName = feature.getFeatureName();
+		String featureName = feature.getName();
 		if (featureName == null) {
 			return false;
 		}
@@ -144,17 +144,18 @@ public class WorldHandler implements IWorldGenerator {
 		return true;
 	}
 
-	public static IFeatureGenerator findFeature(String name) {
+	public static Feature findFeature(String name) {
 
-		for (IFeatureGenerator feature : features) {
-			if (feature.getFeatureName().equals(name)) {
+		for (Feature feature : features) {
+			if (feature.getName().equals(name)) {
 				return feature;
 			}
 		}
+
 		return null;
 	}
 
-	public static List<IFeatureGenerator> getFeatures() {
+	public static List<Feature> getFeatures() {
 
 		return features;
 	}
@@ -246,7 +247,7 @@ public class WorldHandler implements IWorldGenerator {
 		}
 		NBTTagList featureList = new NBTTagList();
 		for (int i = 0; i < features.size(); i++) {
-			featureList.appendTag(new NBTTagString(features.get(i).getFeatureName()));
+			featureList.appendTag(new NBTTagString(features.get(i).getName()));
 		}
 		genTag.setTag("List", featureList);
 		genTag.setLong("Hash", genHash);
@@ -294,9 +295,9 @@ public class WorldHandler implements IWorldGenerator {
 		ChunkReference pos = new ChunkReference(world.provider.getDimension(), chunkX, chunkZ);
 		pos = populatingChunks.get(pos);
 		boolean hasVillage = pos == null ? false : pos.hasVillage;
-		for (IFeatureGenerator feature : features) {
+		for (Feature feature : features) {
 			BlockFalling.fallInstantly = true;
-			feature.generateFeature(random, chunkX, chunkZ, world, hasVillage, newGen | WorldProps.forceFullRegeneration);
+			feature.generate(random, chunkX, chunkZ, world, hasVillage, newGen | WorldProps.forceFullRegeneration);
 		}
 		BlockFalling.fallInstantly = false;
 		if (!newGen) {
@@ -321,12 +322,12 @@ public class WorldHandler implements IWorldGenerator {
 		ChunkReference pos = new ChunkReference(world.provider.getDimension(), chunkX, chunkZ);
 		pos = populatingChunks.get(pos);
 		boolean hasVillage = pos == null ? false : pos.hasVillage;
-		for (IFeatureGenerator feature : features) {
-			if (genned.contains(feature.getFeatureName())) {
+		for (Feature feature : features) {
+			if (genned.contains(feature.getName())) {
 				continue;
 			}
 			BlockFalling.fallInstantly = true;
-			feature.generateFeature(random, chunkX, chunkZ, world, hasVillage, newGen | WorldProps.forceFullRegeneration);
+			feature.generate(random, chunkX, chunkZ, world, hasVillage, newGen | WorldProps.forceFullRegeneration);
 		}
 		BlockFalling.fallInstantly = false;
 		if (!newGen) {

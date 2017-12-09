@@ -1,0 +1,39 @@
+{
+	"desc": "Boulder tests with all distributions",
+	"populate": {
+		"coal": {
+			"distribution": "cave",
+			"generator": {
+				"type": "boulder",
+				"block": "coal_ore",
+				"diameter": 4,
+				"count": 1
+			},
+			"cluster-count": 1
+		},
+
+		"iron": {
+			"distribution": "gaussian",
+			"generator": {
+				"type": "boulder",
+				"block": "iron_ore",
+				"diameter": 4,
+				"count": 1
+			},
+			"cluster-count": 1,
+			"center-height": 40,
+			"spread": 5
+		},
+
+		"gold": {
+			"distribution": "surface",
+			"generator": {
+				"type": "boulder",
+				"block": "gold_ore",
+				"diameter": 4,
+				"count": 1
+			},
+			"cluster-count": 1
+		}
+	}
+}
