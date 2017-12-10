@@ -169,8 +169,15 @@ public class Feature {
                     this.dimensionRestriction = GenRestriction.WHITELIST;
                     this.dimensions.add(((Number)data.unwrapped()).intValue());
                     break;
+                case STRING:
+                    if (config.getString("dimension").equals("all")) {
+                        this.dimensionRestriction = GenRestriction.NONE;
+                    } else {
+                        log.error("Invalid dimension restriction {} on feature {}", data, name);
+                    }
+                    break;
                 default:
-                    log.warn("Skipping dimension restriction {} on feature {}; needs to be an object, list or number.", data, name);
+                    log.warn("Skipping dimension restriction {} on feature {}; needs to be an object, list, number or string.", data, name);
             }
         }
 
