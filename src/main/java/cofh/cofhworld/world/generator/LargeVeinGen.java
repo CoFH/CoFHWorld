@@ -125,7 +125,7 @@ public class LargeVeinGen implements IGenerator {
 
 			int clusterSize = genObject.getInt("cluster-size");
 			if (clusterSize <= 0) {
-				log.warn("Invalid cluster size for generator '{}'", name);
+				log.error("Invalid 'cluster-size' setting for LargeVeinGen on feature {}", name);
 				return null;
 			}
 

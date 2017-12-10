@@ -177,21 +177,20 @@ public class SmallTreeGen implements IGenerator {
 			ArrayList<WeightedRandomBlock> blocks = new ArrayList<>();
 			if (genObject.hasPath("surface")) {
 				if (!FeatureParser.parseResList(genObject.root().get("surface"), blocks, false)) {
-					log.warn("Entry specifies invalid surface for 'smalltree' generator! Using dirt!");
+					log.warn("Parsing 'surface' setting for SmallTreeGen on feature {} failed; using defaults", name);
 					blocks.clear();
 					blocks.add(new WeightedRandomBlock(Blocks.GRASS));
 					blocks.add(new WeightedRandomBlock(Blocks.DIRT));
 				}
 			}
 
+			// TODO: Should this be a required parameter?
 			if (genObject.hasPath("leaves")) {
 				list = new ArrayList<>();
 				if (!FeatureParser.parseResList(genObject.root().get("leaves"), list, true)) {
-					log.warn("Entry specifies invalid leaves for 'smalltree' generator!");
+					log.warn("Parsing 'leaves' setting for SmallTreeGen on feature {} failed", name);
 					list.clear();
 				}
-			} else {
-				log.info("Entry does not specify leaves for 'smalltree' generator! There are none!");
 			}
 
 			SmallTreeGen r = new SmallTreeGen(resList, list, matList);

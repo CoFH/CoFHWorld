@@ -173,7 +173,7 @@ public class LakesGen implements IGenerator {
 			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
 			if (genObject.hasPath("outline-block")) {
 				if (!FeatureParser.parseResList(genObject.root().get("outline-block"), list, true)) {
-					log.warn("Entry specifies invalid outline-block for 'lake' generator! Not outlining!");
+					log.warn("Parsing 'outline-block' setting for LakesGen on feature {} failed; not outlining", name);
 				} else {
 					r.outlineBlock = list;
 				}
@@ -181,7 +181,7 @@ public class LakesGen implements IGenerator {
 			}
 			if (genObject.hasPath("gap-block")) {
 				if (!FeatureParser.parseResList(genObject.getValue("gap-block"), list, true)) {
-					log.warn("Entry specifies invalid gap block for 'lake' generator! Not filling!");
+					log.warn("Parsing 'gap-block' setting for LakesGen on feature {} failed; not filling", name);
 				} else {
 					r.gapBlock = list;
 				}

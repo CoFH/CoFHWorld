@@ -68,7 +68,7 @@ public class PlateGen implements IGenerator {
 
 			int clusterSize = genObject.getInt("radius");
 			if (clusterSize <= 0) {
-				log.warn("Invalid radius for generator '{}'", name);
+				log.warn("Invalid 'radius' setting for PlateGen on feature {}", name);
 				return null;
 			}
 

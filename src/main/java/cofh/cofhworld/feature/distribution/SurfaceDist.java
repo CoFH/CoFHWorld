@@ -4,6 +4,7 @@ import cofh.cofhworld.feature.Feature;
 import cofh.cofhworld.feature.IDistribution;
 import cofh.cofhworld.feature.IDistributionParser;
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.init.WorldProps;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import com.typesafe.config.Config;
@@ -91,7 +92,9 @@ public class SurfaceDist implements IDistribution {
 			if (config.hasPath("material")) {
 				matList = new ArrayList<>();
 				if (!FeatureParser.parseResList(config.root().get("material"), matList, false)) {
-					log.warn("Invalid material list in SurfaceDist {}! Using default list.", name);
+					if (WorldProps.verboseLogging) {
+						log.warn("Parsing 'material' on {} failed; using default for SurfaceDist: {}", name, defaultMats);
+					}
 					matList = defaultMats;
 				}
 			}

@@ -4,6 +4,7 @@ import cofh.cofhworld.feature.Feature;
 import cofh.cofhworld.feature.IDistribution;
 import cofh.cofhworld.feature.IDistributionParser;
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.init.WorldProps;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import com.typesafe.config.Config;
@@ -127,7 +128,9 @@ public class UnderfluidDist implements IDistribution {
 			if (genObject.hasPath("material")) {
 				matList = new ArrayList<>();
 				if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
-					log.warn("Invalid material list in UnderfluidDist {}! Using default list.", name);
+					if (WorldProps.verboseLogging) {
+						log.warn("Parsing 'material' on {} failed; using default for UnderfluidDist: {}", name, defaultMats);
+					}
 					matList = defaultMats;
 				}
 			}

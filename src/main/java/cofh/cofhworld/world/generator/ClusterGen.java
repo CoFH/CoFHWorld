@@ -193,7 +193,7 @@ public class ClusterGen implements IGenerator {
 		public IGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 			int clusterSize = genObject.getInt("cluster-size");
 			if (clusterSize <= 0) {
-				log.warn("Invalid cluster size for generator '{}'", name);
+				log.error("Invalid 'cluster-size' for ClusterGen on feature {}", name);
 				return null;
 			}
 

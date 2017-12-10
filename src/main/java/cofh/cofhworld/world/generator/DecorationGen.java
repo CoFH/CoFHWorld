@@ -4,6 +4,7 @@ import cofh.cofhworld.feature.Feature;
 import cofh.cofhworld.feature.IGenerator;
 import cofh.cofhworld.feature.IGeneratorParser;
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.init.WorldProps;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
@@ -88,18 +89,20 @@ public class DecorationGen implements IGenerator {
 
 			int clusterSize = genObject.getInt("cluster-size"); // TODO: another name?
 			if (clusterSize <= 0) {
-				log.warn("Invalid cluster size for generator '{}'", name);
+				log.error("Invalid 'cluster-size' for DecorationGen on feature {}", name);
 				return null;
 			}
 
 			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
 			ConfigObject genData = genObject.root();
 			if (!genObject.hasPath("surface")) {
-				log.info("Entry does not specify surface for 'decoration' generator. Using grass.");
+				if (WorldProps.verboseLogging) {
+					log.warn("Using default 'surface' setting for DecorationGen on feature {}", name);
+				}
 				list.add(new WeightedRandomBlock(Blocks.GRASS));
 			} else {
 				if (!FeatureParser.parseResList(genData.get("surface"), list, false)) {
-					log.warn("Entry specifies invalid surface for 'decoration' generator! Using grass!");
+					log.warn("Parsing 'surface' setting for DecorationGen on feature {} failed; using default value", name);
 					list.clear();
 					list.add(new WeightedRandomBlock(Blocks.GRASS));
 				}

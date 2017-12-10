@@ -4,6 +4,7 @@ import cofh.cofhworld.feature.Feature;
 import cofh.cofhworld.feature.IGenerator;
 import cofh.cofhworld.feature.IGeneratorParser;
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.init.WorldProps;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
@@ -145,11 +146,13 @@ public class GeodeGen implements IGenerator {
 
 			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
 			if (!genObject.hasPath("crust")) {
-				log.info("Entry does not specify crust for 'geode' generator. Using stone.");
+				if (WorldProps.verboseLogging) {
+					log.warn("Using default 'crust' setting for GeodeGen on feature {}", name);
+				}
 				list.add(new WeightedRandomBlock(Blocks.STONE));
 			} else {
 				if (!FeatureParser.parseResList(genObject.root().get("crust"), list, true)) {
-					log.warn("Entry specifies invalid crust for 'geode' generator! Using obsidian!");
+					log.warn("Parsing 'crust' setting for GeodeGen on feature {} failed; using default value", name);
 					list.clear();
 					list.add(new WeightedRandomBlock(Blocks.OBSIDIAN));
 				}
@@ -161,7 +164,7 @@ public class GeodeGen implements IGenerator {
 			if (genObject.hasPath("filler")) {
 				list = new ArrayList<>();
 				if (!FeatureParser.parseResList(genObject.getValue("filler"), list, true)) {
-					log.warn("Entry specifies invalid filler for 'geode' generator! Not filling!");
+					log.warn("Parsing 'filler' setting for GeodeGen on feature {} failed; not filling", name);
 				} else {
 					r.fillBlock = list;
 				}

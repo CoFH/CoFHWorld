@@ -304,7 +304,9 @@ public class FeatureParser {
 
 		List<WeightedRandomBlock> matList = new ArrayList<WeightedRandomBlock>(defaultMaterial);
 		if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
-			log.warn("Invalid material list on feature {}! Using default list: {}", featureName, defaultMaterial);
+			if (WorldProps.verboseLogging) {
+				log.warn("Parsing 'material' setting for on feature {} failed; using defaults: {}", featureName, defaultMaterial);
+			}
 			matList = defaultMaterial;
 		}
 
@@ -327,7 +329,7 @@ public class FeatureParser {
 			return new MultiGen(gens);
 
 		} else {
-			log.error("Invalid generator data type for %s; must be an object or list.", featureName);
+			log.error("Invalid generator data type for {}; must be an object or list.", featureName);
 			return null;
 		}
 	}
@@ -338,7 +340,7 @@ public class FeatureParser {
 		if (genObject.hasPath("type")) {
 			name = genObject.getString("type");
 			if (!generatorParsers.containsKey(name)) {
-				log.warn("Unknown generator '{}'! using '{}'", name, defaultGenerator);
+				log.warn("Unknown generator '{}' using '{}'", name, defaultGenerator);
 				name = defaultGenerator;
 			}
 		}

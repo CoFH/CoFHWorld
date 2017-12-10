@@ -1,8 +1,10 @@
 package cofh.cofhworld.feature.distribution;
 
+import cofh.cofhworld.CoFHWorld;
 import cofh.cofhworld.feature.IDistribution;
 import cofh.cofhworld.feature.IDistributionParser;
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.init.WorldProps;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import com.typesafe.config.Config;
 import net.minecraft.init.Blocks;
@@ -36,7 +38,9 @@ public class DecorationDist extends SurfaceDist {
             if (config.hasPath("material")) {
                 matList = new ArrayList<>();
                 if (!FeatureParser.parseResList(config.root().get("material"), matList, false)) {
-                    log.warn("Invalid material list in DecorationDist {}! Using default list.", name);
+                    if (WorldProps.verboseLogging) {
+                        log.warn("Parsing 'material' on {} failed; using default for DecorationDist: {}", name, defaultMats);
+                    }
                     matList = defaultMats;
                 }
             }

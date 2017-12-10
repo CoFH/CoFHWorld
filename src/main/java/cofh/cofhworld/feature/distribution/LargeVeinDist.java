@@ -4,6 +4,7 @@ import cofh.cofhworld.feature.Feature;
 import cofh.cofhworld.feature.IDistribution;
 import cofh.cofhworld.feature.IDistributionParser;
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import com.typesafe.config.Config;
@@ -94,18 +95,12 @@ public class LargeVeinDist implements IDistribution {
 
 		@Override
 		public IDistribution parse(String name, Config genObject, Logger log) {
-			if (!(genObject.hasPath("min-height") && genObject.hasPath("vein-height"))) {
-				log.error("Height parameters for 'fractal' template not specified in \"" + name + "\"");
+
+			if (Utils.missingAnySetting(genObject, name, log,
+					"min-height", "vein-height", "vein-diameter", "vertical-density", "horizontal-density")) {
 				return null;
 			}
-			if (!(genObject.hasPath("vein-diameter"))) {
-				log.error("veinDiameter parameter for 'fractal' template not specified in \"" + name + "\"");
-				return null;
-			}
-			if (!(genObject.hasPath("vertical-density") && genObject.hasPath("horizontal-density"))) {
-				log.error("Density parameters for 'fractal' template not specified in \"" + name + "\"");
-				return null;
-			}
+
 			ConfigObject genData = genObject.root();
 			INumberProvider minY = FeatureParser.parseNumberValue(genData.get("min-height"));
 			INumberProvider h = FeatureParser.parseNumberValue(genData.get("vein-height"));

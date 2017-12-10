@@ -4,6 +4,7 @@ import cofh.cofhworld.feature.Feature;
 import cofh.cofhworld.feature.IDistribution;
 import cofh.cofhworld.feature.IDistributionParser;
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import com.typesafe.config.Config;
@@ -65,8 +66,7 @@ public class UniformDist implements IDistribution {
 		@Override
 		public IDistribution parse(String featureName, Config config, Logger log) {
 
-			if (!(config.hasPath("min-height") && config.hasPath("max-height"))) {
-				log.error("Height parameters for 'uniform' template not specified in \"" + featureName + "\"");
+			if (Utils.missingAnySetting(config, featureName, log, "min-height", "max-height")) {
 				return null;
 			}
 

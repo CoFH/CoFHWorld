@@ -4,6 +4,7 @@ import cofh.cofhworld.feature.Feature;
 import cofh.cofhworld.feature.IGenerator;
 import cofh.cofhworld.feature.IGeneratorParser;
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.init.WorldProps;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import com.typesafe.config.Config;
 import net.minecraft.init.Blocks;
@@ -116,11 +117,13 @@ public class StalagmiteGen implements IGenerator {
 			// TODO: these names need revised
 			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
 			if (!genObject.hasPath("gen-body")) {
-				log.info("Entry does not specify gen body for 'stalagmite' generator. Using air.");
+				if (WorldProps.verboseLogging) {
+					log.warn("Using default 'gen-body' setting for StalagmiteGen on feature {}", generatorName);
+				}
 				list.add(new WeightedRandomBlock(Blocks.AIR));
 			} else {
 				if (!FeatureParser.parseResList(genObject.root().get("gen-body"), list, false)) {
-					log.warn("Entry specifies invalid gen body for 'stalagmite' generator! Using air!");
+					log.warn("Parsing 'gen-body' setting for StalagmiteGen on feature {} failed; using default", generatorName);
 					list.clear();
 					list.add(new WeightedRandomBlock(Blocks.AIR));
 				}

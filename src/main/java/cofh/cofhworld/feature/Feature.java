@@ -138,7 +138,7 @@ public class Feature {
                 }
             } else {
                 // Invalid biome restriction entry; default is already NONE, so just log a warning
-                log.error("Invalid biome restriction {} on feature {}; needs to be an object.", data, name);
+                log.warn("Skipping biome restriction {} on feature {}; needs to be an object.", data, name);
             }
         }
 
@@ -170,7 +170,7 @@ public class Feature {
                     this.dimensions.add(((Number)data.unwrapped()).intValue());
                     break;
                 default:
-                    log.error("Invalid dimension restriction %s on feature %s; needs to be an object, list or number.", data, name);
+                    log.warn("Skipping dimension restriction {} on feature {}; needs to be an object, list or number.", data, name);
             }
         }
 

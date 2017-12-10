@@ -41,6 +41,9 @@ public class WorldProps {
 		comment = "This adjusts the % chance that a tree will grow as normal when it is meant to. Reducing this value will mean that trees take longer to grow, on average.";
 		chanceTreeGrowth = CoFHWorld.config.getInt("TreeGrowthChance", category, chanceTreeGrowth, 1, 100, comment);
 
+		comment = "If TRUE, enable verbose logging.";
+		verboseLogging = CoFHWorld.config.getBoolean("VerboseLogging", category, verboseLogging, comment);
+
 		category = "World.Bedrock";
 
 		comment = "If TRUE, the bedrock layer will be flattened.";
@@ -54,8 +57,11 @@ public class WorldProps {
 	}
 
 	private static void init() {
+		if (verboseLogging) {
+			log.info("Verbose logging enabled");
+		}
 
-		log.info("Registering default Feature Templates...");
+		log.info("Registering distributions...");
 		FeatureParser.registerDistribution("gaussian", new GaussianDist.Parser());
 		FeatureParser.registerDistribution("uniform", new UniformDist.Parser());
 		FeatureParser.registerDistribution("surface", new SurfaceDist.Parser());
@@ -65,7 +71,7 @@ public class WorldProps {
 		FeatureParser.registerDistribution("underfluid", new UnderfluidDist.Parser());
 		FeatureParser.registerDistribution("cave", new CaveDist.Parser());
 
-		log.info("Registering default World Generators...");
+		log.info("Registering generators...");
 		FeatureParser.registerGenerator(null, new ClusterGen.Parser());
 		FeatureParser.registerGenerator("", new ClusterGen.Parser());
 		FeatureParser.registerGenerator("cluster", new ClusterGen.Parser());
@@ -135,5 +141,7 @@ public class WorldProps {
 	public static int chanceTreeGrowth = 100;
 	public static int numBedrockLayers = 1;
 	public static int maxBedrockLayers = 8;
+
+	public static boolean verboseLogging = false;
 
 }

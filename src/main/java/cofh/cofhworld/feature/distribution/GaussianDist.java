@@ -4,6 +4,7 @@ import cofh.cofhworld.feature.Feature;
 import cofh.cofhworld.feature.IDistribution;
 import cofh.cofhworld.feature.IDistributionParser;
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
@@ -74,10 +75,11 @@ public class GaussianDist implements IDistribution {
 
 		@Override
 		public IDistribution parse(String name, Config genObject, Logger log) {
-			if (!(genObject.hasPath("center-height") && genObject.hasPath("spread"))) {
-				log.error("Height parameters for 'gaussian' template not specified in \"" + name + "\"");
+			if (Utils.missingAnySetting(genObject, name, log,
+					"center-height", "spread")) {
 				return null;
 			}
+
 			ConfigObject genData = genObject.root();
 			INumberProvider centerHeight = FeatureParser.parseNumberValue(genData.get("center-height"));
 			INumberProvider spread = FeatureParser.parseNumberValue(genData.get("spread"));
