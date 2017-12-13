@@ -1,0 +1,15 @@
+{
+	"desc": "Cluster tests with all distributions (most common case)",
+	"populate": {
+		"coal": {
+			"distribution": "decoration",
+			"generator": {
+				"type": "decoration",
+				"block": "coal_ore",
+				"cluster-size": 10,
+				"see-sky": false
+			},
+			"cluster-count": 5
+		}
+	}
+}

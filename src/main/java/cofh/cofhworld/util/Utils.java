@@ -1,5 +1,6 @@
 package cofh.cofhworld.util;
 
+import com.typesafe.config.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -9,6 +10,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.util.Loader;
 
 import java.io.*;
@@ -115,4 +117,13 @@ public class Utils {
 		outputStream.getChannel().transferFrom(sourceChannel, 0, sourceChannel.size());
 	}
 
+	public static boolean missingAnySetting(Config genObject, String featureName, Logger log, String... settings) {
+		for (String settingName : settings) {
+			if (!genObject.hasPath(settingName)) {
+				log.error("Missing required setting {} on feature {}", settingName, featureName);
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -1,0 +1,22 @@
+{
+	"desc": "Spike tests with all distributions",
+	"populate": {
+		"coal": {
+			"distribution": "surface",
+			"generator": {
+				"type": "spike",
+				"block": "coal_ore"
+			},
+            "cluster-count": 1,
+            "material": ["stone", "dirt", "grass", "sand", "minecraft:air"]
+        },
+        "gold": {
+			"distribution": "underwater",
+			"generator": {
+				"type": "spike",
+				"block": "gold_ore"
+			},
+            "cluster-count": 1
+		}
+	}
+}

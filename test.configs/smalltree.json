@@ -1,0 +1,14 @@
+{
+	"desc": "Small Tree tests with relevant distributions",
+	"populate": {
+		"coal": {
+			"distribution": "decoration",
+			"generator": {
+				"type": "small-tree",
+				"block": "coal_ore",
+				"leaves": "gold_ore"
+			},
+			"cluster-count": 20
+		}
+	}
+}

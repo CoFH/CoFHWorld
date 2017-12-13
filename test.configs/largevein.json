@@ -1,0 +1,61 @@
+{
+	"desc": "Large-vein tests with all distributions",
+	"populate": {
+		"coal": {
+			"distribution": "cave",
+			"generator": {
+				"type": "large-vein",
+				"block": "coal_ore",
+				"cluster-size": 10,
+				"sparse": true
+			},
+			"cluster-count": 1
+		},
+
+		"iron": {
+			"distribution": "gaussian",
+			"generator": {
+				"type": "large-vein",
+				"block": "iron_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 1,
+			"center-height": 40,
+			"spread": 5
+		},
+
+		"gold": {
+			"distribution": "surface",
+			"generator": {
+				"type": "large-vein",
+				"block": "gold_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 1
+		},
+
+		"redstone": {
+			"distribution": "underfluid",
+			"generator": {
+				"type": "large-vein",
+				"block": "redstone_ore",
+				"cluster-size": 10
+			},
+			"fluid": "lava",
+			"cluster-count": 1,
+			"material": "stone"
+		},
+
+		"diamond": {
+			"distribution": "uniform",
+			"generator": {
+				"type": "large-vein",
+				"block": "diamond_ore",
+				"cluster-size": 10
+			},
+			"cluster-count": 1,
+			"min-height": 0,
+			"max-height": 128,
+		}
+	}
+}

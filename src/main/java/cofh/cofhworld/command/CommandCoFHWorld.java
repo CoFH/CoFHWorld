@@ -1,6 +1,5 @@
 package cofh.cofhworld.command;
 
-import cofh.cofhworld.feature.IFeatureGenerator;
 import cofh.cofhworld.init.WorldHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -74,11 +73,10 @@ public class CommandCoFHWorld extends CommandTreeBase {
 
 			StringBuilder b = new StringBuilder();
 			b.append("\n");
-			for (IFeatureGenerator feature : WorldHandler.getFeatures()) {
-				b.append("* " + feature.getFeatureName() + "\n");
-			}
+//			for (IFeatureGenerator feature : WorldHandler.getFeatures()) {
+//				b.append("* " + feature.getFeatureName() + "\n");
+//			}
 			notifyCommandListener(sender, this, "cofhworld.list", b.toString());
 		}
 	}
-
 }
