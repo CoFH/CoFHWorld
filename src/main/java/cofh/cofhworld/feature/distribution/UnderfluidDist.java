@@ -88,11 +88,13 @@ public class UnderfluidDist implements IDistribution {
 
 	@Override
 	public List<WeightedRandomBlock> defaultMaterials() {
+
 		return Arrays.asList(new WeightedRandomBlock(Blocks.DIRT, -1), new WeightedRandomBlock(Blocks.GRASS, -1));
 	}
 
 	@Override
 	public String defaultGenerator() {
+
 		return "cluster";
 	}
 
@@ -120,8 +122,7 @@ public class UnderfluidDist implements IDistribution {
 				}
 			}
 
-			List<WeightedRandomBlock> defaultMats = Arrays.asList(new WeightedRandomBlock(Blocks.DIRT, -1),
-					new WeightedRandomBlock(Blocks.GRASS, -1));
+			List<WeightedRandomBlock> defaultMats = Arrays.asList(new WeightedRandomBlock(Blocks.DIRT, -1), new WeightedRandomBlock(Blocks.GRASS, -1));
 
 			// TODO: WorldGeneratorAdv that allows access to its material list
 			List<WeightedRandomBlock> matList = defaultMats;

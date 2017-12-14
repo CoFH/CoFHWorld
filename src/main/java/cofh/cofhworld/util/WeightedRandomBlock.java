@@ -20,6 +20,7 @@ public final class WeightedRandomBlock extends WeightedRandom.Item {
 
 	@Override
 	public String toString() {
+
 		return "WeightedRandomBlock: " + block.getLocalizedName() + "(" + this.itemWeight + ")";
 	}
 

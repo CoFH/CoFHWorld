@@ -26,6 +26,7 @@ public class CaveDist implements IDistribution {
 
 	@Override
 	public boolean apply(Feature f, Random random, int blockX, int blockZ, World world) {
+
 		int averageSeaLevel = world.provider.getAverageGroundLevel() + 1;
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
@@ -89,11 +90,13 @@ public class CaveDist implements IDistribution {
 
 	@Override
 	public List<WeightedRandomBlock> defaultMaterials() {
+
 		return Arrays.asList(new WeightedRandomBlock(Blocks.STONE, -1));
 	}
 
 	@Override
 	public String defaultGenerator() {
+
 		return "cluster";
 	}
 

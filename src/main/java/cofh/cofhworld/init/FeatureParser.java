@@ -281,6 +281,7 @@ public class FeatureParser {
 	}
 
 	public static IDistribution parseDistribution(String featureName, Config genObject) {
+
 		String distName = genObject.getString("distribution");
 		IDistributionParser distParser = distributionParsers.get(distName);
 		if (distParser != null) {

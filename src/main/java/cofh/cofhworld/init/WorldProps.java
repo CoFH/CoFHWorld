@@ -57,6 +57,7 @@ public class WorldProps {
 	}
 
 	private static void init() {
+
 		if (verboseLogging) {
 			log.info("Verbose logging enabled");
 		}

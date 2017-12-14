@@ -47,7 +47,6 @@ public class SurfaceDist implements IDistribution {
 				continue;
 			}
 
-
 			int y = useTopBlock ? Utils.getTopBlockY(world, x, z) : Utils.getSurfaceBlockY(world, x, z);
 			l:
 			{
@@ -65,11 +64,13 @@ public class SurfaceDist implements IDistribution {
 
 	@Override
 	public List<WeightedRandomBlock> defaultMaterials() {
+
 		return Arrays.asList(matList);
 	}
 
 	@Override
 	public String defaultGenerator() {
+
 		return "cluster";
 	}
 
@@ -82,11 +83,7 @@ public class SurfaceDist implements IDistribution {
 			// generator(s) get invoked; the cleanest way (that I could find) to implement this was to
 			// parse materials when instantiating the distribution. They get parsed AGAIN for the generator in
 			// FeatureParser (blech).
-			List<WeightedRandomBlock> defaultMats = Arrays.asList(new WeightedRandomBlock(Blocks.STONE, -1),
-					new WeightedRandomBlock(Blocks.DIRT, -1), new WeightedRandomBlock(Blocks.GRASS, -1),
-					new WeightedRandomBlock(Blocks.SAND, -1), new WeightedRandomBlock(Blocks.GRAVEL, -1),
-					new WeightedRandomBlock(Blocks.SNOW, -1), new WeightedRandomBlock(Blocks.AIR, -1),
-					new WeightedRandomBlock(Blocks.WATER, -1));
+			List<WeightedRandomBlock> defaultMats = Arrays.asList(new WeightedRandomBlock(Blocks.STONE, -1), new WeightedRandomBlock(Blocks.DIRT, -1), new WeightedRandomBlock(Blocks.GRASS, -1), new WeightedRandomBlock(Blocks.SAND, -1), new WeightedRandomBlock(Blocks.GRAVEL, -1), new WeightedRandomBlock(Blocks.SNOW, -1), new WeightedRandomBlock(Blocks.AIR, -1), new WeightedRandomBlock(Blocks.WATER, -1));
 
 			List<WeightedRandomBlock> matList = defaultMats;
 			if (config.hasPath("material")) {

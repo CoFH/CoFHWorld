@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Random;
 
 public interface IDistribution {
-    boolean apply(Feature f, Random rand, int blockX, int blockZ, World world);
 
-    List<WeightedRandomBlock> defaultMaterials();
+	boolean apply(Feature f, Random rand, int blockX, int blockZ, World world);
 
-    String defaultGenerator();
+	List<WeightedRandomBlock> defaultMaterials();
+
+	String defaultGenerator();
 }

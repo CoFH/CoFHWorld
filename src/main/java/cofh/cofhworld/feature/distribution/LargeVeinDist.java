@@ -83,11 +83,13 @@ public class LargeVeinDist implements IDistribution {
 
 	@Override
 	public List<WeightedRandomBlock> defaultMaterials() {
+
 		return Arrays.asList(new WeightedRandomBlock(Blocks.STONE, -1));
 	}
 
 	@Override
 	public String defaultGenerator() {
+
 		return "large-vein";
 	}
 
@@ -96,8 +98,7 @@ public class LargeVeinDist implements IDistribution {
 		@Override
 		public IDistribution parse(String name, Config genObject, Logger log) {
 
-			if (Utils.missingAnySetting(genObject, name, log,
-					"min-height", "vein-height", "vein-diameter", "vertical-density", "horizontal-density")) {
+			if (Utils.missingAnySetting(genObject, name, log, "min-height", "vein-height", "vein-diameter", "vertical-density", "horizontal-density")) {
 				return null;
 			}
 

@@ -90,6 +90,7 @@ public class SpikeGen implements IGenerator {
 	}
 
 	public static class Parser implements IGeneratorParser {
+
 		@Override
 		public IGenerator parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 

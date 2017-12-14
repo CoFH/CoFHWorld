@@ -30,6 +30,7 @@ public class UniformDist implements IDistribution {
 
 	@Override
 	public boolean apply(Feature f, Random random, int blockX, int blockZ, World world) {
+
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
 		final int count = f.getChunkCount().intValue(world, random, pos);
@@ -46,18 +47,20 @@ public class UniformDist implements IDistribution {
 			if (!f.canGenerateInBiome(world, x, z, random)) {
 				continue;
 			}
-			generated |= f.applyGenerator(world, random, new BlockPos(x,y,z));
+			generated |= f.applyGenerator(world, random, new BlockPos(x, y, z));
 		}
 		return generated;
 	}
 
 	@Override
 	public List<WeightedRandomBlock> defaultMaterials() {
+
 		return Arrays.asList(new WeightedRandomBlock(Blocks.STONE, -1));
 	}
 
 	@Override
 	public String defaultGenerator() {
+
 		return "cluster";
 	}
 

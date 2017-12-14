@@ -170,6 +170,7 @@ public class SmallTreeGen implements IGenerator {
 	}
 
 	public static class Parser implements IGeneratorParser {
+
 		@Override
 		public IGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 

@@ -28,7 +28,7 @@ public class PlateGen implements IGenerator {
 	public PlateGen(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
 
 		cluster = resource;
-		radius = new UniformRandomProvider(clusterSize, clusterSize+2);
+		radius = new UniformRandomProvider(clusterSize, clusterSize + 2);
 		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
 	}
 
@@ -63,6 +63,7 @@ public class PlateGen implements IGenerator {
 	}
 
 	public static class Parser implements IGeneratorParser {
+
 		@Override
 		public IGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 

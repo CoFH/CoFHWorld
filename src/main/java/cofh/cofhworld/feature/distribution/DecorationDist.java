@@ -1,6 +1,5 @@
 package cofh.cofhworld.feature.distribution;
 
-import cofh.cofhworld.CoFHWorld;
 import cofh.cofhworld.feature.IDistribution;
 import cofh.cofhworld.feature.IDistributionParser;
 import cofh.cofhworld.init.FeatureParser;
@@ -16,37 +15,39 @@ import java.util.List;
 
 public class DecorationDist extends SurfaceDist {
 
-    public DecorationDist(List<WeightedRandomBlock> matList, boolean useTopBlock) {
-        super(matList, useTopBlock);
-    }
+	public DecorationDist(List<WeightedRandomBlock> matList, boolean useTopBlock) {
 
-    @Override
-    public String defaultGenerator() {
-        return "decoration";
-    }
+		super(matList, useTopBlock);
+	}
 
-    public static class Parser implements IDistributionParser {
+	@Override
+	public String defaultGenerator() {
 
-        @Override
-        public IDistribution parse(String name, Config config, Logger log) {
+		return "decoration";
+	}
 
-            // The ONLY difference between surface and decoration is that the default materials
-            // vary
-            List<WeightedRandomBlock> defaultMats = Arrays.asList(new WeightedRandomBlock(Blocks.GRASS, -1));
+	public static class Parser implements IDistributionParser {
 
-            List<WeightedRandomBlock> matList = defaultMats;
-            if (config.hasPath("material")) {
-                matList = new ArrayList<>();
-                if (!FeatureParser.parseResList(config.root().get("material"), matList, false)) {
-                    if (WorldProps.verboseLogging) {
-                        log.warn("Parsing 'material' on {} failed; using default for DecorationDist: {}", name, defaultMats);
-                    }
-                    matList = defaultMats;
-                }
-            }
-            // TODO: clarity on follow-terrain field
-            boolean useTopBlock = (config.hasPath("follow-terrain") && config.getBoolean("follow-terrain"));
-            return new DecorationDist(matList, useTopBlock);
-        }
-    }
+		@Override
+		public IDistribution parse(String name, Config config, Logger log) {
+
+			// The ONLY difference between surface and decoration is that the default materials
+			// vary
+			List<WeightedRandomBlock> defaultMats = Arrays.asList(new WeightedRandomBlock(Blocks.GRASS, -1));
+
+			List<WeightedRandomBlock> matList = defaultMats;
+			if (config.hasPath("material")) {
+				matList = new ArrayList<>();
+				if (!FeatureParser.parseResList(config.root().get("material"), matList, false)) {
+					if (WorldProps.verboseLogging) {
+						log.warn("Parsing 'material' on {} failed; using default for DecorationDist: {}", name, defaultMats);
+					}
+					matList = defaultMats;
+				}
+			}
+			// TODO: clarity on follow-terrain field
+			boolean useTopBlock = (config.hasPath("follow-terrain") && config.getBoolean("follow-terrain"));
+			return new DecorationDist(matList, useTopBlock);
+		}
+	}
 }

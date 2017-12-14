@@ -118,6 +118,7 @@ public class Utils {
 	}
 
 	public static boolean missingAnySetting(Config genObject, String featureName, Logger log, String... settings) {
+
 		for (String settingName : settings) {
 			if (!genObject.hasPath(settingName)) {
 				log.error("Missing required setting {} on feature {}", settingName, featureName);
