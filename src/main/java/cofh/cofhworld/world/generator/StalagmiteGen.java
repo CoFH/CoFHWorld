@@ -78,11 +78,9 @@ public class StalagmiteGen implements IGenerator {
 		while (world.isAirBlock(new BlockPos(xStart, yStart, zStart)) && yStart > 0) {
 			--yStart;
 		}
-
 		if (!ClusterGen.canGenerateInBlock(world, xStart, yStart++, zStart, baseBlock)) {
 			return false;
 		}
-
 		int maxHeight = (heightVariance > 0 ? rand.nextInt(heightVariance) : 0) + minHeight;
 
 		int size = (genSize > 0 ? genSize : maxHeight / heightMod);
@@ -128,7 +126,6 @@ public class StalagmiteGen implements IGenerator {
 					list.add(new WeightedRandomBlock(Blocks.AIR));
 				}
 			}
-
 			r.genBlock = list.toArray(new WeightedRandomBlock[list.size()]);
 
 			if (genObject.hasPath("min-height")) {
@@ -155,8 +152,8 @@ public class StalagmiteGen implements IGenerator {
 			if (genObject.hasPath("alt-sinc")) {
 				r.altSinc = genObject.getBoolean("alt-sinc");
 			}
-
 			return r;
 		}
 	}
+
 }

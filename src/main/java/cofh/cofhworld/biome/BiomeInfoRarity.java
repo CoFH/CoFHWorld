@@ -29,4 +29,5 @@ public class BiomeInfoRarity extends BiomeInfo {
 		}
 		return r;
 	}
+
 }

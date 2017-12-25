@@ -159,7 +159,6 @@ public class LakesGen implements IGenerator {
 				}
 			}
 		}
-
 		return true;
 	}
 
@@ -168,7 +167,7 @@ public class LakesGen implements IGenerator {
 		@Override
 		public IGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 
-			boolean useMaterial = genObject.hasPath("use-material") ? genObject.getBoolean("use-material") : false;
+			boolean useMaterial = genObject.hasPath("use-material") && genObject.getBoolean("use-material");
 
 			LakesGen r = new LakesGen(resList, useMaterial ? matList : null);
 			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
@@ -196,4 +195,5 @@ public class LakesGen implements IGenerator {
 			return r;
 		}
 	}
+
 }

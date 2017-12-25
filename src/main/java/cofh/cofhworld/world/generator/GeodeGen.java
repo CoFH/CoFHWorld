@@ -55,7 +55,6 @@ public class GeodeGen implements IGenerator {
 		if (yStart <= heightOff) {
 			return false;
 		}
-
 		yStart -= heightOff;
 		boolean[] spawnBlock = new boolean[width * width * height];
 		boolean[] hollowBlock = new boolean[width * width * height];
@@ -136,7 +135,6 @@ public class GeodeGen implements IGenerator {
 				}
 			}
 		}
-
 		return r;
 	}
 
@@ -173,4 +171,5 @@ public class GeodeGen implements IGenerator {
 			return r;
 		}
 	}
+
 }

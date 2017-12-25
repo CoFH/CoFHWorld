@@ -60,9 +60,7 @@ public class DecorationGen implements IGenerator {
 				++l;
 				continue;
 			}
-
 			if ((!seeSky || world.canSeeSky(new BlockPos(x, y, z))) && ClusterGen.canGenerateInBlock(world, x, y - 1, z, onBlock) && ClusterGen.canGenerateInBlock(world, x, y, z, genBlock)) {
-
 				WeightedRandomBlock block = ClusterGen.selectBlock(world, cluster);
 				int stack = stackHeight.intValue(world, rand, pos);
 				do {
@@ -92,7 +90,6 @@ public class DecorationGen implements IGenerator {
 				log.error("Invalid 'cluster-size' for DecorationGen on feature {}", name);
 				return null;
 			}
-
 			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
 			ConfigObject genData = genObject.root();
 			if (!genObject.hasPath("surface")) {
@@ -107,7 +104,6 @@ public class DecorationGen implements IGenerator {
 					list.add(new WeightedRandomBlock(Blocks.GRASS));
 				}
 			}
-
 			DecorationGen r = new DecorationGen(resList, new ConstantProvider(clusterSize), matList, list);
 			if (genObject.hasPath("see-sky")) {
 				r.seeSky = genObject.getBoolean("see-sky");
@@ -130,4 +126,5 @@ public class DecorationGen implements IGenerator {
 			return r;
 		}
 	}
+
 }

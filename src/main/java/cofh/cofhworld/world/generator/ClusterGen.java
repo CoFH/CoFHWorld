@@ -146,7 +146,6 @@ public class ClusterGen implements IGenerator {
 		if (mat == null || mat.length == 0) {
 			return true;
 		}
-
 		IBlockState state = world.getBlockState(pos);
 		for (int j = 0, e = mat.length; j < e; ++j) {
 			WeightedRandomBlock genBlock = mat[j];
@@ -162,7 +161,6 @@ public class ClusterGen implements IGenerator {
 		if (mat == null || mat.length == 0) {
 			return generateBlock(world, x, y, z, o);
 		}
-
 		if (canGenerateInBlock(world, x, y, z, mat)) {
 			return generateBlock(world, x, y, z, o);
 		}
@@ -197,8 +195,8 @@ public class ClusterGen implements IGenerator {
 				log.error("Invalid 'cluster-size' for ClusterGen on feature {}", name);
 				return null;
 			}
-
 			return new ClusterGen(resList, clusterSize, matList);
 		}
 	}
+
 }

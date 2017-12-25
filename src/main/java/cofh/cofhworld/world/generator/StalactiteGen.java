@@ -29,11 +29,9 @@ public class StalactiteGen extends StalagmiteGen {
 		while (world.isAirBlock(new BlockPos(xStart, yStart, zStart)) && yStart < end) {
 			++yStart;
 		}
-
 		if (!ClusterGen.canGenerateInBlock(world, xStart, yStart--, zStart, baseBlock)) {
 			return false;
 		}
-
 		int maxHeight = rand.nextInt(heightVariance) + minHeight;
 
 		int size = genSize > 0 ? genSize : maxHeight / heightMod + rand.nextInt(sizeVariance);
@@ -60,4 +58,5 @@ public class StalactiteGen extends StalagmiteGen {
 			return commonParse(new StalactiteGen(resList, matList), generatorName, genObject, log);
 		}
 	}
+
 }

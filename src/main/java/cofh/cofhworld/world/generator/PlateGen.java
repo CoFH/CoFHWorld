@@ -58,7 +58,6 @@ public class PlateGen implements IGenerator {
 				}
 			}
 		}
-
 		return r;
 	}
 
@@ -83,4 +82,5 @@ public class PlateGen implements IGenerator {
 			return r;
 		}
 	}
+
 }

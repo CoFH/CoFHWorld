@@ -119,7 +119,6 @@ public class FeatureParser {
 				}
 			}
 		}
-
 		for (int i = 0; i < worldGenList.size(); ++i) {
 			File genFile = worldGenList.get(i);
 
@@ -128,7 +127,6 @@ public class FeatureParser {
 				addFiles(worldGenList, genFile);
 			}
 		}
-
 		for (int i = 0, e = worldGenList.size(); i < e; ++i) {
 			File genFile = worldGenList.get(i);
 			String file = WorldProps.worldGenPath.relativize(Paths.get(genFile.getPath())).toString();
@@ -140,12 +138,10 @@ public class FeatureParser {
 				log.error("Critical error reading from a world generation file: \"{}\" > Please be sure the file is correct!", genFile, t);
 				continue;
 			}
-
 			if (genList.hasPath("dependencies") && !processDependencies(genList.getValue("dependencies"))) {
 				log.info("Unmet dependencies to load {}", file);
 				continue;
 			}
-
 			if (genList.hasPath("populate")) {
 				log.info("Reading world generation info from: {}:", file);
 				Config genData = genList.getConfig("populate");
@@ -297,12 +293,10 @@ public class FeatureParser {
 		if (!genObject.hasPath("generator")) {
 			return null;
 		}
-
 		boolean midAir = genObject.hasPath("mid-air") && genObject.getBoolean("mid-air");
 		if (midAir) {
 			log.info("Enabling mid-air generation on {}", featureName);
 		}
-
 		List<WeightedRandomBlock> matList = new ArrayList<WeightedRandomBlock>(defaultMaterial);
 		if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
 			if (WorldProps.verboseLogging) {
@@ -310,7 +304,6 @@ public class FeatureParser {
 			}
 			matList = defaultMaterial;
 		}
-
 		ConfigValue genData = genObject.root().get("generator");
 		ConfigValueType genDataType = genData.valueType();
 
@@ -328,7 +321,6 @@ public class FeatureParser {
 				gens.add(new WeightedRandomWorldGenerator(gen, weight));
 			}
 			return new MultiGen(gens);
-
 		} else {
 			log.error("Invalid generator data type for {}; must be an object or list.", featureName);
 			return null;
@@ -350,12 +342,10 @@ public class FeatureParser {
 		if (!FeatureParser.parseResList(genObject.getValue("block"), resList, true)) {
 			return null;
 		}
-
 		IGeneratorParser parser = generatorParsers.get(name);
 		if (parser == null) {
 			throw new IllegalStateException("Generator '" + name + "' is not registered!");
 		}
-
 		// If mid-air generation is enabled, make sure to add Air to the list of valid materials
 		// TODO: Verify that this works as expected with decoration & surface
 		if (midAir) {

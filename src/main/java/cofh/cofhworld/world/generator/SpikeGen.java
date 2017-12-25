@@ -43,21 +43,17 @@ public class SpikeGen implements IGenerator {
 		while (world.isAirBlock(new BlockPos(xStart, yStart, zStart)) && yStart > 2) {
 			--yStart;
 		}
-
 		if (!ClusterGen.canGenerateInBlock(world, xStart, yStart, zStart, genBlock)) {
 			return false;
 		}
-
 		int height = rand.nextInt(heightVariance) + minHeight, originalHeight = height;
 		int size = height / (minHeight / 2) + rand.nextInt(sizeVariance);
 		if (size > 1 && positionVariance > 0) {
 			yStart += rand.nextInt(positionVariance + 1) - 1;
 		}
-
 		if (largeSpikes && size > 1 && (largeSpikeChance <= 0 || rand.nextInt(largeSpikeChance) == 0)) {
 			height += minLargeSpikeHeightGain + rand.nextInt(largeSpikeHeightVariance);
 		}
-
 		int offsetHeight = height - originalHeight;
 
 		for (int y = 0; y < height; ++y) {
@@ -126,4 +122,5 @@ public class SpikeGen implements IGenerator {
 			return r;
 		}
 	}
+
 }

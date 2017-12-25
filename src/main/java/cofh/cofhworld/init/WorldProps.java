@@ -143,6 +143,6 @@ public class WorldProps {
 	public static int numBedrockLayers = 1;
 	public static int maxBedrockLayers = 8;
 
-	public static boolean verboseLogging = false;
+	public static boolean verboseLogging = true;
 
 }

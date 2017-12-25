@@ -129,10 +129,9 @@ public class LargeVeinGen implements IGenerator {
 				log.error("Invalid 'cluster-size' setting for LargeVeinGen on feature {}", name);
 				return null;
 			}
-
 			boolean sparse = genObject.hasPath("sparse") ? genObject.getBoolean("sparse") : true;
 			return new LargeVeinGen(resList, clusterSize, matList, sparse);
 		}
-
 	}
+
 }

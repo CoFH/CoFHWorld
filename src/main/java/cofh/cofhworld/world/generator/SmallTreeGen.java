@@ -46,7 +46,6 @@ public class SmallTreeGen implements IGenerator {
 				return relaxedGrowth ? 0 : 1;
 			}
 		}
-
 		if (level >= 1 + height - 4) {
 			return 1 - ((level - height) / 2);
 		} else {
@@ -74,7 +73,6 @@ public class SmallTreeGen implements IGenerator {
 			if (!ClusterGen.canGenerateInBlock(world, x, y - 1, z, genSurface)) {
 				return false;
 			}
-
 			if (y < worldHeight - treeHeight - 1) {
 				if (treeChecks) {
 					for (yOffset = y; yOffset <= y + 1 + treeHeight; ++yOffset) {
@@ -118,7 +116,6 @@ public class SmallTreeGen implements IGenerator {
 							return false;
 						}
 					}
-
 					if (!ClusterGen.canGenerateInBlock(world, x, y - 1, z, genSurface)) {
 						return false;
 					}
@@ -126,7 +123,6 @@ public class SmallTreeGen implements IGenerator {
 					state = world.getBlockState(offsetPos);
 					state.getBlock().onPlantGrow(state, world, offsetPos, new BlockPos(x, y, z));
 				}
-
 				boolean r = false;
 
 				for (yOffset = y; yOffset <= y + treeHeight; ++yOffset) {
@@ -136,7 +132,6 @@ public class SmallTreeGen implements IGenerator {
 					if (radius <= 0) {
 						continue;
 					}
-
 					for (xOffset = x - radius; xOffset <= x + radius; ++xOffset) {
 						int xPos = xOffset - x, t;
 						xPos = (xPos + (t = xPos >> 31)) ^ t;
@@ -153,7 +148,6 @@ public class SmallTreeGen implements IGenerator {
 						}
 					}
 				}
-
 				for (yOffset = 0; yOffset < treeHeight; ++yOffset) {
 					offsetPos = new BlockPos(x, y + yOffset, z);
 					state = world.getBlockState(offsetPos);
@@ -162,7 +156,6 @@ public class SmallTreeGen implements IGenerator {
 						r |= ClusterGen.generateBlock(world, x, yOffset + y, z, trunk);
 					}
 				}
-
 				return r;
 			}
 		}
@@ -184,7 +177,6 @@ public class SmallTreeGen implements IGenerator {
 					blocks.add(new WeightedRandomBlock(Blocks.DIRT));
 				}
 			}
-
 			// TODO: Should this be a required parameter?
 			if (genObject.hasPath("leaves")) {
 				list = new ArrayList<>();
@@ -199,14 +191,12 @@ public class SmallTreeGen implements IGenerator {
 			if (blocks.size() > 0) {
 				r.genSurface = blocks.toArray(new WeightedRandomBlock[blocks.size()]);
 			}
-
 			if (genObject.hasPath("min-height")) {
 				r.minHeight = genObject.getInt("min-height");
 			}
 			if (genObject.hasPath("height-variance")) {
 				r.heightVariance = genObject.getInt("height-variance");
 			}
-
 			if (genObject.hasPath("tree-checks")) {
 				r.treeChecks = genObject.getBoolean("tree-checks");
 			}
@@ -219,8 +209,8 @@ public class SmallTreeGen implements IGenerator {
 			if (genObject.hasPath("leaf-variance")) {
 				r.leafVariance = genObject.getBoolean("leaf-variance");
 			}
-
 			return r;
 		}
 	}
+
 }

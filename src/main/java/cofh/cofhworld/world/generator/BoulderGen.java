@@ -48,7 +48,6 @@ public class BoulderGen implements IGenerator {
 			if (yCenter <= (minSize + var + 1)) {
 				return false;
 			}
-
 			if (ClusterGen.canGenerateInBlock(world, xCenter, yCenter - 1, zCenter, genBlock)) {
 
 				int xWidth = minSize + (var > 1 ? rand.nextInt(var) : 0);
@@ -79,12 +78,10 @@ public class BoulderGen implements IGenerator {
 					}
 				}
 			}
-
 			xCenter += rand.nextInt(var + minSize * 2) - (minSize + var / 2);
 			zCenter += rand.nextInt(var + minSize * 2) - (minSize + var / 2);
 			yCenter += rand.nextInt((var + 1) * 3) - (var + 1);
 		}
-
 		return r;
 	}
 
@@ -98,7 +95,6 @@ public class BoulderGen implements IGenerator {
 				log.error("Invalid 'diameter' for BoulderGen on feature {}", name);
 				return null;
 			}
-
 			BoulderGen r = new BoulderGen(resList, clusterSize, matList);
 			if (genObject.hasPath("size-variance")) {
 				r.sizeVariance = genObject.getInt("size-variance");
@@ -121,4 +117,5 @@ public class BoulderGen implements IGenerator {
 			return r;
 		}
 	}
+
 }

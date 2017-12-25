@@ -108,7 +108,6 @@ public class SparseClusterGen implements IGenerator {
 				}
 			}
 		}
-
 		return r;
 	}
 
@@ -122,8 +121,8 @@ public class SparseClusterGen implements IGenerator {
 				log.error("Invalid 'cluster-size' setting for SparseClusterGen on feature {}", name);
 				return null;
 			}
-
 			return new SparseClusterGen(resList, clusterSize, matList);
 		}
 	}
+
 }
