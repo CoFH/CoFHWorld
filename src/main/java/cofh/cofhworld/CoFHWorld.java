@@ -21,12 +21,12 @@ public class CoFHWorld {
 	public static final String MOD_ID = "cofhworld";
 	public static final String MOD_NAME = "CoFH World";
 
-	public static final String VERSION = "1.0.2";
-	public static final String VERSION_MAX = "1.1.0";
+	public static final String VERSION = "1.1.1";
+	public static final String VERSION_MAX = "1.2.0";
 	public static final String VERSION_GROUP = "required-after:" + MOD_ID + "@[" + VERSION + "," + VERSION_MAX + ");";
 	public static final String UPDATE_URL = "https://raw.github.com/cofh/version/master/" + MOD_ID + "_update.json";
 
-	public static final String DEPENDENCIES = "required-after:forge@[" + "14.21.1.2388,15.0.0.0" + ");";
+	public static final String DEPENDENCIES = "required-after:forge@[" + "14.23.1.2555,15.0.0.0" + ");";
 
 	@Instance (MOD_ID)
 	public static CoFHWorld instance;
