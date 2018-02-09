@@ -43,6 +43,8 @@ public class WorldHandler implements IWorldGenerator {
 	private static Set<EventType> standardGenEvents = new THashSet<>();
 	private static LinkedHashList<ChunkReference> populatingChunks = new LinkedHashList<>();
 
+	private static List<Runnable> reloadCallbacks = new LinkedList<>();
+
 	private static long genHash = 0;
 
 	static {
@@ -98,6 +100,11 @@ public class WorldHandler implements IWorldGenerator {
 
 	}
 
+	public static void registerReloadCallback(Runnable callback) {
+
+		reloadCallbacks.add(callback);
+	}
+
 	public static boolean reloadConfig() {
 		// Reset all features so that config will reload properly
 		features.clear();
@@ -106,6 +113,7 @@ public class WorldHandler implements IWorldGenerator {
 		// Parse all the generation files into features
 		try {
 			FeatureParser.parseGenerationFiles();
+			reloadCallbacks.forEach(Runnable::run);
 			return true;
 		} catch (Throwable t) {
 			t.printStackTrace();
