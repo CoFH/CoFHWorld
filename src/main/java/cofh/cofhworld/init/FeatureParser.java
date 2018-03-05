@@ -131,6 +131,7 @@ public class FeatureParser {
 				addFiles(worldGenList, genFile);
 			}
 		}
+		ArrayList<Config> processedGenList = new ArrayList<Config>(worldGenList.size());
 		for (int i = 0, e = worldGenList.size(); i < e; ++i) {
 			File genFile = worldGenList.get(i);
 			String file = WorldProps.worldGenPath.relativize(Paths.get(genFile.getPath())).toString();
@@ -146,6 +147,37 @@ public class FeatureParser {
 				log.info("Unmet dependencies to load {}", file);
 				continue;
 			}
+			
+			processedGenList.add(genList);
+		}
+		
+		// TODO: stream? is it worth it? wrap Config in a holder: store filename, pre-processed priority
+		Collections.sort(processedGenList, new Comparator<Config>() {
+			@Override
+			public int compare(Config l, Config, r) {
+				long lv = 0, rv = 0;
+				if (l.hasPath("priority")) {
+					try {
+						lv = l.getLong("priority");
+					} catch (Throwable t) {
+						// wrong type
+					}
+				}
+				if (r.hasPath("priority")) {
+					try {
+						rv = r.getLong("priority");
+					} catch (Throwable t) {
+						// wrong type
+					}
+				}
+				
+				return lv < rv ? -1 : (lv == rv ? 0 : 1);
+			}
+		});
+
+		for (int i = 0, e = processedGenList.size(); i < e; ++i) {
+			Config genList = processedGenList.get(i);
+
 			if (genList.hasPath("populate")) {
 				log.info("Reading world generation info from: {}:", file);
 				Config genData = genList.getConfig("populate");
