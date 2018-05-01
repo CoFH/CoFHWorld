@@ -110,7 +110,7 @@ public class FeatureParser {
 		ArrayList<File> worldGenList = new ArrayList<>(5);
 		{
 			int i = 0;
-			if (WorldProps.disableStandardGeneration) {
+			if (WorldProps.replaceStandardGeneration) {
 				worldGenList.add(WorldProps.standardGenFile); // prioritize this over all other files
 				++i;
 			}
@@ -123,7 +123,6 @@ public class FeatureParser {
 				}
 			}
 		}
-
 		for (int i = 0; i < worldGenList.size(); ++i) {
 			File genFile = worldGenList.get(i);
 
@@ -132,7 +131,6 @@ public class FeatureParser {
 				addFiles(worldGenList, genFile);
 			}
 		}
-
 		for (int i = 0, e = worldGenList.size(); i < e; ++i) {
 			File genFile = worldGenList.get(i);
 			String file = WorldProps.worldGenPath.relativize(Paths.get(genFile.getPath())).toString();
@@ -144,12 +142,10 @@ public class FeatureParser {
 				log.error("Critical error reading from a world generation file: \"{}\" > Please be sure the file is correct!", genFile, t);
 				continue;
 			}
-
 			if (genList.hasPath("dependencies") && !processDependencies(genList.getValue("dependencies"))) {
 				log.info("Unmet dependencies to load {}", file);
 				continue;
 			}
-
 			if (genList.hasPath("populate")) {
 				log.info("Reading world generation info from: {}:", file);
 				Config genData = genList.getConfig("populate");
@@ -263,7 +259,6 @@ public class FeatureParser {
 				return EnumActionResult.SUCCESS;
 			}
 		}
-
 		String templateName = parseTemplate(genObject);
 		IFeatureParser template = templateHandlers.get(templateName);
 		if (template != null) {

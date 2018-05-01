@@ -65,7 +65,7 @@ public class WorldHandler implements IWorldGenerator {
 		standardGenEvents.add(EventType.SILVERFISH);
 	}
 
-	//TODO FIXME, Where is the propper place for this, Only used by FeatureParser
+	// TODO: FIXME, Where is the propper place for this, Only used by FeatureParser
 	private static Map<String, ModContainer> apis;
 
 	public static Map<String, ModContainer> getLoadedAPIs() {
@@ -106,6 +106,11 @@ public class WorldHandler implements IWorldGenerator {
 	}
 
 	public static boolean reloadConfig() {
+
+		if (WorldProps.disableFeatureGeneration) {
+			CoFHWorld.log.warn(" Feature Generation has been disabled via the Config file. This option should only be set if you have explicitly configured another mod to handle ore generation.");
+			return false;
+		}
 		// Reset all features so that config will reload properly
 		features.clear();
 		featureNames.clear();
@@ -265,7 +270,7 @@ public class WorldHandler implements IWorldGenerator {
 	@SubscribeEvent (priority = EventPriority.HIGHEST, receiveCanceled = true)
 	public void handleOreGenEvent(OreGenEvent.GenerateMinable event) {
 
-		if (!WorldProps.disableStandardGeneration) {
+		if (!WorldProps.replaceStandardGeneration) {
 			return;
 		}
 		if (standardGenEvents.contains(event.getType())) {
@@ -365,17 +370,17 @@ public class WorldHandler implements IWorldGenerator {
 		int meta = 0; // no meta field for filler
 		switch (world.provider.getDimension()) {
 			case -1:
-			/* This is a hack because Mojang coded the Nether wrong. Are you surprised? */
+				/* This is a hack because Mojang coded the Nether wrong. Are you surprised? */
 				filler = Blocks.NETHERRACK.getDefaultState();
 				break;
 			case 0:
-			/*
-			 * Due to above note, overworld gets replaced with stone. other dimensions are on their own for helping us with the filler block
-			 */
+				/*
+				 * Due to above note, overworld gets replaced with stone. other dimensions are on their own for helping us with the filler block
+				 */
 				filler = Blocks.STONE.getDefaultState();
 				break;
 			case 1:
-			/* This is a hack because Mojang coded The End wrong. Are you surprised? */
+				/* This is a hack because Mojang coded The End wrong. Are you surprised? */
 				filler = Blocks.END_STONE.getDefaultState();
 				break;
 

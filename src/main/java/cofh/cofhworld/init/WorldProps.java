@@ -19,21 +19,23 @@ public class WorldProps {
 
 	public static void preInit() {
 
-		configCommon();
-
-		init();
+		config();
+		initFeatures();
 	}
 
 	/* HELPERS */
-	private static void configCommon() {
+	private static void config() {
 
 		String category;
 		String comment;
 
 		category = "World";
 
+		comment = "If TRUE, CoFH World will not generate features at all. This option is intended for use when you want another mod to handle ore generation but do not want to blank out the various .json files yourself. Flat Bedrock may still be used.";
+		disableFeatureGeneration = CoFHWorld.config.getBoolean("DisableAllGeneration", category, disableFeatureGeneration, comment);
+
 		comment = "If TRUE, standard Minecraft ore generation will be REPLACED. Configure in the 00_minecraft.json file; standard Minecraft defaults have been provided. If you rename the 00_minecraft.json file, this option WILL NOT WORK.";
-		disableStandardGeneration = CoFHWorld.config.getBoolean("ReplaceStandardGeneration", category, disableStandardGeneration, comment);
+		replaceStandardGeneration = CoFHWorld.config.getBoolean("ReplaceStandardGeneration", category, replaceStandardGeneration, comment);
 
 		comment = "If TRUE, world generation handled by CoFH World will be retroactively applied to existing chunks.";
 		enableRetroactiveGeneration = CoFHWorld.config.getBoolean("RetroactiveGeneration", category, enableRetroactiveGeneration, comment);
@@ -53,7 +55,7 @@ public class WorldProps {
 		enableRetroactiveFlatBedrock = CoFHWorld.config.getBoolean("EnableRetroactiveFlatBedrock", category, enableRetroactiveFlatBedrock, comment);
 	}
 
-	private static void init() {
+	private static void initFeatures() {
 
 		log.info("Registering default Feature Templates...");
 		FeatureParser.registerTemplate("gaussian", new GaussianParser());
@@ -109,7 +111,7 @@ public class WorldProps {
 				throw new Error("Unable to create standard generation json (unspecified error).");
 			}
 		} catch (Throwable t) {
-			disableStandardGeneration = false;
+			replaceStandardGeneration = false;
 			log.error("Could not create standard generation json.", t);
 		}
 		log.info("Complete.");
@@ -126,7 +128,8 @@ public class WorldProps {
 	public static final String FILE_GEN_STANDARD_INTERNAL = "00_minecraft.json";
 	public static final String PATH_GEN_STANDARD_INTERNAL = "assets/cofhworld/world/" + FILE_GEN_STANDARD_INTERNAL;
 
-	public static boolean disableStandardGeneration = false;
+	public static boolean disableFeatureGeneration;
+	public static boolean replaceStandardGeneration = false;
 	public static boolean enableRetroactiveGeneration = false;
 
 	public static boolean enableFlatBedrock = false;

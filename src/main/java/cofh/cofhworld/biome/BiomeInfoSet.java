@@ -201,11 +201,9 @@ public class BiomeInfoSet implements Set<BiomeInfo> {
 	public void clear() {
 
 		modCount++;
-
 		for (int i = 0; i < size; i++) {
 			elementData[i] = null;
 		}
-
 		size = 0;
 	}
 
@@ -260,4 +258,5 @@ public class BiomeInfoSet implements Set<BiomeInfo> {
 			}
 		}
 	}
+
 }
