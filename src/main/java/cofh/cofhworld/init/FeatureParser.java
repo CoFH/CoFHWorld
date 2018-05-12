@@ -507,7 +507,11 @@ public class FeatureParser {
 
 	public static Block parseBlockName(String blockRaw) {
 
-		return ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockRaw));
+		ResourceLocation loc = new ResourceLocation(blockRaw);
+		if (ForgeRegistries.BLOCKS.containsKey(loc)) {
+			return ForgeRegistries.BLOCKS.getValue(loc);
+		}
+		return null;
 	}
 
 	public static WeightedRandomBlock parseBlockEntry(ConfigValue genElement, boolean clamp) {
@@ -526,7 +530,7 @@ public class FeatureParser {
 				}
 				String blockName;
 				block = parseBlockName(blockName = blockElement.getString("name"));
-				if (block == Blocks.AIR && !blockName.equalsIgnoreCase("minecraft:air")) {
+				if (block == null) {
 					log.error("Invalid block entry!");
 					return null;
 				}
@@ -555,9 +559,8 @@ public class FeatureParser {
 					return new WeightedRandomBlock(block, metadata, weight);
 				}
 			case STRING:
-				String name = (String) genElement.unwrapped();
-				block = parseBlockName(name);
-				if (block == Blocks.AIR && !name.equalsIgnoreCase("minecraft:air")) {
+				block = parseBlockName((String) genElement.unwrapped());
+				if (block == null) {
 					log.error("Invalid block entry!");
 					return null;
 				}
