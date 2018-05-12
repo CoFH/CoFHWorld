@@ -90,7 +90,7 @@ public class FeatureParser {
 				return false;
 			} else if (new File(file, name).isDirectory()) {
 				dirs.incrementAndGet();
-				return true;
+				return !"includes".equalsIgnoreCase(name);
 			}
 			return name.toLowerCase(Locale.US).endsWith(".json");
 		});
