@@ -107,10 +107,17 @@ public class FeatureParser {
 
 	public static void parseGenerationFiles() {
 
+		log.info("Accumulating world generation files from: \"{}\"", WorldProps.worldGenPath.toString());
 		ArrayList<File> worldGenList = new ArrayList<>(5);
+
 		{
+			/*
+			 * Standard generation file handled specially, so we break out the first pass of adding files and folders
+			 */
 			int i = 0;
 			if (WorldProps.replaceStandardGeneration) {
+				log.info("Replacing standard generation with file \"{}\"",
+						WorldProps.worldGenPath.relativize(Paths.get(WorldProps.standardGenFile.getPath())));
 				worldGenList.add(WorldProps.standardGenFile); // prioritize this over all other files
 				++i;
 			}
@@ -123,6 +130,8 @@ public class FeatureParser {
 				}
 			}
 		}
+
+		// Continue scanning nested folders, breadth first
 		for (int i = 0; i < worldGenList.size(); ++i) {
 			File genFile = worldGenList.get(i);
 
@@ -131,6 +140,7 @@ public class FeatureParser {
 				addFiles(worldGenList, genFile);
 			}
 		}
+
 		ArrayList<Config> processedGenList = new ArrayList<Config>(worldGenList.size());
 		for (int i = 0, e = worldGenList.size(); i < e; ++i) {
 			File genFile = worldGenList.get(i);
@@ -138,20 +148,22 @@ public class FeatureParser {
 
 			Config genList;
 			try {
+				log.debug("Parsing world generation file: \"{}\"", file);
 				genList = ConfigFactory.parseFile(genFile, Includer.options).resolve(Includer.resolveOptions);
 			} catch (Throwable t) {
 				log.error("Critical error reading from a world generation file: \"{}\" > Please be sure the file is correct!", genFile, t);
 				continue;
 			}
+
 			if (genList.hasPath("dependencies") && !processDependencies(genList.getValue("dependencies"))) {
-				log.info("Unmet dependencies to load {}", file);
+				log.debug("Unmet dependencies to load file \"{}\"", file);
 				continue;
 			}
 			if (genList.hasPath("enabled")) {
 				ConfigValue en = genList.getValue("enabled");
 				if (en.valueType() == ConfigValueType.BOOLEAN) {
 					if (!genList.getBoolean("enabled")) {
-						log.info("Generation file \"{}\" is being skipped because it is disabled.", file);
+						log.debug("Generation file \"{}\" is being skipped because it is disabled.", file);
 						continue;
 					}
 				} else {
@@ -159,7 +171,8 @@ public class FeatureParser {
 					continue;
 				}
 			}
-			
+
+			log.trace("World generation file \"{}\" ready to be processed", file);
 			processedGenList.add(genList);
 		}
 		
@@ -191,8 +204,8 @@ public class FeatureParser {
 			Config genList = processedGenList.get(i);
 			String file = WorldProps.worldGenPath.relativize(Paths.get(genList.origin().url().getPath())).toString();
 
+			log.info("Reading world generation info from: \"{}\":", file);
 			if (genList.hasPath("populate")) {
-				log.info("Reading world generation info from: {}:", file);
 				Config genData = genList.getConfig("populate");
 				for (Entry<String, ConfigValue> genEntry : genData.root().entrySet()) {
 					String key = genEntry.getKey();
@@ -222,10 +235,10 @@ public class FeatureParser {
 						log.fatal("There was a severe error parsing '{}'!", key, t);
 					}
 				}
-				log.info("Finished reading {}", file);
 			} else {
 
 			}
+			log.debug("Finished reading \"{}\"", file);
 		}
 	}
 
@@ -300,7 +313,7 @@ public class FeatureParser {
 
 		if (genObject.hasPath("enabled")) {
 			if (!genObject.getBoolean("enabled")) {
-				log.info('"' + featureName + "\" is disabled.");
+				log.debug('"' + featureName + "\" is disabled.");
 				return EnumActionResult.SUCCESS;
 			}
 		}
@@ -364,8 +377,7 @@ public class FeatureParser {
 			return null;
 		}
 
-		List<WeightedRandomBlock> matList = defaultMaterial;
-		matList = new ArrayList<>();
+		List<WeightedRandomBlock> matList = new ArrayList<>();
 		if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
 			log.warn("Invalid material list! Using default list.");
 			matList = defaultMaterial;
@@ -405,7 +417,7 @@ public class FeatureParser {
 		BiomeInfo info = null;
 		switch (element.valueType()) {
 			case NULL:
-				log.info("Null biome entry. Ignoring.");
+				log.debug("Null biome entry. Ignoring.");
 				break;
 			case OBJECT:
 				Config obj = ((ConfigObject) element).toConfig();
