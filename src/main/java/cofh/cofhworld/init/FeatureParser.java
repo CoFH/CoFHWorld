@@ -147,6 +147,18 @@ public class FeatureParser {
 				log.info("Unmet dependencies to load {}", file);
 				continue;
 			}
+			if (genList.hasPath("enabled")) {
+				ConfigValue en = genList.getValue("enabled");
+				if (en.valueType() == ConfigValueType.BOOLEAN) {
+					if (!genList.getBoolean("enabled")) {
+						log.info("Generation file \"{}\" is being skipped because it is disabled.", file);
+						continue;
+					}
+				} else {
+					log.warn("Generation file \"{}\" is being skipped because the file's global `enabled` flag is not a boolean.", file);
+					continue;
+				}
+			}
 			
 			processedGenList.add(genList);
 		}
