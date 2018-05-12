@@ -748,7 +748,7 @@ public class FeatureParser {
 			if (item.hasPath("ore-name")) {
 				String oreName = item.getString("ore-name");
 				if (!Utils.oreNameExists(oreName)) {
-					log.error("Invalid ore name for item at line {}!", genElement.origin().lineNumber());
+					log.error("Invalid ore name `{}` for item at line {}!", oreName, genElement.origin().lineNumber());
 					return null;
 				}
 				ItemStack oreStack = OreDictionary.getOres(oreName, false).get(0);
