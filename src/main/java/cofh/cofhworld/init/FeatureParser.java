@@ -171,7 +171,7 @@ public class FeatureParser {
 					}
 				}
 				
-				return lv < rv ? -1 : (lv == rv ? 0 : 1);
+				return lv < rv ? 1 : (lv == rv ? 0 : -1);
 			}
 		});
 
