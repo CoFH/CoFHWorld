@@ -555,7 +555,20 @@ public class FeatureParser {
 					}
 					return new WeightedRandomBlock(state, weight);
 				} else {
-					int metadata = blockElement.hasPath("data") ? MathHelper.clamp(blockElement.getInt("data"), min, 15) : blockElement.hasPath("metadata") ? MathHelper.clamp(blockElement.getInt("metadata"), min, 15) : min;
+					ConfigValue data = null;
+					if (blockElement.hasPath("data")) {
+						data = blockElement.getValue("data");
+					} else if (blockElement.hasPath("metadata")) {
+						data = blockElement.getValue("metadata");
+					}
+					if (data != null) {
+						log.warn("Using `metadata` (at line: {}) for blocks is deprecated, and will be removed in the future. Use `properties` instead.",
+								data.origin().lineNumber());
+						if (data.valueType() != ConfigValueType.NUMBER) {
+							data = null; // silently consume the error. logic is deprecated anyway.
+						}
+					}
+					int metadata = data != null ? MathHelper.clamp(((Number) data.unwrapped()).intValue(), min, 15) : min;
 					return new WeightedRandomBlock(block, metadata, weight);
 				}
 			case STRING:
