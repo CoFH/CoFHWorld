@@ -663,7 +663,7 @@ public class FeatureParser {
 		return true;
 	}
 
-	public static DungeonMob parseWeightedStringEntry(ConfigValue genElement) {
+	public static WeightedRandomString parseWeightedStringEntry(ConfigValue genElement) {
 
 		int weight = 100;
 		String type = null;
@@ -691,23 +691,23 @@ public class FeatureParser {
 				type = String.valueOf(genElement.unwrapped());
 				break;
 		}
-		return new DungeonMob(weight, new ResourceLocation(type));
+		return new WeightedRandomString(type, weight);
 	}
 
-	public static boolean parseWeightedStringList(ConfigValue genElement, List<DungeonMob> list) {
+	public static boolean parseWeightedStringList(ConfigValue genElement, List<WeightedRandomString> list) {
 
 		if (genElement.valueType() == ConfigValueType.LIST) {
 			ConfigList blockList = (ConfigList) genElement;
 
 			for (int i = 0, e = blockList.size(); i < e; i++) {
-				DungeonMob entry = parseWeightedStringEntry(blockList.get(i));
+				WeightedRandomString entry = parseWeightedStringEntry(blockList.get(i));
 				if (entry == null) {
 					return false;
 				}
 				list.add(entry);
 			}
 		} else {
-			DungeonMob entry = parseWeightedStringEntry(genElement);
+			WeightedRandomString entry = parseWeightedStringEntry(genElement);
 			if (entry == null) {
 				return false;
 			}

@@ -5,6 +5,7 @@ import cofh.cofhworld.feature.generator.FeatureBase.GenRestriction;
 import cofh.cofhworld.feature.generator.FeatureGenUnderfluid;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.WeightedRandomString;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import com.typesafe.config.Config;
 import net.minecraft.init.Blocks;
@@ -38,15 +39,15 @@ public class UnderfluidParser extends UniformParser {
 		Set<String> fluidList = new HashSet<>();
 		l:
 		if (genObject.hasPath("fluid")) {
-			ArrayList<DungeonMob> list = new ArrayList<>();
+			ArrayList<WeightedRandomString> list = new ArrayList<>();
 			if (!FeatureParser.parseWeightedStringList(genObject.root().get("fluid"), list)) {
 				break l;
 			}
 			water = false;
-			for (DungeonMob str : list) {
+			for (WeightedRandomString str : list) {
 				// ints.add(FluidRegistry.getFluidID(str.type));
 				// NOPE. this NPEs.
-				Fluid fluid = FluidRegistry.getFluid(str.type.getResourcePath());
+				Fluid fluid = FluidRegistry.getFluid(str.value);
 				if (fluid != null) {
 					fluidList.add(fluid.getName());
 				}
