@@ -154,7 +154,7 @@ public class FeatureParser {
 		// TODO: stream? is it worth it? wrap Config in a holder: store filename, pre-processed priority
 		Collections.sort(processedGenList, new Comparator<Config>() {
 			@Override
-			public int compare(Config l, Config, r) {
+			public int compare(Config l, Config r) {
 				long lv = 0, rv = 0;
 				if (l.hasPath("priority")) {
 					try {
@@ -177,6 +177,7 @@ public class FeatureParser {
 
 		for (int i = 0, e = processedGenList.size(); i < e; ++i) {
 			Config genList = processedGenList.get(i);
+			String file = WorldProps.worldGenPath.relativize(Paths.get(genList.origin().url().getPath())).toString();
 
 			if (genList.hasPath("populate")) {
 				log.info("Reading world generation info from: {}:", file);
