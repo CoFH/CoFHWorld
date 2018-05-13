@@ -18,6 +18,8 @@ local.properties
 .settings/
 .loadpath
 crash-reports/
+run/
+out/
 logs/
 mods/
 resourcepacks/
