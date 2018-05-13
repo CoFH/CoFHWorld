@@ -73,10 +73,10 @@ public class WorldGenSpike extends WorldGenerator {
 
 					if ((x == 0 && z == 0 || xDist * xDist + zDist * zDist <= layerSize * layerSize) && (x != -width && x != width && z != -width && z != width || rand.nextFloat() <= 0.75F)) {
 
-						WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, genBlock, cluster);
+						WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
 
 						if (y != 0 && width > 1) {
-							WorldGenMinableCluster.generateBlock(world, xStart + x, yStart - y + offsetHeight, zStart + z, genBlock, cluster);
+							WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart - y + offsetHeight, zStart + z, genBlock, cluster);
 						}
 					}
 				}

@@ -141,7 +141,7 @@ public class WorldGenSmallTree extends WorldGenerator {
 							state = world.getBlockState(offsetPos);
 
 							if (((xPos != radius | zPos != radius) || (!leafVariance || (rand.nextInt(2) != 0 && var12 != 0))) && ((treeChecks && (state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos))) || WorldGenMinableCluster.canGenerateInBlock(world, offsetPos, genBlock))) {
-								r |= WorldGenMinableCluster.generateBlock(world, xOffset, yOffset, zOffset, leaves);
+								r |= WorldGenMinableCluster.generateBlock(world, rand, xOffset, yOffset, zOffset, leaves);
 							}
 						}
 					}
@@ -152,7 +152,7 @@ public class WorldGenSmallTree extends WorldGenerator {
 					state = world.getBlockState(offsetPos);
 
 					if ((treeChecks && (state.getBlock().isAir(state, world, offsetPos) || state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isReplaceable(world, offsetPos))) || WorldGenMinableCluster.canGenerateInBlock(world, offsetPos, genBlock)) {
-						r |= WorldGenMinableCluster.generateBlock(world, x, yOffset + y, z, trunk);
+						r |= WorldGenMinableCluster.generateBlock(world, rand, x, yOffset + y, z, trunk);
 					}
 				}
 

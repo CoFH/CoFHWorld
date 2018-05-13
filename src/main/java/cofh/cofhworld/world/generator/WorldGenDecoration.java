@@ -63,7 +63,7 @@ public class WorldGenDecoration extends WorldGenerator {
 
 			if ((!seeSky || world.canSeeSky(new BlockPos(x, y, z))) && WorldGenMinableCluster.canGenerateInBlock(world, x, y - 1, z, onBlock) && WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
 
-				WeightedRandomBlock block = WorldGenMinableCluster.selectBlock(world, cluster);
+				WeightedRandomBlock block = WorldGenMinableCluster.selectBlock(rand, cluster);
 				int stack = stackHeight.intValue(world, rand, pos);
 				do {
 					// TODO: checkStay logic

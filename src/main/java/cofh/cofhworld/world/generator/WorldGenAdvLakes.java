@@ -122,9 +122,9 @@ public class WorldGenAdvLakes extends WorldGenerator {
 				for (y = 0; y < height; ++y) {
 					if (spawnBlock[(x * width + z) * height + y]) {
 						if (y < heightOff) {
-							WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, genBlock, cluster);
+							WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
 						} else if (WorldGenMinableCluster.canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
-							WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, gapBlock);
+							WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, gapBlock);
 						}
 					}
 				}
@@ -149,7 +149,7 @@ public class WorldGenAdvLakes extends WorldGenerator {
 						boolean flag = !spawnBlock[(x * width + z) * height + y] && ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
 						if (flag && (solidOutline | y < heightOff || rand.nextInt(2) != 0) && (totalOutline || world.getBlockState(new BlockPos(xStart + x, yStart + y, zStart + z)).getMaterial().isSolid())) {
-							WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, outlineBlock);
+							WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, outlineBlock);
 						}
 					}
 				}

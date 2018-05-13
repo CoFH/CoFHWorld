@@ -145,7 +145,7 @@ public class WorldGenMinableCluster extends WorldGenerator {
 						if (zDistSq + xyDistSq >= 1F) {
 							continue;
 						}
-						r |= generateBlock(world, blockX, blockY, blockZ, genBlock, cluster);
+						r |= generateBlock(world, rand, blockX, blockY, blockZ, genBlock, cluster);
 					}
 				}
 			}
@@ -155,14 +155,14 @@ public class WorldGenMinableCluster extends WorldGenerator {
 
 	public boolean generateTiny(World world, Random random, int clusterSize, int x, int y, int z) {
 
-		boolean r = generateBlock(world, x, y, z, genBlock, cluster);
+		boolean r = generateBlock(world, random, x, y, z, genBlock, cluster);
 		// not <=; generating up to clusterSize blocks
 		for (int i = 1; i < clusterSize; i++) {
 			int d0 = x + random.nextInt(2);
 			int d1 = y + random.nextInt(2);
 			int d2 = z + random.nextInt(2);
 
-			r |= generateBlock(world, d0, d1, d2, genBlock, cluster);
+			r |= generateBlock(world, random, d0, d1, d2, genBlock, cluster);
 		}
 		return r;
 	}
@@ -189,32 +189,32 @@ public class WorldGenMinableCluster extends WorldGenerator {
 		return false;
 	}
 
-	public static boolean generateBlock(World world, int x, int y, int z, WeightedRandomBlock[] mat, List<WeightedRandomBlock> o) {
+	public static boolean generateBlock(World world, Random rand, int x, int y, int z, WeightedRandomBlock[] mat, List<WeightedRandomBlock> o) {
 
 		if (mat == null || mat.length == 0) {
-			return generateBlock(world, x, y, z, o);
+			return generateBlock(world, rand, x, y, z, o);
 		}
 
 		if (canGenerateInBlock(world, x, y, z, mat)) {
-			return generateBlock(world, x, y, z, o);
+			return generateBlock(world, rand, x, y, z, o);
 		}
 		return false;
 	}
 
-	public static boolean generateBlock(World world, int x, int y, int z, List<WeightedRandomBlock> o) {
+	public static boolean generateBlock(World world, Random rand, int x, int y, int z, List<WeightedRandomBlock> o) {
 
-		WeightedRandomBlock ore = selectBlock(world, o);
+		WeightedRandomBlock ore = selectBlock(rand, o);
 		return ore != null && world.setBlockState(new BlockPos(x, y, z), ore.getState(), 2);
 	}
 
-	public static WeightedRandomBlock selectBlock(World world, List<WeightedRandomBlock> o) {
+	public static WeightedRandomBlock selectBlock(Random rand, List<WeightedRandomBlock> o) {
 
 		int size = o.size();
 		if (size == 0) {
 			return null;
 		}
 		if (size > 1) {
-			return WeightedRandom.getRandomItem(world.rand, o);
+			return WeightedRandom.getRandomItem(rand, o);
 		}
 		return o.get(0);
 	}

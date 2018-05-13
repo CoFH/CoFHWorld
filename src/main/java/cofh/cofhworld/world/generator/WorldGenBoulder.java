@@ -66,7 +66,7 @@ public class WorldGenBoulder extends WorldGenerator {
 
 							if (dist <= maxDist) {
 								if (dist >= minDist) {
-									r |= WorldGenMinableCluster.generateBlock(world, xCenter + x, yCenter + y, zCenter + z, cluster);
+									r |= WorldGenMinableCluster.generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, cluster);
 								} else {
 									r |= world.setBlockToAir(new BlockPos(xCenter + x, yCenter + y, zCenter + z));
 								}

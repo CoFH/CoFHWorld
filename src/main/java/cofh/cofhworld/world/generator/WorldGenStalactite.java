@@ -41,7 +41,7 @@ public class WorldGenStalactite extends WorldGenStalagmite {
 				}
 				int height = getHeight(x, z, size, rand, maxHeight);
 				for (int y = 0; y < height; ++y) {
-					r |= WorldGenMinableCluster.generateBlock(world, xStart + x, yStart - y, zStart + z, genBlock, cluster);
+					r |= WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart - y, zStart + z, genBlock, cluster);
 				}
 			}
 		}

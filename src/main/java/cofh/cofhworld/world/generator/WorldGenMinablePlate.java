@@ -53,7 +53,7 @@ public class WorldGenMinablePlate extends WorldGenerator {
 
 				if (zSize * zSize + xDist <= dist) {
 					for (int posY = y - height; slim ? posY < y + height : posY <= y + height; ++posY) {
-						r |= WorldGenMinableCluster.generateBlock(world, posX, posY, posZ, genBlock, cluster);
+						r |= WorldGenMinableCluster.generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
 					}
 				}
 			}

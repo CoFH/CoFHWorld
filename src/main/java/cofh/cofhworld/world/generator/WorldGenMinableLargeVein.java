@@ -134,7 +134,7 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 							posZ2 += rand.nextInt(2) * directionZ2;
 						}
 
-						r |= WorldGenMinableCluster.generateBlock(world, posX2, posY2, posZ2, genBlock, cluster);
+						r |= WorldGenMinableCluster.generateBlock(world, rand, posX2, posY2, posZ2, genBlock, cluster);
 
 						if (sparse) {
 							blocksVein++;
@@ -144,7 +144,7 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 					}
 				}
 
-				r |= WorldGenMinableCluster.generateBlock(world, posX, posY, posZ, genBlock, cluster);
+				r |= WorldGenMinableCluster.generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
 
 				blocksBranch++;
 			}

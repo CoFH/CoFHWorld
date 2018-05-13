@@ -137,7 +137,7 @@ public class WorldGenSparseMinableCluster extends WorldGenerator {
 							continue;
 						}
 
-						r |= WorldGenMinableCluster.generateBlock(world, blockX, blockY, blockZ, genBlock, cluster);
+						r |= WorldGenMinableCluster.generateBlock(world, rand, blockX, blockY, blockZ, genBlock, cluster);
 					}
 				}
 			}

@@ -105,7 +105,7 @@ public class WorldGenGeode extends WorldGenerator {
 			for (z = 0; z < width; ++z) {
 				for (y = 0; y < height; ++y) {
 					if (spawnBlock[(x * width + z) * height + y]) {
-						boolean t = WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, cluster);
+						boolean t = WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, cluster);
 						r |= t;
 						if (!t) {
 							spawnBlock[(x * width + z) * height + y] = false;
@@ -119,12 +119,12 @@ public class WorldGenGeode extends WorldGenerator {
 			for (z = 0; z < width; ++z) {
 				for (y = 0; y < height; ++y) {
 					if (fillBlock != null && hollowBlock[(x * width + z) * height + y]) {
-						r |= WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, fillBlock);
+						r |= WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, fillBlock);
 					} else {
 						boolean flag = !spawnBlock[(x * width + z) * height + y] && ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
 						if (flag) {
-							r |= WorldGenMinableCluster.generateBlock(world, xStart + x, yStart + y, zStart + z, outline);
+							r |= WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, outline);
 						}
 					}
 				}
