@@ -83,6 +83,8 @@ public class WorldProps {
 		FeatureParser.registerGenerator("stalagmite", new StalagmiteParser(false));
 		FeatureParser.registerGenerator("stalactite", new StalagmiteParser(true));
 		FeatureParser.registerGenerator("small-tree", new SmallTreeParser());
+		// meta-generators
+		FeatureParser.registerGenerator("sequential", new SequentialParser());
 
 		log.info("Verifying or creating base world generation directory...");
 

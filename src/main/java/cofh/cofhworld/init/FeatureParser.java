@@ -338,6 +338,7 @@ public class FeatureParser {
 		return genObject.getString("distribution");
 	}
 
+	// FIXME: add an InvalidGeneratorException and throw that instead of returning null in any of the sub-logic for this method
 	public static WorldGenerator parseGenerator(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
 
 		if (!genObject.hasPath("generator")) {
@@ -349,6 +350,9 @@ public class FeatureParser {
 			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
 				WorldGenerator gen = parseGeneratorData(def, genElement, defaultMaterial);
+				if (gen == null) {
+					return null;
+				}
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedRandomWorldGenerator(gen, weight));
 			}
