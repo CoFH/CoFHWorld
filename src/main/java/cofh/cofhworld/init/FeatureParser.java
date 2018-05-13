@@ -397,7 +397,7 @@ public class FeatureParser {
 			matList = defaultMaterial;
 		}
 
-		return parser.parseGenerator(name, genObject, log, resList, matList);
+		return parser.parseGenerator(parser.isMeta() ? def : name, genObject, log, resList, matList);
 	}
 
 	public static BiomeInfoSet parseBiomeRestrictions(Config genObject) {

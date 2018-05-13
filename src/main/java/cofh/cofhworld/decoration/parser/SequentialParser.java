@@ -39,7 +39,7 @@ public class SequentialParser implements IGeneratorParser {
 			List<? extends Config> list = genObject.getConfigList("generators");
 			gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
-				WorldGenerator gen = FeatureParser.parseGenerator("cluster", genElement.atKey("generator"), matList);
+				WorldGenerator gen = FeatureParser.parseGenerator(name, genElement.atKey("generator"), matList);
 				if (gen == null) {
 					return null;
 				}
@@ -47,7 +47,7 @@ public class SequentialParser implements IGeneratorParser {
 			}
 		} else if (genData.valueType() == ConfigValueType.OBJECT) {
 			gens = new ArrayList<>(1);
-			WorldGenerator gen = FeatureParser.parseGenerator("cluster", genObject.getConfig("generators").atKey("generator"), matList);
+			WorldGenerator gen = FeatureParser.parseGenerator(name, genObject.getConfig("generators").atKey("generator"), matList);
 			if (gen == null) {
 				return null;
 			}
