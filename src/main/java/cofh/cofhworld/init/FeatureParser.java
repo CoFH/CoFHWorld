@@ -376,6 +376,8 @@ public class FeatureParser {
 		IGeneratorParser parser = generatorHandlers.get(name);
 		if (parser == null) {
 			throw new IllegalStateException("Generator '" + name + "' is not registered!");
+		} else if (parser.isMeta() && name == def) {
+			throw new IllegalStateException("Default generator for a template is a meta generator!");
 		}
 
 		List<WeightedRandomBlock> resList = new ArrayList<>();
