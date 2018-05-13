@@ -373,21 +373,28 @@ public class FeatureParser {
 				name = def;
 			}
 		}
-
-		List<WeightedRandomBlock> resList = new ArrayList<>();
-		if (!FeatureParser.parseResList(genObject.getValue("block"), resList, true)) {
-			return null;
-		}
-
-		List<WeightedRandomBlock> matList = new ArrayList<>();
-		if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
-			log.warn("Invalid material list! Using default list.");
-			matList = defaultMaterial;
-		}
 		IGeneratorParser parser = generatorHandlers.get(name);
 		if (parser == null) {
 			throw new IllegalStateException("Generator '" + name + "' is not registered!");
 		}
+
+		List<WeightedRandomBlock> resList = new ArrayList<>();
+		if (!parser.isMeta() && !genObject.hasPath("block")) {
+			log.error("Generators cannot generate blocks unless `block` is specified.");
+			return null;
+		} else if (!FeatureParser.parseResList(genObject.root().get("block"), resList, true) && !parser.isMeta()) {
+			return null;
+		}
+
+		List<WeightedRandomBlock> matList = new ArrayList<>();
+		if (!genObject.hasPath("material")) {
+			log.debug("Using the default material list.");
+			matList = defaultMaterial;
+		} else if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
+			log.warn("Invalid material list! Using default list.");
+			matList = defaultMaterial;
+		}
+
 		return parser.parseGenerator(name, genObject, log, resList, matList);
 	}
 

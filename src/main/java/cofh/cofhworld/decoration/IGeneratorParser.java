@@ -22,4 +22,9 @@ public interface IGeneratorParser {
 	 */
 	WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList);
 
+	default boolean isMeta() {
+
+		return false;
+	}
+
 }

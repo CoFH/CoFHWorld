@@ -24,6 +24,12 @@ public class SequentialParser implements IGeneratorParser {
 	}
 
 	@Override
+	public boolean isMeta() {
+
+		return true;
+	}
+
+	@Override
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 
 		ArrayList<WorldGenerator> gens;
