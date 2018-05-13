@@ -105,7 +105,7 @@ public class FeatureParser {
 
 	public static void parseGenerationFiles() {
 
-		log.info("Accumulating world generation files from: \"{}\"", WorldProps.worldGenPath.toString());
+		log.info("Accumulating world generation files from: \"{}\"", WorldProps.worldGenDir.toString());
 		ArrayList<File> worldGenList = new ArrayList<>(5);
 
 		{
@@ -200,7 +200,7 @@ public class FeatureParser {
 
 		for (int i = 0, e = processedGenList.size(); i < e; ++i) {
 			Config genList = processedGenList.get(i);
-			String file = WorldProps.worldGenPath.relativize(Paths.get(genList.origin().url().getPath())).toString();
+			String file = WorldProps.worldGenPath.relativize(Paths.get(genList.origin().filename())).toString();
 
 			log.info("Reading world generation info from: \"{}\":", file);
 			if (genList.hasPath("populate")) {
