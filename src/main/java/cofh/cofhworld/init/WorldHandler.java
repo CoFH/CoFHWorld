@@ -121,7 +121,7 @@ public class WorldHandler implements IWorldGenerator {
 			reloadCallbacks.forEach(Runnable::run);
 			return true;
 		} catch (Throwable t) {
-			t.printStackTrace();
+			CoFHWorld.log.catching(t);
 			return false;
 		}
 	}
