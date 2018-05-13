@@ -7,10 +7,8 @@ import cofh.cofhworld.decoration.IGeneratorParser;
 import cofh.cofhworld.feature.IFeatureGenerator;
 import cofh.cofhworld.feature.IFeatureParser;
 import cofh.cofhworld.util.*;
-import cofh.cofhworld.util.numbers.ConstantProvider;
-import cofh.cofhworld.util.numbers.INumberProvider;
-import cofh.cofhworld.util.numbers.SkellamRandomProvider;
-import cofh.cofhworld.util.numbers.UniformRandomProvider;
+import cofh.cofhworld.util.numbers.*;
+import cofh.cofhworld.util.numbers.world.WorldValueProvider;
 import cofh.cofhworld.world.generator.WorldGenMulti;
 import com.typesafe.config.*;
 import net.minecraft.block.Block;
@@ -834,11 +832,23 @@ public class FeatureParser {
 							return new ConstantProvider(boundCheck(genProp.getNumber("value"), min, max));
 						} else if (genData.containsKey("variance")) {
 							return new SkellamRandomProvider(boundCheck(genProp.getNumber("variance"), min, max));
+						} else if (genData.containsKey("world-data")) {
+							return new WorldValueProvider(genProp.getString("world-data"), min, max);
 						}
 						break;
 					case 2:
 						if (genData.containsKey("min") && genData.containsKey("max")) {
 							return new UniformRandomProvider(boundCheck(genProp.getNumber("min"), min, max), boundCheck(genProp.getNumber("max"), min, max));
+						}
+						break;
+					case 3:
+						if (genData.containsKey("operation") &&
+								genData.containsKey("value-a") &&
+								genData.containsKey("value-b")) {
+							INumberProvider a, b;
+							a = parseNumberValue(genProp.getValue("value-a"));
+							b = parseNumberValue(genProp.getValue("value-b"));
+							return new OperationProvider(a, b, genProp.getString("operation"), min, max);
 						}
 						break;
 					default:
