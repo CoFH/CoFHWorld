@@ -824,51 +824,58 @@ public class FeatureParser {
 
 	public static INumberProvider parseNumberValue(ConfigValue genElement) {
 
-		return parseNumberValue(genElement, Long.MIN_VALUE, Long.MAX_VALUE);
+		switch (genElement.valueType()) {
+		case NUMBER:
+			return new ConstantProvider(((Number) genElement.unwrapped()));
+		case OBJECT:
+			ConfigObject genData = (ConfigObject) genElement;
+			Config genProp = genData.toConfig();
+			switch (genData.size()) {
+			case 1:
+				if (genData.containsKey("value")) {
+					return new ConstantProvider(genProp.getNumber("value"));
+				} else if (genData.containsKey("variance")) {
+					return new SkellamRandomProvider(genProp.getNumber("variance"));
+				} else if (genData.containsKey("world-data")) {
+					return new WorldValueProvider(genProp.getString("world-data"));
+				}
+				break;
+			case 2:
+				if (genData.containsKey("min") && genData.containsKey("max")) {
+					return new UniformRandomProvider(genProp.getNumber("min"), genProp.getNumber("max"));
+				}
+				break;
+			case 3:
+				INumberProvider a, b;
+				if (genData.containsKey("operation") &&
+						genData.containsKey("value-a") &&
+						genData.containsKey("value-b")) {
+					a = parseNumberValue(genProp.getValue("value-a"));
+					b = parseNumberValue(genProp.getValue("value-b"));
+					return new OperationProvider(a, b, genProp.getString("operation"));
+				} else if (genData.containsKey("value") &&
+						genData.containsKey("min") &&
+						genData.containsKey("max")) {
+					INumberProvider v = parseNumberValue(genProp.getValue("value"));
+					a = parseNumberValue(genProp.getValue("min"));
+					b = parseNumberValue(genProp.getValue("max"));
+					return new BoundedProvider(v, a, b);
+				}
+				break;
+			default:
+				throw new Error(String.format("Too many properties on object at line %s", genElement.origin().lineNumber()));
+			case 0:
+				break;
+			}
+			throw new Error(String.format("Unknown properties on object at line %s", genElement.origin().lineNumber()));
+		default:
+			throw new Error(String.format("Unsupported data type at line %s", genElement.origin().lineNumber()));
+		}
 	}
 
 	public static INumberProvider parseNumberValue(ConfigValue genElement, long min, long max) {
 
-		switch (genElement.valueType()) {
-			case NUMBER:
-				return new ConstantProvider(boundCheck((Number) genElement.unwrapped(), min, max));
-			case OBJECT:
-				ConfigObject genData = (ConfigObject) genElement;
-				Config genProp = genData.toConfig();
-				switch (genData.size()) {
-					case 1:
-						if (genData.containsKey("value")) {
-							return new ConstantProvider(boundCheck(genProp.getNumber("value"), min, max));
-						} else if (genData.containsKey("variance")) {
-							return new SkellamRandomProvider(boundCheck(genProp.getNumber("variance"), min, max));
-						} else if (genData.containsKey("world-data")) {
-							return new WorldValueProvider(genProp.getString("world-data"), min, max);
-						}
-						break;
-					case 2:
-						if (genData.containsKey("min") && genData.containsKey("max")) {
-							return new UniformRandomProvider(boundCheck(genProp.getNumber("min"), min, max), boundCheck(genProp.getNumber("max"), min, max));
-						}
-						break;
-					case 3:
-						if (genData.containsKey("operation") &&
-								genData.containsKey("value-a") &&
-								genData.containsKey("value-b")) {
-							INumberProvider a, b;
-							a = parseNumberValue(genProp.getValue("value-a"));
-							b = parseNumberValue(genProp.getValue("value-b"));
-							return new OperationProvider(a, b, genProp.getString("operation"), min, max);
-						}
-						break;
-					default:
-						throw new Error(String.format("Too many properties on object at line %s", genElement.origin().lineNumber()));
-					case 0:
-						break;
-				}
-				throw new Error(String.format("Unknown properties on object at line %s", genElement.origin().lineNumber()));
-			default:
-				throw new Error(String.format("Unsupported data type at line %s", genElement.origin().lineNumber()));
-		}
+		return new BoundedProvider(parseNumberValue(genElement), new ConstantProvider(min), new ConstantProvider(max));
 	}
 
 	public static Number boundCheck(Number value, long min, long max) {

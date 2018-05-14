@@ -10,13 +10,10 @@ import java.util.Random;
 public class WorldValueProvider implements INumberProvider {
 
 	protected final WorldValueEnum data;
-	protected final long min, max;
 
-	public WorldValueProvider(String type, long min, long max) {
+	public WorldValueProvider(String type) {
 
 		this.data = WorldValueEnum.valueOf(type.toUpperCase(Locale.US));
-		this.min = min;
-		this.max = max;
 	}
 
 	protected long getValue(World world, Random rand, BlockPos pos) {
@@ -31,7 +28,7 @@ public class WorldValueProvider implements INumberProvider {
 
 	public long longValue(World world, Random rand, BlockPos pos) {
 
-		return Math.min(Math.max(getValue(world, rand, pos), min), max);
+		return getValue(world, rand, pos);
 	}
 
 	public float floatValue(World world, Random rand, BlockPos pos) {
@@ -41,7 +38,7 @@ public class WorldValueProvider implements INumberProvider {
 
 	public double doubleValue(World world, Random rand, BlockPos pos) {
 
-		return Math.min(Math.max(getValue(world, rand, pos), min), max);
+		return getValue(world, rand, pos);
 	}
 
 }

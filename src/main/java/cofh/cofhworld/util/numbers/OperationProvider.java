@@ -11,15 +11,12 @@ public class OperationProvider implements INumberProvider {
 	protected final INumberProvider valueA;
 	protected final INumberProvider valueB;
 	protected final Operation operation;
-	protected final long min, max;
 
-	public OperationProvider(INumberProvider valueA, INumberProvider valueB, String type, long min, long max) {
+	public OperationProvider(INumberProvider valueA, INumberProvider valueB, String type) {
 
 		this.valueA = valueA;
 		this.valueB = valueB;
 		this.operation = Operation.valueOf(type.toUpperCase(Locale.US));
-		this.min = min;
-		this.max = max;
 	}
 
 	public int intValue(World world, Random rand, BlockPos pos) {
@@ -29,7 +26,7 @@ public class OperationProvider implements INumberProvider {
 
 	public long longValue(World world, Random rand, BlockPos pos) {
 
-		return Math.min(Math.max(operation.perform(valueA.longValue(world, rand, pos), valueB.longValue(world, rand, pos)), min), max);
+		return operation.perform(valueA.longValue(world, rand, pos), valueB.longValue(world, rand, pos));
 	}
 
 	public float floatValue(World world, Random rand, BlockPos pos) {
@@ -39,7 +36,7 @@ public class OperationProvider implements INumberProvider {
 
 	public double doubleValue(World world, Random rand, BlockPos pos) {
 
-		return Math.min(Math.max(operation.perform(valueA.doubleValue(world, rand, pos), valueB.doubleValue(world, rand, pos)), min), max);
+		return operation.perform(valueA.doubleValue(world, rand, pos), valueB.doubleValue(world, rand, pos));
 	}
 
 	private static enum Operation {
