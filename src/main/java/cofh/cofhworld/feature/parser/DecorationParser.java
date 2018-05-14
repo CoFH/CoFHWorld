@@ -48,13 +48,13 @@ public class DecorationParser extends SurfaceParser implements IGeneratorParser 
 			r.setStackHeight(FeatureParser.parseNumberValue(genData.get("stack-height")));
 		}
 		if (genObject.hasPath("x-variance")) {
-			r.setXVar(FeatureParser.parseNumberValue(genData.get("x-variance"), 1, 15));
+			r.setXVar(FeatureParser.parseNumberValue(genData.get("x-variance"), 0, 15));
 		}
 		if (genObject.hasPath("y-variance")) {
-			r.setYVar(FeatureParser.parseNumberValue(genData.get("y-variance"), 0, 15));
+			r.setYVar(FeatureParser.parseNumberValue(genData.get("y-variance")));
 		}
 		if (genObject.hasPath("z-variance")) {
-			r.setZVar(FeatureParser.parseNumberValue(genData.get("z-variance"), 1, 15));
+			r.setZVar(FeatureParser.parseNumberValue(genData.get("z-variance"), 0, 15));
 		}
 		return r;
 	}
