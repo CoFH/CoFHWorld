@@ -1,5 +1,6 @@
 package cofh.cofhworld.feature;
 
+import cofh.cofhworld.feature.IConfigurableFeatureGenerator.GenRestriction;
 import com.google.gson.JsonObject;
 import com.typesafe.config.Config;
 import org.apache.logging.log4j.Logger;
@@ -15,5 +16,7 @@ public interface IFeatureParser {
 	 * @return The {@link IFeatureGenerator} to be registered with an IFeatureHandler
 	 */
 	IFeatureGenerator parseFeature(String featureName, Config genObject, Logger log);
+
+	IConfigurableFeatureGenerator getFeature(String featureName, Config genObject, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log);
 
 }

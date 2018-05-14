@@ -38,7 +38,7 @@ public class FeatureGenCave extends FeatureBase {
 	}
 
 	@Override
-	protected boolean generateFeature(Random random, int blockX, int blockZ, World world) {
+	public boolean generateFeature(Random random, int blockX, int blockZ, World world) {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 

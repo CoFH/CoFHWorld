@@ -66,6 +66,7 @@ public class WorldProps {
 		FeatureParser.registerTemplate("underwater", new UnderfluidParser(true));
 		FeatureParser.registerTemplate("underfluid", new UnderfluidParser(false));
 		FeatureParser.registerTemplate("cave", new CaveParser());
+		FeatureParser.registerTemplate("sequential", new SequentialParser());
 
 		log.info("Registering default World Generators...");
 		FeatureParser.registerGenerator(null, new ClusterParser(false));
@@ -84,7 +85,7 @@ public class WorldProps {
 		FeatureParser.registerGenerator("stalactite", new StalagmiteParser(true));
 		FeatureParser.registerGenerator("small-tree", new SmallTreeParser());
 		// meta-generators
-		FeatureParser.registerGenerator("sequential", new SequentialParser());
+		FeatureParser.registerGenerator("sequential", new SequentialGenParser());
 
 		log.info("Verifying or creating base world generation directory...");
 

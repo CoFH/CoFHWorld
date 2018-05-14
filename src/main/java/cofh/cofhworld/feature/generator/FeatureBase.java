@@ -2,6 +2,7 @@ package cofh.cofhworld.feature.generator;
 
 import cofh.cofhworld.biome.BiomeInfo;
 import cofh.cofhworld.biome.BiomeInfoSet;
+import cofh.cofhworld.feature.IConfigurableFeatureGenerator;
 import cofh.cofhworld.feature.IFeatureGenerator;
 import gnu.trove.set.hash.THashSet;
 import net.minecraft.util.math.BlockPos;
@@ -11,22 +12,7 @@ import net.minecraft.world.biome.Biome;
 import java.util.Random;
 import java.util.Set;
 
-public abstract class FeatureBase implements IFeatureGenerator {
-
-	public enum GenRestriction {
-		NONE, BLACKLIST, WHITELIST;
-
-		public static GenRestriction get(String restriction) {
-
-			if (restriction.equalsIgnoreCase("blacklist")) {
-				return BLACKLIST;
-			}
-			if (restriction.equalsIgnoreCase("whitelist")) {
-				return WHITELIST;
-			}
-			return NONE;
-		}
-	}
+public abstract class FeatureBase implements IFeatureGenerator, IConfigurableFeatureGenerator {
 
 	public final String name;
 
@@ -35,7 +21,7 @@ public abstract class FeatureBase implements IFeatureGenerator {
 
 	public final boolean regen;
 
-	public boolean withVillage = true;
+	protected boolean withVillage = true;
 
 	protected int rarity;
 
@@ -74,9 +60,16 @@ public abstract class FeatureBase implements IFeatureGenerator {
 		this.regen = regen;
 	}
 
-	public void setRarity(int rarity) {
+	public FeatureBase setWithVillage(boolean inVillage) {
+
+		this.withVillage = inVillage;
+		return this;
+	}
+
+	public FeatureBase setRarity(int rarity) {
 
 		this.rarity = rarity;
+		return this;
 	}
 
 	public FeatureBase addBiome(BiomeInfo biome) {
@@ -95,6 +88,16 @@ public abstract class FeatureBase implements IFeatureGenerator {
 
 		dimensions.add(dimID);
 		return this;
+	}
+
+	public GenRestriction getBiomeRestriction() {
+
+		return this.biomeRestriction;
+	}
+
+	public GenRestriction getDimensionRestriction() {
+
+		return this.dimensionRestriction;
 	}
 
 	/* IFeatureGenerator */
@@ -122,7 +125,7 @@ public abstract class FeatureBase implements IFeatureGenerator {
 		return generateFeature(random, chunkX * 16 + 8, chunkZ * 16 + 8, world);
 	}
 
-	protected abstract boolean generateFeature(Random random, int blockX, int blockZ, World world);
+	public abstract boolean generateFeature(Random random, int blockX, int blockZ, World world);
 
 	protected boolean canGenerateInBiome(World world, int x, int z, Random rand) {
 

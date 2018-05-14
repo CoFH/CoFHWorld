@@ -57,6 +57,11 @@ public class FeatureParser {
 
 	}
 
+	public static IFeatureParser getTemplate(String template) {
+
+		return templateHandlers.get(template);
+	}
+
 	public static boolean registerTemplate(String template, IFeatureParser handler) {
 
 		// TODO: provide this function through IFeatureHandler?

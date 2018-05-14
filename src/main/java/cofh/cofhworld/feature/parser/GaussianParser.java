@@ -1,7 +1,7 @@
 package cofh.cofhworld.feature.parser;
 
 import cofh.cofhworld.feature.generator.FeatureBase;
-import cofh.cofhworld.feature.generator.FeatureBase.GenRestriction;
+import cofh.cofhworld.feature.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.feature.generator.FeatureGenGaussian;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.numbers.ConstantProvider;
