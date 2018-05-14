@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class FeatureGenCave extends FeatureBase {
 
-	private final static INumberProvider GROUND_LEVEL = new WorldValueProvider("GROUND_LEVEL", 20, 255);
+	private final static INumberProvider GROUND_LEVEL = new WorldValueProvider("GROUND_LEVEL");
 
 	final WorldGenerator worldGen;
 	final INumberProvider count;
