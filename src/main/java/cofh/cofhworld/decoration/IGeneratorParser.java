@@ -2,6 +2,7 @@ package cofh.cofhworld.decoration;
 
 import cofh.cofhworld.feature.IFeatureGenerator;
 import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +21,7 @@ public interface IGeneratorParser {
 	 * @param matList   The processed list of materials to generate in
 	 * @return The {@link WorldGenerator} to be registered with an IFeatureGenerator
 	 */
-	WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList);
+	WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException;
 
 	default boolean isMeta() {
 

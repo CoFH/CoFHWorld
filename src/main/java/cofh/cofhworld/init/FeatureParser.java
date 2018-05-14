@@ -7,6 +7,7 @@ import cofh.cofhworld.decoration.IGeneratorParser;
 import cofh.cofhworld.feature.IFeatureGenerator;
 import cofh.cofhworld.feature.IFeatureParser;
 import cofh.cofhworld.util.*;
+import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import cofh.cofhworld.util.numbers.*;
 import cofh.cofhworld.util.numbers.world.WorldValueProvider;
 import cofh.cofhworld.world.generator.WorldGenMulti;
@@ -15,7 +16,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
@@ -26,7 +26,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.biome.Biome.TempCategory;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.common.DungeonHooks.DungeonMob;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ModContainer;
@@ -316,7 +315,7 @@ public class FeatureParser {
 
 		if (genObject.hasPath("enabled")) {
 			if (!genObject.getBoolean("enabled")) {
-				log.debug('"' + featureName + "\" is disabled.");
+				log.debug("\"{}\" is disabled.", featureName);
 				return EnumActionResult.SUCCESS;
 			}
 		}
@@ -341,8 +340,7 @@ public class FeatureParser {
 		return genObject.getString("distribution");
 	}
 
-	// FIXME: add an InvalidGeneratorException and throw that instead of returning null in any of the sub-logic for this method
-	public static WorldGenerator parseGenerator(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
+	public static WorldGenerator parseGenerator(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) throws InvalidGeneratorException {
 
 		if (!genObject.hasPath("generator")) {
 			return null;
@@ -353,9 +351,6 @@ public class FeatureParser {
 			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
 				WorldGenerator gen = parseGeneratorData(def, genElement, defaultMaterial);
-				if (gen == null) {
-					return null;
-				}
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedRandomWorldGenerator(gen, weight));
 			}
@@ -368,7 +363,7 @@ public class FeatureParser {
 		}
 	}
 
-	public static WorldGenerator parseGeneratorData(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) {
+	public static WorldGenerator parseGeneratorData(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) throws InvalidGeneratorException {
 
 		String name = def;
 		if (genObject.hasPath("type")) {
@@ -388,9 +383,9 @@ public class FeatureParser {
 		List<WeightedRandomBlock> resList = new ArrayList<>();
 		if (!parser.isMeta() && !genObject.hasPath("block")) {
 			log.error("Generators cannot generate blocks unless `block` is specified.");
-			return null;
+			throw new InvalidGeneratorException("`block` not specified", genObject.origin());
 		} else if (!FeatureParser.parseResList(genObject.root().get("block"), resList, true) && !parser.isMeta()) {
-			return null;
+			throw new InvalidGeneratorException("`block` not valid", genObject.origin());
 		}
 
 		List<WeightedRandomBlock> matList = new ArrayList<>();

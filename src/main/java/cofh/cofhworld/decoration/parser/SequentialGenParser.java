@@ -3,11 +3,8 @@ package cofh.cofhworld.decoration.parser;
 import cofh.cofhworld.decoration.IGeneratorParser;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.WeightedRandomWorldGenerator;
-import cofh.cofhworld.world.generator.WorldGenMinableCluster;
-import cofh.cofhworld.world.generator.WorldGenMulti;
+import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import cofh.cofhworld.world.generator.WorldGenSequential;
-import cofh.cofhworld.world.generator.WorldGenSparseMinableCluster;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
@@ -30,7 +27,7 @@ public class SequentialGenParser implements IGeneratorParser {
 	}
 
 	@Override
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException {
 
 		ArrayList<WorldGenerator> gens;
 
@@ -40,21 +37,15 @@ public class SequentialGenParser implements IGeneratorParser {
 			gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
 				WorldGenerator gen = FeatureParser.parseGenerator(name, genElement.atKey("generator"), matList);
-				if (gen == null) {
-					return null;
-				}
 				gens.add(gen);
 			}
 		} else if (genData.valueType() == ConfigValueType.OBJECT) {
 			gens = new ArrayList<>(1);
 			WorldGenerator gen = FeatureParser.parseGenerator(name, genObject.getConfig("generators").atKey("generator"), matList);
-			if (gen == null) {
-				return null;
-			}
 			gens.add(gen);
 		} else {
 			log.error("Invalid object type for generator on line {}.", genData.origin().lineNumber());
-			return null;
+			throw new InvalidGeneratorException("Invalid object type", genData.origin());
 		}
 
 		return new WorldGenSequential(gens);

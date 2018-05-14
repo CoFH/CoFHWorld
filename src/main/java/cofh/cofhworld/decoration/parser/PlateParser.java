@@ -3,6 +3,7 @@ package cofh.cofhworld.decoration.parser;
 import cofh.cofhworld.decoration.IGeneratorParser;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import cofh.cofhworld.world.generator.WorldGenMinablePlate;
 import com.typesafe.config.Config;
 import net.minecraft.util.math.MathHelper;
@@ -14,12 +15,12 @@ import java.util.List;
 public class PlateParser implements IGeneratorParser {
 
 	@Override
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException {
 
 		int clusterSize = genObject.getInt("radius");
 		if (clusterSize <= 0) {
-			log.warn("Invalid radius for generator '{}'", name);
-			return null;
+			log.warn("Invalid `radius` for generator '{}'", name);
+			throw new InvalidGeneratorException("Invalid `radius`", genObject.getValue("radius").origin());
 		}
 
 		WorldGenMinablePlate r = new WorldGenMinablePlate(resList, MathHelper.clamp(clusterSize, 0, 32), matList);

@@ -2,6 +2,7 @@ package cofh.cofhworld.decoration.parser;
 
 import cofh.cofhworld.decoration.IGeneratorParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import cofh.cofhworld.world.generator.WorldGenBoulder;
 import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -12,12 +13,12 @@ import java.util.List;
 public class BoulderParser implements IGeneratorParser {
 
 	@Override
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException {
 
 		int clusterSize = genObject.getInt("diameter");
 		if (clusterSize <= 0) {
-			log.warn("Invalid diameter for generator '{}'", name);
-			return null;
+			log.warn("Invalid `diameter` for generator '{}'", name);
+			throw new InvalidGeneratorException("Invalid `diameter`", genObject.getValue("diameter").origin());
 		}
 
 		WorldGenBoulder r = new WorldGenBoulder(resList, clusterSize, matList);

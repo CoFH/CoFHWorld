@@ -1,26 +1,19 @@
 package cofh.cofhworld.feature.parser;
 
-import cofh.cofhworld.feature.IConfigurableFeatureGenerator;
 import cofh.cofhworld.feature.IConfigurableFeatureGenerator.GenRestriction;
-import cofh.cofhworld.feature.IFeatureGenerator;
-import cofh.cofhworld.feature.IFeatureParser;
 import cofh.cofhworld.feature.generator.FeatureBase;
 import cofh.cofhworld.feature.generator.FeatureGenUniform;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigList;
-import com.typesafe.config.ConfigValue;
-import com.typesafe.config.ConfigValueType;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class UniformParser extends SequentialParser {
 
@@ -41,9 +34,11 @@ public class UniformParser extends SequentialParser {
 
 		INumberProvider numClusters = FeatureParser.parseNumberValue(genObject.getValue("cluster-count"), 0, Long.MAX_VALUE);
 
-		WorldGenerator generator = FeatureParser.parseGenerator(getDefaultGenerator(), genObject, defaultMaterial);
-		if (generator == null) {
-			log.warn("Invalid generator for '{}'!", featureName);
+		WorldGenerator generator;
+		try {
+			generator = FeatureParser.parseGenerator(getDefaultGenerator(), genObject, defaultMaterial);
+		} catch (InvalidGeneratorException e) {
+			log.warn("Invalid generator for '{}' on line {}!", featureName, e.origin().lineNumber());
 			return null;
 		}
 
