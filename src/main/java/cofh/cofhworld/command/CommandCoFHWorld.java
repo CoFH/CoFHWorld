@@ -86,6 +86,10 @@ public class CommandCoFHWorld extends CommandTreeBase {
 			component.getStyle().setColor(TextFormatting.GOLD);
 			sender.sendMessage(component);
 
+			if (generators.size() == 0) {
+				return;
+			}
+
 			StringBuilder b = new StringBuilder();
 			int maxIndex = Math.min((page + 1) * pageSize, generators.size());
 			for (int i = page * pageSize; i < maxIndex; ++i) {
