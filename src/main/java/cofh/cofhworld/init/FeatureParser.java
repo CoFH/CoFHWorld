@@ -327,9 +327,9 @@ public class FeatureParser {
 				parsedFeatures.add(feature);
 				return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
 			}
-			log.warn("Template '" + templateName + "' failed to parse its entry!");
+			log.error("Template '{}' failed to parse its entry!", templateName);
 		} else {
-			log.warn("Unknown template + '" + templateName + "'.");
+			log.warn("Unknown template '{}'.", templateName);
 		}
 
 		return EnumActionResult.FAIL;
@@ -876,17 +876,6 @@ public class FeatureParser {
 	public static INumberProvider parseNumberValue(ConfigValue genElement, long min, long max) {
 
 		return new BoundedProvider(parseNumberValue(genElement), new ConstantProvider(min), new ConstantProvider(max));
-	}
-
-	public static Number boundCheck(Number value, long min, long max) {
-
-		if (value.longValue() >= min) {
-			if (value.longValue() <= max) {
-				return value;
-			}
-			return new Long(max);
-		}
-		return new Long(min);
 	}
 
 	/* INCLUDER CLASS */
