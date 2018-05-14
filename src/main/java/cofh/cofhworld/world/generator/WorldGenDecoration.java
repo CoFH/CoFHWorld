@@ -4,6 +4,7 @@ import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import cofh.cofhworld.util.numbers.SkellamRandomProvider;
+import net.minecraft.block.BlockBush;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -42,37 +43,40 @@ public class WorldGenDecoration extends WorldGenerator {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos pos) {
+	public boolean generate(World world, Random rand, BlockPos start) {
 
-		int xStart = pos.getX();
-		int yStart = pos.getY();
-		int zStart = pos.getZ();
+		int xStart = start.getX();
+		int yStart = start.getY();
+		int zStart = start.getZ();
 
-		final int clusterSize = this.clusterSize.intValue(world, rand, pos);
+		final int clusterSize = this.clusterSize.intValue(world, rand, start);
 
 		boolean r = false;
 		for (int l = clusterSize; l-- > 0; ) {
-			int x = xStart + xVar.intValue(world, rand, pos);
-			int y = yStart + yVar.intValue(world, rand, pos);
-			int z = zStart + zVar.intValue(world, rand, pos);
+			int x = xStart + xVar.intValue(world, rand, start);
+			int y = yStart + yVar.intValue(world, rand, start);
+			int z = zStart + zVar.intValue(world, rand, start);
+			BlockPos pos = new BlockPos(x, y, z);
 
-			if (!world.isBlockLoaded(new BlockPos(x, y, z))) {
+			if (!world.isBlockLoaded(pos)) {
 				++l;
 				continue;
 			}
 
-			if ((!seeSky || world.canSeeSky(new BlockPos(x, y, z))) && WorldGenMinableCluster.canGenerateInBlock(world, x, y - 1, z, onBlock) && WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
+			if ((!seeSky || world.canSeeSky(pos)) &&
+					WorldGenMinableCluster.canGenerateInBlock(world, x, y - 1, z, onBlock) &&
+					WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
 
 				WeightedRandomBlock block = WorldGenMinableCluster.selectBlock(rand, cluster);
 				int stack = stackHeight.intValue(world, rand, pos);
 				do {
-					// TODO: checkStay logic
-					if (!checkStay /*|| block.block.canBlockStay(world, x, y, z) Moved to BlockBush...*/) {
-						r |= world.setBlockState(new BlockPos(x, y, z), block.getState(), 2);
+					if (!checkStay || (!(block.block instanceof BlockBush) || ((BlockBush)block.block).canBlockStay(world, pos, block.getState()))) {
+						r |= world.setBlockState(pos, block.getState(), 2);
 					} else {
 						break;
 					}
 					++y;
+					pos = pos.add(0, 1, 0);
 					if (!WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
 						break;
 					}
