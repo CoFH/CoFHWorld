@@ -104,6 +104,30 @@ public class OperationProvider implements INumberProvider {
 
 				return a % b;
 			}
+		}, MINIMUM {
+			@Override
+			public long perform(long a, long b) {
+
+				return a <= b ? a : b;
+			}
+
+			@Override
+			public double perform(double a, double b) {
+
+				return a <= b ? a : b;
+			}
+		}, MAXIMUM {
+			@Override
+			public long perform(long a, long b) {
+
+				return a >= b ? a : b;
+			}
+
+			@Override
+			public double perform(double a, double b) {
+
+				return a >= b ? a : b;
+			}
 		};
 
 		public abstract long perform(long a, long b);
