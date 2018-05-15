@@ -6,6 +6,7 @@ import cofh.cofhworld.feature.parser.*;
 import cofh.cofhworld.util.Utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -86,11 +87,17 @@ public class WorldProps {
 		FeatureParser.registerGenerator("small-tree", new SmallTreeParser());
 		// meta-generators
 		FeatureParser.registerGenerator("sequential", new SequentialGenParser());
+		FeatureParser.registerGenerator("structure", new StructureParser());
 
 		log.info("Verifying or creating base world generation directory...");
 
 		worldGenDir = new File(configDir, "/cofh/world/");
 		worldGenPath = Paths.get(configDir.getPath());
+		try {
+			cannonicalWorldGenDir = worldGenDir.getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
 		if (!worldGenDir.exists()) {
 			try {
@@ -126,6 +133,7 @@ public class WorldProps {
 	/* WORLD */
 	public static Path worldGenPath;
 	public static File worldGenDir;
+	public static String cannonicalWorldGenDir;
 	public static File standardGenFile;
 
 	public static final String FILE_GEN_STANDARD_INTERNAL = "00_minecraft.json";

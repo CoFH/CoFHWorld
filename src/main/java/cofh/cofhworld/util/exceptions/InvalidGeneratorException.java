@@ -17,4 +17,10 @@ public class InvalidGeneratorException extends Exception {
 		return this.origin;
 	}
 
+	public InvalidGeneratorException causedBy(Throwable cause) {
+
+		this.initCause(cause);
+		return this;
+	}
+
 }
