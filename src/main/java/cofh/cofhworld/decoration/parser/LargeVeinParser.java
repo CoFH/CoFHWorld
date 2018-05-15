@@ -21,11 +21,13 @@ public class LargeVeinParser implements IGeneratorParser {
 			throw new InvalidGeneratorException("Invalid `cluster-size`", genObject.getValue("cluster-size").origin());
 		}
 
-		boolean sparse = true;
+		boolean sparse = true, spindly = false;
 		{
 			sparse = genObject.hasPath("sparse") ? genObject.getBoolean("sparse") : sparse;
+			spindly = genObject.hasPath("spindly") ? genObject.getBoolean("spindly") : spindly;
 		}
-		return new WorldGenMinableLargeVein(resList, clusterSize, matList, sparse);
+		WorldGenMinableLargeVein vein = new WorldGenMinableLargeVein(resList, clusterSize, matList, sparse);
+		return vein.setSpindly(spindly);
 	}
 
 }

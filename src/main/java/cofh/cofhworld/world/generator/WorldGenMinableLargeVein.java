@@ -19,6 +19,7 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 	private final WeightedRandomBlock[] genBlock;
 	private final INumberProvider genVeinSize;
 	private final boolean sparse;
+	private boolean spindly;
 
 	public WorldGenMinableLargeVein(ItemStack ore, int clusterSize) {
 
@@ -66,6 +67,12 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 		genVeinSize = clusterSize;
 		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
 		sparse = sparze;
+	}
+
+	public WorldGenMinableLargeVein setSpindly(boolean spindly) {
+
+		this.spindly = spindly;
+		return this;
 	}
 
 	@Override
@@ -146,13 +153,18 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 
 				r |= WorldGenMinableCluster.generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
 
+				if (spindly) {
+					blocksVein++;
+				}
 				blocksBranch++;
 			}
 
 			x = x + (rand.nextInt(3) - 1);
 			y = y + (rand.nextInt(3) - 1);
 			z = z + (rand.nextInt(3) - 1);
-			blocksVein++;
+			if (!spindly) {
+				blocksVein++;
+			}
 		}
 
 		return r;
