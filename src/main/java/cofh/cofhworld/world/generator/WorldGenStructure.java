@@ -1,10 +1,12 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.WeightedRandomEnum;
 import cofh.cofhworld.util.WeightedRandomNBTTag;
-import net.minecraft.nbt.NBTTagCompound;
+import cofh.cofhworld.util.numbers.INumberProvider;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -16,39 +18,75 @@ import java.util.Random;
 
 public class WorldGenStructure extends WorldGenerator {
 
-	private final WeightedRandomBlock[] material;
+	private final PlacementSettings placementSettings = new PlacementSettings();
 	private final Template template = new Template();
 
-	public WorldGenStructure(List<WeightedRandomNBTTag> templates, List<WeightedRandomBlock> mat) {
+	private final List<WeightedRandomNBTTag> templates;
 
-		material = mat.toArray(new WeightedRandomBlock[mat.size()]);
-		template.read((NBTTagCompound) templates.get(0).tag);
+	private final List<WeightedRandomBlock> ignoredBlocks;
+
+	private List<WeightedRandomEnum<Rotation>> rots;
+	private List<WeightedRandomEnum<Mirror>> mirrors;
+
+	private INumberProvider integrity;
+
+	public WorldGenStructure(List<WeightedRandomNBTTag> templates, List<WeightedRandomBlock> ignoredBlocks, boolean ignoreEntities) {
+
+		if (templates.size() > 1) {
+			this.templates = templates;
+		} else {
+			this.templates = null;
+			template.read(templates.get(0).getCompoundTag());
+		}
+		if (ignoredBlocks.size() > 1) {
+			this.ignoredBlocks = ignoredBlocks;
+		} else {
+			this.ignoredBlocks = null;
+			if (ignoredBlocks.size() > 0) {
+				placementSettings.setReplacedBlock(ignoredBlocks.get(0).block);
+			}
+		}
+		placementSettings.setIgnoreEntities(ignoreEntities);
 	}
+
+
 
 	@Override
 	public boolean generate(World world, Random random, BlockPos pos) {
 
-		Rotation[] arotation = Rotation.values();
-		Rotation rotation = arotation[random.nextInt(arotation.length)];
-		Mirror[] amirror = Mirror.values();
-		Mirror mirror = amirror[random.nextInt(amirror.length)];
+		if (templates != null) {
+			template.read(WeightedRandom.getRandomItem(random, templates).getCompoundTag());
+		}
 
-		PlacementSettings placementsettings = (new PlacementSettings()).setRotation(rotation).setMirror(mirror).setRandom(random);
+		placementSettings.setRandom(random);
 
-		BlockPos blockpos = template.transformedSize(rotation);
-		int j = 0;
-		int k = 0;
+		if (rots != null) {
+			placementSettings.setRotation(WeightedRandom.getRandomItem(random, rots).value);
+		}
+		if (mirrors != null) {
+			placementSettings.setMirror(WeightedRandom.getRandomItem(random, mirrors).value);
+		}
+
+		if (ignoredBlocks != null) {
+			placementSettings.setReplacedBlock(WeightedRandom.getRandomItem(random, ignoredBlocks).block);
+		}
+
+		BlockPos start = template.getZeroPositionWithTransform(pos, placementSettings.getMirror(), placementSettings.getRotation());
+
+		BlockPos checkValue = start;
+
+		BlockPos blockpos = template.transformedSize(placementSettings.getRotation());
 		int l = 256;
 
 		for (int i1 = 0; i1 < blockpos.getX(); ++i1) {
 			for (int j1 = 0; j1 < blockpos.getZ(); ++j1) {
-				l = Math.min(l, world.getHeight(pos.getX() + i1 + j, pos.getZ() + j1 + k));
+				l = Math.min(l, world.getHeight(pos.getX() + i1, pos.getZ() + j1));
 			}
 		}
 
-		BlockPos blockpos1 = template.getZeroPositionWithTransform(pos.add(j, l, k), mirror, rotation);
-		placementsettings.setIntegrity(0.9F);
-		template.addBlocksToWorld(world, blockpos1, placementsettings, 20);
+		placementSettings.setIntegrity(integrity.floatValue(world, random, checkValue));
+
+		template.addBlocksToWorld(world, start, placementSettings, 20);
 
 
 		return false;

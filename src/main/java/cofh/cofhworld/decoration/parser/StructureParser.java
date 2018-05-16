@@ -63,7 +63,19 @@ public class StructureParser implements IGeneratorParser {
 			throw new InvalidGeneratorException("Missing `structure` tag", genObject.origin());
 		}
 
-		WorldGenStructure gen = new WorldGenStructure(tags, matList);
+		resList.clear();
+
+		if (genObject.hasPath("ignored-block") && !FeatureParser.parseResList(genObject.getValue("ignored-block"), resList, false)) {
+			log.warn("Error parsing `ignored-block`, generating all template blocks instead");
+			resList.clear();
+		}
+
+		boolean ignoreEntities = false;
+		if (genObject.hasPath("ignore-entities")) {
+			ignoreEntities = genObject.getBoolean("ignore-entities");
+		}
+
+		WorldGenStructure gen = new WorldGenStructure(tags, resList, ignoreEntities);
 
 		return gen;
 	}
