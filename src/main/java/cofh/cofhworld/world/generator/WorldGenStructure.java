@@ -29,7 +29,7 @@ public class WorldGenStructure extends WorldGenerator {
 	private List<WeightedRandomEnum<Rotation>> rots;
 	private List<WeightedRandomEnum<Mirror>> mirrors;
 
-	private INumberProvider integrity = new ConstantProvider(0.9f);
+	private INumberProvider integrity = new ConstantProvider(2f); // 1++
 
 	public WorldGenStructure(List<WeightedRandomNBTTag> templates, List<WeightedRandomBlock> ignoredBlocks, boolean ignoreEntities) {
 
