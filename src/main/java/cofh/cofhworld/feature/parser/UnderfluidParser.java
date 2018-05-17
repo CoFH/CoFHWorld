@@ -54,7 +54,7 @@ public class UnderfluidParser extends UniformParser {
 			}
 		}
 
-		// TODO: WorldGeneratorAdv that allows access to its material list
+		// does this logic actually need a material?
 		List<WeightedRandomBlock> matList = defaultMaterial;
 		if (genObject.hasPath("material")) {
 			matList = new ArrayList<>();

@@ -27,7 +27,7 @@ public class SurfaceParser extends UniformParser {
 	@Override
 	protected FeatureBase getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
 
-		// TODO: WorldGeneratorAdv that allows access to its material list
+		// this feature checks the block below where the generator runs, and needs its own material list
 		List<WeightedRandomBlock> matList = defaultMaterial;
 		if (genObject.hasPath("material")) {
 			matList = new ArrayList<>();
@@ -36,7 +36,7 @@ public class SurfaceParser extends UniformParser {
 				matList = defaultMaterial;
 			}
 		}
-		// TODO: clarity on follow-terrain field
+		// TODO: rename follow-terrain?: when true, stops at first found block, when false finds first solid non-tree block
 		if (genObject.hasPath("follow-terrain") && genObject.getBoolean("follow-terrain")) {
 			return new FeatureGenTopBlock(featureName, gen, matList, numClusters, biomeRes, retrogen, dimRes);
 		} else {
