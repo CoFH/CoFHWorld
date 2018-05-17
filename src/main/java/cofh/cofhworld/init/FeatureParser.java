@@ -97,13 +97,13 @@ public class FeatureParser {
 			return name.toLowerCase(Locale.US).endsWith(".json");
 		});
 
-		Object o = folder == WorldProps.worldGenDir ? folder : WorldProps.worldGenPath.relativize(Paths.get(folder.getPath()));
+		String o = WorldProps.worldGenPath.relativize(Paths.get(folder.getPath())).toString();
 		if (fList == null || fList.length <= 0) {
-			log.debug("There are no World Generation files present in {}.", o);
+			log.debug("There are no World Generation files present in \"{}\".", o);
 			return;
 		}
 		int d = dirs.get();
-		log.info("Found {} World Generation files and {} folders present in {}.", (fList.length - d), d, o);
+		log.info("Found {} World Generation files and {} folders present in \"{}\".", (fList.length - d), d, o);
 		list.addAll(Arrays.asList(fList));
 	}
 
