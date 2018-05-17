@@ -70,7 +70,7 @@ public class WorldGenDecoration extends WorldGenerator {
 				WeightedRandomBlock block = WorldGenMinableCluster.selectBlock(rand, cluster);
 				int stack = stackHeight.intValue(world, rand, pos);
 				do {
-					if (!checkStay || (!(block.block instanceof BlockBush) || ((BlockBush)block.block).canBlockStay(world, pos, block.getState()))) {
+					if (!checkStay || (block.block.canPlaceBlockAt(world, pos))) {
 						r |= world.setBlockState(pos, block.getState(), 2);
 					} else {
 						break;
