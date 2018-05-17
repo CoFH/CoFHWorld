@@ -3,6 +3,7 @@ package cofh.cofhworld.world.generator;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.WeightedRandomEnum;
 import cofh.cofhworld.util.WeightedRandomNBTTag;
+import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -28,7 +29,7 @@ public class WorldGenStructure extends WorldGenerator {
 	private List<WeightedRandomEnum<Rotation>> rots;
 	private List<WeightedRandomEnum<Mirror>> mirrors;
 
-	private INumberProvider integrity;
+	private INumberProvider integrity = new ConstantProvider(0.9f);
 
 	public WorldGenStructure(List<WeightedRandomNBTTag> templates, List<WeightedRandomBlock> ignoredBlocks, boolean ignoreEntities) {
 
@@ -49,7 +50,27 @@ public class WorldGenStructure extends WorldGenerator {
 		placementSettings.setIgnoreEntities(ignoreEntities);
 	}
 
+	public WorldGenStructure setIntegrity(INumberProvider itg) {
 
+		integrity = itg;
+		return this;
+	}
+
+	public WorldGenStructure setDetails(List<WeightedRandomEnum<Rotation>> rot, List<WeightedRandomEnum<Mirror>> mir) {
+
+		if (rot.size() == 1) {
+			placementSettings.setRotation(rot.get(0).value);
+			rot = null;
+		}
+		rots = rot;
+
+		if (mir.size() == 1) {
+			placementSettings.setMirror(mir.get(0).value);
+			mir = null;
+		}
+		mirrors = mir;
+		return this;
+	}
 
 	@Override
 	public boolean generate(World world, Random random, BlockPos pos) {
@@ -58,6 +79,7 @@ public class WorldGenStructure extends WorldGenerator {
 			template.read(WeightedRandom.getRandomItem(random, templates).getCompoundTag());
 		}
 
+		// WeightedRandomLong to supply `setSeed` instead of the worldgen random?
 		placementSettings.setRandom(random);
 
 		if (rots != null) {
@@ -73,23 +95,11 @@ public class WorldGenStructure extends WorldGenerator {
 
 		BlockPos start = template.getZeroPositionWithTransform(pos, placementSettings.getMirror(), placementSettings.getRotation());
 
-		BlockPos checkValue = start;
-
-		BlockPos blockpos = template.transformedSize(placementSettings.getRotation());
-		int l = 256;
-
-		for (int i1 = 0; i1 < blockpos.getX(); ++i1) {
-			for (int j1 = 0; j1 < blockpos.getZ(); ++j1) {
-				l = Math.min(l, world.getHeight(pos.getX() + i1, pos.getZ() + j1));
-			}
-		}
-
-		placementSettings.setIntegrity(integrity.floatValue(world, random, checkValue));
+		placementSettings.setIntegrity(integrity.floatValue(world, random, pos));
 
 		template.addBlocksToWorld(world, start, placementSettings, 20);
 
-
-		return false;
+		return true; // we probably did something. templates don't actually feed back information like that
 	}
 
 }

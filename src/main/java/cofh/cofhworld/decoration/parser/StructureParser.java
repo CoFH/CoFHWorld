@@ -4,12 +4,16 @@ import cofh.cofhworld.decoration.IGeneratorParser;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.init.WorldProps;
 import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.WeightedRandomEnum;
 import cofh.cofhworld.util.WeightedRandomNBTTag;
 import cofh.cofhworld.util.WeightedRandomString;
 import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import cofh.cofhworld.world.generator.WorldGenStructure;
+import com.google.common.collect.Lists;
 import com.typesafe.config.Config;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -22,6 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StructureParser implements IGeneratorParser {
+
+	protected static ArrayList<WeightedRandomEnum<Rotation>> ALL_ROTATION = Lists.newArrayList(
+			new WeightedRandomEnum<Rotation>(Rotation.NONE, 1),
+			new WeightedRandomEnum<Rotation>(Rotation.CLOCKWISE_90, 1),
+			new WeightedRandomEnum<Rotation>(Rotation.CLOCKWISE_180, 1),
+			new WeightedRandomEnum<Rotation>(Rotation.COUNTERCLOCKWISE_90, 1)
+			);
+	protected static ArrayList<WeightedRandomEnum<Mirror>> NO_MIRROR = new ArrayList<>();
 
 	@Override
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException {
@@ -76,6 +88,28 @@ public class StructureParser implements IGeneratorParser {
 		}
 
 		WorldGenStructure gen = new WorldGenStructure(tags, resList, ignoreEntities);
+
+		if (genObject.hasPath("integrity")) {
+			gen.setIntegrity(FeatureParser.parseNumberValue(genObject.getValue("integrity"), 0d, 1.01d)); // ensure we don't accidentally a .999...
+		}
+
+		ArrayList<WeightedRandomEnum<Rotation>> rots = ALL_ROTATION;
+		if (genObject.hasPath("rotation")) {
+			rots = new ArrayList<>(4);
+			if (!FeatureParser.parseWeightedEnumList(genObject.getValue("rotation"), rots, Rotation.class)) {
+				rots.clear();
+			}
+		}
+
+		ArrayList<WeightedRandomEnum<Mirror>> mirror = NO_MIRROR;
+		if (genObject.hasPath("mirror")) {
+			mirror = new ArrayList<>(3);
+			if (!FeatureParser.parseWeightedEnumList(genObject.getValue("mirror"), mirror, Mirror.class)) {
+				mirror.clear();
+			}
+		}
+
+		gen.setDetails(rots, mirror);
 
 		return gen;
 	}

@@ -703,10 +703,10 @@ public class FeatureParser {
 				return null;
 			case OBJECT:
 				Config genObject = ((ConfigObject) genElement).toConfig();
-				if (genObject.hasPath("type")) {
+				if (genObject.hasPath("name")) {
 					type = genObject.getString("name");
 				} else {
-					log.warn("Value missing 'type' field at line {}", genElement.origin().lineNumber());
+					log.warn("Value missing 'name' field at line {}", genElement.origin().lineNumber());
 				}
 				if (genObject.hasPath("weight")) {
 					weight = genObject.getInt("weight");
@@ -822,6 +822,66 @@ public class FeatureParser {
 		return true;
 	}
 
+	public static <T extends Enum<T>> WeightedRandomEnum<T> parseWeightedEnumEntry(ConfigValue genElement, Class<T> values) {
+
+		int weight = 100;
+		String type = null;
+		switch (genElement.valueType()) {
+		case LIST:
+			log.warn("Lists are not supported for enum values at line {}.", genElement.origin().lineNumber());
+			return null;
+		case NULL:
+			log.warn("Null enum entry at line {}", genElement.origin().lineNumber());
+			return null;
+		case OBJECT:
+			Config genObject = ((ConfigObject) genElement).toConfig();
+			if (genObject.hasPath("name")) {
+				type = genObject.getString("name");
+			} else {
+				log.warn("Value missing 'name' field at line {}", genElement.origin().lineNumber());
+			}
+			if (genObject.hasPath("weight")) {
+				weight = genObject.getInt("weight");
+			}
+			break;
+		case STRING:
+			type = String.valueOf(genElement.unwrapped());
+			break;
+		default:
+			log.warn("Invalid type for enum at line {}", genElement.origin().lineNumber());
+			return null;
+		}
+		try {
+			T v = Enum.valueOf(values, type);
+			return new WeightedRandomEnum<T>(v, weight);
+		} catch (IllegalArgumentException e) {
+			log.error("Invalid enum entry {} on line {}", type, genElement.origin().lineNumber());
+		}
+		return null;
+	}
+
+	public static <T extends Enum<T>> boolean parseWeightedEnumList(ConfigValue genElement, List<WeightedRandomEnum<T>> list, Class<T> values) {
+
+		if (genElement.valueType() == ConfigValueType.LIST) {
+			ConfigList blockList = (ConfigList) genElement;
+
+			for (int i = 0, e = blockList.size(); i < e; i++) {
+				WeightedRandomEnum<T> entry = parseWeightedEnumEntry(blockList.get(i), values);
+				if (entry == null) {
+					return false;
+				}
+				list.add(entry);
+			}
+		} else {
+			WeightedRandomEnum<T> entry = parseWeightedEnumEntry(genElement, values);
+			if (entry == null) {
+				return false;
+			}
+			list.add(entry);
+		}
+		return true;
+	}
+
 	public static INumberProvider parseNumberValue(ConfigValue genElement) {
 
 		switch (genElement.valueType()) {
@@ -873,7 +933,7 @@ public class FeatureParser {
 		}
 	}
 
-	public static INumberProvider parseNumberValue(ConfigValue genElement, long min, long max) {
+	public static INumberProvider parseNumberValue(ConfigValue genElement, Number min, Number max) {
 
 		return new BoundedProvider(parseNumberValue(genElement), new ConstantProvider(min), new ConstantProvider(max));
 	}
