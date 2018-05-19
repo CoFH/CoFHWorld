@@ -1,5 +1,6 @@
 package cofh.cofhworld.command;
 
+import cofh.cofhworld.CoFHWorld;
 import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.init.WorldHandler;
 import net.minecraft.command.CommandBase;
@@ -22,6 +23,12 @@ public class CommandCoFHWorld extends CommandTreeBase {
 	}
 
 	@Override
+	public int getRequiredPermissionLevel() {
+
+		return -1;
+	}
+
+	@Override
 	public String getUsage(ICommandSender sender) {
 
 		return "cofhworld.usage";
@@ -31,6 +38,34 @@ public class CommandCoFHWorld extends CommandTreeBase {
 
 		addSubcommand(new CommandReload());
 		addSubcommand(new CommandList());
+		addSubcommand(new CommandVersion());
+	}
+
+	public static class CommandVersion extends CommandBase {
+
+		@Override
+		public String getName() {
+
+			return "version";
+		}
+
+		@Override
+		public int getRequiredPermissionLevel() {
+
+			return -1;
+		}
+
+		@Override
+		public String getUsage(ICommandSender sender) {
+
+			return "cofhworld.version.usage";
+		}
+
+		@Override
+		public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+
+			sender.sendMessage(new TextComponentString(CoFHWorld.VERSION));
+		}
 	}
 
 	// Command to reload all feature definitions
@@ -40,6 +75,12 @@ public class CommandCoFHWorld extends CommandTreeBase {
 		public String getName() {
 
 			return "reload";
+		}
+
+		@Override
+		public int getRequiredPermissionLevel() {
+
+			return 4;
 		}
 
 		@Override
@@ -66,6 +107,12 @@ public class CommandCoFHWorld extends CommandTreeBase {
 		public String getName() {
 
 			return "list";
+		}
+
+		@Override
+		public int getRequiredPermissionLevel() {
+
+			return 1;
 		}
 
 		@Override
