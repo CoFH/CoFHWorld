@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StructureParser implements IGeneratorParser {
+public class GenParserStructure implements IGeneratorParser {
 
 	// @formatter:off
 	protected static ArrayList<WeightedRandomEnum<Rotation>> ALL_ROTATION = Lists.newArrayList(

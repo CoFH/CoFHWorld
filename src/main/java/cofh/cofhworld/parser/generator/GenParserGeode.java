@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeodeParser implements IGeneratorParser {
+public class GenParserGeode implements IGeneratorParser {
 
 	@Override
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {

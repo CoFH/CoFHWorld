@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class BoulderParser implements IGeneratorParser {
+public class GenParserBoulder implements IGeneratorParser {
 
 	@Override
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException {

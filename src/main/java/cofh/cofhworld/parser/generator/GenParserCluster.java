@@ -11,11 +11,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class ClusterParser implements IGeneratorParser {
+public class GenParserCluster implements IGeneratorParser {
 
 	private final boolean sparse;
 
-	public ClusterParser(boolean sparse) {
+	public GenParserCluster(boolean sparse) {
 
 		this.sparse = sparse;
 	}

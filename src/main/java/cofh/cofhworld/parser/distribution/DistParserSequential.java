@@ -6,8 +6,8 @@ import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.parser.IDistributionParser;
-import cofh.cofhworld.world.distribution.FeatureBase;
-import cofh.cofhworld.world.distribution.FeatureGenSequential;
+import cofh.cofhworld.world.distribution.Distribution;
+import cofh.cofhworld.world.distribution.DistributionSequential;
 import cofh.cofhworld.init.FeatureParser;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigList;
@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SequentialParser implements IDistributionParser {
+public class DistParserSequential implements IDistributionParser {
 
 	@Override
 	public IFeatureGenerator parseFeature(String featureName, Config genObject, Logger log) {
@@ -77,7 +77,7 @@ public class SequentialParser implements IDistributionParser {
 	}
 
 	@Override
-	public FeatureBase getFeature(String featureName, Config genObject, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
+	public Distribution getFeature(String featureName, Config genObject, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
 
 		ArrayList<IConfigurableFeatureGenerator> features = new ArrayList<>();
 
@@ -98,7 +98,7 @@ public class SequentialParser implements IDistributionParser {
 			}
 		}
 
-		return new FeatureGenSequential(featureName, features, biomeRes, retrogen, dimRes);
+		return new DistributionSequential(featureName, features, biomeRes, retrogen, dimRes);
 	}
 
 	public static void addFeatureRestrictions(IConfigurableFeatureGenerator feature, Config genObject) {

@@ -14,9 +14,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SequentialGenParser implements IGeneratorParser {
+public class GenParserSequential implements IGeneratorParser {
 
-	public SequentialGenParser() {
+	public GenParserSequential() {
 
 	}
 

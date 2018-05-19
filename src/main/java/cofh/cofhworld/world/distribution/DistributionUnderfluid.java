@@ -2,7 +2,6 @@ package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -16,25 +15,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class FeatureGenUnderfluid extends FeatureBase {
+public class DistributionUnderfluid extends Distribution {
 
-	final boolean water;
-	final WorldGenerator worldGen;
-	final INumberProvider count;
-	final List<WeightedRandomBlock> matList;
-	final String[] fluidList;
+	private final boolean water;
+	private final WorldGenerator worldGen;
+	private final INumberProvider count;
+	private final List<WeightedRandomBlock> matList;
+	private final String[] fluidList;
 
-	public FeatureGenUnderfluid(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, int count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
-
-		this(name, worldGen, matList, new ConstantProvider(count), biomeRes, regen, dimRes);
-	}
-
-	public FeatureGenUnderfluid(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, String[] fluidList, int count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
-
-		this(name, worldGen, matList, fluidList, new ConstantProvider(count), biomeRes, regen, dimRes);
-	}
-
-	public FeatureGenUnderfluid(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
 
 		super(name, biomeRes, regen, dimRes);
 		this.worldGen = worldGen;
@@ -44,7 +33,7 @@ public class FeatureGenUnderfluid extends FeatureBase {
 		fluidList = null;
 	}
 
-	public FeatureGenUnderfluid(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, String[] fluidList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, String[] fluidList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
 
 		super(name, biomeRes, regen, dimRes);
 		this.worldGen = worldGen;

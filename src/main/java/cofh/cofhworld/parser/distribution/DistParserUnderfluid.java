@@ -2,9 +2,9 @@ package cofh.cofhworld.parser.distribution;
 
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.StringData;
-import cofh.cofhworld.world.distribution.FeatureBase;
+import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
-import cofh.cofhworld.world.distribution.FeatureGenUnderfluid;
+import cofh.cofhworld.world.distribution.DistributionUnderfluid;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.WeightedRandomString;
 import cofh.cofhworld.util.numbers.INumberProvider;
@@ -17,11 +17,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-public class UnderfluidParser extends UniformParser {
+public class DistParserUnderfluid extends DistParserUniform {
 
 	private boolean isUnderwater;
 
-	public UnderfluidParser(boolean water) {
+	public DistParserUnderfluid(boolean water) {
 
 		isUnderwater = water;
 	}
@@ -33,7 +33,7 @@ public class UnderfluidParser extends UniformParser {
 	}
 
 	@Override
-	protected FeatureBase getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
+	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
 
 		boolean water = true;
 		Set<String> fluidList = new HashSet<>();
@@ -64,9 +64,9 @@ public class UnderfluidParser extends UniformParser {
 			}
 		}
 		if (water) {
-			return new FeatureGenUnderfluid(featureName, gen, matList, numClusters, biomeRes, retrogen, dimRes);
+			return new DistributionUnderfluid(featureName, gen, matList, numClusters, biomeRes, retrogen, dimRes);
 		} else {
-			return new FeatureGenUnderfluid(featureName, gen, matList, fluidList.toArray(new String[0]), numClusters, biomeRes, retrogen, dimRes);
+			return new DistributionUnderfluid(featureName, gen, matList, fluidList.toArray(new String[0]), numClusters, biomeRes, retrogen, dimRes);
 		}
 	}
 

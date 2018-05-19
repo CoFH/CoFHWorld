@@ -8,17 +8,17 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
-public class FeatureGenSequential extends FeatureBase {
+public class DistributionSequential extends Distribution {
 
 	private final IConfigurableFeatureGenerator[] features;
 
-	public FeatureGenSequential(String name, List<IConfigurableFeatureGenerator> features, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionSequential(String name, List<IConfigurableFeatureGenerator> features, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
 
 		super(name, biomeRes, regen, dimRes);
 		this.features = features.toArray(new IConfigurableFeatureGenerator[features.size()]);
 	}
 
-	public FeatureBase addBiome(BiomeInfo biome) {
+	public Distribution addBiome(BiomeInfo biome) {
 
 		super.addBiome(biome);
 		for (IConfigurableFeatureGenerator feature : features) {
@@ -27,7 +27,7 @@ public class FeatureGenSequential extends FeatureBase {
 		return this;
 	}
 
-	public FeatureBase addBiomes(BiomeInfoSet biomes) {
+	public Distribution addBiomes(BiomeInfoSet biomes) {
 
 		super.addBiomes(biomes);
 		for (IConfigurableFeatureGenerator feature : features) {
@@ -36,7 +36,7 @@ public class FeatureGenSequential extends FeatureBase {
 		return this;
 	}
 
-	public FeatureBase setWithVillage(boolean inVillage) {
+	public Distribution setWithVillage(boolean inVillage) {
 
 		super.setWithVillage(inVillage);
 		for (IConfigurableFeatureGenerator feature : features) {

@@ -1,6 +1,5 @@
 package cofh.cofhworld.world.distribution;
 
-import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -8,19 +7,14 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
-public class FeatureGenUniform extends FeatureBase {
+public class DistributionUniform extends Distribution {
 
-	final WorldGenerator worldGen;
-	final INumberProvider count;
-	final INumberProvider minY;
-	final INumberProvider maxY;
+	private final WorldGenerator worldGen;
+	private final INumberProvider count;
+	private final INumberProvider minY;
+	private final INumberProvider maxY;
 
-	public FeatureGenUniform(String name, WorldGenerator worldGen, int count, int minY, int maxY, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
-
-		this(name, worldGen, new ConstantProvider(count), new ConstantProvider(minY), new ConstantProvider(maxY), biomeRes, regen, dimRes);
-	}
-
-	public FeatureGenUniform(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, INumberProvider maxY, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionUniform(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, INumberProvider maxY, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
 
 		super(name, biomeRes, regen, dimRes);
 		this.worldGen = worldGen;
