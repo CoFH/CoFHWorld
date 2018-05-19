@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.distribution;
 
+import cofh.cofhworld.parser.distribution.base.AbstractDistParser;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.StringData;
 import cofh.cofhworld.world.distribution.Distribution;
@@ -17,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-public class DistParserUnderfluid extends DistParserUniform {
+public class DistParserUnderfluid extends AbstractDistParser {
 
 	private boolean isUnderwater;
 

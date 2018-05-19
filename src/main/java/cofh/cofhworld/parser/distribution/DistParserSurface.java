@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.distribution;
 
+import cofh.cofhworld.parser.distribution.base.AbstractDistParser;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DistParserSurface extends DistParserUniform {
+public class DistParserSurface extends AbstractDistParser {
 
 	@Override
 	protected List<WeightedRandomBlock> generateDefaultMaterial() {
@@ -31,7 +32,7 @@ public class DistParserSurface extends DistParserUniform {
 		List<WeightedRandomBlock> matList = defaultMaterial;
 		if (genObject.hasPath("material")) {
 			matList = new ArrayList<>();
-			if (!BlockData.parseBlockList(genObject.root().get("material"), matList, false)) {
+			if (!BlockData.parseBlockList(genObject.getValue("material"), matList, false)) {
 				log.warn("Invalid material list! Using default list.");
 				matList = defaultMaterial;
 			}
