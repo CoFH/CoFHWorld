@@ -107,13 +107,20 @@ public class WorldHandler implements IWorldGenerator {
 
 	public static boolean reloadConfig() {
 
+		return reloadConfig(true);
+	}
+
+	public static boolean reloadConfig(boolean clear) {
+
 		if (WorldProps.disableFeatureGeneration) {
 			CoFHWorld.log.warn(" Feature Generation has been disabled via the Config file. This option should only be set if you have explicitly configured another mod to handle ore generation.");
 			return false;
 		}
-		// Reset all features so that config will reload properly
-		features.clear();
-		featureNames.clear();
+		if (clear) {
+			// Reset all features so that config will reload properly
+			features.clear();
+			featureNames.clear();
+		}
 
 		// Parse all the generation files into features
 		try {
