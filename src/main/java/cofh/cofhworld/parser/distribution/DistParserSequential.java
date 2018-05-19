@@ -21,8 +21,6 @@ import java.util.Locale;
 
 public class DistParserSequential implements IDistributionParser {
 
-	@Override
-	public IFeatureGenerator parseFeature(String featureName, Config genObject, Logger log) {
 
 		boolean retrogen = false;
 		if (genObject.hasPath("retrogen")) {
@@ -99,39 +97,6 @@ public class DistParserSequential implements IDistributionParser {
 		}
 
 		return new DistributionSequential(featureName, features, biomeRes, retrogen, dimRes);
-	}
-
-	public static void addFeatureRestrictions(IConfigurableFeatureGenerator feature, Config genObject) {
-
-		if (feature.getBiomeRestriction() != GenRestriction.NONE) {
-			feature.addBiomes(BiomeData.parseBiomeRestrictions(genObject.getConfig("biome")));
-		}
-		if (feature.getDimensionRestriction() != GenRestriction.NONE) {
-			String field = "dimension";
-			ConfigValue data = genObject.getValue(field);
-			ConfigList restrictionList = null;
-			switch (data.valueType()) {
-			case OBJECT:
-				field += ".value";
-			case LIST:
-				restrictionList = genObject.getList(field);
-				break;
-			case NUMBER:
-				feature.addDimension(genObject.getNumber(field).intValue());
-				break;
-			default:
-				// unreachable
-				break;
-			}
-			if (restrictionList != null) {
-				for (int i = 0; i < restrictionList.size(); i++) {
-					ConfigValue val = restrictionList.get(i);
-					if (val.valueType() == ConfigValueType.NUMBER) {
-						feature.addDimension(((Number) val.unwrapped()).intValue());
-					}
-				}
-			}
-		}
 	}
 
 }
