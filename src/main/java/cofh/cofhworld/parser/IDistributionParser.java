@@ -111,6 +111,8 @@ public interface IDistributionParser {
 		return feature;
 	};
 
+	String[] getRequiredFields();
+
 	IConfigurableFeatureGenerator getFeature(String featureName, Config genObject, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log);
 
 }
