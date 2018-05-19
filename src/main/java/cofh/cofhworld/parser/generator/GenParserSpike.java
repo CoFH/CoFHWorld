@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class SpikeParser implements IGeneratorParser {
+public class GenParserSpike implements IGeneratorParser {
 
 	@Override
 	public WorldGenerator parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {

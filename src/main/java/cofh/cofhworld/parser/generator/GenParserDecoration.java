@@ -1,4 +1,4 @@
-package cofh.cofhworld.parser.distribution;
+package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.BlockData;
@@ -12,10 +12,9 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class DecorationParser extends SurfaceParser implements IGeneratorParser {
+public class GenParserDecoration implements IGeneratorParser {
 
 	@Override
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
@@ -58,18 +57,6 @@ public class DecorationParser extends SurfaceParser implements IGeneratorParser 
 			r.setZVar(NumberData.parseNumberValue(genData.get("z-variance"), 0, 15));
 		}
 		return r;
-	}
-
-	@Override
-	protected List<WeightedRandomBlock> generateDefaultMaterial() {
-
-		return Collections.singletonList(new WeightedRandomBlock(Blocks.GRASS, -1));
-	}
-
-	@Override
-	protected String getDefaultGenerator() {
-
-		return "decoration";
 	}
 
 }

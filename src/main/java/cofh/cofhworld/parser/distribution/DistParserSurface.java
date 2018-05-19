@@ -1,10 +1,10 @@
 package cofh.cofhworld.parser.distribution;
 
 import cofh.cofhworld.parser.variables.BlockData;
-import cofh.cofhworld.world.distribution.FeatureBase;
+import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
-import cofh.cofhworld.world.distribution.FeatureGenSurface;
-import cofh.cofhworld.world.distribution.FeatureGenTopBlock;
+import cofh.cofhworld.world.distribution.DistributionSurface;
+import cofh.cofhworld.world.distribution.DistributionTopBlock;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import com.typesafe.config.Config;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SurfaceParser extends UniformParser {
+public class DistParserSurface extends DistParserUniform {
 
 	@Override
 	protected List<WeightedRandomBlock> generateDefaultMaterial() {
@@ -25,7 +25,7 @@ public class SurfaceParser extends UniformParser {
 	}
 
 	@Override
-	protected FeatureBase getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
+	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
 
 		// this feature checks the block below where the generator runs, and needs its own material list
 		List<WeightedRandomBlock> matList = defaultMaterial;
@@ -38,9 +38,9 @@ public class SurfaceParser extends UniformParser {
 		}
 		// TODO: rename follow-terrain?: when true, stops at first found block, when false finds first solid non-tree block
 		if (genObject.hasPath("follow-terrain") && genObject.getBoolean("follow-terrain")) {
-			return new FeatureGenTopBlock(featureName, gen, matList, numClusters, biomeRes, retrogen, dimRes);
+			return new DistributionTopBlock(featureName, gen, matList, numClusters, biomeRes, retrogen, dimRes);
 		} else {
-			return new FeatureGenSurface(featureName, gen, matList, numClusters, biomeRes, retrogen, dimRes);
+			return new DistributionSurface(featureName, gen, matList, numClusters, biomeRes, retrogen, dimRes);
 		}
 	}
 

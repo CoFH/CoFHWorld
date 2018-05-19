@@ -12,7 +12,7 @@ import net.minecraft.world.biome.Biome;
 import java.util.Random;
 import java.util.Set;
 
-public abstract class FeatureBase implements IFeatureGenerator, IConfigurableFeatureGenerator {
+public abstract class Distribution implements IFeatureGenerator, IConfigurableFeatureGenerator {
 
 	public final String name;
 
@@ -31,7 +31,7 @@ public abstract class FeatureBase implements IFeatureGenerator, IConfigurableFea
 	/**
 	 * Shortcut to add a Feature with no biome or dimension restriction.
 	 */
-	public FeatureBase(String name, boolean regen) {
+	public Distribution(String name, boolean regen) {
 
 		this(name, GenRestriction.NONE, regen, GenRestriction.NONE);
 	}
@@ -39,7 +39,7 @@ public abstract class FeatureBase implements IFeatureGenerator, IConfigurableFea
 	/**
 	 * Shortcut to add a Feature with a dimension restriction but no biome restriction.
 	 */
-	public FeatureBase(String name, boolean regen, GenRestriction dimRes) {
+	public Distribution(String name, boolean regen, GenRestriction dimRes) {
 
 		this(name, GenRestriction.NONE, regen, dimRes);
 	}
@@ -47,12 +47,12 @@ public abstract class FeatureBase implements IFeatureGenerator, IConfigurableFea
 	/**
 	 * Shortcut to add a Feature with a biome restriction but no dimension restriction.
 	 */
-	public FeatureBase(String name, GenRestriction biomeRes, boolean regen) {
+	public Distribution(String name, GenRestriction biomeRes, boolean regen) {
 
 		this(name, biomeRes, regen, GenRestriction.NONE);
 	}
 
-	public FeatureBase(String name, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public Distribution(String name, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
 
 		this.name = name;
 		this.biomeRestriction = biomeRes;
@@ -60,31 +60,31 @@ public abstract class FeatureBase implements IFeatureGenerator, IConfigurableFea
 		this.regen = regen;
 	}
 
-	public FeatureBase setWithVillage(boolean inVillage) {
+	public Distribution setWithVillage(boolean inVillage) {
 
 		this.withVillage = inVillage;
 		return this;
 	}
 
-	public FeatureBase setRarity(int rarity) {
+	public Distribution setRarity(int rarity) {
 
 		this.rarity = rarity;
 		return this;
 	}
 
-	public FeatureBase addBiome(BiomeInfo biome) {
+	public Distribution addBiome(BiomeInfo biome) {
 
 		biomes.add(biome);
 		return this;
 	}
 
-	public FeatureBase addBiomes(BiomeInfoSet biomes) {
+	public Distribution addBiomes(BiomeInfoSet biomes) {
 
 		this.biomes.addAll(biomes);
 		return this;
 	}
 
-	public FeatureBase addDimension(int dimID) {
+	public Distribution addDimension(int dimID) {
 
 		dimensions.add(dimID);
 		return this;
@@ -131,7 +131,7 @@ public abstract class FeatureBase implements IFeatureGenerator, IConfigurableFea
 
 		if (biomeRestriction != GenRestriction.NONE) {
 			Biome biome = world.getBiome(new BlockPos(x, 0, z));
-			return !(biomeRestriction == GenRestriction.BLACKLIST == biomes.contains(biome, rand));
+			return biomeRestriction == GenRestriction.WHITELIST == biomes.contains(biome, rand);
 		}
 		return true;
 	}

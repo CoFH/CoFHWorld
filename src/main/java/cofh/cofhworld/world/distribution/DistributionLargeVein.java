@@ -1,6 +1,5 @@
 package cofh.cofhworld.world.distribution;
 
-import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -8,21 +7,16 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
-public class FeatureGenLargeVein extends FeatureBase {
+public class DistributionLargeVein extends Distribution {
 
-	final WorldGenerator worldGen;
-	final INumberProvider count;
-	final INumberProvider minY;
+	private final WorldGenerator worldGen;
+	private final INumberProvider count;
+	private final INumberProvider minY;
 	private INumberProvider veinHeight, veinDiameter;
 	private INumberProvider verticalDensity;
 	private INumberProvider horizontalDensity;
 
-	public FeatureGenLargeVein(String name, WorldGenerator worldGen, int count, int minY, GenRestriction biomeRes, boolean regen, GenRestriction dimRes, int height, int diameter, int vDensity, int hDensity) {
-
-		this(name, worldGen, new ConstantProvider(count), new ConstantProvider(minY), biomeRes, regen, dimRes, new ConstantProvider(height), new ConstantProvider(diameter), new ConstantProvider(vDensity), new ConstantProvider(hDensity));
-	}
-
-	public FeatureGenLargeVein(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, GenRestriction biomeRes, boolean regen, GenRestriction dimRes, INumberProvider height, INumberProvider diameter, INumberProvider vDensity, INumberProvider hDensity) {
+	public DistributionLargeVein(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, GenRestriction biomeRes, boolean regen, GenRestriction dimRes, INumberProvider height, INumberProvider diameter, INumberProvider vDensity, INumberProvider hDensity) {
 
 		super(name, biomeRes, regen, dimRes);
 		this.worldGen = worldGen;

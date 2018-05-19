@@ -1,19 +1,19 @@
 package cofh.cofhworld.parser.distribution;
 
 import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.world.distribution.FeatureBase;
+import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
-import cofh.cofhworld.world.distribution.FeatureGenLargeVein;
+import cofh.cofhworld.world.distribution.DistributionLargeVein;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
-public class FractalParser extends UniformParser {
+public class DistParserFractal extends DistParserUniform {
 
 	@Override
-	protected FeatureBase getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
+	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
 
 		if (!(genObject.hasPath("min-height") && genObject.hasPath("vein-height"))) {
 			log.error("Height parameters for 'fractal' template not specified in \"" + featureName + "\"");
@@ -34,7 +34,7 @@ public class FractalParser extends UniformParser {
 		INumberProvider vD = NumberData.parseNumberValue(genData.get("vertical-density"), 0, 100);
 		INumberProvider hD = NumberData.parseNumberValue(genData.get("horizontal-density"), 0, 100);
 
-		return new FeatureGenLargeVein(featureName, gen, numClusters, minY, biomeRes, retrogen, dimRes, h, d, vD, hD);
+		return new DistributionLargeVein(featureName, gen, numClusters, minY, biomeRes, retrogen, dimRes, h, d, vD, hD);
 	}
 
 	@Override

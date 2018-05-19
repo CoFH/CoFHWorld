@@ -13,11 +13,11 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StalagmiteParser implements IGeneratorParser {
+public class GenParserStalagmite implements IGeneratorParser {
 
 	private final boolean stalactite;
 
-	public StalagmiteParser(boolean stalactite) {
+	public GenParserStalagmite(boolean stalactite) {
 
 		this.stalactite = stalactite;
 	}

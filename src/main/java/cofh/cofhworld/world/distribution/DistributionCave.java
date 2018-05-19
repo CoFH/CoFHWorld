@@ -1,6 +1,5 @@
 package cofh.cofhworld.world.distribution;
 
-import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import cofh.cofhworld.util.numbers.world.WorldValueProvider;
 import net.minecraft.block.state.IBlockState;
@@ -10,21 +9,16 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
-public class FeatureGenCave extends FeatureBase {
+public class DistributionCave extends Distribution {
 
 	private final static INumberProvider GROUND_LEVEL = new WorldValueProvider("GROUND_LEVEL");
 
-	final WorldGenerator worldGen;
-	final INumberProvider count;
+	private final WorldGenerator worldGen;
+	private final INumberProvider count;
 	private INumberProvider groundLevel = GROUND_LEVEL;
-	final boolean ceiling;
+	private final boolean ceiling;
 
-	public FeatureGenCave(String name, WorldGenerator worldGen, boolean ceiling, int count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
-
-		this(name, worldGen, ceiling, new ConstantProvider(count), biomeRes, regen, dimRes);
-	}
-
-	public FeatureGenCave(String name, WorldGenerator worldGen, boolean ceiling, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionCave(String name, WorldGenerator worldGen, boolean ceiling, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
 
 		super(name, biomeRes, regen, dimRes);
 		this.worldGen = worldGen;

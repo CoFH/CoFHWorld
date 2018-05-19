@@ -2,7 +2,6 @@ package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.numbers.ConstantProvider;
 import cofh.cofhworld.util.numbers.INumberProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -14,18 +13,13 @@ import java.util.Random;
 
 import static cofh.cofhworld.world.generator.WorldGenMinableCluster.canGenerateInBlock;
 
-public class FeatureGenTopBlock extends FeatureBase {
+public class DistributionSurface extends Distribution {
 
-	final WorldGenerator worldGen;
-	final INumberProvider count;
-	final WeightedRandomBlock[] matList;
+	private final WorldGenerator worldGen;
+	private final INumberProvider count;
+	private final WeightedRandomBlock[] matList;
 
-	public FeatureGenTopBlock(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, int count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
-
-		this(name, worldGen, matList, new ConstantProvider(count), biomeRes, regen, dimRes);
-	}
-
-	public FeatureGenTopBlock(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionSurface(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
 
 		super(name, biomeRes, regen, dimRes);
 		this.worldGen = worldGen;
@@ -48,7 +42,7 @@ public class FeatureGenTopBlock extends FeatureBase {
 				continue;
 			}
 
-			int y = Utils.getTopBlockY(world, x, z);
+			int y = Utils.getSurfaceBlockY(world, x, z);
 			l:
 			{
 				IBlockState state = world.getBlockState(new BlockPos(x, y, z));

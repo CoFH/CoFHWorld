@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Deprecated//TODO
-public class DungeonParser implements IGeneratorParser {
+public class GenParserDungeon implements IGeneratorParser {
 
 	@Override
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
