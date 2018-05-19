@@ -100,6 +100,15 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		return this.dimensionRestriction;
 	}
 
+	protected boolean canGenerateInBiome(World world, int x, int z, Random rand) {
+
+		if (biomeRestriction != GenRestriction.NONE) {
+			Biome biome = world.getBiome(new BlockPos(x, 0, z));
+			return biomeRestriction == GenRestriction.WHITELIST == biomes.contains(biome, rand);
+		}
+		return true;
+	}
+
 	/* IFeatureGenerator */
 	@Override
 	public final String getFeatureName() {
@@ -126,14 +135,5 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 	}
 
 	public abstract boolean generateFeature(Random random, int blockX, int blockZ, World world);
-
-	protected boolean canGenerateInBiome(World world, int x, int z, Random rand) {
-
-		if (biomeRestriction != GenRestriction.NONE) {
-			Biome biome = world.getBiome(new BlockPos(x, 0, z));
-			return biomeRestriction == GenRestriction.WHITELIST == biomes.contains(biome, rand);
-		}
-		return true;
-	}
 
 }
