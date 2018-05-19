@@ -1,8 +1,8 @@
 package cofh.cofhworld.init;
 
 import cofh.cofhworld.CoFHWorld;
-import cofh.cofhworld.decoration.parser.*;
-import cofh.cofhworld.feature.parser.*;
+import cofh.cofhworld.parser.distribution.*;
+import cofh.cofhworld.parser.generator.*;
 import cofh.cofhworld.util.Utils;
 
 import java.io.File;

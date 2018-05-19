@@ -1,7 +1,7 @@
 package cofh.cofhworld.init;
 
 import cofh.cofhworld.CoFHWorld;
-import cofh.cofhworld.feature.IFeatureGenerator;
+import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.init.WorldTickHandler.RetroChunkCoord;
 import cofh.cofhworld.util.ChunkCoord;
 import cofh.cofhworld.util.LinkedHashList;

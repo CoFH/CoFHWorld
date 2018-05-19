@@ -1,39 +1,17 @@
 package cofh.cofhworld.init;
 
-import cofh.cofhworld.biome.BiomeInfo;
-import cofh.cofhworld.biome.BiomeInfoRarity;
-import cofh.cofhworld.biome.BiomeInfoSet;
-import cofh.cofhworld.decoration.IGeneratorParser;
-import cofh.cofhworld.feature.IFeatureGenerator;
-import cofh.cofhworld.feature.IFeatureParser;
-import cofh.cofhworld.util.*;
-import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
-import cofh.cofhworld.util.numbers.*;
-import cofh.cofhworld.util.numbers.world.WorldValueProvider;
-import cofh.cofhworld.world.generator.WorldGenMulti;
+import cofh.cofhworld.parser.DistributionData;
+import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.world.IFeatureGenerator;
+import cofh.cofhworld.parser.IDistributionParser;
 import com.typesafe.config.*;
-import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.biome.Biome.TempCategory;
-import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionParser;
-import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -48,7 +26,7 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class FeatureParser {
 
-	private static HashMap<String, IFeatureParser> templateHandlers = new HashMap<>();
+	private static HashMap<String, IDistributionParser> distributionHandlers = new HashMap<>();
 	private static HashMap<String, IGeneratorParser> generatorHandlers = new HashMap<>();
 	public static ArrayList<IFeatureGenerator> parsedFeatures = new ArrayList<>();
 
@@ -56,16 +34,21 @@ public class FeatureParser {
 
 	}
 
-	public static IFeatureParser getTemplate(String template) {
+	public static IDistributionParser getDistribution(String distribution) {
 
-		return templateHandlers.get(template);
+		return distributionHandlers.get(distribution);
 	}
 
-	public static boolean registerTemplate(String template, IFeatureParser handler) {
+	public static IGeneratorParser getGenerator(String generator) {
+
+		return generatorHandlers.get(generator);
+	}
+
+	public static boolean registerTemplate(String template, IDistributionParser handler) {
 
 		// TODO: provide this function through IFeatureHandler?
-		if (!templateHandlers.containsKey(template)) {
-			templateHandlers.put(template, handler);
+		if (!distributionHandlers.containsKey(template)) {
+			distributionHandlers.put(template, handler);
 			return true;
 		}
 		log.error("Attempted to register duplicate template '{}'!", template);
@@ -118,7 +101,8 @@ public class FeatureParser {
 			 */
 			int i = 0;
 			if (WorldProps.replaceStandardGeneration) {
-				log.info("Replacing standard generation with file \"{}\"", WorldProps.worldGenPath.relativize(Paths.get(WorldProps.standardGenFile.getPath())));
+				log.info("Replacing standard generation with file \"{}\"",
+						WorldProps.worldGenPath.relativize(Paths.get(WorldProps.standardGenFile.getPath())));
 				worldGenList.add(WorldProps.standardGenFile); // prioritize this over all other files
 				++i;
 			}
@@ -176,12 +160,11 @@ public class FeatureParser {
 			log.trace("World generation file \"{}\" ready to be processed", file);
 			processedGenList.add(genList);
 		}
-
+		
 		// TODO: stream? is it worth it? wrap Config in a holder: store filename, pre-processed priority
 		Collections.sort(processedGenList, new Comparator<Config>() {
 			@Override
 			public int compare(Config l, Config r) {
-
 				long lv = 0, rv = 0;
 				if (l.hasPath("priority")) {
 					try {
@@ -197,7 +180,7 @@ public class FeatureParser {
 						// wrong type
 					}
 				}
-
+				
 				return lv < rv ? 1 : (lv == rv ? 0 : -1);
 			}
 		});
@@ -215,7 +198,7 @@ public class FeatureParser {
 						if (genEntry.getValue().valueType() != ConfigValueType.OBJECT) {
 							log.error("Error parsing generation entry: '{}' > This must be an object and is not.", key);
 						} else {
-							switch (parseGenerationEntry(key, genData.getConfig(key))) {
+							switch (parsePopulateEntry(key, genData.getConfig(key))) {
 								case SUCCESS:
 									log.debug("Generation entry successfully parsed: '{}'", key);
 									break;
@@ -311,7 +294,7 @@ public class FeatureParser {
 		return true == retComp;
 	}
 
-	public static EnumActionResult parseGenerationEntry(String featureName, Config genObject) {
+	public static EnumActionResult parsePopulateEntry(String featureName, Config genObject) {
 
 		if (genObject.hasPath("enabled")) {
 			if (!genObject.getBoolean("enabled")) {
@@ -319,618 +302,14 @@ public class FeatureParser {
 				return EnumActionResult.SUCCESS;
 			}
 		}
-		String templateName = parseTemplate(genObject);
-		IFeatureParser template = templateHandlers.get(templateName);
-		if (template != null) {
-			IFeatureGenerator feature = template.parseFeature(featureName, genObject, log);
-			if (feature != null) {
-				parsedFeatures.add(feature);
-				return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
-			}
-			log.error("Template '{}' failed to parse its entry!", templateName);
-		} else {
-			log.warn("Unknown template '{}'.", templateName);
+
+		IFeatureGenerator feature = DistributionData.parseFeature(featureName, genObject);
+		if (feature != null) {
+			parsedFeatures.add(feature);
+			return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
 		}
 
 		return EnumActionResult.FAIL;
-	}
-
-	public static String parseTemplate(Config genObject) {
-
-		return genObject.getString("distribution");
-	}
-
-	public static WorldGenerator parseGenerator(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) throws InvalidGeneratorException {
-
-		if (!genObject.hasPath("generator")) {
-			return null;
-		}
-		ConfigValue genData = genObject.root().get("generator");
-		if (genData.valueType() == ConfigValueType.LIST) {
-			List<? extends Config> list = genObject.getConfigList("generator");
-			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
-			for (Config genElement : list) {
-				WorldGenerator gen = parseGeneratorData(def, genElement, defaultMaterial);
-				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
-				gens.add(new WeightedRandomWorldGenerator(gen, weight));
-			}
-			return new WorldGenMulti(gens);
-		} else if (genData.valueType() == ConfigValueType.OBJECT) {
-			return parseGeneratorData(def, genObject.getConfig("generator"), defaultMaterial);
-		} else {
-			log.error("Invalid data type for field 'generator'. > It must be an object or list.");
-			return null;
-		}
-	}
-
-	public static WorldGenerator parseGeneratorData(String def, Config genObject, List<WeightedRandomBlock> defaultMaterial) throws InvalidGeneratorException {
-
-		String name = def;
-		if (genObject.hasPath("type")) {
-			name = genObject.getString("type");
-			if (!generatorHandlers.containsKey(name)) {
-				log.warn("Unknown generator '{}'! using '{}'", name, def);
-				name = def;
-			}
-		}
-		IGeneratorParser parser = generatorHandlers.get(name);
-		if (parser == null) {
-			throw new IllegalStateException("Generator '" + name + "' is not registered!");
-		} else if (parser.isMeta() && name == def) {
-			throw new IllegalStateException("Default generator for a template is a meta generator!");
-		}
-
-		List<WeightedRandomBlock> resList = new ArrayList<>();
-		if (!parser.isMeta() && !genObject.hasPath("block")) {
-			log.error("Generators cannot generate blocks unless `block` is specified.");
-			throw new InvalidGeneratorException("`block` not specified", genObject.origin());
-		} else if (!FeatureParser.parseResList(genObject.root().get("block"), resList, true) && !parser.isMeta()) {
-			throw new InvalidGeneratorException("`block` not valid", genObject.origin());
-		}
-
-		List<WeightedRandomBlock> matList = new ArrayList<>();
-		if (!genObject.hasPath("material")) {
-			log.debug("Using the default material list.");
-			matList = defaultMaterial;
-		} else if (!FeatureParser.parseResList(genObject.root().get("material"), matList, false)) {
-			log.warn("Invalid material list! Using default list.");
-			matList = defaultMaterial;
-		}
-
-		return parser.parseGenerator(parser.isMeta() ? def : name, genObject, log, resList, matList);
-	}
-
-	public static BiomeInfoSet parseBiomeRestrictions(Config genObject) {
-
-		BiomeInfoSet set;
-		ConfigValue data = genObject.getValue("value");
-		if (data.valueType() == ConfigValueType.LIST) {
-			ConfigList restrictionList = (ConfigList) data;
-			set = new BiomeInfoSet(restrictionList.size());
-			for (int i = 0, e = restrictionList.size(); i < e; i++) {
-				BiomeInfo info = parseBiomeData(restrictionList.get(i));
-				if (info != null) {
-					set.add(info);
-				}
-			}
-		} else {
-			set = new BiomeInfoSet(1);
-			BiomeInfo info = parseBiomeData(data);
-			if (info != null) {
-				set.add(info);
-			}
-		}
-		return set;
-	}
-
-	public static BiomeInfo parseBiomeData(ConfigValue element) {
-
-		BiomeInfo info = null;
-		switch (element.valueType()) {
-			case NULL:
-				log.debug("Null biome entry. Ignoring.");
-				break;
-			case OBJECT:
-				Config obj = ((ConfigObject) element).toConfig();
-				String type = obj.getString("type");
-				boolean wl = !obj.hasPath("whitelist") || obj.getBoolean("whitelist");
-				ConfigValue value = obj.root().get("entry");
-				List<String> array = value.valueType() == ConfigValueType.LIST ? obj.getStringList("entry") : null;
-				String entry = array != null ? null : (String) value.unwrapped();
-				int rarity = obj.hasPath("rarity") ? obj.getInt("rarity") : -1;
-
-				l:
-				if (type.equalsIgnoreCase("name")) {
-					if (array != null) {
-						List<String> names = array;
-						if (rarity > 0) {
-							info = new BiomeInfoRarity(names, 4, true, rarity);
-						} else {
-							info = new BiomeInfo(names, 4, true);
-						}
-					} else {
-						if (rarity > 0) {
-							info = new BiomeInfoRarity(entry, rarity);
-						} else {
-							info = new BiomeInfo(entry);
-						}
-					}
-				} else {
-					Object data;
-					int t;
-					if (type.equalsIgnoreCase("dictionary")) {
-						if (array != null) {
-							ArrayList<Type> tags = new ArrayList<>(array.size());
-							for (int k = 0, j = array.size(); k < j; k++) {
-								tags.add(Type.getType(array.get(k)));
-							}
-							data = tags.toArray(new Type[tags.size()]);
-							t = 6;
-						} else {
-							data = Type.getType(entry);
-							t = 2;
-						}
-					} else if (type.equalsIgnoreCase("id")) {
-						if (array != null) {
-							ArrayList<ResourceLocation> ids = new ArrayList<>(array.size());
-							for (int k = 0, j = array.size(); k < j; ++k) {
-								ids.add(new ResourceLocation(array.get(k)));
-							}
-							data = ids;
-							t = 8;
-						} else {
-							data = new ResourceLocation(entry);
-							t = 7;
-						}
-					} else if (type.equalsIgnoreCase("temperature")) {
-						if (array != null) {
-							ArrayList<TempCategory> temps = new ArrayList<>(array.size());
-							for (int k = 0, j = array.size(); k < j; k++) {
-								temps.add(TempCategory.valueOf(array.get(k)));
-							}
-							data = EnumSet.copyOf(temps);
-							t = 5;
-						} else {
-							data = TempCategory.valueOf(entry);
-							t = 1;
-						}
-					} else {
-						log.warn("Biome entry of unknown type");
-						break l;
-					}
-					if (data != null) {
-						if (rarity > 0) {
-							info = new BiomeInfoRarity(data, t, wl, rarity);
-						} else {
-							info = new BiomeInfo(data, t, wl);
-						}
-					}
-				}
-				break;
-			case STRING:
-				info = new BiomeInfo((String) element.unwrapped());
-				break;
-			default:
-				log.error("Unknown biome type in at line {}", element.origin().lineNumber());
-		}
-		return info;
-	}
-
-	public static Block parseBlockName(String blockRaw) {
-
-		ResourceLocation loc = new ResourceLocation(blockRaw);
-		if (ForgeRegistries.BLOCKS.containsKey(loc)) {
-			return ForgeRegistries.BLOCKS.getValue(loc);
-		}
-		return null;
-	}
-
-	public static WeightedRandomBlock parseBlockEntry(ConfigValue genElement, boolean clamp) {
-
-		final int min = clamp ? 0 : -1;
-		Block block;
-		switch (genElement.valueType()) {
-			case NULL:
-				log.warn("Null Block entry!");
-				return null;
-			case OBJECT:
-				Config blockElement = ((ConfigObject) genElement).toConfig();
-				if (!blockElement.hasPath("name")) {
-					log.error("Block entry needs a name!");
-					return null;
-				}
-				String blockName;
-				block = parseBlockName(blockName = blockElement.getString("name"));
-				if (block == null) {
-					log.error("Invalid block entry!");
-					return null;
-				}
-				int weight = blockElement.hasPath("weight") ? MathHelper.clamp(blockElement.getInt("weight"), 1, 1000000) : 100;
-				if (blockElement.hasPath("properties")) {
-					BlockStateContainer blockstatecontainer = block.getBlockState();
-					IBlockState state = block.getDefaultState();
-					for (Entry<String, ConfigValue> propEntry : blockElement.getObject("properties").entrySet()) {
-
-						IProperty<?> prop = blockstatecontainer.getProperty(propEntry.getKey());
-						if (prop == null) {
-							log.warn("Block '{}' does not have property '{}'.", blockName, propEntry.getKey());
-						}
-						if (propEntry.getValue().valueType() != ConfigValueType.STRING) {
-							log.error("Property '{}' is not a string. All block properties must be strings.", propEntry.getKey());
-							prop = null;
-						}
-
-						if (prop != null) {
-							state = setValue(state, prop, (String) propEntry.getValue().unwrapped());
-						}
-					}
-					return new WeightedRandomBlock(state, weight);
-				} else {
-					ConfigValue data = null;
-					if (blockElement.hasPath("data")) {
-						data = blockElement.getValue("data");
-					} else if (blockElement.hasPath("metadata")) {
-						data = blockElement.getValue("metadata");
-					}
-					if (data != null) {
-						log.warn("Using `metadata` (at line: {}) for blocks is deprecated, and will be removed in the future. Use `properties` instead.", data.origin().lineNumber());
-						if (data.valueType() != ConfigValueType.NUMBER) {
-							data = null; // silently consume the error. logic is deprecated anyway.
-						}
-					}
-					int metadata = data != null ? MathHelper.clamp(((Number) data.unwrapped()).intValue(), min, 15) : min;
-					return new WeightedRandomBlock(block, metadata, weight);
-				}
-			case STRING:
-				block = parseBlockName((String) genElement.unwrapped());
-				if (block == null) {
-					log.error("Invalid block entry!");
-					return null;
-				}
-				return new WeightedRandomBlock(block, min);
-			default:
-				return null;
-		}
-	}
-
-	private static <T extends Comparable<T>> IBlockState setValue(IBlockState state, IProperty<T> prop, String val) {
-
-		return state.withProperty(prop, prop.parseValue(val).get());
-	}
-
-	public static boolean parseResList(ConfigValue genElement, List<WeightedRandomBlock> resList, boolean clamp) {
-
-		if (genElement == null) {
-			return false;
-		}
-
-		if (genElement.valueType() == ConfigValueType.LIST) {
-			ConfigList blockList = (ConfigList) genElement;
-
-			for (int i = 0, e = blockList.size(); i < e; i++) {
-				WeightedRandomBlock entry = parseBlockEntry(blockList.get(i), clamp);
-				if (entry == null) {
-					return false;
-				}
-				resList.add(entry);
-			}
-		} else if (genElement.valueType() == ConfigValueType.NULL) {
-			return true;
-		} else {
-			WeightedRandomBlock entry = parseBlockEntry(genElement, clamp);
-			if (entry == null) {
-				return false;
-			}
-			resList.add(entry);
-		}
-		return true;
-	}
-
-	public static WeightedRandomNBTTag parseEntityEntry(ConfigValue genElement) {
-
-		switch (genElement.valueType()) {
-			case NULL:
-				log.warn("Null entity entry!");
-				return null;
-			case OBJECT:
-				Config genObject = ((ConfigObject) genElement).toConfig();
-				NBTTagCompound data;
-				if (genObject.hasPath("spawner-tag")) {
-					try {
-						data = JsonToNBT.getTagFromJson(genObject.getString("spawner-tag"));
-					} catch (NBTException e) {
-						log.error("Invalid entity entry at line {}!", genElement.origin().lineNumber(), e);
-						return null;
-					}
-				} else if (!genObject.hasPath("entity")) {
-					log.error("Invalid entity entry at line {}!", genElement.origin().lineNumber());
-					return null;
-				} else {
-					data = new NBTTagCompound();
-					String type = genObject.getString("entity");
-					data.setString("EntityId", type);
-				}
-				int weight = genObject.hasPath("weight") ? genObject.getInt("weight") : 100;
-				return new WeightedRandomNBTTag(weight, data);
-			case STRING:
-				String type = (String) genElement.unwrapped();
-				if (type == null) {
-					log.error("Invalid entity entry!");
-					return null;
-				}
-				NBTTagCompound tag = new NBTTagCompound();
-				tag.setString("EntityId", type);
-				return new WeightedRandomNBTTag(100, tag);
-			default:
-				log.warn("Invalid entity entry type at line {}", genElement.origin().lineNumber());
-				return null;
-		}
-	}
-
-	public static boolean parseEntityList(ConfigValue genElement, List<WeightedRandomNBTTag> list) {
-
-		if (genElement.valueType() == ConfigValueType.LIST) {
-			ConfigList blockList = (ConfigList) genElement;
-
-			for (int i = 0, e = blockList.size(); i < e; i++) {
-				WeightedRandomNBTTag entry = parseEntityEntry(blockList.get(i));
-				if (entry == null) {
-					return false;
-				}
-				list.add(entry);
-			}
-		} else {
-			WeightedRandomNBTTag entry = parseEntityEntry(genElement);
-			if (entry == null) {
-				return false;
-			}
-			list.add(entry);
-		}
-		return true;
-	}
-
-	public static WeightedRandomString parseWeightedStringEntry(ConfigValue genElement) {
-
-		int weight = 100;
-		String type = null;
-		switch (genElement.valueType()) {
-			case LIST:
-				log.warn("Lists are not supported for string values at line {}.", genElement.origin().lineNumber());
-				return null;
-			case NULL:
-				log.warn("Null string entry at line {}", genElement.origin().lineNumber());
-				return null;
-			case OBJECT:
-				Config genObject = ((ConfigObject) genElement).toConfig();
-				if (genObject.hasPath("name")) {
-					type = genObject.getString("name");
-				} else {
-					log.warn("Value missing 'name' field at line {}", genElement.origin().lineNumber());
-				}
-				if (genObject.hasPath("weight")) {
-					weight = genObject.getInt("weight");
-				}
-				break;
-			case BOOLEAN:
-			case NUMBER:
-			case STRING:
-				type = String.valueOf(genElement.unwrapped());
-				break;
-		}
-		return new WeightedRandomString(type, weight);
-	}
-
-	public static boolean parseWeightedStringList(ConfigValue genElement, List<WeightedRandomString> list) {
-
-		if (genElement.valueType() == ConfigValueType.LIST) {
-			ConfigList blockList = (ConfigList) genElement;
-
-			for (int i = 0, e = blockList.size(); i < e; i++) {
-				WeightedRandomString entry = parseWeightedStringEntry(blockList.get(i));
-				if (entry == null) {
-					return false;
-				}
-				list.add(entry);
-			}
-		} else {
-			WeightedRandomString entry = parseWeightedStringEntry(genElement);
-			if (entry == null) {
-				return false;
-			}
-			list.add(entry);
-		}
-		return true;
-	}
-
-	public static WeightedRandomItemStack parseWeightedRandomItem(ConfigValue genElement) {
-
-		if (genElement.valueType() == ConfigValueType.NULL) {
-			return null;
-		}
-		int metadata = 0, stackSize = 1, chance = 100;
-		ItemStack stack;
-
-		if (genElement.valueType() != ConfigValueType.OBJECT) {
-			stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(String.valueOf(genElement.unwrapped()))), 1, metadata);
-		} else {
-			Config item = ((ConfigObject) genElement).toConfig();
-
-			if (item.hasPath("metadata")) {
-				metadata = item.getInt("metadata");
-			}
-			if (item.hasPath("count")) {
-				stackSize = item.getInt("count");
-			} else if (item.hasPath("stack-size")) {
-				stackSize = item.getInt("stack-size");
-			} else if (item.hasPath("amount")) {
-				stackSize = item.getInt("amount");
-			}
-			if (stackSize <= 0) {
-				stackSize = 1;
-			}
-			if (item.hasPath("weight")) {
-				chance = item.getInt("weight");
-			}
-			if (item.hasPath("ore-name")) {
-				String oreName = item.getString("ore-name");
-				if (!Utils.oreNameExists(oreName)) {
-					log.error("Invalid ore name `{}` for item at line {}!", oreName, genElement.origin().lineNumber());
-					return null;
-				}
-				ItemStack oreStack = OreDictionary.getOres(oreName, false).get(0);
-				stack = Utils.cloneStack(oreStack, stackSize);
-			} else {
-				if (!item.hasPath("name")) {
-					log.error("Item entry missing valid name or ore name at line {}!", genElement.origin().lineNumber());
-					return null;
-				}
-				stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item.getString("name"))), stackSize, metadata);
-			}
-			if (item.hasPath("nbt")) {
-				try {
-					NBTTagCompound nbtbase = JsonToNBT.getTagFromJson(item.getString("nbt"));
-
-					stack.setTagCompound(nbtbase);
-				} catch (NBTException t) {
-					log.error("Item has invalid NBT data.", t);
-				}
-			}
-		}
-		return new WeightedRandomItemStack(stack, chance);
-	}
-
-	public static boolean parseWeightedItemList(ConfigValue genElement, List<WeightedRandomItemStack> res) {
-
-		if (genElement.valueType() != ConfigValueType.LIST) {
-			WeightedRandomItemStack entry = parseWeightedRandomItem(genElement);
-			if (entry == null) {
-				return false;
-			}
-			res.add(entry);
-		} else {
-			ConfigList list = (ConfigList) genElement;
-
-			for (int i = 0, e = list.size(); i < e; ++i) {
-				WeightedRandomItemStack entry = parseWeightedRandomItem(list.get(i));
-				if (entry == null) {
-					return false;
-				}
-				res.add(entry);
-			}
-		}
-		return true;
-	}
-
-	public static <T extends Enum<T>> WeightedRandomEnum<T> parseWeightedEnumEntry(ConfigValue genElement, Class<T> values) {
-
-		int weight = 100;
-		String type = null;
-		switch (genElement.valueType()) {
-			case LIST:
-				log.warn("Lists are not supported for enum values at line {}.", genElement.origin().lineNumber());
-				return null;
-			case NULL:
-				log.warn("Null enum entry at line {}", genElement.origin().lineNumber());
-				return null;
-			case OBJECT:
-				Config genObject = ((ConfigObject) genElement).toConfig();
-				if (genObject.hasPath("name")) {
-					type = genObject.getString("name");
-				} else {
-					log.warn("Value missing 'name' field at line {}", genElement.origin().lineNumber());
-				}
-				if (genObject.hasPath("weight")) {
-					weight = genObject.getInt("weight");
-				}
-				break;
-			case STRING:
-				type = String.valueOf(genElement.unwrapped());
-				break;
-			default:
-				log.warn("Invalid type for enum at line {}", genElement.origin().lineNumber());
-				return null;
-		}
-		try {
-			T v = Enum.valueOf(values, type);
-			return new WeightedRandomEnum<T>(v, weight);
-		} catch (IllegalArgumentException e) {
-			log.error("Invalid enum entry {} on line {}", type, genElement.origin().lineNumber());
-		}
-		return null;
-	}
-
-	public static <T extends Enum<T>> boolean parseWeightedEnumList(ConfigValue genElement, List<WeightedRandomEnum<T>> list, Class<T> values) {
-
-		if (genElement.valueType() == ConfigValueType.LIST) {
-			ConfigList blockList = (ConfigList) genElement;
-
-			for (int i = 0, e = blockList.size(); i < e; i++) {
-				WeightedRandomEnum<T> entry = parseWeightedEnumEntry(blockList.get(i), values);
-				if (entry == null) {
-					return false;
-				}
-				list.add(entry);
-			}
-		} else {
-			WeightedRandomEnum<T> entry = parseWeightedEnumEntry(genElement, values);
-			if (entry == null) {
-				return false;
-			}
-			list.add(entry);
-		}
-		return true;
-	}
-
-	public static INumberProvider parseNumberValue(ConfigValue genElement) {
-
-		switch (genElement.valueType()) {
-			case NUMBER:
-				return new ConstantProvider(((Number) genElement.unwrapped()));
-			case OBJECT:
-				ConfigObject genData = (ConfigObject) genElement;
-				Config genProp = genData.toConfig();
-				switch (genData.size()) {
-					case 1:
-						if (genData.containsKey("value")) {
-							return new ConstantProvider(genProp.getNumber("value"));
-						} else if (genData.containsKey("variance")) {
-							return new SkellamRandomProvider(genProp.getNumber("variance"));
-						} else if (genData.containsKey("world-data")) {
-							return new WorldValueProvider(genProp.getString("world-data"));
-						}
-						break;
-					case 2:
-						if (genData.containsKey("min") && genData.containsKey("max")) {
-							return new UniformRandomProvider(genProp.getNumber("min"), genProp.getNumber("max"));
-						}
-						break;
-					case 3:
-						INumberProvider a, b;
-						if (genData.containsKey("operation") && genData.containsKey("value-a") && genData.containsKey("value-b")) {
-							a = parseNumberValue(genProp.getValue("value-a"));
-							b = parseNumberValue(genProp.getValue("value-b"));
-							return new OperationProvider(a, b, genProp.getString("operation"));
-						} else if (genData.containsKey("value") && genData.containsKey("min") && genData.containsKey("max")) {
-							INumberProvider v = parseNumberValue(genProp.getValue("value"));
-							a = parseNumberValue(genProp.getValue("min"));
-							b = parseNumberValue(genProp.getValue("max"));
-							return new BoundedProvider(v, a, b);
-						}
-						break;
-					default:
-						throw new Error(String.format("Too many properties on object at line %s", genElement.origin().lineNumber()));
-					case 0:
-						break;
-				}
-				throw new Error(String.format("Unknown properties on object at line %s", genElement.origin().lineNumber()));
-			default:
-				throw new Error(String.format("Unsupported data type at line %s", genElement.origin().lineNumber()));
-		}
-	}
-
-	public static INumberProvider parseNumberValue(ConfigValue genElement, Number min, Number max) {
-
-		return new BoundedProvider(parseNumberValue(genElement), new ConstantProvider(min), new ConstantProvider(max));
 	}
 
 	/* INCLUDER CLASS */

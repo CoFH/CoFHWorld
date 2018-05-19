@@ -1,0 +1,65 @@
+package cofh.cofhworld.parser.variables;
+
+import cofh.cofhworld.util.WeightedRandomString;
+import com.typesafe.config.*;
+
+import java.util.List;
+
+import static cofh.cofhworld.CoFHWorld.log;
+
+public class StringData {
+
+	public static boolean parseStringList(ConfigValue stringEntry, List<WeightedRandomString> list) {
+
+		if (stringEntry.valueType() == ConfigValueType.LIST) {
+			ConfigList configList = (ConfigList) stringEntry;
+
+			for (int i = 0, e = configList.size(); i < e; i++) {
+				WeightedRandomString entry = parseStringEntry(configList.get(i));
+				if (entry == null) {
+					return false;
+				}
+				list.add(entry);
+			}
+		} else {
+			WeightedRandomString entry = parseStringEntry(stringEntry);
+			if (entry == null) {
+				return false;
+			}
+			list.add(entry);
+		}
+		return true;
+	}
+
+	public static WeightedRandomString parseStringEntry(ConfigValue stringEntry) {
+
+		int weight = 100;
+		String value = null;
+		switch (stringEntry.valueType()) {
+			case LIST:
+				log.warn("Lists are not supported for string values at line {}.", stringEntry.origin().lineNumber());
+				return null;
+			case NULL:
+				log.warn("Null string entry at line {}", stringEntry.origin().lineNumber());
+				return null;
+			case OBJECT:
+				Config stringObject = ((ConfigObject) stringEntry).toConfig();
+				if (stringObject.hasPath("name")) { // TODO: rename `name` to `value`
+					value = stringObject.getString("name");
+				} else {
+					log.warn("Value missing 'name' field at line {}", stringEntry.origin().lineNumber());
+				}
+				if (stringObject.hasPath("weight")) {
+					weight = stringObject.getInt("weight");
+				}
+				break;
+			case BOOLEAN:
+			case NUMBER:
+			case STRING:
+				value = String.valueOf(stringEntry.unwrapped());
+				break;
+		}
+		return new WeightedRandomString(value, weight);
+	}
+
+}
