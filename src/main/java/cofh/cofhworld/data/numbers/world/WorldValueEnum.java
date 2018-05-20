@@ -1,4 +1,4 @@
-package cofh.cofhworld.util.numbers.world;
+package cofh.cofhworld.data.numbers.world;
 
 import cofh.cofhworld.util.Utils;
 import net.minecraft.util.math.BlockPos;

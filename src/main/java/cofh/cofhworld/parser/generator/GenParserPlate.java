@@ -3,7 +3,6 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import cofh.cofhworld.world.generator.WorldGenMinablePlate;
 import com.typesafe.config.Config;
 import net.minecraft.util.math.MathHelper;

@@ -2,7 +2,7 @@ package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

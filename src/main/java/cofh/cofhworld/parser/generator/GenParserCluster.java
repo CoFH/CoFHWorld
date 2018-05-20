@@ -2,7 +2,6 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import cofh.cofhworld.world.generator.WorldGenMinableCluster;
 import cofh.cofhworld.world.generator.WorldGenSparseMinableCluster;
 import com.typesafe.config.Config;

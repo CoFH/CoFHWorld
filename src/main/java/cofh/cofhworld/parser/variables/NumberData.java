@@ -1,7 +1,7 @@
 package cofh.cofhworld.parser.variables;
 
-import cofh.cofhworld.util.numbers.*;
-import cofh.cofhworld.util.numbers.world.WorldValueProvider;
+import cofh.cofhworld.data.numbers.*;
+import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;

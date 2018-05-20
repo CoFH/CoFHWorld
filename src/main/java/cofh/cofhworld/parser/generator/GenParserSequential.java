@@ -3,7 +3,6 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.parser.GeneratorData;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import cofh.cofhworld.world.generator.WorldGenSequential;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigValue;

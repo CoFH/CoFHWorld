@@ -10,7 +10,6 @@ import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.WeightedRandomEnum;
 import cofh.cofhworld.util.WeightedRandomNBTTag;
 import cofh.cofhworld.util.WeightedRandomString;
-import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import cofh.cofhworld.world.generator.WorldGenStructure;
 import com.google.common.collect.Lists;
 import com.typesafe.config.Config;

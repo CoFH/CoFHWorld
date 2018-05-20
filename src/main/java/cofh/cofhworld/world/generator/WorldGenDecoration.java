@@ -1,9 +1,9 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.numbers.ConstantProvider;
-import cofh.cofhworld.util.numbers.INumberProvider;
-import cofh.cofhworld.util.numbers.SkellamRandomProvider;
+import cofh.cofhworld.data.numbers.ConstantProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.SkellamRandomProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -62,7 +62,10 @@ public class WorldGenDecoration extends WorldGenerator {
 				continue;
 			}
 
-			if ((!seeSky || world.canSeeSky(pos)) && WorldGenMinableCluster.canGenerateInBlock(world, x, y - 1, z, onBlock) && WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
+			if ((!seeSky || world.canSeeSky(pos)) &&
+					WorldGenMinableCluster.canGenerateInBlock(world, x, y - 1, z, onBlock) &&
+					WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
+
 				WeightedRandomBlock block = WorldGenMinableCluster.selectBlock(rand, cluster);
 				int stack = stackHeight.intValue(world, rand, pos);
 				do {
