@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.block.Block;
@@ -15,57 +15,57 @@ import java.util.Random;
 
 public class WorldGenMinableLargeVein extends WorldGenerator {
 
-	private final List<WeightedRandomBlock> cluster;
-	private final WeightedRandomBlock[] genBlock;
+	private final List<WeightedBlock> cluster;
+	private final WeightedBlock[] genBlock;
 	private final INumberProvider genVeinSize;
 	private final boolean sparse;
 	private boolean spindly;
 
 	public WorldGenMinableLargeVein(ItemStack ore, int clusterSize) {
 
-		this(new WeightedRandomBlock(ore), clusterSize);
+		this(new WeightedBlock(ore), clusterSize);
 	}
 
-	public WorldGenMinableLargeVein(WeightedRandomBlock resource, int clusterSize) {
+	public WorldGenMinableLargeVein(WeightedBlock resource, int clusterSize) {
 
 		this(WorldGenMinableCluster.fabricateList(resource), clusterSize);
 	}
 
-	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, int clusterSize) {
+	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize) {
 
 		this(resource, clusterSize, Blocks.STONE);
 	}
 
 	public WorldGenMinableLargeVein(ItemStack ore, int clusterSize, Block block) {
 
-		this(new WeightedRandomBlock(ore, 1), clusterSize, block);
+		this(new WeightedBlock(ore, 1), clusterSize, block);
 	}
 
-	public WorldGenMinableLargeVein(WeightedRandomBlock resource, int clusterSize, Block block) {
+	public WorldGenMinableLargeVein(WeightedBlock resource, int clusterSize, Block block) {
 
 		this(WorldGenMinableCluster.fabricateList(resource), clusterSize, block);
 	}
 
-	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, int clusterSize, Block block) {
+	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, Block block) {
 
 		this(resource, clusterSize, WorldGenMinableCluster.fabricateList(block));
 	}
 
-	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
+	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
 
 		this(resource, clusterSize, block, true);
 	}
 
-	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block, boolean sparze) {
+	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block, boolean sparze) {
 
 		this(resource, new ConstantProvider(clusterSize), block, sparze);
 	}
 
-	public WorldGenMinableLargeVein(List<WeightedRandomBlock> resource, INumberProvider clusterSize, List<WeightedRandomBlock> block, boolean sparze) {
+	public WorldGenMinableLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block, boolean sparze) {
 
 		cluster = resource;
 		genVeinSize = clusterSize;
-		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
+		genBlock = block.toArray(new WeightedBlock[block.size()]);
 		sparse = sparze;
 	}
 

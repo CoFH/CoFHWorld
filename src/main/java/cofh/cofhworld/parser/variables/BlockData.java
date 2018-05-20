@@ -1,6 +1,6 @@
 package cofh.cofhworld.parser.variables;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import com.typesafe.config.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -17,7 +17,7 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class BlockData {
 
-	public static boolean parseBlockList(ConfigValue blockEntry, List<WeightedRandomBlock> list, boolean wildcard) {
+	public static boolean parseBlockList(ConfigValue blockEntry, List<WeightedBlock> list, boolean wildcard) {
 
 		if (blockEntry == null) {
 			return false;
@@ -27,7 +27,7 @@ public class BlockData {
 			ConfigList blockList = (ConfigList) blockEntry;
 
 			for (int i = 0, e = blockList.size(); i < e; i++) {
-				WeightedRandomBlock entry = parseBlockEntry(blockList.get(i), wildcard);
+				WeightedBlock entry = parseBlockEntry(blockList.get(i), wildcard);
 				if (entry == null) {
 					return false;
 				}
@@ -36,7 +36,7 @@ public class BlockData {
 		} else if (blockEntry.valueType() == ConfigValueType.NULL) {
 			return true;
 		} else {
-			WeightedRandomBlock entry = parseBlockEntry(blockEntry, wildcard);
+			WeightedBlock entry = parseBlockEntry(blockEntry, wildcard);
 			if (entry == null) {
 				return false;
 			}
@@ -45,7 +45,7 @@ public class BlockData {
 		return true;
 	}
 
-	public static WeightedRandomBlock parseBlockEntry(ConfigValue blockEntry, boolean wildcard) {
+	public static WeightedBlock parseBlockEntry(ConfigValue blockEntry, boolean wildcard) {
 
 		final int min = wildcard ? 0 : -1;
 		Block block;
@@ -84,7 +84,7 @@ public class BlockData {
 							state = setValue(state, prop, (String) propEntry.getValue().unwrapped());
 						}
 					}
-					return new WeightedRandomBlock(state, weight);
+					return new WeightedBlock(state, weight);
 				} else {
 					ConfigValue data = null;
 					if (blockObject.hasPath("data")) {
@@ -100,7 +100,7 @@ public class BlockData {
 						}
 					}
 					int metadata = data != null ? MathHelper.clamp(((Number) data.unwrapped()).intValue(), min, 15) : min;
-					return new WeightedRandomBlock(block, metadata, weight);
+					return new WeightedBlock(block, metadata, weight);
 				}
 			case STRING:
 				block = parseBlock((String) blockEntry.unwrapped());
@@ -108,7 +108,7 @@ public class BlockData {
 					log.error("Invalid block name on line {}!", blockEntry.origin().lineNumber());
 					return null;
 				}
-				return new WeightedRandomBlock(block, min);
+				return new WeightedBlock(block, min);
 			default:
 				log.error("Invalid type for block entry on line!", blockEntry.origin().lineNumber());
 				return null;

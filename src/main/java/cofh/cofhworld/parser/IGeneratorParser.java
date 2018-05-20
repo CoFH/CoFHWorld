@@ -1,7 +1,7 @@
 package cofh.cofhworld.parser;
 
 import cofh.cofhworld.world.IFeatureGenerator;
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigOrigin;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -21,7 +21,7 @@ public interface IGeneratorParser {
 	 * @param matList   The processed list of materials to generate in
 	 * @return The {@link WorldGenerator} to be registered with an IFeatureGenerator
 	 */
-	WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException;
+	WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException;
 
 	String[] getRequiredFields();
 

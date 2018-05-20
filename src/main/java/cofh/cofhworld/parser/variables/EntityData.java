@@ -1,6 +1,6 @@
 package cofh.cofhworld.parser.variables;
 
-import cofh.cofhworld.util.WeightedRandomNBTTag;
+import cofh.cofhworld.util.random.WeightedNBTTag;
 import com.typesafe.config.*;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
@@ -12,20 +12,20 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class EntityData {
 
-	public static boolean parseEntityList(ConfigValue entityEntry, List<WeightedRandomNBTTag> list) {
+	public static boolean parseEntityList(ConfigValue entityEntry, List<WeightedNBTTag> list) {
 
 		if (entityEntry.valueType() == ConfigValueType.LIST) {
 			ConfigList blockList = (ConfigList) entityEntry;
 
 			for (int i = 0, e = blockList.size(); i < e; i++) {
-				WeightedRandomNBTTag entry = parseEntityEntry(blockList.get(i));
+				WeightedNBTTag entry = parseEntityEntry(blockList.get(i));
 				if (entry == null) {
 					return false;
 				}
 				list.add(entry);
 			}
 		} else {
-			WeightedRandomNBTTag entry = parseEntityEntry(entityEntry);
+			WeightedNBTTag entry = parseEntityEntry(entityEntry);
 			if (entry == null) {
 				return false;
 			}
@@ -34,7 +34,7 @@ public class EntityData {
 		return true;
 	}
 
-	public static WeightedRandomNBTTag parseEntityEntry(ConfigValue entityEntry) {
+	public static WeightedNBTTag parseEntityEntry(ConfigValue entityEntry) {
 
 		switch (entityEntry.valueType()) {
 			case NULL:
@@ -59,7 +59,7 @@ public class EntityData {
 					data.setString("EntityId", type);
 				}
 				int weight = entityObject.hasPath("weight") ? entityObject.getInt("weight") : 100;
-				return new WeightedRandomNBTTag(weight, data);
+				return new WeightedNBTTag(weight, data);
 			case STRING:
 				String type = (String) entityEntry.unwrapped();
 				if (type == null) {
@@ -68,7 +68,7 @@ public class EntityData {
 				}
 				NBTTagCompound tag = new NBTTagCompound();
 				tag.setString("EntityId", type);
-				return new WeightedRandomNBTTag(100, tag);
+				return new WeightedNBTTag(100, tag);
 			default:
 				log.warn("Invalid entity entry type at line {}", entityEntry.origin().lineNumber());
 				return null;

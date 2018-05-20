@@ -2,7 +2,7 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGenSmallTree;
 import com.typesafe.config.Config;
 import net.minecraft.init.Blocks;
@@ -15,16 +15,16 @@ import java.util.List;
 public class GenParserSmallTree extends AbstractGenParserBlock {
 
 	@Override
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
 
-		ArrayList<WeightedRandomBlock> list = new ArrayList<>();
-		ArrayList<WeightedRandomBlock> blocks = new ArrayList<>();
+		ArrayList<WeightedBlock> list = new ArrayList<>();
+		ArrayList<WeightedBlock> blocks = new ArrayList<>();
 		if (genObject.hasPath("surface")) {
 			if (!BlockData.parseBlockList(genObject.getValue("surface"), blocks, false)) {
 				log.warn("Entry specifies invalid surface for 'smalltree' generator! Using dirt!");
 				blocks.clear();
-				blocks.add(new WeightedRandomBlock(Blocks.GRASS));
-				blocks.add(new WeightedRandomBlock(Blocks.DIRT));
+				blocks.add(new WeightedBlock(Blocks.GRASS));
+				blocks.add(new WeightedBlock(Blocks.DIRT));
 			}
 		}
 
@@ -41,7 +41,7 @@ public class GenParserSmallTree extends AbstractGenParserBlock {
 		WorldGenSmallTree r = new WorldGenSmallTree(resList, list, matList);
 		{
 			if (blocks.size() > 0) {
-				r.genSurface = blocks.toArray(new WeightedRandomBlock[blocks.size()]);
+				r.genSurface = blocks.toArray(new WeightedBlock[blocks.size()]);
 			}
 
 			if (genObject.hasPath("min-height")) {

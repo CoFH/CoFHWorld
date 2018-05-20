@@ -4,7 +4,7 @@ import cofh.cofhworld.parser.GeneratorData;
 import cofh.cofhworld.parser.IDistributionParser;
 import cofh.cofhworld.parser.IGeneratorParser.InvalidGeneratorException;
 import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.distribution.Distribution;
@@ -18,7 +18,7 @@ public abstract class AbstractDistParser implements IDistributionParser {
 
 	private final String[] FIELDS = new String[] { "generator", "cluster-count" };
 
-	protected final List<WeightedRandomBlock> defaultMaterial;
+	protected final List<WeightedBlock> defaultMaterial;
 
 	protected AbstractDistParser() {
 
@@ -31,7 +31,7 @@ public abstract class AbstractDistParser implements IDistributionParser {
 		return FIELDS;
 	}
 
-	protected abstract List<WeightedRandomBlock> generateDefaultMaterial();
+	protected abstract List<WeightedBlock> generateDefaultMaterial();
 
 	@Override
 	public final Distribution getFeature(String featureName, Config genObject, IConfigurableFeatureGenerator.GenRestriction biomeRes, boolean retrogen, IConfigurableFeatureGenerator.GenRestriction dimRes, Logger log) {

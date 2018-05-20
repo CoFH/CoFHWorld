@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.util.math.BlockPos;
@@ -12,18 +12,18 @@ import java.util.Random;
 
 public class WorldGenGeode extends WorldGenerator {
 
-	private final List<WeightedRandomBlock> cluster;
-	private final List<WeightedRandomBlock> outline;
-	private final WeightedRandomBlock[] genBlock;
-	private List<WeightedRandomBlock> fillBlock;
+	private final List<WeightedBlock> cluster;
+	private final List<WeightedBlock> outline;
+	private final WeightedBlock[] genBlock;
+	private List<WeightedBlock> fillBlock;
 	private boolean hollow;
 	private INumberProvider width;
 	private INumberProvider height;
 
-	public WorldGenGeode(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> material, List<WeightedRandomBlock> cover) {
+	public WorldGenGeode(List<WeightedBlock> resource, List<WeightedBlock> material, List<WeightedBlock> cover) {
 
 		cluster = resource;
-		genBlock = material.toArray(new WeightedRandomBlock[material.size()]);
+		genBlock = material.toArray(new WeightedBlock[material.size()]);
 		outline = cover;
 		fillBlock = null;
 		hollow = false;
@@ -164,7 +164,7 @@ public class WorldGenGeode extends WorldGenerator {
 		return this;
 	}
 
-	public WorldGenGeode setFillBlock(List<WeightedRandomBlock> blocks) {
+	public WorldGenGeode setFillBlock(List<WeightedBlock> blocks) {
 
 		this.fillBlock = blocks;
 		return this;

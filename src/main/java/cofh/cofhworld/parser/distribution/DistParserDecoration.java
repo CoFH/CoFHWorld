@@ -1,6 +1,6 @@
 package cofh.cofhworld.parser.distribution;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.init.Blocks;
 
 import java.util.Collections;
@@ -9,9 +9,9 @@ import java.util.List;
 public class DistParserDecoration extends DistParserSurface {
 
 	@Override
-	protected List<WeightedRandomBlock> generateDefaultMaterial() {
+	protected List<WeightedBlock> generateDefaultMaterial() {
 
-		return Collections.singletonList(new WeightedRandomBlock(Blocks.GRASS, -1));
+		return Collections.singletonList(new WeightedBlock(Blocks.GRASS, -1));
 	}
 
 	@Override

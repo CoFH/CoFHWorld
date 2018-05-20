@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -11,11 +11,11 @@ import java.util.Random;
 
 public class WorldGenSmallTree extends WorldGenerator {
 
-	private final List<WeightedRandomBlock> leaves;
-	private final List<WeightedRandomBlock> trunk;
-	private final WeightedRandomBlock[] genBlock;
+	private final List<WeightedBlock> leaves;
+	private final List<WeightedBlock> trunk;
+	private final WeightedBlock[] genBlock;
 
-	public WeightedRandomBlock[] genSurface = null;
+	public WeightedBlock[] genSurface = null;
 	public int minHeight = 5;
 	public int heightVariance = 3;
 	public boolean treeChecks = true;
@@ -23,11 +23,11 @@ public class WorldGenSmallTree extends WorldGenerator {
 	public boolean relaxedGrowth = false;
 	public boolean waterLoving = false;
 
-	public WorldGenSmallTree(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> leaf, List<WeightedRandomBlock> block) {
+	public WorldGenSmallTree(List<WeightedBlock> resource, List<WeightedBlock> leaf, List<WeightedBlock> block) {
 
 		trunk = resource;
 		leaves = leaf;
-		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
+		genBlock = block.toArray(new WeightedBlock[block.size()]);
 	}
 
 	protected int getLeafRadius(int height, int level, boolean check) {

@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.block.Block;
@@ -16,50 +16,50 @@ import java.util.Random;
 
 public class WorldGenSparseMinableCluster extends WorldGenerator {
 
-	private final List<WeightedRandomBlock> cluster;
+	private final List<WeightedBlock> cluster;
 	private final INumberProvider genClusterSize;
-	private final WeightedRandomBlock[] genBlock;
+	private final WeightedBlock[] genBlock;
 
 	public WorldGenSparseMinableCluster(ItemStack ore, int clusterSize) {
 
-		this(new WeightedRandomBlock(ore), clusterSize);
+		this(new WeightedBlock(ore), clusterSize);
 	}
 
-	public WorldGenSparseMinableCluster(WeightedRandomBlock resource, int clusterSize) {
+	public WorldGenSparseMinableCluster(WeightedBlock resource, int clusterSize) {
 
 		this(WorldGenMinableCluster.fabricateList(resource), clusterSize);
 	}
 
-	public WorldGenSparseMinableCluster(List<WeightedRandomBlock> resource, int clusterSize) {
+	public WorldGenSparseMinableCluster(List<WeightedBlock> resource, int clusterSize) {
 
 		this(resource, clusterSize, Blocks.STONE);
 	}
 
 	public WorldGenSparseMinableCluster(ItemStack ore, int clusterSize, Block block) {
 
-		this(new WeightedRandomBlock(ore, 1), clusterSize, block);
+		this(new WeightedBlock(ore, 1), clusterSize, block);
 	}
 
-	public WorldGenSparseMinableCluster(WeightedRandomBlock resource, int clusterSize, Block block) {
+	public WorldGenSparseMinableCluster(WeightedBlock resource, int clusterSize, Block block) {
 
 		this(WorldGenMinableCluster.fabricateList(resource), clusterSize, block);
 	}
 
-	public WorldGenSparseMinableCluster(List<WeightedRandomBlock> resource, int clusterSize, Block block) {
+	public WorldGenSparseMinableCluster(List<WeightedBlock> resource, int clusterSize, Block block) {
 
 		this(resource, clusterSize, WorldGenMinableCluster.fabricateList(block));
 	}
 
-	public WorldGenSparseMinableCluster(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
+	public WorldGenSparseMinableCluster(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
 
 		this(resource, new ConstantProvider(clusterSize), block);
 	}
 
-	public WorldGenSparseMinableCluster(List<WeightedRandomBlock> resource, INumberProvider clusterSize, List<WeightedRandomBlock> block) {
+	public WorldGenSparseMinableCluster(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block) {
 
 		cluster = resource;
 		genClusterSize = clusterSize;
-		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
+		genBlock = block.toArray(new WeightedBlock[block.size()]);
 	}
 
 	@Override

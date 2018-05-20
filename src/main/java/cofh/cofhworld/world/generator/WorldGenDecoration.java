@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
@@ -13,9 +13,9 @@ import java.util.Random;
 
 public class WorldGenDecoration extends WorldGenerator {
 
-	private final List<WeightedRandomBlock> cluster;
-	private final WeightedRandomBlock[] genBlock;
-	private final WeightedRandomBlock[] onBlock;
+	private final List<WeightedBlock> cluster;
+	private final WeightedBlock[] genBlock;
+	private final WeightedBlock[] onBlock;
 	private final INumberProvider clusterSize;
 	private boolean seeSky = true;
 	private boolean checkStay = true;
@@ -24,17 +24,17 @@ public class WorldGenDecoration extends WorldGenerator {
 	private INumberProvider yVar;
 	private INumberProvider zVar;
 
-	public WorldGenDecoration(List<WeightedRandomBlock> blocks, int count, List<WeightedRandomBlock> material, List<WeightedRandomBlock> on) {
+	public WorldGenDecoration(List<WeightedBlock> blocks, int count, List<WeightedBlock> material, List<WeightedBlock> on) {
 
 		this(blocks, new ConstantProvider(count), material, on);
 	}
 
-	public WorldGenDecoration(List<WeightedRandomBlock> blocks, INumberProvider count, List<WeightedRandomBlock> material, List<WeightedRandomBlock> on) {
+	public WorldGenDecoration(List<WeightedBlock> blocks, INumberProvider count, List<WeightedBlock> material, List<WeightedBlock> on) {
 
 		cluster = blocks;
 		clusterSize = count;
-		genBlock = material == null ? null : material.toArray(new WeightedRandomBlock[material.size()]);
-		onBlock = on == null ? null : on.toArray(new WeightedRandomBlock[on.size()]);
+		genBlock = material == null ? null : material.toArray(new WeightedBlock[material.size()]);
+		onBlock = on == null ? null : on.toArray(new WeightedBlock[on.size()]);
 		this.setStackHeight(1);
 		this.setXVar(new SkellamRandomProvider(8));
 		this.setYVar(new SkellamRandomProvider(4));
@@ -66,7 +66,7 @@ public class WorldGenDecoration extends WorldGenerator {
 					WorldGenMinableCluster.canGenerateInBlock(world, x, y - 1, z, onBlock) &&
 					WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
 
-				WeightedRandomBlock block = WorldGenMinableCluster.selectBlock(rand, cluster);
+				WeightedBlock block = WorldGenMinableCluster.selectBlock(rand, cluster);
 				int stack = stackHeight.intValue(world, rand, pos);
 				do {
 					if (!checkStay || (block.block.canPlaceBlockAt(world, pos))) {

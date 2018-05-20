@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -10,8 +10,8 @@ import java.util.Random;
 
 public class WorldGenBoulder extends WorldGenerator {
 
-	private final List<WeightedRandomBlock> cluster;
-	private final WeightedRandomBlock[] genBlock;
+	private final List<WeightedBlock> cluster;
+	private final WeightedBlock[] genBlock;
 	private final int size;
 	public int sizeVariance = 2;
 	public int clusters = 3;
@@ -20,11 +20,11 @@ public class WorldGenBoulder extends WorldGenerator {
 	public float hollowAmt = 0.1665f;
 	public float hollowVar = 0;
 
-	public WorldGenBoulder(List<WeightedRandomBlock> resource, int minSize, List<WeightedRandomBlock> block) {
+	public WorldGenBoulder(List<WeightedBlock> resource, int minSize, List<WeightedBlock> block) {
 
 		cluster = resource;
 		size = minSize;
-		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
+		genBlock = block.toArray(new WeightedBlock[block.size()]);
 	}
 
 	@Override

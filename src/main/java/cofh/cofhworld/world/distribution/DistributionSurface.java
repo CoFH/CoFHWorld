@@ -1,7 +1,7 @@
 package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.util.Utils;
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -17,14 +17,14 @@ public class DistributionSurface extends Distribution {
 
 	private final WorldGenerator worldGen;
 	private final INumberProvider count;
-	private final WeightedRandomBlock[] matList;
+	private final WeightedBlock[] matList;
 
-	public DistributionSurface(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionSurface(String name, WorldGenerator worldGen, List<WeightedBlock> matList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
 
 		super(name, biomeRes, regen, dimRes);
 		this.worldGen = worldGen;
 		this.count = count;
-		this.matList = matList.toArray(new WeightedRandomBlock[matList.size()]);
+		this.matList = matList.toArray(new WeightedBlock[matList.size()]);
 	}
 
 	@Override

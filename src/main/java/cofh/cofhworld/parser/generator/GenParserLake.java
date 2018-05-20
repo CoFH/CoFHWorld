@@ -2,7 +2,7 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGenAdvLakes;
 import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -14,7 +14,7 @@ import java.util.List;
 public class GenParserLake extends AbstractGenParserBlock {
 
 	@Override
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
 
 		boolean useMaterial = false;
 		{
@@ -22,7 +22,7 @@ public class GenParserLake extends AbstractGenParserBlock {
 		}
 		WorldGenAdvLakes r = new WorldGenAdvLakes(resList, useMaterial ? matList : null);
 		{
-			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
+			ArrayList<WeightedBlock> list = new ArrayList<>();
 			if (genObject.hasPath("outline-block")) {
 				if (!BlockData.parseBlockList(genObject.getValue("outline-block"), list, true)) {
 					log.warn("Entry specifies invalid outline-block for 'lake' generator! Not outlining!");

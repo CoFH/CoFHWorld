@@ -2,8 +2,8 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.EntityData;
-import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.WeightedRandomNBTTag;
+import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.util.random.WeightedNBTTag;
 import com.typesafe.config.Config;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -24,22 +24,22 @@ public class GenParserDungeon implements IGeneratorParser {
 	}
 
 	@Override
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
 
-		ArrayList<WeightedRandomNBTTag> mobList = new ArrayList<>();
+		ArrayList<WeightedNBTTag> mobList = new ArrayList<>();
 		if (genObject.hasPath("spawnEntity")) {
 			if (!EntityData.parseEntityList(genObject.getValue("spawnEntity"), mobList)) {
 				log.warn("Entry specifies invalid entity list for 'dungeon' generator! Using 'Pig'!");
 				mobList.clear();
 				NBTTagCompound tag = new NBTTagCompound();
 				tag.setString("EntityId", "Pig");
-				mobList.add(new WeightedRandomNBTTag(100, tag));
+				mobList.add(new WeightedNBTTag(100, tag));
 			}
 		} else {
 			log.warn("Entry specifies invalid entity list for 'dungeon' generator! Using 'Pig'!");
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setString("EntityId", "Pig");
-			mobList.add(new WeightedRandomNBTTag(100, tag));
+			mobList.add(new WeightedNBTTag(100, tag));
 		}
 		/*WorldGenDungeon r = new WorldGenDungeon(resList, matList, mobList);
 		if (genObject.has("spawnerFloor")) {

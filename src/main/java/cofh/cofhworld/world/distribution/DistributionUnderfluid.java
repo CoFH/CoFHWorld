@@ -1,7 +1,7 @@
 package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.util.Utils;
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -20,10 +20,10 @@ public class DistributionUnderfluid extends Distribution {
 	private final boolean water;
 	private final WorldGenerator worldGen;
 	private final INumberProvider count;
-	private final List<WeightedRandomBlock> matList;
+	private final List<WeightedBlock> matList;
 	private final String[] fluidList;
 
-	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedBlock> matList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
 
 		super(name, biomeRes, regen, dimRes);
 		this.worldGen = worldGen;
@@ -33,7 +33,7 @@ public class DistributionUnderfluid extends Distribution {
 		fluidList = null;
 	}
 
-	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedRandomBlock> matList, String[] fluidList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedBlock> matList, String[] fluidList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
 
 		super(name, biomeRes, regen, dimRes);
 		this.worldGen = worldGen;
@@ -80,7 +80,7 @@ public class DistributionUnderfluid extends Distribution {
 						continue;
 					}
 				}
-				for (WeightedRandomBlock mat : matList) {
+				for (WeightedBlock mat : matList) {
 					if (state.getBlock().isReplaceableOreGen(state, world, new BlockPos(x, y, z), BlockMatcher.forBlock(mat.block))) {
 						break l;
 					}

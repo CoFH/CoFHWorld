@@ -3,10 +3,9 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGenDecoration;
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigObject;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +24,7 @@ public class GenParserDecoration implements IGeneratorParser {
 	}
 
 	@Override
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
+	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
 
 		int clusterSize = genObject.getInt("cluster-size"); // TODO: another name?
 		if (clusterSize <= 0) {
@@ -33,15 +32,15 @@ public class GenParserDecoration implements IGeneratorParser {
 			return null;
 		}
 
-		ArrayList<WeightedRandomBlock> list = new ArrayList<>();
+		ArrayList<WeightedBlock> list = new ArrayList<>();
 		if (!genObject.hasPath("surface")) {
 			log.debug("Entry does not specify surface for 'decoration' generator. Using grass.");
-			list.add(new WeightedRandomBlock(Blocks.GRASS));
+			list.add(new WeightedBlock(Blocks.GRASS));
 		} else {
 			if (!BlockData.parseBlockList(genObject.getValue("surface"), list, false)) {
 				log.warn("Entry specifies invalid surface for 'decoration' generator! Using grass!");
 				list.clear();
-				list.add(new WeightedRandomBlock(Blocks.GRASS));
+				list.add(new WeightedBlock(Blocks.GRASS));
 			}
 		}
 		WorldGenDecoration r = new WorldGenDecoration(resList, clusterSize, matList, list);
