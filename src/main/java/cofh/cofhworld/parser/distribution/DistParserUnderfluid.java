@@ -41,7 +41,7 @@ public class DistParserUnderfluid extends AbstractDistParser {
 		l:
 		if (genObject.hasPath("fluid")) {
 			ArrayList<WeightedRandomString> list = new ArrayList<>();
-			if (!StringData.parseStringList(genObject.root().get("fluid"), list)) {
+			if (!StringData.parseStringList(genObject.getValue("fluid"), list)) {
 				break l;
 			}
 			water = false;
@@ -59,7 +59,7 @@ public class DistParserUnderfluid extends AbstractDistParser {
 		List<WeightedRandomBlock> matList = defaultMaterial;
 		if (genObject.hasPath("material")) {
 			matList = new ArrayList<>();
-			if (!BlockData.parseBlockList(genObject.root().get("material"), matList, false)) {
+			if (!BlockData.parseBlockList(genObject.getValue("material"), matList, false)) {
 				log.warn("Invalid material list! Using default list.");
 				matList = defaultMaterial;
 			}
