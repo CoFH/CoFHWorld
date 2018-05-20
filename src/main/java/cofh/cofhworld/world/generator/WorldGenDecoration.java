@@ -3,7 +3,7 @@ package cofh.cofhworld.world.generator;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.SkellamRandomProvider;
+import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;

@@ -1,5 +1,6 @@
-package cofh.cofhworld.data.numbers;
+package cofh.cofhworld.data.numbers.random;
 
+import cofh.cofhworld.data.numbers.ConstantProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
