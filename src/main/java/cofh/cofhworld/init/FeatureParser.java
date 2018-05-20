@@ -21,6 +21,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static cofh.cofhworld.CoFHWorld.log;
 
@@ -68,6 +70,9 @@ public class FeatureParser {
 
 	public static void addFiles(ArrayList<File> list, File folder) {
 
+		final String logPath = WorldProps.worldGenPath.relativize(Paths.get(folder.getPath())).toString();
+		log.trace("Scanning folder \"{}\": ", logPath);
+
 		final AtomicInteger dirs = new AtomicInteger(0);
 		File[] fList = folder.listFiles((file, name) -> {
 
@@ -80,17 +85,16 @@ public class FeatureParser {
 			return name.toLowerCase(Locale.US).endsWith(".json");
 		});
 
-		String o = WorldProps.worldGenPath.relativize(Paths.get(folder.getPath())).toString();
 		if (fList == null || fList.length <= 0) {
-			log.debug("There are no World Generation files present in \"{}\".", o);
+			log.debug("There are no World Generation files present in \"{}\".", logPath);
 			return;
 		}
 		int d = dirs.get();
-		log.info("Found {} World Generation files and {} folders present in \"{}\".", (fList.length - d), d, o);
+		log.trace("Found {} World Generation files and {} folders present in \"{}\".", (fList.length - d), d, logPath);
 		list.addAll(Arrays.asList(fList));
 	}
 
-	public static void parseGenerationFiles() {
+	public static void processGenerationFiles() {
 
 		log.info("Accumulating world generation files from: \"{}\"", WorldProps.worldGenDir.toString());
 		ArrayList<File> worldGenList = new ArrayList<>(5);
@@ -126,6 +130,8 @@ public class FeatureParser {
 			}
 		}
 
+		log.info("Found a total of {} world generation files.", worldGenList.size());
+
 		ArrayList<Config> processedGenList = new ArrayList<Config>(worldGenList.size());
 		for (int i = 0, e = worldGenList.size(); i < e; ++i) {
 			File genFile = worldGenList.get(i);
@@ -160,11 +166,13 @@ public class FeatureParser {
 			log.trace("World generation file \"{}\" ready to be processed", file);
 			processedGenList.add(genList);
 		}
-		
+
 		// TODO: stream? is it worth it? wrap Config in a holder: store filename, pre-processed priority
 		Collections.sort(processedGenList, new Comparator<Config>() {
+
 			@Override
 			public int compare(Config l, Config r) {
+
 				long lv = 0, rv = 0;
 				if (l.hasPath("priority")) {
 					try {
@@ -180,51 +188,12 @@ public class FeatureParser {
 						// wrong type
 					}
 				}
-				
+
 				return lv < rv ? 1 : (lv == rv ? 0 : -1);
 			}
 		});
 
-		for (int i = 0, e = processedGenList.size(); i < e; ++i) {
-			Config genList = processedGenList.get(i);
-			String file = WorldProps.worldGenPath.relativize(Paths.get(genList.origin().filename())).toString();
-
-			log.info("Reading world generation info from: \"{}\":", file);
-			if (genList.hasPath("populate")) {
-				Config genData = genList.getConfig("populate");
-				for (Entry<String, ConfigValue> genEntry : genData.root().entrySet()) {
-					String key = genEntry.getKey();
-					try {
-						if (genEntry.getValue().valueType() != ConfigValueType.OBJECT) {
-							log.error("Error parsing generation entry: '{}' > This must be an object and is not.", key);
-						} else {
-							switch (parsePopulateEntry(key, genData.getConfig(key))) {
-								case SUCCESS:
-									log.debug("Generation entry successfully parsed: '{}'", key);
-									break;
-								case FAIL:
-									log.error("Error parsing generation entry: '{}' > Please check the parameters.", key);
-									break;
-								case PASS:
-									log.error("Error parsing generation entry: '{}' > It is a duplicate.", key);
-							}
-						}
-					} catch (ConfigException ex) {
-						String line = "";
-						if (ex.origin() != null) {
-							line = String.format(" on line %s", ex.origin().lineNumber());
-						}
-						log.error("Error parsing entry '{}'{}: {}", key, line, ex.getMessage());
-						continue;
-					} catch (Throwable t) {
-						log.fatal("There was a severe error parsing '{}'!", key, t);
-					}
-				}
-			} else {
-
-			}
-			log.debug("Finished reading \"{}\"", file);
-		}
+		parseGenerationFiles(processedGenList);
 	}
 
 	public static boolean processDependencies(ConfigValue value) {
@@ -294,6 +263,61 @@ public class FeatureParser {
 		return true == retComp;
 	}
 
+	public static void parseGenerationFiles(ArrayList<Config> processedGenList) {
+
+		for (int i = 0, e = processedGenList.size(); i < e; ++i) {
+			Config genList = processedGenList.get(i);
+			String file = WorldProps.worldGenPath.relativize(Paths.get(genList.origin().filename())).toString();
+			log.info("Reading world generation info from: \"{}\":", file);
+			{
+				parseGenerationTag(genList, "populate", FeatureParser::parsePopulateEntry);
+
+				parseGenerationTag(genList, "structure", FeatureParser::parseStructureEntry);
+			}
+			log.debug("Finished reading \"{}\"", file);
+		}
+	}
+
+	public static void parseGenerationTag(Config genList, String tag, BiFunction<String, Config, EnumActionResult> parseEntry) {
+		if (genList.hasPath(tag)) {
+			log.trace("Processing `{}` entries", tag);
+			Config genData = genList.getConfig(tag);
+			for (Entry<String, ConfigValue> genEntry : genData.root().entrySet()) {
+				String key = genEntry.getKey();
+				ConfigValue value = genEntry.getValue();
+				try {
+					if (value.valueType() != ConfigValueType.OBJECT) {
+						log.error("Error parsing `{}` entry: '{}' > This must be an object and is not.", tag, key);
+					} else {
+						log.debug("Parsing `{}` entry '{}':", tag, key);
+						switch (parseEntry.apply(key, genData.getConfig(key))) {
+						case SUCCESS:
+							log.debug("Parsed `{}` entry successfully: '{}'", tag, key);
+							break;
+						case FAIL:
+							log.error("Error parsing `{}` entry: '{}' > Please check the parameters.", tag, key);
+							break;
+						case PASS:
+							log.error("Error parsing `{}` entry: '{}' > It is a duplicate.", tag, key);
+						}
+					}
+				} catch (ConfigException ex) {
+					String line = "";
+					if (ex.origin() != null) {
+						line = String.format(" on line %s", ex.origin().lineNumber());
+					}
+					log.error("Error parsing `{}` entry '{}'{}: {}", tag, key, line, ex.getMessage());
+					continue;
+				} catch (Throwable t) {
+					log.fatal("There was a severe error parsing `{}` entry '{}' on line {}!", tag, key, t, value.origin().lineNumber());
+				}
+			}
+			log.trace("Finished processing `{}` entries", tag);
+		} else {
+			log.trace("File does not contain tag `{}`", tag);
+		}
+	}
+
 	public static EnumActionResult parsePopulateEntry(String featureName, Config genObject) {
 
 		if (genObject.hasPath("enabled")) {
@@ -307,6 +331,18 @@ public class FeatureParser {
 		if (feature != null) {
 			parsedFeatures.add(feature);
 			return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
+		}
+
+		return EnumActionResult.FAIL;
+	}
+
+	public static EnumActionResult parseStructureEntry(String featureName, Config genObject) {
+
+		if (genObject.hasPath("enabled")) {
+			if (!genObject.getBoolean("enabled")) {
+				log.debug("\"{}\" is disabled.", featureName);
+				return EnumActionResult.SUCCESS;
+			}
 		}
 
 		return EnumActionResult.FAIL;

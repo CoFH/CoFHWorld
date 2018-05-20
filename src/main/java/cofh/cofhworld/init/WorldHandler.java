@@ -124,7 +124,7 @@ public class WorldHandler implements IWorldGenerator {
 
 		// Parse all the generation files into features
 		try {
-			FeatureParser.parseGenerationFiles();
+			FeatureParser.processGenerationFiles();
 			reloadCallbacks.forEach(Runnable::run);
 			return true;
 		} catch (Throwable t) {
