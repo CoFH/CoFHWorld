@@ -8,7 +8,7 @@ import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.world.distribution.DistributionUnderfluid;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.util.WeightedRandomString;
-import cofh.cofhworld.util.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
 import com.typesafe.config.Config;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.feature.WorldGenerator;

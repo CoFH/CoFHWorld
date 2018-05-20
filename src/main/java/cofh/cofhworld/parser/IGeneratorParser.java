@@ -2,8 +2,8 @@ package cofh.cofhworld.parser;
 
 import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigOrigin;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
@@ -30,4 +30,26 @@ public interface IGeneratorParser {
 		return false;
 	}
 
+	class InvalidGeneratorException extends Exception {
+
+		private final ConfigOrigin origin;
+
+		public InvalidGeneratorException(String cause, ConfigOrigin origin) {
+
+			super(cause);
+			this.origin = origin;
+		}
+
+		public ConfigOrigin origin() {
+
+			return this.origin;
+		}
+
+		public InvalidGeneratorException causedBy(Throwable cause) {
+
+			this.initCause(cause);
+			return this;
+		}
+
+	}
 }

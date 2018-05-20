@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.distribution;
 
-import cofh.cofhworld.util.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;

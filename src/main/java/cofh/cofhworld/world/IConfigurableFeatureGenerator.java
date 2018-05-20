@@ -1,7 +1,7 @@
 package cofh.cofhworld.world;
 
-import cofh.cofhworld.biome.BiomeInfo;
-import cofh.cofhworld.biome.BiomeInfoSet;
+import cofh.cofhworld.data.biome.BiomeInfo;
+import cofh.cofhworld.data.biome.BiomeInfoSet;
 import net.minecraft.world.World;
 
 import java.util.Random;

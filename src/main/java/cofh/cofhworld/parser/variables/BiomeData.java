@@ -1,8 +1,8 @@
 package cofh.cofhworld.parser.variables;
 
-import cofh.cofhworld.biome.BiomeInfo;
-import cofh.cofhworld.biome.BiomeInfoRarity;
-import cofh.cofhworld.biome.BiomeInfoSet;
+import cofh.cofhworld.data.biome.BiomeInfo;
+import cofh.cofhworld.data.biome.BiomeInfoRarity;
+import cofh.cofhworld.data.biome.BiomeInfoSet;
 import com.typesafe.config.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;

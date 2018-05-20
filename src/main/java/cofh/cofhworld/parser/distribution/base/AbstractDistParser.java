@@ -2,10 +2,10 @@ package cofh.cofhworld.parser.distribution.base;
 
 import cofh.cofhworld.parser.GeneratorData;
 import cofh.cofhworld.parser.IDistributionParser;
+import cofh.cofhworld.parser.IGeneratorParser.InvalidGeneratorException;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.exceptions.InvalidGeneratorException;
-import cofh.cofhworld.util.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.distribution.Distribution;
 import com.typesafe.config.Config;

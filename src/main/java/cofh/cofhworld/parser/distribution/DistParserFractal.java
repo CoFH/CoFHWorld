@@ -5,7 +5,7 @@ import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.world.distribution.DistributionLargeVein;
-import cofh.cofhworld.util.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
 import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;

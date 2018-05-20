@@ -1,4 +1,4 @@
-package cofh.cofhworld.biome;
+package cofh.cofhworld.data.biome;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
