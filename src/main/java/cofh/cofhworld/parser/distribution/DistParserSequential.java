@@ -1,6 +1,5 @@
 package cofh.cofhworld.parser.distribution;
 
-import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.parser.DistributionData;
 import cofh.cofhworld.parser.IDistributionParser;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
@@ -29,19 +28,11 @@ public class DistParserSequential implements IDistributionParser {
 
 		int i = 0;
 		for (Config featureConf : genObject.getConfigList("features")) {
-			String template = DistributionData.parseFeatureType(featureConf);
-			IDistributionParser parser = FeatureParser.getDistribution(template);
-			if (parser != null) {
-				IConfigurableFeatureGenerator feature = parser.getFeature(featureName + '$' + ++i, featureConf, biomeRes, retrogen, dimRes, log);
-				if (feature == null) {
-					log.error("Template '{}' has failed to parse its entry!", template);
-					return null;
-				}
-				features.add(feature);
-			} else {
-				log.error("Unknown template '{}'", template);
+			IConfigurableFeatureGenerator feature = DistributionData.getFeature(featureName + '$' + ++i, featureConf, biomeRes, retrogen, dimRes, log);
+			if (feature == null) {
 				return null;
 			}
+			features.add(feature);
 		}
 
 		return new DistributionSequential(featureName, features, biomeRes, retrogen, dimRes);
