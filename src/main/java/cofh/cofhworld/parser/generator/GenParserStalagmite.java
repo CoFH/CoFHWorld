@@ -1,6 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.world.generator.WorldGenStalactite;
@@ -13,15 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenParserStalagmite implements IGeneratorParser {
-
-	private static String[] FIELDS = new String[] { "block" };
-
-	@Override
-	public String[] getRequiredFields() {
-
-		return FIELDS;
-	}
+public class GenParserStalagmite extends AbstractGenParserBlock {
 
 	private final boolean stalactite;
 
