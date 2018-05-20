@@ -26,12 +26,11 @@ public class GenParserDecoration implements IGeneratorParser {
 		}
 
 		ArrayList<WeightedRandomBlock> list = new ArrayList<>();
-		ConfigObject genData = genObject.root();
 		if (!genObject.hasPath("surface")) {
-			log.info("Entry does not specify surface for 'decoration' generator. Using grass.");
+			log.debug("Entry does not specify surface for 'decoration' generator. Using grass.");
 			list.add(new WeightedRandomBlock(Blocks.GRASS));
 		} else {
-			if (!BlockData.parseBlockList(genData.get("surface"), list, false)) {
+			if (!BlockData.parseBlockList(genObject.getValue("surface"), list, false)) {
 				log.warn("Entry specifies invalid surface for 'decoration' generator! Using grass!");
 				list.clear();
 				list.add(new WeightedRandomBlock(Blocks.GRASS));
@@ -45,16 +44,16 @@ public class GenParserDecoration implements IGeneratorParser {
 			r.setCheckStay(genObject.getBoolean("check-stay"));
 		}
 		if (genObject.hasPath("stack-height")) {
-			r.setStackHeight(NumberData.parseNumberValue(genData.get("stack-height")));
+			r.setStackHeight(NumberData.parseNumberValue(genObject.getValue("stack-height")));
 		}
 		if (genObject.hasPath("x-variance")) {
-			r.setXVar(NumberData.parseNumberValue(genData.get("x-variance"), 0, 15));
+			r.setXVar(NumberData.parseNumberValue(genObject.getValue("x-variance"), 0, 15));
 		}
 		if (genObject.hasPath("y-variance")) {
-			r.setYVar(NumberData.parseNumberValue(genData.get("y-variance")));
+			r.setYVar(NumberData.parseNumberValue(genObject.getValue("y-variance")));
 		}
 		if (genObject.hasPath("z-variance")) {
-			r.setZVar(NumberData.parseNumberValue(genData.get("z-variance"), 0, 15));
+			r.setZVar(NumberData.parseNumberValue(genObject.getValue("z-variance"), 0, 15));
 		}
 		return r;
 	}

@@ -26,7 +26,7 @@ public class GenParserPlate implements IGeneratorParser {
 		WorldGenMinablePlate r = new WorldGenMinablePlate(resList, MathHelper.clamp(clusterSize, 0, 32), matList);
 		{
 			if (genObject.hasPath("height")) {
-				r.setHeight(NumberData.parseNumberValue(genObject.root().get("height"), 0, 64));
+				r.setHeight(NumberData.parseNumberValue(genObject.getValue("height"), 0, 64));
 			}
 			if (genObject.hasPath("slim")) {
 				r.setSlim(genObject.getBoolean("slim"));

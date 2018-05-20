@@ -24,7 +24,7 @@ public class GenParserLake implements IGeneratorParser {
 		{
 			ArrayList<WeightedRandomBlock> list = new ArrayList<>();
 			if (genObject.hasPath("outline-block")) {
-				if (!BlockData.parseBlockList(genObject.root().get("outline-block"), list, true)) {
+				if (!BlockData.parseBlockList(genObject.getValue("outline-block"), list, true)) {
 					log.warn("Entry specifies invalid outline-block for 'lake' generator! Not outlining!");
 				} else {
 					r.setOutlineBlock(list);
