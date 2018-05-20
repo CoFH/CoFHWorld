@@ -1,6 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserClusterCount;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.world.generator.WorldGenMinableCluster;
 import cofh.cofhworld.world.generator.WorldGenSparseMinableCluster;
@@ -10,15 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class GenParserCluster implements IGeneratorParser {
-
-	private static String[] FIELDS = new String[] { "block", "cluster-size" };
-
-	@Override
-	public String[] getRequiredFields() {
-
-		return FIELDS;
-	}
+public class GenParserCluster extends AbstractGenParserClusterCount {
 
 	private final boolean sparse;
 

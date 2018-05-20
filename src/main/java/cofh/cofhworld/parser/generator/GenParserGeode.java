@@ -1,6 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.world.generator.WorldGenGeode;
@@ -12,15 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenParserGeode implements IGeneratorParser {
-
-	private static String[] FIELDS = new String[] { "block", "" };
-
-	@Override
-	public String[] getRequiredFields() {
-
-		return FIELDS;
-	}
+public class GenParserGeode extends AbstractGenParserBlock {
 
 	@Override
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {

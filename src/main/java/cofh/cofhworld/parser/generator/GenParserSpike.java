@@ -1,6 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.util.WeightedRandomBlock;
 import cofh.cofhworld.world.generator.WorldGenSpike;
 import com.typesafe.config.Config;
@@ -9,15 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class GenParserSpike implements IGeneratorParser {
-
-	private static String[] FIELDS = new String[] { "block" };
-
-	@Override
-	public String[] getRequiredFields() {
-
-		return FIELDS;
-	}
+public class GenParserSpike extends AbstractGenParserBlock {
 
 	@Override
 	public WorldGenerator parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
