@@ -19,10 +19,10 @@ public class GenParserGeode implements IGeneratorParser {
 
 		ArrayList<WeightedRandomBlock> list = new ArrayList<>();
 		if (!genObject.hasPath("crust")) {
-			log.info("Entry does not specify crust for 'geode' generator. Using stone.");
+			log.debug("Entry does not specify crust for 'geode' generator. Using stone.");
 			list.add(new WeightedRandomBlock(Blocks.STONE));
 		} else {
-			if (!BlockData.parseBlockList(genObject.root().get("crust"), list, true)) {
+			if (!BlockData.parseBlockList(genObject.getValue("crust"), list, true)) {
 				log.warn("Entry specifies invalid crust for 'geode' generator! Using obsidian!");
 				list.clear();
 				list.add(new WeightedRandomBlock(Blocks.OBSIDIAN));

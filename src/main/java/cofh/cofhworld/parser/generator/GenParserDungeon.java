@@ -20,7 +20,7 @@ public class GenParserDungeon implements IGeneratorParser {
 
 		ArrayList<WeightedRandomNBTTag> mobList = new ArrayList<>();
 		if (genObject.hasPath("spawnEntity")) {
-			if (!EntityData.parseEntityList(genObject.root().get("spawnEntity"), mobList)) {
+			if (!EntityData.parseEntityList(genObject.getValue("spawnEntity"), mobList)) {
 				log.warn("Entry specifies invalid entity list for 'dungeon' generator! Using 'Pig'!");
 				mobList.clear();
 				NBTTagCompound tag = new NBTTagCompound();

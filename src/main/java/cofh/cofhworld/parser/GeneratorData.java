@@ -23,7 +23,7 @@ public class GeneratorData {
 		if (!genObject.hasPath("generator")) {
 			throw new InvalidGeneratorException("No `generator` entry present", genObject.origin());
 		}
-		ConfigValue genData = genObject.root().get("generator");
+		ConfigValue genData = genObject.getValue("generator");
 		if (genData.valueType() == ConfigValueType.LIST) {
 			List<? extends Config> list = genObject.getConfigList("generator");
 			ArrayList<WeightedRandomWorldGenerator> gens = new ArrayList<>(list.size());
@@ -63,7 +63,7 @@ public class GeneratorData {
 		if (!parser.isMeta() && !genObject.hasPath("block")) {
 			log.error("Generators cannot generate blocks unless `block` is specified.");
 			throw new InvalidGeneratorException("`block` not specified", genObject.origin());
-		} else if (!BlockData.parseBlockList(genObject.getValue("block"), resList, true) && !parser.isMeta()) {
+		} else if (!BlockData.parseBlockList(genObject.root().get("block"), resList, true) && !parser.isMeta()) {
 			throw new InvalidGeneratorException("`block` not valid", genObject.origin());
 		}
 
@@ -71,7 +71,7 @@ public class GeneratorData {
 		if (!genObject.hasPath("material")) {
 			log.debug("Using the default material list.");
 			matList = defaultMaterial;
-		} else if (!BlockData.parseBlockList(genObject.getValue("material"), matList, false)) {
+		} else if (!BlockData.parseBlockList(genObject.root().get("material"), matList, false)) {
 			log.warn("Invalid material list! Using default list.");
 			matList = defaultMaterial;
 		}

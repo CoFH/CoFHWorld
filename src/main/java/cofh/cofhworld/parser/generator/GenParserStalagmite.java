@@ -31,7 +31,7 @@ public class GenParserStalagmite implements IGeneratorParser {
 			log.info("Entry does not specify gen body for 'stalagmite' generator. Using air.");
 			list.add(new WeightedRandomBlock(Blocks.AIR));
 		} else {
-			if (!BlockData.parseBlockList(genObject.root().get("gen-body"), list, false)) {
+			if (!BlockData.parseBlockList(genObject.getValue("gen-body"), list, false)) {
 				log.warn("Entry specifies invalid gen body for 'stalagmite' generator! Using air!");
 				list.clear();
 				list.add(new WeightedRandomBlock(Blocks.AIR));
