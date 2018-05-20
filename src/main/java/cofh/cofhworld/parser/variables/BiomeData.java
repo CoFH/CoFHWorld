@@ -50,7 +50,7 @@ public class BiomeData {
 				Config obj = ((ConfigObject) biomeEntry).toConfig();
 				String type = obj.getString("type");
 				boolean wl = !obj.hasPath("whitelist") || obj.getBoolean("whitelist");
-				ConfigValue value = obj.root().get("entry");
+				ConfigValue value = obj.getValue("entry");
 				List<String> array = value.valueType() == ConfigValueType.LIST ? obj.getStringList("entry") : null;
 				String entry = array != null ? null : (String) value.unwrapped();
 				int rarity = obj.hasPath("rarity") ? obj.getInt("rarity") : -1;
