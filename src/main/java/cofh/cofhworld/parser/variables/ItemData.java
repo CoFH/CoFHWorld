@@ -1,7 +1,7 @@
 package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.util.Utils;
-import cofh.cofhworld.util.WeightedRandomItemStack;
+import cofh.cofhworld.util.random.WeightedItemStack;
 import com.typesafe.config.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -17,20 +17,20 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class ItemData {
 
-	public static boolean parseItemList(ConfigValue itemEntry, List<WeightedRandomItemStack> list) {
+	public static boolean parseItemList(ConfigValue itemEntry, List<WeightedItemStack> list) {
 
 		if (itemEntry.valueType() == ConfigValueType.LIST) {
 			ConfigList configList = (ConfigList) itemEntry;
 
 			for (int i = 0, e = configList.size(); i < e; ++i) {
-				WeightedRandomItemStack entry = parseItemEntry(configList.get(i));
+				WeightedItemStack entry = parseItemEntry(configList.get(i));
 				if (entry == null) {
 					return false;
 				}
 				list.add(entry);
 			}
 		} else {
-			WeightedRandomItemStack entry = parseItemEntry(itemEntry);
+			WeightedItemStack entry = parseItemEntry(itemEntry);
 			if (entry == null) {
 				return false;
 			}
@@ -39,7 +39,7 @@ public class ItemData {
 		return true;
 	}
 
-	public static WeightedRandomItemStack parseItemEntry(ConfigValue itemEntry) {
+	public static WeightedItemStack parseItemEntry(ConfigValue itemEntry) {
 
 		if (itemEntry.valueType() == ConfigValueType.NULL) {
 			return null;
@@ -94,7 +94,7 @@ public class ItemData {
 				}
 			}
 		}
-		return new WeightedRandomItemStack(stack, chance);
+		return new WeightedItemStack(stack, chance);
 	}
 
 }

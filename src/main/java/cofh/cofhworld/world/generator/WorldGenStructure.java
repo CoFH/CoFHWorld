@@ -1,8 +1,8 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.WeightedRandomEnum;
-import cofh.cofhworld.util.WeightedRandomNBTTag;
+import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.util.random.WeightedEnum;
+import cofh.cofhworld.util.random.WeightedNBTTag;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.util.Mirror;
@@ -22,16 +22,16 @@ public class WorldGenStructure extends WorldGenerator {
 	private final PlacementSettings placementSettings = new PlacementSettings();
 	private final Template template = new Template();
 
-	private final List<WeightedRandomNBTTag> templates;
+	private final List<WeightedNBTTag> templates;
 
-	private final List<WeightedRandomBlock> ignoredBlocks;
+	private final List<WeightedBlock> ignoredBlocks;
 
-	private List<WeightedRandomEnum<Rotation>> rots;
-	private List<WeightedRandomEnum<Mirror>> mirrors;
+	private List<WeightedEnum<Rotation>> rots;
+	private List<WeightedEnum<Mirror>> mirrors;
 
 	private INumberProvider integrity = new ConstantProvider(2f); // 1++
 
-	public WorldGenStructure(List<WeightedRandomNBTTag> templates, List<WeightedRandomBlock> ignoredBlocks, boolean ignoreEntities) {
+	public WorldGenStructure(List<WeightedNBTTag> templates, List<WeightedBlock> ignoredBlocks, boolean ignoreEntities) {
 
 		if (templates.size() > 1) {
 			this.templates = templates;
@@ -56,7 +56,7 @@ public class WorldGenStructure extends WorldGenerator {
 		return this;
 	}
 
-	public WorldGenStructure setDetails(List<WeightedRandomEnum<Rotation>> rot, List<WeightedRandomEnum<Mirror>> mir) {
+	public WorldGenStructure setDetails(List<WeightedEnum<Rotation>> rot, List<WeightedEnum<Mirror>> mir) {
 
 		if (rot.size() == 1) {
 			placementSettings.setRotation(rot.get(0).value);

@@ -1,6 +1,6 @@
 package cofh.cofhworld.parser.variables;
 
-import cofh.cofhworld.util.WeightedRandomString;
+import cofh.cofhworld.util.random.WeightedString;
 import com.typesafe.config.*;
 
 import java.util.List;
@@ -9,20 +9,20 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class StringData {
 
-	public static boolean parseStringList(ConfigValue stringEntry, List<WeightedRandomString> list) {
+	public static boolean parseStringList(ConfigValue stringEntry, List<WeightedString> list) {
 
 		if (stringEntry.valueType() == ConfigValueType.LIST) {
 			ConfigList configList = (ConfigList) stringEntry;
 
 			for (int i = 0, e = configList.size(); i < e; i++) {
-				WeightedRandomString entry = parseStringEntry(configList.get(i));
+				WeightedString entry = parseStringEntry(configList.get(i));
 				if (entry == null) {
 					return false;
 				}
 				list.add(entry);
 			}
 		} else {
-			WeightedRandomString entry = parseStringEntry(stringEntry);
+			WeightedString entry = parseStringEntry(stringEntry);
 			if (entry == null) {
 				return false;
 			}
@@ -31,7 +31,7 @@ public class StringData {
 		return true;
 	}
 
-	public static WeightedRandomString parseStringEntry(ConfigValue stringEntry) {
+	public static WeightedString parseStringEntry(ConfigValue stringEntry) {
 
 		int weight = 100;
 		String value = null;
@@ -59,7 +59,7 @@ public class StringData {
 				value = String.valueOf(stringEntry.unwrapped());
 				break;
 		}
-		return new WeightedRandomString(value, weight);
+		return new WeightedString(value, weight);
 	}
 
 }

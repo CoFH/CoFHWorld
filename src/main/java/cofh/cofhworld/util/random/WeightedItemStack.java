@@ -1,18 +1,18 @@
-package cofh.cofhworld.util;
+package cofh.cofhworld.util.random;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
 
-public class WeightedRandomItemStack extends WeightedRandom.Item {
+public class WeightedItemStack extends WeightedRandom.Item {
 
 	private final ItemStack stack;
 
-	public WeightedRandomItemStack(ItemStack stack) {
+	public WeightedItemStack(ItemStack stack) {
 
 		this(stack, 100);
 	}
 
-	public WeightedRandomItemStack(ItemStack stack, int weight) {
+	public WeightedItemStack(ItemStack stack, int weight) {
 
 		super(weight);
 		this.stack = stack;

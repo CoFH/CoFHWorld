@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.block.material.Material;
@@ -17,23 +17,23 @@ import java.util.Random;
 
 public class WorldGenAdvLakes extends WorldGenerator {
 
-	private static final List<WeightedRandomBlock> GAP_BLOCK = Arrays.asList(new WeightedRandomBlock(Blocks.AIR, 0));
-	private final List<WeightedRandomBlock> cluster;
-	private final WeightedRandomBlock[] genBlock;
-	private List<WeightedRandomBlock> outlineBlock = null;
-	private List<WeightedRandomBlock> gapBlock = GAP_BLOCK;
+	private static final List<WeightedBlock> GAP_BLOCK = Arrays.asList(new WeightedBlock(Blocks.AIR, 0));
+	private final List<WeightedBlock> cluster;
+	private final WeightedBlock[] genBlock;
+	private List<WeightedBlock> outlineBlock = null;
+	private List<WeightedBlock> gapBlock = GAP_BLOCK;
 	private boolean solidOutline = false;
 	private boolean totalOutline = false;
 	private INumberProvider width;
 	private INumberProvider height;
 
-	public WorldGenAdvLakes(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
+	public WorldGenAdvLakes(List<WeightedBlock> resource, List<WeightedBlock> block) {
 
 		cluster = resource;
 		if (block == null) {
 			genBlock = null;
 		} else {
-			genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
+			genBlock = block.toArray(new WeightedBlock[block.size()]);
 		}
 		this.setWidth(16);
 		this.setHeight(9);
@@ -195,13 +195,13 @@ public class WorldGenAdvLakes extends WorldGenerator {
 		return this;
 	}
 
-	public WorldGenAdvLakes setOutlineBlock(List<WeightedRandomBlock> blocks) {
+	public WorldGenAdvLakes setOutlineBlock(List<WeightedBlock> blocks) {
 
 		this.outlineBlock = blocks;
 		return this;
 	}
 
-	public WorldGenAdvLakes setGapBlock(List<WeightedRandomBlock> blocks) {
+	public WorldGenAdvLakes setGapBlock(List<WeightedBlock> blocks) {
 
 		this.gapBlock = blocks;
 		return this;

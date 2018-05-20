@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.block.Block;
@@ -20,64 +20,64 @@ import java.util.Random;
 
 public class WorldGenMinableCluster extends WorldGenerator {
 
-	public static List<WeightedRandomBlock> fabricateList(WeightedRandomBlock resource) {
+	public static List<WeightedBlock> fabricateList(WeightedBlock resource) {
 
-		List<WeightedRandomBlock> list = new ArrayList<>();
+		List<WeightedBlock> list = new ArrayList<>();
 		list.add(resource);
 		return list;
 	}
 
-	public static List<WeightedRandomBlock> fabricateList(Block resource) {
+	public static List<WeightedBlock> fabricateList(Block resource) {
 
-		List<WeightedRandomBlock> list = new ArrayList<>();
-		list.add(new WeightedRandomBlock(new ItemStack(resource, 1, 0)));
+		List<WeightedBlock> list = new ArrayList<>();
+		list.add(new WeightedBlock(new ItemStack(resource, 1, 0)));
 		return list;
 	}
 
-	private final List<WeightedRandomBlock> cluster;
+	private final List<WeightedBlock> cluster;
 	private final INumberProvider genClusterSize;
-	private final WeightedRandomBlock[] genBlock;
+	private final WeightedBlock[] genBlock;
 
 	public WorldGenMinableCluster(ItemStack ore, int clusterSize) {
 
-		this(new WeightedRandomBlock(ore), clusterSize);
+		this(new WeightedBlock(ore), clusterSize);
 	}
 
-	public WorldGenMinableCluster(WeightedRandomBlock resource, int clusterSize) {
+	public WorldGenMinableCluster(WeightedBlock resource, int clusterSize) {
 
 		this(fabricateList(resource), clusterSize);
 	}
 
-	public WorldGenMinableCluster(List<WeightedRandomBlock> resource, int clusterSize) {
+	public WorldGenMinableCluster(List<WeightedBlock> resource, int clusterSize) {
 
 		this(resource, clusterSize, Blocks.STONE);
 	}
 
 	public WorldGenMinableCluster(ItemStack ore, int clusterSize, Block block) {
 
-		this(new WeightedRandomBlock(ore, 1), clusterSize, block);
+		this(new WeightedBlock(ore, 1), clusterSize, block);
 	}
 
-	public WorldGenMinableCluster(WeightedRandomBlock resource, int clusterSize, Block block) {
+	public WorldGenMinableCluster(WeightedBlock resource, int clusterSize, Block block) {
 
 		this(fabricateList(resource), clusterSize, block);
 	}
 
-	public WorldGenMinableCluster(List<WeightedRandomBlock> resource, int clusterSize, Block block) {
+	public WorldGenMinableCluster(List<WeightedBlock> resource, int clusterSize, Block block) {
 
 		this(resource, clusterSize, fabricateList(block));
 	}
 
-	public WorldGenMinableCluster(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
+	public WorldGenMinableCluster(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
 
 		this(resource, new ConstantProvider(clusterSize), block);
 	}
 
-	public WorldGenMinableCluster(List<WeightedRandomBlock> resource, INumberProvider clusterSize, List<WeightedRandomBlock> block) {
+	public WorldGenMinableCluster(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block) {
 
 		cluster = resource;
 		genClusterSize = clusterSize;
-		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
+		genBlock = block.toArray(new WeightedBlock[block.size()]);
 	}
 
 	@Override
@@ -168,12 +168,12 @@ public class WorldGenMinableCluster extends WorldGenerator {
 	}
 
 	@Deprecated
-	public static boolean canGenerateInBlock(World world, int x, int y, int z, WeightedRandomBlock[] mat) {
+	public static boolean canGenerateInBlock(World world, int x, int y, int z, WeightedBlock[] mat) {
 
 		return canGenerateInBlock(world, new BlockPos(x, y, z), mat);
 	}
 
-	public static boolean canGenerateInBlock(World world, BlockPos pos, WeightedRandomBlock[] mat) {
+	public static boolean canGenerateInBlock(World world, BlockPos pos, WeightedBlock[] mat) {
 
 		if (mat == null || mat.length == 0) {
 			return true;
@@ -181,7 +181,7 @@ public class WorldGenMinableCluster extends WorldGenerator {
 
 		IBlockState state = world.getBlockState(pos);
 		for (int j = 0, e = mat.length; j < e; ++j) {
-			WeightedRandomBlock genBlock = mat[j];
+			WeightedBlock genBlock = mat[j];
 			if ((-1 == genBlock.metadata || genBlock.metadata == state.getBlock().getMetaFromState(state)) && (state.getBlock().isReplaceableOreGen(state, world, pos, BlockMatcher.forBlock(genBlock.block)) || state.getBlock().isAssociatedBlock(genBlock.block))) {
 				return true;
 			}
@@ -189,7 +189,7 @@ public class WorldGenMinableCluster extends WorldGenerator {
 		return false;
 	}
 
-	public static boolean generateBlock(World world, Random rand, int x, int y, int z, WeightedRandomBlock[] mat, List<WeightedRandomBlock> o) {
+	public static boolean generateBlock(World world, Random rand, int x, int y, int z, WeightedBlock[] mat, List<WeightedBlock> o) {
 
 		if (mat == null || mat.length == 0) {
 			return generateBlock(world, rand, x, y, z, o);
@@ -201,13 +201,13 @@ public class WorldGenMinableCluster extends WorldGenerator {
 		return false;
 	}
 
-	public static boolean generateBlock(World world, Random rand, int x, int y, int z, List<WeightedRandomBlock> o) {
+	public static boolean generateBlock(World world, Random rand, int x, int y, int z, List<WeightedBlock> o) {
 
-		WeightedRandomBlock ore = selectBlock(rand, o);
+		WeightedBlock ore = selectBlock(rand, o);
 		return ore != null && world.setBlockState(new BlockPos(x, y, z), ore.getState(), 2);
 	}
 
-	public static WeightedRandomBlock selectBlock(Random rand, List<WeightedRandomBlock> o) {
+	public static WeightedBlock selectBlock(Random rand, List<WeightedBlock> o) {
 
 		int size = o.size();
 		if (size == 0) {

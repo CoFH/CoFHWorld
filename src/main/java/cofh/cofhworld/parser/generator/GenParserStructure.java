@@ -6,10 +6,10 @@ import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.EnumData;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.parser.variables.StringData;
-import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.WeightedRandomEnum;
-import cofh.cofhworld.util.WeightedRandomNBTTag;
-import cofh.cofhworld.util.WeightedRandomString;
+import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.util.random.WeightedEnum;
+import cofh.cofhworld.util.random.WeightedNBTTag;
+import cofh.cofhworld.util.random.WeightedString;
 import cofh.cofhworld.world.generator.WorldGenStructure;
 import com.google.common.collect.Lists;
 import com.typesafe.config.Config;
@@ -29,15 +29,13 @@ import java.util.List;
 
 public class GenParserStructure implements IGeneratorParser {
 
-	// @formatter:off
-	protected static ArrayList<WeightedRandomEnum<Rotation>> ALL_ROTATION = Lists.newArrayList(
-			new WeightedRandomEnum<>(Rotation.NONE, 1),
-			new WeightedRandomEnum<>(Rotation.CLOCKWISE_90, 1),
-			new WeightedRandomEnum<>(Rotation.CLOCKWISE_180, 1),
-			new WeightedRandomEnum<>(Rotation.COUNTERCLOCKWISE_90, 1)
-	);
-	// @formatter:on
-	protected static ArrayList<WeightedRandomEnum<Mirror>> NO_MIRROR = new ArrayList<>();
+	protected static ArrayList<WeightedEnum<Rotation>> ALL_ROTATION = Lists.newArrayList(
+			new WeightedEnum<Rotation>(Rotation.NONE, 1),
+			new WeightedEnum<Rotation>(Rotation.CLOCKWISE_90, 1),
+			new WeightedEnum<Rotation>(Rotation.CLOCKWISE_180, 1),
+			new WeightedEnum<Rotation>(Rotation.COUNTERCLOCKWISE_90, 1)
+			);
+	protected static ArrayList<WeightedEnum<Mirror>> NO_MIRROR = new ArrayList<>();
 
 	private static String[] FIELDS = new String[] { "structure" };
 
@@ -48,11 +46,11 @@ public class GenParserStructure implements IGeneratorParser {
 	}
 
 	@Override
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException {
+	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
 
-		ArrayList<WeightedRandomNBTTag> tags = new ArrayList<>();
+		ArrayList<WeightedNBTTag> tags = new ArrayList<>();
 		if (genObject.hasPath("structure")) {
-			ArrayList<WeightedRandomString> files = new ArrayList<>();
+			ArrayList<WeightedString> files = new ArrayList<>();
 			final String dir = FilenameUtils.getFullPath(genObject.origin().filename());
 			if (StringData.parseStringList(genObject.getValue("structure"), files)) {
 				if (files.size() == 0) {
@@ -60,7 +58,7 @@ public class GenParserStructure implements IGeneratorParser {
 					throw new InvalidGeneratorException("Empty `structure` array", genObject.getValue("structure").origin());
 				}
 				tags.ensureCapacity(files.size());
-				for (WeightedRandomString file : files) {
+				for (WeightedString file : files) {
 					String path = FilenameUtils.normalize(dir + file.value);
 					try {
 						if (!FilenameUtils.directoryContains(WorldProps.cannonicalWorldGenDir, path)) {
@@ -72,7 +70,7 @@ public class GenParserStructure implements IGeneratorParser {
 					}
 					try {
 						FileInputStream stream = new FileInputStream(new File(path));
-						tags.add(new WeightedRandomNBTTag(file.itemWeight, CompressedStreamTools.readCompressed(stream)));
+						tags.add(new WeightedNBTTag(file.itemWeight, CompressedStreamTools.readCompressed(stream)));
 						IOUtils.closeQuietly(stream);
 					} catch (IOException e) {
 						throw new InvalidGeneratorException("Structure NBT file cannot be read.", genObject.getValue("structure").origin()).causedBy(e);
@@ -105,7 +103,7 @@ public class GenParserStructure implements IGeneratorParser {
 			gen.setIntegrity(NumberData.parseNumberValue(genObject.getValue("integrity"), 0d, 1.01d)); // ensure we don't accidentally a .999...
 		}
 
-		ArrayList<WeightedRandomEnum<Rotation>> rots = ALL_ROTATION;
+		ArrayList<WeightedEnum<Rotation>> rots = ALL_ROTATION;
 		if (genObject.hasPath("rotation")) {
 			rots = new ArrayList<>(4);
 			if (!EnumData.parseEnumList(genObject.getValue("rotation"), rots, Rotation.class)) {
@@ -113,7 +111,7 @@ public class GenParserStructure implements IGeneratorParser {
 			}
 		}
 
-		ArrayList<WeightedRandomEnum<Mirror>> mirror = NO_MIRROR;
+		ArrayList<WeightedEnum<Mirror>> mirror = NO_MIRROR;
 		if (genObject.hasPath("mirror")) {
 			mirror = new ArrayList<>(3);
 			if (!EnumData.parseEnumList(genObject.getValue("mirror"), mirror, Mirror.class)) {

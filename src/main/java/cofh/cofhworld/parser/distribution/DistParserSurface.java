@@ -6,7 +6,7 @@ import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.world.distribution.DistributionSurface;
 import cofh.cofhworld.world.distribution.DistributionTopBlock;
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import com.typesafe.config.Config;
 import net.minecraft.init.Blocks;
@@ -20,16 +20,16 @@ import java.util.List;
 public class DistParserSurface extends AbstractDistParser {
 
 	@Override
-	protected List<WeightedRandomBlock> generateDefaultMaterial() {
+	protected List<WeightedBlock> generateDefaultMaterial() {
 
-		return Arrays.asList(new WeightedRandomBlock(Blocks.STONE, -1), new WeightedRandomBlock(Blocks.DIRT, -1), new WeightedRandomBlock(Blocks.GRASS, -1), new WeightedRandomBlock(Blocks.SAND, -1), new WeightedRandomBlock(Blocks.GRAVEL, -1), new WeightedRandomBlock(Blocks.SNOW, -1), new WeightedRandomBlock(Blocks.AIR, -1), new WeightedRandomBlock(Blocks.WATER, -1));
+		return Arrays.asList(new WeightedBlock(Blocks.STONE, -1), new WeightedBlock(Blocks.DIRT, -1), new WeightedBlock(Blocks.GRASS, -1), new WeightedBlock(Blocks.SAND, -1), new WeightedBlock(Blocks.GRAVEL, -1), new WeightedBlock(Blocks.SNOW, -1), new WeightedBlock(Blocks.AIR, -1), new WeightedBlock(Blocks.WATER, -1));
 	}
 
 	@Override
 	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
 
 		// this feature checks the block below where the generator runs, and needs its own material list
-		List<WeightedRandomBlock> matList = defaultMaterial;
+		List<WeightedBlock> matList = defaultMaterial;
 		if (genObject.hasPath("material")) {
 			matList = new ArrayList<>();
 			if (!BlockData.parseBlockList(genObject.getValue("material"), matList, false)) {

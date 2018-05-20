@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class WorldGenStalactite extends WorldGenStalagmite {
 
-	public WorldGenStalactite(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block, List<WeightedRandomBlock> gblock) {
+	public WorldGenStalactite(List<WeightedBlock> resource, List<WeightedBlock> block, List<WeightedBlock> gblock) {
 
 		super(resource, block, gblock);
 	}

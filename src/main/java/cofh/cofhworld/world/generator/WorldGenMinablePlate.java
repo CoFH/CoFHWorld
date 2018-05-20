@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
@@ -13,22 +13,22 @@ import java.util.Random;
 
 public class WorldGenMinablePlate extends WorldGenerator {
 
-	private final List<WeightedRandomBlock> cluster;
-	private final WeightedRandomBlock[] genBlock;
+	private final List<WeightedBlock> cluster;
+	private final WeightedBlock[] genBlock;
 	private final INumberProvider radius;
 	private INumberProvider height;
 	private boolean slim;
 
-	public WorldGenMinablePlate(List<WeightedRandomBlock> resource, int clusterSize, List<WeightedRandomBlock> block) {
+	public WorldGenMinablePlate(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
 
 		this(resource, new UniformRandomProvider(clusterSize, clusterSize + 2), block);
 	}
 
-	public WorldGenMinablePlate(List<WeightedRandomBlock> resource, INumberProvider clusterSize, List<WeightedRandomBlock> block) {
+	public WorldGenMinablePlate(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block) {
 
 		cluster = resource;
 		radius = clusterSize;
-		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
+		genBlock = block.toArray(new WeightedBlock[block.size()]);
 		setHeight(1).setSlim(false);
 	}
 

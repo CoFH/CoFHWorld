@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -11,8 +11,8 @@ import java.util.Random;
 
 public class WorldGenSpike extends WorldGenerator {
 
-	private final List<WeightedRandomBlock> cluster;
-	private final WeightedRandomBlock[] genBlock;
+	private final List<WeightedBlock> cluster;
+	private final WeightedBlock[] genBlock;
 	public boolean largeSpikes = true;
 	public int largeSpikeChance = 60;
 	public int minHeight = 7;
@@ -23,10 +23,10 @@ public class WorldGenSpike extends WorldGenerator {
 	public int largeSpikeHeightVariance = 30;
 	public int largeSpikeFillerSize = 1;
 
-	public WorldGenSpike(List<WeightedRandomBlock> resource, List<WeightedRandomBlock> block) {
+	public WorldGenSpike(List<WeightedBlock> resource, List<WeightedBlock> block) {
 
 		cluster = resource;
-		genBlock = block.toArray(new WeightedRandomBlock[block.size()]);
+		genBlock = block.toArray(new WeightedBlock[block.size()]);
 	}
 
 	@Override

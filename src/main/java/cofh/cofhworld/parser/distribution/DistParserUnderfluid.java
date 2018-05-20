@@ -6,8 +6,8 @@ import cofh.cofhworld.parser.variables.StringData;
 import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.world.distribution.DistributionUnderfluid;
-import cofh.cofhworld.util.WeightedRandomBlock;
-import cofh.cofhworld.util.WeightedRandomString;
+import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.util.random.WeightedString;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import com.typesafe.config.Config;
 import net.minecraft.init.Blocks;
@@ -28,9 +28,9 @@ public class DistParserUnderfluid extends AbstractDistParser {
 	}
 
 	@Override
-	protected List<WeightedRandomBlock> generateDefaultMaterial() {
+	protected List<WeightedBlock> generateDefaultMaterial() {
 
-		return Arrays.asList(new WeightedRandomBlock(Blocks.DIRT, -1), new WeightedRandomBlock(Blocks.GRASS, -1));
+		return Arrays.asList(new WeightedBlock(Blocks.DIRT, -1), new WeightedBlock(Blocks.GRASS, -1));
 	}
 
 	@Override
@@ -40,12 +40,12 @@ public class DistParserUnderfluid extends AbstractDistParser {
 		Set<String> fluidList = new HashSet<>();
 		l:
 		if (genObject.hasPath("fluid")) {
-			ArrayList<WeightedRandomString> list = new ArrayList<>();
+			ArrayList<WeightedString> list = new ArrayList<>();
 			if (!StringData.parseStringList(genObject.getValue("fluid"), list)) {
 				break l;
 			}
 			water = false;
-			for (WeightedRandomString str : list) {
+			for (WeightedString str : list) {
 				// ints.add(FluidRegistry.getFluidID(str.type));
 				// NOPE. this NPEs.
 				Fluid fluid = FluidRegistry.getFluid(str.value);
@@ -56,7 +56,7 @@ public class DistParserUnderfluid extends AbstractDistParser {
 		}
 
 		// does this logic actually need a material?
-		List<WeightedRandomBlock> matList = defaultMaterial;
+		List<WeightedBlock> matList = defaultMaterial;
 		if (genObject.hasPath("material")) {
 			matList = new ArrayList<>();
 			if (!BlockData.parseBlockList(genObject.getValue("material"), matList, false)) {

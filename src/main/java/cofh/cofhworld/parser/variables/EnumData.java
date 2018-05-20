@@ -1,6 +1,6 @@
 package cofh.cofhworld.parser.variables;
 
-import cofh.cofhworld.util.WeightedRandomEnum;
+import cofh.cofhworld.util.random.WeightedEnum;
 import com.typesafe.config.*;
 
 import java.util.List;
@@ -9,20 +9,20 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class EnumData {
 
-	public static <T extends Enum<T>> boolean parseEnumList(ConfigValue enumEntry, List<WeightedRandomEnum<T>> list, Class<T> values) {
+	public static <T extends Enum<T>> boolean parseEnumList(ConfigValue enumEntry, List<WeightedEnum<T>> list, Class<T> values) {
 
 		if (enumEntry.valueType() == ConfigValueType.LIST) {
 			ConfigList configList = (ConfigList) enumEntry;
 
 			for (int i = 0, e = configList.size(); i < e; i++) {
-				WeightedRandomEnum<T> entry = parseEnumEntry(configList.get(i), values);
+				WeightedEnum<T> entry = parseEnumEntry(configList.get(i), values);
 				if (entry == null) {
 					return false;
 				}
 				list.add(entry);
 			}
 		} else {
-			WeightedRandomEnum<T> entry = parseEnumEntry(enumEntry, values);
+			WeightedEnum<T> entry = parseEnumEntry(enumEntry, values);
 			if (entry == null) {
 				return false;
 			}
@@ -31,7 +31,7 @@ public class EnumData {
 		return true;
 	}
 
-	public static <T extends Enum<T>> WeightedRandomEnum<T> parseEnumEntry(ConfigValue enumEntry, Class<T> values) {
+	public static <T extends Enum<T>> WeightedEnum<T> parseEnumEntry(ConfigValue enumEntry, Class<T> values) {
 
 		int weight = 100;
 		String type = null;
@@ -62,7 +62,7 @@ public class EnumData {
 		}
 		try {
 			T v = Enum.valueOf(values, type);
-			return new WeightedRandomEnum<T>(v, weight);
+			return new WeightedEnum<T>(v, weight);
 		} catch (IllegalArgumentException e) {
 			log.error("Invalid enum entry {} on line {}", type, enumEntry.origin().lineNumber());
 		}

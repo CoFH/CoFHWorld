@@ -2,7 +2,7 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.util.WeightedRandomBlock;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGenMinablePlate;
 import com.typesafe.config.Config;
 import net.minecraft.util.math.MathHelper;
@@ -22,7 +22,7 @@ public class GenParserPlate implements IGeneratorParser {
 	}
 
 	@Override
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException {
+	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
 
 		int clusterSize = genObject.getInt("radius");
 		if (clusterSize <= 0) {

@@ -1,4 +1,4 @@
-package cofh.cofhworld.util;
+package cofh.cofhworld.util.random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -12,33 +12,33 @@ import java.util.Collection;
  *
  * @author King Lemming
  */
-public final class WeightedRandomBlock extends WeightedRandom.Item {
+public final class WeightedBlock extends WeightedRandom.Item {
 
 	public final Block block;
 	public final int metadata;
 	public final IBlockState state;
 
-	public WeightedRandomBlock(ItemStack ore) {
+	public WeightedBlock(ItemStack ore) {
 
 		this(ore, 100);
 	}
 
-	public WeightedRandomBlock(ItemStack ore, int weight) {
+	public WeightedBlock(ItemStack ore, int weight) {
 
 		this(Block.getBlockFromItem(ore.getItem()), ore.getItemDamage(), weight);
 	}
 
-	public WeightedRandomBlock(Block ore) {
+	public WeightedBlock(Block ore) {
 
 		this(ore, 0, 100); // some blocks do not have associated items
 	}
 
-	public WeightedRandomBlock(Block ore, int metadata) {
+	public WeightedBlock(Block ore, int metadata) {
 
 		this(ore, metadata, 100);
 	}
 
-	public WeightedRandomBlock(Block ore, int metadata, int weight) {
+	public WeightedBlock(Block ore, int metadata, int weight) {
 
 		super(weight);
 		this.block = ore;
@@ -46,7 +46,7 @@ public final class WeightedRandomBlock extends WeightedRandom.Item {
 		this.state = null;
 	}
 
-	public WeightedRandomBlock(IBlockState ore, int weight) {
+	public WeightedBlock(IBlockState ore, int weight) {
 
 		super(weight);
 		this.block = ore.getBlock();
@@ -54,9 +54,9 @@ public final class WeightedRandomBlock extends WeightedRandom.Item {
 		this.state = ore;
 	}
 
-	public static boolean isBlockContained(Block block, int metadata, Collection<WeightedRandomBlock> list) {
+	public static boolean isBlockContained(Block block, int metadata, Collection<WeightedBlock> list) {
 
-		for (WeightedRandomBlock rb : list) {
+		for (WeightedBlock rb : list) {
 			if (block.equals(rb.block) && (metadata == -1 || rb.metadata == -1 || rb.metadata == metadata)) {
 				return true;
 			}
@@ -64,9 +64,9 @@ public final class WeightedRandomBlock extends WeightedRandom.Item {
 		return false;
 	}
 
-	public static boolean isBlockContained(Block block, int metadata, WeightedRandomBlock[] list) {
+	public static boolean isBlockContained(Block block, int metadata, WeightedBlock[] list) {
 
-		for (WeightedRandomBlock rb : list) {
+		for (WeightedBlock rb : list) {
 			if (block.equals(rb.block) && (metadata == -1 || rb.metadata == -1 || rb.metadata == metadata)) {
 				return true;
 			}
