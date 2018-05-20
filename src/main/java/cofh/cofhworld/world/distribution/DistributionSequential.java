@@ -12,10 +12,28 @@ public class DistributionSequential extends Distribution {
 
 	private final IConfigurableFeatureGenerator[] features;
 
-	public DistributionSequential(String name, List<IConfigurableFeatureGenerator> features, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionSequential(String name, List<IConfigurableFeatureGenerator> features, boolean regen) {
 
-		super(name, biomeRes, regen, dimRes);
+		super(name, regen);
 		this.features = features.toArray(new IConfigurableFeatureGenerator[features.size()]);
+	}
+
+	public Distribution setBiomeRestriction(GenRestriction restriction) {
+
+		super.setBiomeRestriction(restriction);
+		for (IConfigurableFeatureGenerator feature : features) {
+			feature.setBiomeRestriction(restriction);
+		}
+		return this;
+	}
+
+	public Distribution setDimensionRestriction(GenRestriction restriction) {
+
+		super.setDimensionRestriction(restriction);
+		for (IConfigurableFeatureGenerator feature : features) {
+			feature.setDimensionRestriction(restriction);
+		}
+		return this;
 	}
 
 	public Distribution addBiome(BiomeInfo biome) {

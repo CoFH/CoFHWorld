@@ -1,8 +1,8 @@
 package cofh.cofhworld.world.distribution;
 
+import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockMatcher;
@@ -23,9 +23,9 @@ public class DistributionUnderfluid extends Distribution {
 	private final List<WeightedBlock> matList;
 	private final String[] fluidList;
 
-	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedBlock> matList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedBlock> matList, INumberProvider count, boolean regen) {
 
-		super(name, biomeRes, regen, dimRes);
+		super(name, regen);
 		this.worldGen = worldGen;
 		this.count = count;
 		this.matList = matList;
@@ -33,9 +33,9 @@ public class DistributionUnderfluid extends Distribution {
 		fluidList = null;
 	}
 
-	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedBlock> matList, String[] fluidList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedBlock> matList, String[] fluidList, INumberProvider count, boolean regen) {
 
-		super(name, biomeRes, regen, dimRes);
+		super(name, regen);
 		this.worldGen = worldGen;
 		this.count = count;
 		this.matList = matList;

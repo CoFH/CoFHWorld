@@ -18,9 +18,9 @@ public class DistributionCave extends Distribution {
 	private INumberProvider groundLevel = GROUND_LEVEL;
 	private final boolean ceiling;
 
-	public DistributionCave(String name, WorldGenerator worldGen, boolean ceiling, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionCave(String name, WorldGenerator worldGen, boolean ceiling, INumberProvider count, boolean regen) {
 
-		super(name, biomeRes, regen, dimRes);
+		super(name, regen);
 		this.worldGen = worldGen;
 		this.count = count;
 		this.ceiling = ceiling;

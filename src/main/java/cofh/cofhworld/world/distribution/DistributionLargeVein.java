@@ -16,9 +16,9 @@ public class DistributionLargeVein extends Distribution {
 	private INumberProvider verticalDensity;
 	private INumberProvider horizontalDensity;
 
-	public DistributionLargeVein(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, GenRestriction biomeRes, boolean regen, GenRestriction dimRes, INumberProvider height, INumberProvider diameter, INumberProvider vDensity, INumberProvider hDensity) {
+	public DistributionLargeVein(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, boolean regen, INumberProvider height, INumberProvider diameter, INumberProvider vDensity, INumberProvider hDensity) {
 
-		super(name, biomeRes, regen, dimRes);
+		super(name, regen);
 		this.worldGen = worldGen;
 		this.count = count;
 		this.minY = minY;
