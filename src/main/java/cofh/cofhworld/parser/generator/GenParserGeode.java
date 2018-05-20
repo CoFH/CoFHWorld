@@ -14,6 +14,14 @@ import java.util.List;
 
 public class GenParserGeode implements IGeneratorParser {
 
+	private static String[] FIELDS = new String[] { "block", "" };
+
+	@Override
+	public String[] getRequiredFields() {
+
+		return FIELDS;
+	}
+
 	@Override
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) {
 

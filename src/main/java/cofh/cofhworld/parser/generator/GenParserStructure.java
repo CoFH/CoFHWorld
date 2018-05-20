@@ -38,6 +38,14 @@ public class GenParserStructure implements IGeneratorParser {
 			);
 	protected static ArrayList<WeightedRandomEnum<Mirror>> NO_MIRROR = new ArrayList<>();
 
+	private static String[] FIELDS = new String[] { "structure" };
+
+	@Override
+	public String[] getRequiredFields() {
+
+		return FIELDS;
+	}
+
 	@Override
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException {
 

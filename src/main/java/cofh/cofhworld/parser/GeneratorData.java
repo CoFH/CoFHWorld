@@ -59,6 +59,17 @@ public class GeneratorData {
 			throw new IllegalStateException("Default generator for a distribution is a meta generator!");
 		}
 
+		boolean missedFields = false;
+		for (String field : parser.getRequiredFields()) {
+			if (!genObject.hasPath(field)) {
+				log.error("Missing required setting `{}` for generator type '{}' on line {}.", field, name, genObject.origin().lineNumber());
+				missedFields = true;
+			}
+		}
+		if (missedFields) {
+			throw new InvalidGeneratorException("Missing fields", genObject.origin());
+		}
+
 		List<WeightedRandomBlock> resList = new ArrayList<>();
 		if (!parser.isMeta() && !genObject.hasPath("block")) {
 			log.error("Generators cannot generate blocks unless `block` is specified.");

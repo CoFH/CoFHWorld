@@ -16,8 +16,12 @@ import java.util.List;
 
 public class GenParserSequential implements IGeneratorParser {
 
-	public GenParserSequential() {
+	private static String[] FIELDS = new String[] { "generators" };
 
+	@Override
+	public String[] getRequiredFields() {
+
+		return FIELDS;
 	}
 
 	@Override

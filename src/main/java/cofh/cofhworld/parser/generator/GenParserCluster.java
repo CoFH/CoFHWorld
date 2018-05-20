@@ -13,6 +13,14 @@ import java.util.List;
 
 public class GenParserCluster implements IGeneratorParser {
 
+	private static String[] FIELDS = new String[] { "block", "cluster-size" };
+
+	@Override
+	public String[] getRequiredFields() {
+
+		return FIELDS;
+	}
+
 	private final boolean sparse;
 
 	public GenParserCluster(boolean sparse) {

@@ -15,6 +15,14 @@ import java.util.List;
 
 public class GenParserStalagmite implements IGeneratorParser {
 
+	private static String[] FIELDS = new String[] { "block" };
+
+	@Override
+	public String[] getRequiredFields() {
+
+		return FIELDS;
+	}
+
 	private final boolean stalactite;
 
 	public GenParserStalagmite(boolean stalactite) {
