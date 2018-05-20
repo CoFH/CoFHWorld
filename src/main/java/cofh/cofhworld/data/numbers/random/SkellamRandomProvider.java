@@ -1,12 +1,13 @@
-package cofh.cofhworld.data.numbers;
+package cofh.cofhworld.data.numbers.random;
 
+import cofh.cofhworld.data.numbers.ConstantProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Random;
 
-import static cofh.cofhworld.data.numbers.UniformRandomProvider.getRandomDouble;
-import static cofh.cofhworld.data.numbers.UniformRandomProvider.getRandomLong;
+import static cofh.cofhworld.data.numbers.random.UniformRandomProvider.getRandomDouble;
+import static cofh.cofhworld.data.numbers.random.UniformRandomProvider.getRandomLong;
 
 public class SkellamRandomProvider extends ConstantProvider {
 

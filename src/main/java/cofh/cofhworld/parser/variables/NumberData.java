@@ -1,6 +1,10 @@
 package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.data.numbers.*;
+import cofh.cofhworld.data.numbers.operation.BoundedProvider;
+import cofh.cofhworld.data.numbers.operation.MathProvider;
+import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
+import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
@@ -38,7 +42,7 @@ public class NumberData {
 						numberProps.containsKey("value-b")) {
 					a = parseNumberValue(numberObject.getValue("value-a"));
 					b = parseNumberValue(numberObject.getValue("value-b"));
-					return new OperationProvider(a, b, numberObject.getString("operation"));
+					return new MathProvider(a, b, numberObject.getString("operation"));
 				} else if (numberProps.containsKey("value") &&
 						numberProps.containsKey("min") &&
 						numberProps.containsKey("max")) {

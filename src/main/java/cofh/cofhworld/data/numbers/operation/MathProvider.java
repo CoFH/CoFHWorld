@@ -1,18 +1,19 @@
-package cofh.cofhworld.data.numbers;
+package cofh.cofhworld.data.numbers.operation;
 
+import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Locale;
 import java.util.Random;
 
-public class OperationProvider implements INumberProvider {
+public class MathProvider implements INumberProvider {
 
 	protected final INumberProvider valueA;
 	protected final INumberProvider valueB;
 	protected final Operation operation;
 
-	public OperationProvider(INumberProvider valueA, INumberProvider valueB, String type) {
+	public MathProvider(INumberProvider valueA, INumberProvider valueB, String type) {
 
 		this.valueA = valueA;
 		this.valueB = valueB;
