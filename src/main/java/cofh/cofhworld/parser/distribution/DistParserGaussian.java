@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 public class DistParserGaussian extends AbstractStoneDistParser {
 
-	private final String[] FIELDS = new String[] { "generator", "center-height", "spread" };
+	private final String[] FIELDS = new String[] { "generator", "cluster-count", "center-height", "spread" };
 
 	@Override
 	public String[] getRequiredFields() {

@@ -16,7 +16,7 @@ import java.util.List;
 
 public abstract class AbstractDistParser implements IDistributionParser {
 
-	private final String[] FIELDS = new String[] { "generator" };
+	private final String[] FIELDS = new String[] { "generator", "cluster-count" };
 
 	protected final List<WeightedRandomBlock> defaultMaterial;
 

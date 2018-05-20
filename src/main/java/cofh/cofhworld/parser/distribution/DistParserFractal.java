@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 public class DistParserFractal extends AbstractStoneDistParser {
 
-	private final String[] FIELDS = new String[] { "generator", "min-height", "vein-height", "vein-diameter", "vertical-density", "horizontal-density" };
+	private final String[] FIELDS = new String[] { "generator", "cluster-count", "min-height", "vein-height", "vein-diameter", "vertical-density", "horizontal-density" };
 
 	@Override
 	public String[] getRequiredFields() {

@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 public class DistParserUniform extends AbstractStoneDistParser {
 
-	private final String[] FIELDS = new String[] { "generator", "min-height", "max-height" };
+	private final String[] FIELDS = new String[] { "generator", "cluster-count", "min-height", "max-height" };
 
 	@Override
 	public String[] getRequiredFields() {
@@ -23,13 +23,8 @@ public class DistParserUniform extends AbstractStoneDistParser {
 	@Override
 	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
 
-		if (!(genObject.hasPath("min-height") && genObject.hasPath("max-height"))) {
-			log.error("Height parameters for 'uniform' template not specified in \"" + featureName + "\"");
-			return null;
-		}
-
-		INumberProvider minHeight = NumberData.parseNumberValue(genObject.root().get("min-height"));
-		INumberProvider maxHeight = NumberData.parseNumberValue(genObject.root().get("max-height"));
+		INumberProvider minHeight = NumberData.parseNumberValue(genObject.getValue("min-height"));
+		INumberProvider maxHeight = NumberData.parseNumberValue(genObject.getValue("max-height"));
 
 		return new DistributionUniform(featureName, gen, numClusters, minHeight, maxHeight, biomeRes, retrogen, dimRes);
 	}
