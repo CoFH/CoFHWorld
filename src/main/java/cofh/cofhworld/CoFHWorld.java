@@ -31,7 +31,7 @@ public class CoFHWorld {
 	@Instance (MOD_ID)
 	public static CoFHWorld instance;
 
-	public static Logger log = LogManager.getLogger(MOD_ID);
+	public static Logger log = LogManager.getLogger(MOD_NAME);
 	public static Configuration config;
 
 	public CoFHWorld() {
