@@ -1,13 +1,12 @@
 package cofh.cofhworld.parser.distribution;
 
+import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.parser.distribution.base.AbstractDistParser;
 import cofh.cofhworld.parser.variables.BlockData;
+import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.distribution.Distribution;
-import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.world.distribution.DistributionSurface;
 import cofh.cofhworld.world.distribution.DistributionTopBlock;
-import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.data.numbers.INumberProvider;
 import com.typesafe.config.Config;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -26,7 +25,7 @@ public class DistParserSurface extends AbstractDistParser {
 	}
 
 	@Override
-	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, GenRestriction biomeRes, boolean retrogen, GenRestriction dimRes, Logger log) {
+	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		// this feature checks the block below where the generator runs, and needs its own material list
 		List<WeightedBlock> matList = defaultMaterial;
@@ -39,9 +38,9 @@ public class DistParserSurface extends AbstractDistParser {
 		}
 		// TODO: rename follow-terrain?: when true, stops at first found block, when false finds first solid non-tree block
 		if (genObject.hasPath("follow-terrain") && genObject.getBoolean("follow-terrain")) {
-			return new DistributionTopBlock(featureName, gen, matList, numClusters, biomeRes, retrogen, dimRes);
+			return new DistributionTopBlock(featureName, gen, matList, numClusters, retrogen);
 		} else {
-			return new DistributionSurface(featureName, gen, matList, numClusters, biomeRes, retrogen, dimRes);
+			return new DistributionSurface(featureName, gen, matList, numClusters, retrogen);
 		}
 	}
 

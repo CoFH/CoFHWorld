@@ -38,8 +38,7 @@ public class DistributionData {
 		return null;
 	}
 
-	public static IConfigurableFeatureGenerator getFeature(String featureName, Config distObject, IConfigurableFeatureGenerator.GenRestriction biomeRes,
-			boolean retrogen, IConfigurableFeatureGenerator.GenRestriction dimRes, Logger log) {
+	public static IConfigurableFeatureGenerator getFeature(String featureName, Config distObject, boolean retrogen, Logger log) {
 
 		String featureType = parseFeatureType(distObject);
 		IDistributionParser parser = FeatureParser.getDistribution(featureType);
@@ -55,7 +54,7 @@ public class DistributionData {
 			if (missedFields) {
 				return null;
 			}
-			IConfigurableFeatureGenerator feature = parser.getFeature(featureName, distObject, biomeRes, retrogen, dimRes, log);
+			IConfigurableFeatureGenerator feature = parser.getFeature(featureName, distObject, retrogen, log);
 			if (feature != null) {
 				return feature;
 			}

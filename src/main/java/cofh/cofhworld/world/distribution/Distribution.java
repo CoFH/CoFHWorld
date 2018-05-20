@@ -16,8 +16,8 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 
 	public final String name;
 
-	public final GenRestriction biomeRestriction;
-	public final GenRestriction dimensionRestriction;
+	protected GenRestriction biomeRestriction = GenRestriction.NONE;
+	protected GenRestriction dimensionRestriction = GenRestriction.NONE;
 
 	public final boolean regen;
 
@@ -28,35 +28,9 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 	protected final BiomeInfoSet biomes = new BiomeInfoSet(1);
 	protected final Set<Integer> dimensions = new THashSet<>();
 
-	/**
-	 * Shortcut to add a Feature with no biome or dimension restriction.
-	 */
 	public Distribution(String name, boolean regen) {
 
-		this(name, GenRestriction.NONE, regen, GenRestriction.NONE);
-	}
-
-	/**
-	 * Shortcut to add a Feature with a dimension restriction but no biome restriction.
-	 */
-	public Distribution(String name, boolean regen, GenRestriction dimRes) {
-
-		this(name, GenRestriction.NONE, regen, dimRes);
-	}
-
-	/**
-	 * Shortcut to add a Feature with a biome restriction but no dimension restriction.
-	 */
-	public Distribution(String name, GenRestriction biomeRes, boolean regen) {
-
-		this(name, biomeRes, regen, GenRestriction.NONE);
-	}
-
-	public Distribution(String name, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
-
 		this.name = name;
-		this.biomeRestriction = biomeRes;
-		this.dimensionRestriction = dimRes;
 		this.regen = regen;
 	}
 
@@ -90,14 +64,16 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		return this;
 	}
 
-	public GenRestriction getBiomeRestriction() {
+	public Distribution setBiomeRestriction(GenRestriction restriction) {
 
-		return this.biomeRestriction;
+		this.biomeRestriction = restriction;
+		return this;
 	}
 
-	public GenRestriction getDimensionRestriction() {
+	public Distribution setDimensionRestriction(GenRestriction restriction) {
 
-		return this.dimensionRestriction;
+		this.dimensionRestriction = restriction;
+		return this;
 	}
 
 	protected boolean canGenerateInBiome(World world, int x, int z, Random rand) {

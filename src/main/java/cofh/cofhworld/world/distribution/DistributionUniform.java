@@ -14,9 +14,9 @@ public class DistributionUniform extends Distribution {
 	private final INumberProvider minY;
 	private final INumberProvider maxY;
 
-	public DistributionUniform(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, INumberProvider maxY, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionUniform(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, INumberProvider maxY, boolean regen) {
 
-		super(name, biomeRes, regen, dimRes);
+		super(name, regen);
 		this.worldGen = worldGen;
 		this.count = count;
 		this.minY = minY;

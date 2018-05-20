@@ -1,12 +1,11 @@
 package cofh.cofhworld.parser.distribution.base;
 
+import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.parser.GeneratorData;
 import cofh.cofhworld.parser.IDistributionParser;
 import cofh.cofhworld.parser.IGeneratorParser.InvalidGeneratorException;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.distribution.Distribution;
 import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -34,7 +33,7 @@ public abstract class AbstractDistParser implements IDistributionParser {
 	protected abstract List<WeightedBlock> generateDefaultMaterial();
 
 	@Override
-	public final Distribution getFeature(String featureName, Config genObject, IConfigurableFeatureGenerator.GenRestriction biomeRes, boolean retrogen, IConfigurableFeatureGenerator.GenRestriction dimRes, Logger log) {
+	public final Distribution getFeature(String featureName, Config genObject, boolean retrogen, Logger log) {
 
 		INumberProvider numClusters = NumberData.parseNumberValue(genObject.getValue("cluster-count"), 0, Long.MAX_VALUE);
 
@@ -46,11 +45,10 @@ public abstract class AbstractDistParser implements IDistributionParser {
 			return null;
 		}
 
-		return getFeature(featureName, genObject, generator, numClusters, biomeRes, retrogen, dimRes, log);
+		return getFeature(featureName, genObject, generator, numClusters, retrogen, log);
 	}
 
-	protected abstract Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters,
-			IConfigurableFeatureGenerator.GenRestriction biomeRes, boolean retrogen, IConfigurableFeatureGenerator.GenRestriction dimRes, Logger log);
+	protected abstract Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log);
 
 	protected String getDefaultGenerator() {
 

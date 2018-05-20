@@ -15,9 +15,9 @@ public class DistributionGaussian extends Distribution {
 	private final INumberProvider meanY;
 	private final INumberProvider maxVar;
 
-	public DistributionGaussian(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider smoothness, INumberProvider meanY, INumberProvider maxVar, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionGaussian(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider smoothness, INumberProvider meanY, INumberProvider maxVar, boolean regen) {
 
-		super(name, biomeRes, regen, dimRes);
+		super(name, regen);
 		this.worldGen = worldGen;
 		this.count = count;
 		this.rolls = smoothness;

@@ -35,8 +35,8 @@ public interface IConfigurableFeatureGenerator extends IFeatureGenerator {
 
 	IConfigurableFeatureGenerator addDimension(int dimID);
 
-	GenRestriction getBiomeRestriction();
+	IConfigurableFeatureGenerator setBiomeRestriction(GenRestriction restriction);
 
-	GenRestriction getDimensionRestriction();
+	IConfigurableFeatureGenerator setDimensionRestriction(GenRestriction restriction);
 
 }

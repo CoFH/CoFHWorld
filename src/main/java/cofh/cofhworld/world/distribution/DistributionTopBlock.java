@@ -1,8 +1,8 @@
 package cofh.cofhworld.world.distribution;
 
+import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -19,9 +19,9 @@ public class DistributionTopBlock extends Distribution {
 	private final INumberProvider count;
 	private final WeightedBlock[] matList;
 
-	public DistributionTopBlock(String name, WorldGenerator worldGen, List<WeightedBlock> matList, INumberProvider count, GenRestriction biomeRes, boolean regen, GenRestriction dimRes) {
+	public DistributionTopBlock(String name, WorldGenerator worldGen, List<WeightedBlock> matList, INumberProvider count, boolean regen) {
 
-		super(name, biomeRes, regen, dimRes);
+		super(name, regen);
 		this.worldGen = worldGen;
 		this.count = count;
 		this.matList = matList.toArray(new WeightedBlock[matList.size()]);
