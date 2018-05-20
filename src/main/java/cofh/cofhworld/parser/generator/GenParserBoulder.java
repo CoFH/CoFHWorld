@@ -12,6 +12,14 @@ import java.util.List;
 
 public class GenParserBoulder implements IGeneratorParser {
 
+	private static String[] FIELDS = new String[] { "block", "diameter" };
+
+	@Override
+	public String[] getRequiredFields() {
+
+		return FIELDS;
+	}
+
 	@Override
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedRandomBlock> resList, List<WeightedRandomBlock> matList) throws InvalidGeneratorException {
 
