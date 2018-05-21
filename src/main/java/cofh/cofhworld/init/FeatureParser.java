@@ -132,7 +132,7 @@ public class FeatureParser {
 
 		log.info("Found a total of {} world generation files.", worldGenList.size());
 
-		ArrayList<Config> processedGenList = new ArrayList<Config>(worldGenList.size());
+		ArrayList<ConfigContainer> processedGenList = new ArrayList<>(worldGenList.size());
 		for (int i = 0, e = worldGenList.size(); i < e; ++i) {
 			File genFile = worldGenList.get(i);
 			String file = WorldProps.worldGenPath.relativize(Paths.get(genFile.getPath())).toString();
@@ -142,7 +142,7 @@ public class FeatureParser {
 				log.debug("Parsing world generation file: \"{}\"", file);
 				genList = ConfigFactory.parseFile(genFile, Includer.options).resolve(Includer.resolveOptions);
 			} catch (Throwable t) {
-				log.error("Critical error reading from a world generation file: \"{}\" > Please be sure the file is correct!", genFile, t);
+				log.fatal("Critical error reading from a world generation file: \"{}\" > Please be sure the file is correct!", genFile, t);
 				continue;
 			}
 
@@ -163,34 +163,22 @@ public class FeatureParser {
 				}
 			}
 
+			try {
+				long pri = genList.hasPath("priority") ? genList.getLong("priority") : 0;
+				String namespace = genList.hasPath("namespace") ? genList.getString("namespace") + ":" : "";
+				processedGenList.add(new ConfigContainer(genList, pri, namespace));
+			} catch (Throwable t) {
+				log.error("Error reading world generation file: \"{}\" > Please be sure the file is correct!", genFile, t);
+				continue;
+			}
 			log.trace("World generation file \"{}\" ready to be processed", file);
-			processedGenList.add(genList);
 		}
 
-		// TODO: stream? is it worth it? wrap Config in a holder: store filename, pre-processed priority
-		Collections.sort(processedGenList, new Comparator<Config>() {
+		Collections.sort(processedGenList, (ConfigContainer l, ConfigContainer r) -> {
 
-			@Override
-			public int compare(Config l, Config r) {
+			long lv = l.priority, rv = r.priority;
 
-				long lv = 0, rv = 0;
-				if (l.hasPath("priority")) {
-					try {
-						lv = l.getLong("priority");
-					} catch (Throwable t) {
-						// wrong type
-					}
-				}
-				if (r.hasPath("priority")) {
-					try {
-						rv = r.getLong("priority");
-					} catch (Throwable t) {
-						// wrong type
-					}
-				}
-
-				return lv < rv ? 1 : (lv == rv ? 0 : -1);
-			}
+			return lv < rv ? 1 : (lv == rv ? 0 : -1);
 		});
 
 		parseGenerationFiles(processedGenList);
@@ -263,11 +251,11 @@ public class FeatureParser {
 		return true == retComp;
 	}
 
-	public static void parseGenerationFiles(ArrayList<Config> processedGenList) {
+	public static void parseGenerationFiles(ArrayList<ConfigContainer> processedGenList) {
 
 		for (int i = 0, e = processedGenList.size(); i < e; ++i) {
-			Config genList = processedGenList.get(i);
-			String file = WorldProps.worldGenPath.relativize(Paths.get(genList.origin().filename())).toString();
+			ConfigContainer genList = processedGenList.get(i);
+			String file = WorldProps.worldGenPath.relativize(Paths.get(genList.config.origin().filename())).toString();
 			log.info("Reading world generation info from: \"{}\":", file);
 			{
 				parseGenerationTag(genList, "populate", FeatureParser::parsePopulateEntry);
@@ -278,10 +266,10 @@ public class FeatureParser {
 		}
 	}
 
-	public static void parseGenerationTag(Config genList, String tag, BiFunction<String, Config, EnumActionResult> parseEntry) {
-		if (genList.hasPath(tag)) {
+	public static void parseGenerationTag(ConfigContainer genList, String tag, BiFunction<String, Config, EnumActionResult> parseEntry) {
+		if (genList.config.hasPath(tag)) {
 			log.trace("Processing `{}` entries", tag);
-			Config genData = genList.getConfig(tag);
+			Config genData = genList.config.getConfig(tag);
 			for (Entry<String, ConfigValue> genEntry : genData.root().entrySet()) {
 				String key = genEntry.getKey();
 				ConfigValue value = genEntry.getValue();
@@ -290,7 +278,7 @@ public class FeatureParser {
 						log.error("Error parsing `{}` entry: '{}' > This must be an object and is not.", tag, key);
 					} else {
 						log.debug("Parsing `{}` entry '{}':", tag, key);
-						switch (parseEntry.apply(key, genData.getConfig(key))) {
+						switch (parseEntry.apply(genList.namespace + key, genData.getConfig(key))) {
 						case SUCCESS:
 							log.debug("Parsed `{}` entry successfully: '{}'", tag, key);
 							break;
@@ -353,6 +341,21 @@ public class FeatureParser {
 		}
 
 		return EnumActionResult.FAIL;
+	}
+
+	private static class ConfigContainer {
+
+		public final Config config;
+		public final long priority;
+		public final String namespace;
+
+		public ConfigContainer(Config config, long priority, String namespace) {
+
+			this.config = config;
+			this.priority = priority;
+			this.namespace = namespace;
+		}
+
 	}
 
 	/* INCLUDER CLASS */
