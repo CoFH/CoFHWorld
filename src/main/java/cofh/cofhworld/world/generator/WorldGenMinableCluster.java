@@ -8,6 +8,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockMatcher;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -167,7 +169,6 @@ public class WorldGenMinableCluster extends WorldGenerator {
 		return r;
 	}
 
-	@Deprecated
 	public static boolean canGenerateInBlock(World world, int x, int y, int z, WeightedBlock[] mat) {
 
 		return canGenerateInBlock(world, new BlockPos(x, y, z), mat);
@@ -203,8 +204,19 @@ public class WorldGenMinableCluster extends WorldGenerator {
 
 	public static boolean generateBlock(World world, Random rand, int x, int y, int z, List<WeightedBlock> o) {
 
-		WeightedBlock ore = selectBlock(rand, o);
-		return ore != null && world.setBlockState(new BlockPos(x, y, z), ore.getState(), 2);
+		return setBlock(world, new BlockPos(x, y, z), selectBlock(rand, o));
+	}
+
+	public static boolean setBlock(World world, BlockPos pos, WeightedBlock ore) {
+
+		if (ore != null && world.setBlockState(pos, ore.getState(), 2)) {
+			if (ore.block.hasTileEntity(ore.getState())) {
+				TileEntity tile = world.getTileEntity(pos);
+				tile.readFromNBT(ore.getData(tile.writeToNBT(new NBTTagCompound())));
+			}
+			return true;
+		}
+		return false;
 	}
 
 	public static WeightedBlock selectBlock(Random rand, List<WeightedBlock> o) {

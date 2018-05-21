@@ -6,9 +6,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Marker;
 
 import java.util.List;
 import java.util.Map;
@@ -66,6 +71,15 @@ public class BlockData {
 					return null;
 				}
 				int weight = blockObject.hasPath("weight") ? MathHelper.clamp(blockObject.getInt("weight"), 1, 1000000) : 100;
+				NBTTagCompound dataTag = null;
+				if (blockObject.hasPath("data-tag")) {
+					try {
+						dataTag = JsonToNBT.getTagFromJson(blockObject.getString("data-tag"));
+					} catch (NBTException e) {
+						log.error("Invalid NBT data defined on line {}.", blockObject.getValue("data-tag").origin().lineNumber());
+						log.catching(Level.DEBUG, e);
+					}
+				}
 				if (blockObject.hasPath("properties")) {
 					BlockStateContainer blockstatecontainer = block.getBlockState();
 					IBlockState state = block.getDefaultState();
@@ -84,7 +98,7 @@ public class BlockData {
 							state = setValue(state, prop, (String) propEntry.getValue().unwrapped());
 						}
 					}
-					return new WeightedBlock(state, weight);
+					return new WeightedBlock(state, dataTag, weight);
 				} else {
 					ConfigValue data = null;
 					if (blockObject.hasPath("data")) {
@@ -100,7 +114,7 @@ public class BlockData {
 						}
 					}
 					int metadata = data != null ? MathHelper.clamp(((Number) data.unwrapped()).intValue(), min, 15) : min;
-					return new WeightedBlock(block, metadata, weight);
+					return new WeightedBlock(block, metadata, dataTag, weight);
 				}
 			case STRING:
 				block = parseBlock((String) blockEntry.unwrapped());

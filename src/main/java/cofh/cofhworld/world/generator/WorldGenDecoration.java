@@ -70,7 +70,7 @@ public class WorldGenDecoration extends WorldGenerator {
 				int stack = stackHeight.intValue(world, rand, pos);
 				do {
 					if (!checkStay || (block.block.canPlaceBlockAt(world, pos))) {
-						r |= world.setBlockState(pos, block.getState(), 2);
+						r |= WorldGenMinableCluster.setBlock(world, pos, block);
 					} else {
 						break;
 					}

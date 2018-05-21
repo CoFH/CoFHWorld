@@ -3,6 +3,7 @@ package cofh.cofhworld.util.random;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.WeightedRandom;
 
 import java.util.Collection;
@@ -17,6 +18,7 @@ public final class WeightedBlock extends WeightedRandom.Item {
 	public final Block block;
 	public final int metadata;
 	public final IBlockState state;
+	public final NBTTagCompound data;
 
 	public WeightedBlock(ItemStack ore) {
 
@@ -25,33 +27,35 @@ public final class WeightedBlock extends WeightedRandom.Item {
 
 	public WeightedBlock(ItemStack ore, int weight) {
 
-		this(Block.getBlockFromItem(ore.getItem()), ore.getItemDamage(), weight);
+		this(Block.getBlockFromItem(ore.getItem()), ore.getItemDamage(), null, weight);
 	}
 
 	public WeightedBlock(Block ore) {
 
-		this(ore, 0, 100); // some blocks do not have associated items
+		this(ore, 0, null, 100); // some blocks do not have associated items
 	}
 
 	public WeightedBlock(Block ore, int metadata) {
 
-		this(ore, metadata, 100);
+		this(ore, metadata, null, 100);
 	}
 
-	public WeightedBlock(Block ore, int metadata, int weight) {
+	public WeightedBlock(Block ore, int metadata, NBTTagCompound data, int weight) {
 
 		super(weight);
 		this.block = ore;
 		this.metadata = metadata;
 		this.state = null;
+		this.data = data;
 	}
 
-	public WeightedBlock(IBlockState ore, int weight) {
+	public WeightedBlock(IBlockState ore, NBTTagCompound data, int weight) {
 
 		super(weight);
 		this.block = ore.getBlock();
 		this.metadata = block.getMetaFromState(ore);
 		this.state = ore;
+		this.data = data;
 	}
 
 	public static boolean isBlockContained(Block block, int metadata, Collection<WeightedBlock> list) {
@@ -77,6 +81,17 @@ public final class WeightedBlock extends WeightedRandom.Item {
 	public IBlockState getState() {
 
 		return state == null ? block.getStateFromMeta(metadata) : state;
+	}
+
+	public NBTTagCompound getData(NBTTagCompound source) {
+
+		if (data != null) {
+			data.removeTag("x");
+			data.removeTag("y");
+			data.removeTag("z");
+			source.merge(data);
+		}
+		return source;
 	}
 
 }
