@@ -21,6 +21,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class GenParserStructure implements IGeneratorParser {
 	}
 
 	@Override
+	@Nonnull
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
 
 		ArrayList<WeightedNBTTag> tags = new ArrayList<>();

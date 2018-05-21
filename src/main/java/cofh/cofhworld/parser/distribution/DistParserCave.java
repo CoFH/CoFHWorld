@@ -9,9 +9,12 @@ import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 public class DistParserCave extends AbstractStoneDistParser {
 
 	@Override
+	@Nonnull
 	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		boolean ceiling = genObject.hasPath("ceiling") && genObject.getBoolean("ceiling");

@@ -10,6 +10,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class GenParserDecoration implements IGeneratorParser {
 	}
 
 	@Override
+	@Nonnull
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
 
 		int clusterSize = genObject.getInt("cluster-size"); // TODO: another name?

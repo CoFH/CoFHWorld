@@ -12,6 +12,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +26,7 @@ public class DistParserSurface extends AbstractDistParser {
 	}
 
 	@Override
+	@Nonnull
 	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		// this feature checks the block below where the generator runs, and needs its own material list

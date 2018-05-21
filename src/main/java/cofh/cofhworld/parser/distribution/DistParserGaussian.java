@@ -10,6 +10,8 @@ import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 public class DistParserGaussian extends AbstractStoneDistParser {
 
 	private final String[] FIELDS = new String[] { "generator", "cluster-count", "center-height", "spread" };
@@ -21,6 +23,7 @@ public class DistParserGaussian extends AbstractStoneDistParser {
 	}
 
 	@Override
+	@Nonnull
 	protected Distribution getFeature(String featureName, Config genData, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		INumberProvider centerHeight = NumberData.parseNumberValue(genData.getValue("center-height"));

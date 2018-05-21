@@ -9,6 +9,8 @@ import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 public class DistParserFractal extends AbstractStoneDistParser {
 
 	private final String[] FIELDS = new String[] { "generator", "cluster-count", "min-height", "vein-height", "vein-diameter", "vertical-density", "horizontal-density" };
@@ -20,6 +22,7 @@ public class DistParserFractal extends AbstractStoneDistParser {
 	}
 
 	@Override
+	@Nonnull
 	protected Distribution getFeature(String featureName, Config genData, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		INumberProvider minY = NumberData.parseNumberValue(genData.getValue("min-height"));

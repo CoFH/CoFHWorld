@@ -11,6 +11,7 @@ import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class AbstractDistParser implements IDistributionParser {
@@ -33,7 +34,8 @@ public abstract class AbstractDistParser implements IDistributionParser {
 	protected abstract List<WeightedBlock> generateDefaultMaterial();
 
 	@Override
-	public final Distribution getFeature(String featureName, Config genObject, boolean retrogen, Logger log) {
+	@Nonnull
+	public final Distribution getFeature(String featureName, Config genObject, boolean retrogen, Logger log) throws InvalidDistributionException {
 
 		INumberProvider numClusters = NumberData.parseNumberValue(genObject.getValue("cluster-count"), 0, Long.MAX_VALUE);
 
@@ -42,12 +44,13 @@ public abstract class AbstractDistParser implements IDistributionParser {
 			generator = GeneratorData.parseGenerator(getDefaultGenerator(), genObject, defaultMaterial);
 		} catch (InvalidGeneratorException e) {
 			log.warn("Invalid generator for '{}' on line {}!", featureName, e.origin().lineNumber());
-			return null;
+			throw new InvalidDistributionException("Invalid generator", e.origin()).causedBy(e);
 		}
 
 		return getFeature(featureName, genObject, generator, numClusters, retrogen, log);
 	}
 
+	@Nonnull
 	protected abstract Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log);
 
 	protected String getDefaultGenerator() {

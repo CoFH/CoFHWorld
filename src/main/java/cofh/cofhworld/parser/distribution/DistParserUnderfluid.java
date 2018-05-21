@@ -15,6 +15,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class DistParserUnderfluid extends AbstractDistParser {
@@ -33,6 +34,7 @@ public class DistParserUnderfluid extends AbstractDistParser {
 	}
 
 	@Override
+	@Nonnull
 	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		boolean water = true;

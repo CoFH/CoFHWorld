@@ -1,6 +1,7 @@
 package cofh.cofhworld.parser;
 
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.parser.IDistributionParser.InvalidDistributionException;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IFeatureGenerator;
 import com.typesafe.config.Config;
@@ -10,7 +11,7 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class DistributionData {
 
-	public static IFeatureGenerator parseFeature(String featureName, Config distObject) {
+	public static IFeatureGenerator parseFeature(String featureName, Config distObject) throws InvalidDistributionException {
 
 		String featureType = parseFeatureType(distObject);
 		IDistributionParser parser = FeatureParser.getDistribution(featureType);
@@ -24,21 +25,16 @@ public class DistributionData {
 				}
 			}
 			if (missedFields) {
-				return null;
+				throw new InvalidDistributionException("Missing required fields", distObject.origin());
 			}
-			IFeatureGenerator feature = parser.parseFeature(featureName, distObject, log);
-			if (feature != null) {
-				return feature;
-			}
-			log.error("Distribution '{}' failed to parse its entry on line {}!", featureType, distObject.origin().lineNumber());
+			return parser.parseFeature(featureName, distObject, log);
 		} else {
 			log.warn("Unknown distribution '{}' on line {}.", featureType, distObject.origin().lineNumber());
+			throw new InvalidDistributionException("Unknown distribution type", distObject.origin());
 		}
-		// TODO: throw exception instead
-		return null;
 	}
 
-	public static IConfigurableFeatureGenerator getFeature(String featureName, Config distObject, boolean retrogen, Logger log) {
+	public static IConfigurableFeatureGenerator getFeature(String featureName, Config distObject, boolean retrogen, Logger log) throws InvalidDistributionException {
 
 		String featureType = parseFeatureType(distObject);
 		IDistributionParser parser = FeatureParser.getDistribution(featureType);
@@ -52,18 +48,13 @@ public class DistributionData {
 				}
 			}
 			if (missedFields) {
-				return null;
+				throw new InvalidDistributionException("Missing required fields", distObject.origin());
 			}
-			IConfigurableFeatureGenerator feature = parser.getFeature(featureName, distObject, retrogen, log);
-			if (feature != null) {
-				return feature;
-			}
-			log.error("Distribution '{}' failed to parse its entry on line {}!", featureType, distObject.origin().lineNumber());
+			return parser.getFeature(featureName, distObject, retrogen, log);
 		} else {
 			log.warn("Unknown distribution '{}' on line {}.", featureType, distObject.origin().lineNumber());
+			throw new InvalidDistributionException("Unknown distribution type", distObject.origin());
 		}
-		// TODO: throw exception instead
-		return null;
 	}
 
 	public static String parseFeatureType(Config genObject) {

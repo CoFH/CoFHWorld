@@ -8,6 +8,7 @@ import cofh.cofhworld.world.distribution.DistributionSequential;
 import com.typesafe.config.Config;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 public class DistParserSequential implements IDistributionParser {
@@ -21,17 +22,14 @@ public class DistParserSequential implements IDistributionParser {
 	}
 
 	@Override
-	public Distribution getFeature(String featureName, Config genObject, boolean retrogen, Logger log) {
+	@Nonnull
+	public Distribution getFeature(String featureName, Config genObject, boolean retrogen, Logger log) throws InvalidDistributionException {
 
 		ArrayList<IConfigurableFeatureGenerator> features = new ArrayList<>();
 
 		int i = 0;
 		for (Config featureConf : genObject.getConfigList("features")) {
-			IConfigurableFeatureGenerator feature = DistributionData.getFeature(featureName + '$' + ++i, featureConf, retrogen, log);
-			if (feature == null) {
-				return null;
-			}
-			features.add(feature);
+			features.add(DistributionData.getFeature(featureName + '$' + ++i, featureConf, retrogen, log));
 		}
 
 		return new DistributionSequential(featureName, features, retrogen);
