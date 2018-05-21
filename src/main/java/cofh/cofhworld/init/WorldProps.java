@@ -68,6 +68,7 @@ public class WorldProps {
 		FeatureParser.registerTemplate("underfluid", new DistParserUnderfluid(false));
 		FeatureParser.registerTemplate("cave", new DistParserCave());
 		FeatureParser.registerTemplate("sequential", new DistParserSequential());
+		FeatureParser.registerTemplate("custom", new DistParserCustom());
 
 		log.info("Registering default World Generators...");
 		FeatureParser.registerGenerator(null, new GenParserCluster(false));
