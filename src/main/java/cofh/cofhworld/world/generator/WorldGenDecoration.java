@@ -53,8 +53,8 @@ public class WorldGenDecoration extends WorldGenerator {
 		boolean r = false;
 		for (int l = clusterSize; l-- > 0; ) {
 			int x = xStart + xVar.intValue(world, rand, start);
-			int y = yStart + yVar.intValue(world, rand, start);
-			int z = zStart + zVar.intValue(world, rand, start);
+			int z = zStart + zVar.intValue(world, rand, start.add(x - xStart, 0, 0));
+			int y = yStart + yVar.intValue(world, rand, start.add(x - xStart, 0, z - zStart));
 			BlockPos pos = new BlockPos(x, y, z);
 
 			if (!world.isBlockLoaded(pos)) {
