@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.io.IOException;
@@ -335,7 +336,8 @@ public class FeatureParser {
 				throw new IDistributionParser.InvalidDistributionException("Distribution doesn't have a name", genObject.origin());
 			}
 		} catch (IDistributionParser.InvalidDistributionException e) {
-			log.error("Distribution '{}' failed to parse its entry on line {}!", featureName, e.origin().lineNumber(), e);
+			log.error("Distribution '{}' failed to parse its entry on line {}!", featureName, e.origin().lineNumber());
+			log.catching(Level.DEBUG, e);
 		}
 
 		return EnumActionResult.FAIL;
