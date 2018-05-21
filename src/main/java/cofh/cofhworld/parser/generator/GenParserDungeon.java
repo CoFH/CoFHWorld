@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class GenParserDungeon implements IGeneratorParser {
 	}
 
 	@Override
+	@Nonnull
 	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
 
 		ArrayList<WeightedNBTTag> mobList = new ArrayList<>();
@@ -93,7 +95,7 @@ public class GenParserDungeon implements IGeneratorParser {
 				r.maxWidthZ = genObject.get("maxWidthZ").getAsInt();
 			}
 		}*/
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 }

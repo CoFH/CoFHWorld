@@ -7,11 +7,13 @@ import com.typesafe.config.Config;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class GenParserSpike extends AbstractGenParserBlock {
 
 	@Override
+	@Nonnull
 	public WorldGenerator parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
 
 		WorldGenSpike r = new WorldGenSpike(resList, matList);

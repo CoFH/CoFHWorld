@@ -10,6 +10,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class GenParserStalagmite extends AbstractGenParserBlock {
 	}
 
 	@Override
+	@Nonnull
 	public WorldGenerator parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
 
 		// TODO: these names need revised

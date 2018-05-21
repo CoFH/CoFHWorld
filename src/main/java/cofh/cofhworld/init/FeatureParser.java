@@ -1,9 +1,9 @@
 package cofh.cofhworld.init;
 
 import cofh.cofhworld.parser.DistributionData;
+import cofh.cofhworld.parser.IDistributionParser;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.world.IFeatureGenerator;
-import cofh.cofhworld.parser.IDistributionParser;
 import com.typesafe.config.*;
 import net.minecraft.util.EnumActionResult;
 import net.minecraftforge.fml.common.Loader;
@@ -22,7 +22,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import static cofh.cofhworld.CoFHWorld.log;
 
@@ -327,10 +326,16 @@ public class FeatureParser {
 			}
 		}
 
-		IFeatureGenerator feature = DistributionData.parseFeature(featureName, genObject);
-		if (feature != null) {
-			parsedFeatures.add(feature);
-			return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
+		try {
+			IFeatureGenerator feature = DistributionData.parseFeature(featureName, genObject);
+			if (feature.getFeatureName() != null) {
+				parsedFeatures.add(feature);
+				return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
+			} else {
+				throw new IDistributionParser.InvalidDistributionException("Distribution doesn't have a name", genObject.origin());
+			}
+		} catch (IDistributionParser.InvalidDistributionException e) {
+			log.error("Distribution '{}' failed to parse its entry on line {}!", featureName, e.origin().lineNumber(), e);
 		}
 
 		return EnumActionResult.FAIL;
