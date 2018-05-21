@@ -85,6 +85,7 @@ public class WorldProps {
 		FeatureParser.registerGenerator("stalagmite", new GenParserStalagmite(false));
 		FeatureParser.registerGenerator("stalactite", new GenParserStalagmite(true));
 		FeatureParser.registerGenerator("small-tree", new GenParserSmallTree());
+		FeatureParser.registerGenerator("spout", new GenParserSpout());
 		// meta-generators
 		FeatureParser.registerGenerator("sequential", new GenParserSequential());
 		FeatureParser.registerGenerator("structure", new GenParserStructure());
