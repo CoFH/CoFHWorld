@@ -45,10 +45,10 @@ public class SkellamRandomProvider implements INumberProvider {
 		boolean mh = (mid | high) > 0;
 		long r = mh ? rand.nextInt() & Integer.MAX_VALUE : rand.nextInt(low);
 		if (mh) {
-			r |= (high > 0 ? rand.nextInt() & Integer.MAX_VALUE : rand.nextInt(mid)) << 31;
+			r |= ((long) (high > 0 ? rand.nextInt() & Integer.MAX_VALUE : rand.nextInt(mid))) << 31;
 		}
 		if (high > 0) {
-			r |= rand.nextInt(high) << 62;
+			r |= ((long) rand.nextInt(high)) << 62;
 		}
 
 		return r;
