@@ -16,29 +16,9 @@ public class WorldValueProvider implements INumberProvider {
 		this.data = WorldValueEnum.valueOf(type.toUpperCase(Locale.US));
 	}
 
-	protected long getValue(World world, Random rand, BlockPos pos) {
-
-		return data.getValue(world, rand, pos);
-	}
-
-	public int intValue(World world, Random rand, BlockPos pos) {
-
-		return (int) longValue(world, rand, pos);
-	}
-
 	public long longValue(World world, Random rand, BlockPos pos) {
 
-		return getValue(world, rand, pos);
-	}
-
-	public float floatValue(World world, Random rand, BlockPos pos) {
-
-		return (float) doubleValue(world, rand, pos);
-	}
-
-	public double doubleValue(World world, Random rand, BlockPos pos) {
-
-		return getValue(world, rand, pos);
+		return data.getValue(world, rand, pos);
 	}
 
 }

@@ -20,19 +20,9 @@ public class MathProvider implements INumberProvider {
 		this.operation = Operation.valueOf(type.toUpperCase(Locale.US));
 	}
 
-	public int intValue(World world, Random rand, BlockPos pos) {
-
-		return (int) longValue(world, rand, pos);
-	}
-
 	public long longValue(World world, Random rand, BlockPos pos) {
 
 		return operation.perform(valueA.longValue(world, rand, pos), valueB.longValue(world, rand, pos));
-	}
-
-	public float floatValue(World world, Random rand, BlockPos pos) {
-
-		return (float) doubleValue(world, rand, pos);
 	}
 
 	public double doubleValue(World world, Random rand, BlockPos pos) {

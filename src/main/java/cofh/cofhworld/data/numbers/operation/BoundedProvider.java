@@ -19,21 +19,9 @@ public class BoundedProvider implements INumberProvider {
 	}
 
 	@Override
-	public int intValue(World world, Random rand, BlockPos pos) {
-
-		return (int) longValue(world, rand, pos);
-	}
-
-	@Override
 	public long longValue(World world, Random rand, BlockPos pos) {
 
 		return Math.min(Math.max(value.longValue(world, rand, pos), min.longValue(world, rand, pos)), max.longValue(world, rand, pos));
-	}
-
-	@Override
-	public float floatValue(World world, Random rand, BlockPos pos) {
-
-		return (float) doubleValue(world, rand, pos);
 	}
 
 	@Override

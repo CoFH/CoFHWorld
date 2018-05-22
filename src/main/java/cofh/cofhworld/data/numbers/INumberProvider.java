@@ -7,12 +7,21 @@ import java.util.Random;
 
 public interface INumberProvider {
 
-	int intValue(World world, Random rand, BlockPos pos);
+	default int intValue(World world, Random rand, BlockPos pos) {
+
+		return (int) longValue(world, rand, pos);
+	}
 
 	long longValue(World world, Random rand, BlockPos pos);
 
-	float floatValue(World world, Random rand, BlockPos pos);
+	default float floatValue(World world, Random rand, BlockPos pos) {
 
-	double doubleValue(World world, Random rand, BlockPos pos);
+		return (float) doubleValue(world, rand, pos);
+	}
+
+	default double doubleValue(World world, Random rand, BlockPos pos) {
+
+		return longValue(world, rand, pos);
+	}
 
 }

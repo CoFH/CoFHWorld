@@ -25,14 +25,14 @@ public class NumberData {
 				if (numberProps.containsKey("value")) {
 					return new ConstantProvider(numberObject.getNumber("value"));
 				} else if (numberProps.containsKey("variance")) {
-					return new SkellamRandomProvider(numberObject.getNumber("variance"));
+					return new SkellamRandomProvider(parseNumberValue(numberObject.getValue("variance")));
 				} else if (numberProps.containsKey("world-data")) {
 					return new WorldValueProvider(numberObject.getString("world-data"));
 				}
 				break;
 			case 2:
 				if (numberProps.containsKey("min") && numberProps.containsKey("max")) {
-					return new UniformRandomProvider(numberObject.getNumber("min"), numberObject.getNumber("max"));
+					return new UniformRandomProvider(parseNumberValue(numberObject.getValue("min")), parseNumberValue(numberObject.getValue("max")));
 				}
 				break;
 			case 3:
