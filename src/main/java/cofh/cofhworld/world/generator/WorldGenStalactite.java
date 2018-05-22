@@ -7,6 +7,10 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @deprecated TODO: replace all ints with INumberProvider
+ */
+@Deprecated
 public class WorldGenStalactite extends WorldGenStalagmite {
 
 	public WorldGenStalactite(List<WeightedBlock> resource, List<WeightedBlock> block, List<WeightedBlock> gblock) {

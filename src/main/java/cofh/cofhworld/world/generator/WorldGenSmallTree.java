@@ -9,6 +9,10 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @deprecated TODO: replace all ints with INumberProvider
+ */
+@Deprecated
 public class WorldGenSmallTree extends WorldGenerator {
 
 	private final List<WeightedBlock> leaves;
