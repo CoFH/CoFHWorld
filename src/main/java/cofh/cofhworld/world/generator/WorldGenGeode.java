@@ -38,8 +38,10 @@ public class WorldGenGeode extends WorldGenerator {
 		int yStart = pos.getY();
 		int zStart = pos.getZ();
 
-		final int height = this.height.intValue(world, rand, pos);
-		final int width = this.width.intValue(world, rand, pos);
+		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+
+		final int height = this.height.intValue(world, rand, data);
+		final int width = this.width.intValue(world, rand, data);
 
 		int heightOff = height / 2;
 		int widthOff = width / 2;

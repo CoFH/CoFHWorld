@@ -1,7 +1,6 @@
 package cofh.cofhworld.data.numbers.operation;
 
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Random;
@@ -19,15 +18,15 @@ public class BoundedProvider implements INumberProvider {
 	}
 
 	@Override
-	public long longValue(World world, Random rand, BlockPos pos) {
+	public long longValue(World world, Random rand, DataHolder data) {
 
-		return Math.min(Math.max(value.longValue(world, rand, pos), min.longValue(world, rand, pos)), max.longValue(world, rand, pos));
+		return Math.min(Math.max(value.longValue(world, rand, data), min.longValue(world, rand, data)), max.longValue(world, rand, data));
 	}
 
 	@Override
-	public double doubleValue(World world, Random rand, BlockPos pos) {
+	public double doubleValue(World world, Random rand, DataHolder data) {
 
-		return Math.min(Math.max(value.doubleValue(world, rand, pos), min.doubleValue(world, rand, pos)), max.doubleValue(world, rand, pos));
+		return Math.min(Math.max(value.doubleValue(world, rand, data), min.doubleValue(world, rand, data)), max.doubleValue(world, rand, data));
 	}
 
 }

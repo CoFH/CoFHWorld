@@ -36,7 +36,9 @@ public class DistributionCave extends Distribution {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
-		final int count = this.count.intValue(world, random, pos);
+		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+
+		final int count = this.count.intValue(world, random, data);
 
 		boolean generated = false;
 		for (int i = 0; i < count; i++) {
@@ -45,7 +47,7 @@ public class DistributionCave extends Distribution {
 			if (!canGenerateInBiome(world, x, z, random)) {
 				continue;
 			}
-			int seaLevel = groundLevel.intValue(world, random, new BlockPos(x, 64, z));
+			int seaLevel = groundLevel.intValue(world, random, data.setPosition(new BlockPos(x, 64, z)));
 			if (seaLevel < 20 && groundLevel == GROUND_LEVEL) {
 				seaLevel = world.getHeight();
 			}

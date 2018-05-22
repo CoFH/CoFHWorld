@@ -28,8 +28,10 @@ public class DistributionUniform extends Distribution {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
-		final int count = this.count.intValue(world, random, pos);
-		final int minY = Math.max(this.minY.intValue(world, random, pos), 0), maxY = this.maxY.intValue(world, random, pos);
+		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+
+		final int count = this.count.intValue(world, random, data);
+		final int minY = Math.max(this.minY.intValue(world, random, data), 0), maxY = this.maxY.intValue(world, random, data);
 		if (minY > maxY) {
 			return false;
 		}

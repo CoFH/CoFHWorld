@@ -1,7 +1,6 @@
 package cofh.cofhworld.data.numbers.operation;
 
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Locale;
@@ -20,14 +19,14 @@ public class MathProvider implements INumberProvider {
 		this.operation = Operation.valueOf(type.toUpperCase(Locale.US));
 	}
 
-	public long longValue(World world, Random rand, BlockPos pos) {
+	public long longValue(World world, Random rand, DataHolder data) {
 
-		return operation.perform(valueA.longValue(world, rand, pos), valueB.longValue(world, rand, pos));
+		return operation.perform(valueA.longValue(world, rand, data), valueB.longValue(world, rand, data));
 	}
 
-	public double doubleValue(World world, Random rand, BlockPos pos) {
+	public double doubleValue(World world, Random rand, DataHolder data) {
 
-		return operation.perform(valueA.doubleValue(world, rand, pos), valueB.doubleValue(world, rand, pos));
+		return operation.perform(valueA.doubleValue(world, rand, data), valueB.doubleValue(world, rand, data));
 	}
 
 	private static enum Operation {

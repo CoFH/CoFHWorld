@@ -28,14 +28,15 @@ public class DistributionCustom extends Distribution {
 	@Override
 	public boolean generateFeature(Random random, int blockX, int blockZ, World world) {
 
-		BlockPos pos = new BlockPos(blockX, 64, blockZ);
+		BlockPos pos =new BlockPos(blockX, 64, blockZ);
+		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
 
-		int e = count.intValue(world, random, pos);
+		int e = count.intValue(world, random, data);
 		boolean r = false;
 		for (int i = 0; i < e; ++i) {
-			int x = xPos.intValue(world, random, pos);
-			int z = zPos.intValue(world, random, pos.add(x, 0, 0));
-			int y = yPos.intValue(world, random, pos.add(x, 0, z));
+			int x = xPos.intValue(world, random, data.setPosition(pos));
+			int z = zPos.intValue(world, random, data.setPosition(pos.add(x, 0, 0)));
+			int y = yPos.intValue(world, random, data.setPosition(pos.add(x, 0, z)));
 			x += blockX;
 			z += blockZ;
 			if (!canGenerateInBiome(world, x, z, random)) {

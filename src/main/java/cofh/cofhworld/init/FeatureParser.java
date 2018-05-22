@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.versioning.VersionParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Level;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -378,6 +379,7 @@ public class FeatureParser {
 		}
 
 		@Override
+		@Nullable
 		public ConfigObject includeFile(ConfigIncludeContext context, File file) {
 
 			try {

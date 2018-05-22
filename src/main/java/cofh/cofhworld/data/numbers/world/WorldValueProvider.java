@@ -1,7 +1,6 @@
 package cofh.cofhworld.data.numbers.world;
 
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Locale;
@@ -16,9 +15,9 @@ public class WorldValueProvider implements INumberProvider {
 		this.data = WorldValueEnum.valueOf(type.toUpperCase(Locale.US));
 	}
 
-	public long longValue(World world, Random rand, BlockPos pos) {
+	public long longValue(World world, Random rand, DataHolder data) {
 
-		return data.getValue(world, rand, pos);
+		return this.data.getValue(world, rand, data);
 	}
 
 }

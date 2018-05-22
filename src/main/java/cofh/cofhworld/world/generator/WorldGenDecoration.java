@@ -48,13 +48,15 @@ public class WorldGenDecoration extends WorldGenerator {
 		int yStart = start.getY();
 		int zStart = start.getZ();
 
-		final int clusterSize = this.clusterSize.intValue(world, rand, start);
+		INumberProvider.DataHolder data = new INumberProvider.DataHolder(start);
+
+		final int clusterSize = this.clusterSize.intValue(world, rand, data);
 
 		boolean r = false;
 		for (int l = clusterSize; l-- > 0; ) {
-			int x = xStart + xVar.intValue(world, rand, start);
-			int z = zStart + zVar.intValue(world, rand, start.add(x - xStart, 0, 0));
-			int y = yStart + yVar.intValue(world, rand, start.add(x - xStart, 0, z - zStart));
+			int x = xStart + xVar.intValue(world, rand, data.setPosition(start));
+			int z = zStart + zVar.intValue(world, rand, data.setPosition(start.add(x - xStart, 0, 0)));
+			int y = yStart + yVar.intValue(world, rand, data.setPosition(start.add(x - xStart, 0, z - zStart)));
 			BlockPos pos = new BlockPos(x, y, z);
 
 			if (!world.isBlockLoaded(pos)) {
@@ -67,7 +69,7 @@ public class WorldGenDecoration extends WorldGenerator {
 					WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
 
 				WeightedBlock block = WorldGenMinableCluster.selectBlock(rand, cluster);
-				int stack = stackHeight.intValue(world, rand, pos);
+				int stack = stackHeight.intValue(world, rand, data.setPosition(pos));
 				do {
 					if (!checkStay || (block.block.canPlaceBlockAt(world, pos))) {
 						r |= WorldGenMinableCluster.setBlock(world, pos, block);

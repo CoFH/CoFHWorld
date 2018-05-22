@@ -48,12 +48,15 @@ public class DistributionLargeVein extends Distribution {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
-		final int count = this.count.intValue(world, random, pos);
-		final int blockY = minY.intValue(world, random, pos);
-		final int veinDiameter = this.veinDiameter.intValue(world, random, pos);
-		final int horizontalDensity = this.horizontalDensity.intValue(world, random, pos);
-		final int veinHeight = this.veinHeight.intValue(world, random, pos);
-		final int verticalDensity = this.verticalDensity.intValue(world, random, pos);
+		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+
+		final int veinDiameter = this.veinDiameter.intValue(world, random, data);
+		final int horizontalDensity = this.horizontalDensity.intValue(world, random, data);
+		final int veinHeight = this.veinHeight.intValue(world, random, data);
+		final int verticalDensity = this.verticalDensity.intValue(world, random, data);
+
+		final int blockY = minY.intValue(world, random, data);
+		final int count = this.count.intValue(world, random, data);
 
 		Random dRand = new Random(world.getSeed());
 		long l = (dRand.nextLong() / 2L) * 2L + 1L;

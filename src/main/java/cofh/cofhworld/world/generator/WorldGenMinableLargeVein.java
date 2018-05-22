@@ -82,7 +82,7 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 		int y = pos.getY();
 		int z = pos.getZ();
 
-		final int veinSize = genVeinSize.intValue(world, rand, pos);
+		final int veinSize = genVeinSize.intValue(world, rand, new INumberProvider.DataHolder(pos));
 		final int branchSize = 1 + (veinSize / 30);
 		final int subBranchSize = 1 + (branchSize / 5);
 

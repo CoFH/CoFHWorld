@@ -2,7 +2,6 @@ package cofh.cofhworld.data.numbers.random;
 
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Random;
@@ -24,17 +23,17 @@ public class UniformRandomProvider extends SkellamRandomProvider {
 	}
 
 	@Override
-	public long longValue(World world, Random rand, BlockPos pos) {
+	public long longValue(World world, Random rand, DataHolder data) {
 
-		long min = this.min.longValue(world, rand, pos);
-		return getRandomLong(max.longValue(world, rand, pos) - min, rand) + min;
+		long min = this.min.longValue(world, rand, data);
+		return getRandomLong(max.longValue(world, rand, data) - min, rand) + min;
 	}
 
 	@Override
-	public double doubleValue(World world, Random rand, BlockPos pos) {
+	public double doubleValue(World world, Random rand, DataHolder data) {
 
-		double min = this.min.doubleValue(world, rand, pos);
-		return getRandomDouble(max.doubleValue(world, rand, pos) - min, rand) + min;
+		double min = this.min.doubleValue(world, rand, data);
+		return getRandomDouble(max.doubleValue(world, rand, data) - min, rand) + min;
 	}
 
 }

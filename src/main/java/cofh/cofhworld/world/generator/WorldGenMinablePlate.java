@@ -39,10 +39,12 @@ public class WorldGenMinablePlate extends WorldGenerator {
 		int y = pos.getY();
 		int z = pos.getZ();
 
+		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+
 		++y;
-		int size = radius.intValue(world, rand, pos);
+		int size = radius.intValue(world, rand, data);
 		final int dist = size * size;
-		int height = this.height.intValue(world, rand, pos);
+		int height = this.height.intValue(world, rand, data);
 
 		boolean r = false;
 		for (int posX = x - size; posX <= x + size; ++posX) {

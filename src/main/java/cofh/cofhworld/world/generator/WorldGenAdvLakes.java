@@ -46,8 +46,10 @@ public class WorldGenAdvLakes extends WorldGenerator {
 		int yStart = pos.getY();
 		int zStart = pos.getZ();
 
-		final int width = this.width.intValue(world, rand, pos);
-		final int height = this.height.intValue(world, rand, pos);
+		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+
+		final int width = this.width.intValue(world, rand, data);
+		final int height = this.height.intValue(world, rand, data);
 
 		int widthOff = width / 2;
 		int heightOff = height / 2 + 1;

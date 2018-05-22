@@ -89,7 +89,7 @@ public class WorldGenMinableCluster extends WorldGenerator {
 		int y = pos.getY();
 		int z = pos.getZ();
 
-		int blocks = MathHelper.clamp(genClusterSize.intValue(world, rand, pos), 1, 42);
+		int blocks = MathHelper.clamp(genClusterSize.intValue(world, rand, new INumberProvider.DataHolder(pos)), 1, 42);
 		if (blocks < 4) { // HACK: at 1 and 2 no ores are ever generated. at 3 only 1/3 veins generate
 			return generateTiny(world, rand, blocks, x, y, z);
 		}

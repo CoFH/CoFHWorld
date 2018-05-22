@@ -48,7 +48,7 @@ public class DistributionUnderfluid extends Distribution {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
-		final int count = this.count.intValue(world, random, pos);
+		final int count = this.count.intValue(world, random, new INumberProvider.DataHolder(pos));
 
 		boolean generated = false;
 		for (int i = 0; i < count; i++) {

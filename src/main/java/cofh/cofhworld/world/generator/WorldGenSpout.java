@@ -62,10 +62,12 @@ public class WorldGenSpout extends WorldGenerator {
 		int yCenter = pos.getY();
 		int zCenter = pos.getZ();
 
-		int height = this.height.intValue(world, rand, pos);
+		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+
+		int height = this.height.intValue(world, rand, data);
 		boolean r = false;
 		for (int y = 0; y < height; ++y) {
-			int radius = this.radius.intValue(world, rand, pos.add(0, y, 0));
+			int radius = this.radius.intValue(world, rand, data.setPosition(pos.add(0, y, 0)));
 			for (int x = -radius; x <= radius; ++x) {
 				for (int z = -radius; z <= radius; ++z) {
 					if (shape.inArea(x, z, radius)) {

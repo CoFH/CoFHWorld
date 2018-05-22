@@ -95,7 +95,7 @@ public class WorldGenStructure extends WorldGenerator {
 
 		BlockPos start = template.getZeroPositionWithTransform(pos, placementSettings.getMirror(), placementSettings.getRotation());
 
-		placementSettings.setIntegrity(integrity.floatValue(world, random, pos));
+		placementSettings.setIntegrity(integrity.floatValue(world, random, new INumberProvider.DataHolder(pos)));
 
 		template.addBlocksToWorld(world, start, placementSettings, 20);
 

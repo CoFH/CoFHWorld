@@ -69,7 +69,7 @@ public class WorldGenSparseMinableCluster extends WorldGenerator {
 		int y = pos.getY();
 		int z = pos.getZ();
 
-		int blocks = MathHelper.clamp(genClusterSize.intValue(world, rand, pos), 1, 42);
+		int blocks = MathHelper.clamp(genClusterSize.intValue(world, rand, new INumberProvider.DataHolder(pos)), 1, 42);
 		float f = rand.nextFloat() * (float) Math.PI;
 		// despite naming, these are not exactly min/max. more like direction
 		float yMin = (y + rand.nextInt(3)) - 2;

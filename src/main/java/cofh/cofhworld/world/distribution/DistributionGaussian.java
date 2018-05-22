@@ -30,17 +30,20 @@ public class DistributionGaussian extends Distribution {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
-		final int count = this.count.intValue(world, random, pos);
+		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+
+		final int count = this.count.intValue(world, random, data);
 
 		boolean generated = false;
 		for (int i = 0; i < count; i++) {
 			int x = blockX + random.nextInt(16);
 			int z = blockZ + random.nextInt(16);
 			pos = new BlockPos(x, 64, z);
-			int y = this.meanY.intValue(world, random, pos);
-			final int maxVar = this.maxVar.intValue(world, random, pos);
+			int y = this.meanY.intValue(world, random, data.setPosition(pos));
+			pos = pos.add(0, y - pos.getY(), 0);
+			final int maxVar = this.maxVar.intValue(world, random, data.setPosition(pos));
 			if (maxVar > 1) {
-				final int rolls = this.rolls.intValue(world, random, pos);
+				final int rolls = this.rolls.intValue(world, random, data);
 				for (int v = 0; v < rolls; ++v) {
 					y += random.nextInt(maxVar);
 				}
