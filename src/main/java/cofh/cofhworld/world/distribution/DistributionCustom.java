@@ -31,6 +31,8 @@ public class DistributionCustom extends Distribution {
 		BlockPos pos =new BlockPos(blockX, 64, blockZ);
 		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
 
+		worldGen.setDecorationDefaults();
+
 		int e = count.intValue(world, random, data);
 		boolean r = false;
 		for (int i = 0; i < e; ++i) {

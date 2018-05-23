@@ -63,6 +63,8 @@ public class DistributionLargeVein extends Distribution {
 		long l1 = (dRand.nextLong() / 2L) * 2L + 1L;
 		dRand.setSeed((blockX >> 4) * l + (blockZ >> 4) * l1 ^ world.getSeed());
 
+		worldGen.setDecorationDefaults();
+
 		boolean generated = false;
 		for (int i = count; i-- > 0; ) {
 

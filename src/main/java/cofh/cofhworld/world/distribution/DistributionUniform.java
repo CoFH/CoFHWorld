@@ -36,6 +36,8 @@ public class DistributionUniform extends Distribution {
 			return false;
 		}
 
+		worldGen.setDecorationDefaults();
+
 		boolean generated = false;
 		for (int i = 0; i < count; i++) {
 			int x = blockX + random.nextInt(16);

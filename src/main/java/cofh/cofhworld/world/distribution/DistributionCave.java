@@ -40,6 +40,8 @@ public class DistributionCave extends Distribution {
 
 		final int count = this.count.intValue(world, random, data);
 
+		worldGen.setDecorationDefaults();
+
 		boolean generated = false;
 		for (int i = 0; i < count; i++) {
 			int x = blockX + random.nextInt(16);

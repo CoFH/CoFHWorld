@@ -88,8 +88,9 @@ public class WorldProps {
 		FeatureParser.registerGenerator("small-tree", new GenParserSmallTree());
 		FeatureParser.registerGenerator("spout", new GenParserSpout());
 		// meta-generators
-		FeatureParser.registerGenerator("sequential", new GenParserSequential());
 		FeatureParser.registerGenerator("structure", new GenParserStructure());
+		FeatureParser.registerGenerator("sequential", new GenParserSequential());
+		FeatureParser.registerGenerator("consecutive", new GenParserConsecutive());
 
 		log.info("Verifying or creating base world generation directory...");
 

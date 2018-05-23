@@ -20,6 +20,14 @@ public class WorldGenMulti extends WorldGenerator {
 	}
 
 	@Override
+	public void setDecorationDefaults() {
+
+		for (WeightedWorldGenerator gen : generators) {
+			gen.generator.setDecorationDefaults();
+		}
+	}
+
+	@Override
 	public boolean generate(World world, Random random, BlockPos pos) {
 
 		WeightedWorldGenerator gen = WeightedRandom.getRandomItem(random, generators);
