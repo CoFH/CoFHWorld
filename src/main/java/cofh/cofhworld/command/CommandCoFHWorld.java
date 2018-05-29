@@ -1,8 +1,8 @@
 package cofh.cofhworld.command;
 
 import cofh.cofhworld.CoFHWorld;
-import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.init.WorldHandler;
+import cofh.cofhworld.world.IFeatureGenerator;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

@@ -36,29 +36,29 @@ public class EnumData {
 		int weight = 100;
 		String type = null;
 		switch (enumEntry.valueType()) {
-		case LIST:
-			log.warn("Lists are not supported for enum values at line {}.", enumEntry.origin().lineNumber());
-			return null;
-		case NULL:
-			log.warn("Null enum entry at line {}", enumEntry.origin().lineNumber());
-			return null;
-		case OBJECT:
-			Config enumObject = ((ConfigObject) enumEntry).toConfig();
-			if (enumObject.hasPath("name")) {
-				type = enumObject.getString("name");
-			} else {
-				log.warn("Value missing 'name' field at line {}", enumEntry.origin().lineNumber());
-			}
-			if (enumObject.hasPath("weight")) {
-				weight = enumObject.getInt("weight");
-			}
-			break;
-		case STRING:
-			type = String.valueOf(enumEntry.unwrapped());
-			break;
-		default:
-			log.warn("Invalid type for enum at line {}", enumEntry.origin().lineNumber());
-			return null;
+			case LIST:
+				log.warn("Lists are not supported for enum values at line {}.", enumEntry.origin().lineNumber());
+				return null;
+			case NULL:
+				log.warn("Null enum entry at line {}", enumEntry.origin().lineNumber());
+				return null;
+			case OBJECT:
+				Config enumObject = ((ConfigObject) enumEntry).toConfig();
+				if (enumObject.hasPath("name")) {
+					type = enumObject.getString("name");
+				} else {
+					log.warn("Value missing 'name' field at line {}", enumEntry.origin().lineNumber());
+				}
+				if (enumObject.hasPath("weight")) {
+					weight = enumObject.getInt("weight");
+				}
+				break;
+			case STRING:
+				type = String.valueOf(enumEntry.unwrapped());
+				break;
+			default:
+				log.warn("Invalid type for enum at line {}", enumEntry.origin().lineNumber());
+				return null;
 		}
 		try {
 			T v = Enum.valueOf(values, type);

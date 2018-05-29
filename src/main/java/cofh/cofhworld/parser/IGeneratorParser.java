@@ -1,7 +1,7 @@
 package cofh.cofhworld.parser;
 
-import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.world.IFeatureGenerator;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigOrigin;
 import net.minecraft.world.gen.feature.WorldGenerator;

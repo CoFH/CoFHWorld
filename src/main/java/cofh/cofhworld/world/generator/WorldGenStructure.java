@@ -1,10 +1,10 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.numbers.ConstantProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedEnum;
 import cofh.cofhworld.util.random.WeightedNBTTag;
-import cofh.cofhworld.data.numbers.ConstantProvider;
-import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.WeightedRandom;

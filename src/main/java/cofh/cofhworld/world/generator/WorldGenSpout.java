@@ -15,14 +15,12 @@ public class WorldGenSpout extends WorldGenerator {
 	private static enum Shape {
 
 		CIRCLE {
-
 			@Override
 			public boolean inArea(int x, int z, int radius) {
 
-				return x*x + z*z <= radius * radius;
+				return x * x + z * z <= radius * radius;
 			}
 		}, SQUARE {
-
 			@Override
 			public boolean inArea(int x, int z, int radius) {
 

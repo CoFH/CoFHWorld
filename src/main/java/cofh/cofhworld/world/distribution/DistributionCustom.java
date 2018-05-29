@@ -28,7 +28,7 @@ public class DistributionCustom extends Distribution {
 	@Override
 	public boolean generateFeature(Random random, int blockX, int blockZ, World world) {
 
-		BlockPos pos =new BlockPos(blockX, 64, blockZ);
+		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
 
 		worldGen.setDecorationDefaults();

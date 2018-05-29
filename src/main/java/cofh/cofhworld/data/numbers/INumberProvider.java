@@ -26,7 +26,7 @@ public interface INumberProvider {
 		return longValue(world, rand, data);
 	}
 
-	public class DataHolder  {
+	public class DataHolder {
 
 		private final Object2ObjectOpenHashMap<String, Object> data = new Object2ObjectOpenHashMap<>(16);
 

@@ -13,7 +13,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Marker;
 
 import java.util.List;
 import java.util.Map;
@@ -107,8 +106,7 @@ public class BlockData {
 						data = blockObject.getValue("metadata");
 					}
 					if (data != null) {
-						log.warn("Using `metadata` (at line: {}) for blocks is deprecated, and will be removed in the future. Use `properties` instead.",
-								data.origin().lineNumber());
+						log.warn("Using `metadata` (at line: {}) for blocks is deprecated, and will be removed in the future. Use `properties` instead.", data.origin().lineNumber());
 						if (data.valueType() != ConfigValueType.NUMBER) {
 							data = null; // silently consume the error. logic is deprecated anyway.
 						}

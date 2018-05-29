@@ -1,10 +1,10 @@
 package cofh.cofhworld.init;
 
 import cofh.cofhworld.CoFHWorld;
-import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.init.WorldTickHandler.RetroChunkCoord;
 import cofh.cofhworld.util.ChunkCoord;
 import cofh.cofhworld.util.LinkedHashList;
+import cofh.cofhworld.world.IFeatureGenerator;
 import gnu.trove.set.hash.THashSet;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;

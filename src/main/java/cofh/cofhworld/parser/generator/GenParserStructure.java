@@ -1,7 +1,7 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.init.WorldProps;
+import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.EnumData;
 import cofh.cofhworld.parser.variables.NumberData;
@@ -30,12 +30,14 @@ import java.util.List;
 
 public class GenParserStructure implements IGeneratorParser {
 
+	// @formatter:off
 	protected static ArrayList<WeightedEnum<Rotation>> ALL_ROTATION = Lists.newArrayList(
-			new WeightedEnum<Rotation>(Rotation.NONE, 1),
-			new WeightedEnum<Rotation>(Rotation.CLOCKWISE_90, 1),
-			new WeightedEnum<Rotation>(Rotation.CLOCKWISE_180, 1),
-			new WeightedEnum<Rotation>(Rotation.COUNTERCLOCKWISE_90, 1)
-			);
+			new WeightedEnum<>(Rotation.NONE, 1),
+			new WeightedEnum<>(Rotation.CLOCKWISE_90, 1),
+			new WeightedEnum<>(Rotation.CLOCKWISE_180, 1),
+			new WeightedEnum<>(Rotation.COUNTERCLOCKWISE_90, 1)
+	);
+	// @formatter:on
 	protected static ArrayList<WeightedEnum<Mirror>> NO_MIRROR = new ArrayList<>();
 
 	private static String[] FIELDS = new String[] { "structure" };

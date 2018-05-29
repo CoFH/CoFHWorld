@@ -24,8 +24,7 @@ public class MapGenCaves extends MapGenBase {
 		this.addTunnel(p_180703_1_, p_180703_3_, p_180703_4_, p_180703_5_, p_180703_6_, p_180703_8_, p_180703_10_, 1.0F + this.rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
 	}
 
-	protected void addTunnel(long p_180702_1_, int p_180702_3_, int p_180702_4_, ChunkPrimer p_180702_5_, double p_180702_6_, double p_180702_8_, double p_180702_10_,
-			float p_180702_12_, float p_180702_13_, float p_180702_14_, int p_180702_15_, int p_180702_16_, double p_180702_17_) {
+	protected void addTunnel(long p_180702_1_, int p_180702_3_, int p_180702_4_, ChunkPrimer p_180702_5_, double p_180702_6_, double p_180702_8_, double p_180702_10_, float p_180702_12_, float p_180702_13_, float p_180702_14_, int p_180702_15_, int p_180702_16_, double p_180702_17_) {
 
 		double d0 = (double) (p_180702_3_ * 16 + 8);
 		double d1 = (double) (p_180702_4_ * 16 + 8);
@@ -70,10 +69,8 @@ public class MapGenCaves extends MapGenBase {
 			f = f + (random.nextFloat() - random.nextFloat()) * random.nextFloat() * 4.0F;
 
 			if (!flag2 && p_180702_15_ == j && p_180702_12_ > 1.0F && p_180702_16_ > 0) {
-				this.addTunnel(random.nextLong(), p_180702_3_, p_180702_4_, p_180702_5_, p_180702_6_, p_180702_8_, p_180702_10_, random.nextFloat() * 0.5F + 0.5F,
-						p_180702_13_ - ((float) Math.PI / 2F), p_180702_14_ / 3.0F, p_180702_15_, p_180702_16_, 1.0D);
-				this.addTunnel(random.nextLong(), p_180702_3_, p_180702_4_, p_180702_5_, p_180702_6_, p_180702_8_, p_180702_10_, random.nextFloat() * 0.5F + 0.5F,
-						p_180702_13_ + ((float) Math.PI / 2F), p_180702_14_ / 3.0F, p_180702_15_, p_180702_16_, 1.0D);
+				this.addTunnel(random.nextLong(), p_180702_3_, p_180702_4_, p_180702_5_, p_180702_6_, p_180702_8_, p_180702_10_, random.nextFloat() * 0.5F + 0.5F, p_180702_13_ - ((float) Math.PI / 2F), p_180702_14_ / 3.0F, p_180702_15_, p_180702_16_, 1.0D);
+				this.addTunnel(random.nextLong(), p_180702_3_, p_180702_4_, p_180702_5_, p_180702_6_, p_180702_8_, p_180702_10_, random.nextFloat() * 0.5F + 0.5F, p_180702_13_ + ((float) Math.PI / 2F), p_180702_14_ / 3.0F, p_180702_15_, p_180702_16_, 1.0D);
 				return;
 			}
 
@@ -87,8 +84,7 @@ public class MapGenCaves extends MapGenBase {
 					return;
 				}
 
-				if (p_180702_6_ >= d0 - 16.0D - d2 * 2.0D && p_180702_10_ >= d1 - 16.0D - d2 * 2.0D && p_180702_6_ <= d0 + 16.0D + d2 * 2.0D &&
-						p_180702_10_ <= d1 + 16.0D + d2 * 2.0D) {
+				if (p_180702_6_ >= d0 - 16.0D - d2 * 2.0D && p_180702_10_ >= d1 - 16.0D - d2 * 2.0D && p_180702_6_ <= d0 + 16.0D + d2 * 2.0D && p_180702_10_ <= d1 + 16.0D + d2 * 2.0D) {
 					int k2 = MathHelper.floor(p_180702_6_ - d2) - p_180702_3_ * 16 - 1;
 					int k = MathHelper.floor(p_180702_6_ + d2) - p_180702_3_ * 16 + 1;
 					int l2 = MathHelper.floor(p_180702_8_ - d3) - 1;
@@ -246,10 +242,12 @@ public class MapGenCaves extends MapGenBase {
 	//Exception biomes to make sure we generate like vanilla
 	private boolean isExceptionBiome(net.minecraft.world.biome.Biome biome) {
 
-		if (biome == net.minecraft.init.Biomes.BEACH)
+		if (biome == net.minecraft.init.Biomes.BEACH) {
 			return true;
-		if (biome == net.minecraft.init.Biomes.DESERT)
+		}
+		if (biome == net.minecraft.init.Biomes.DESERT) {
 			return true;
+		}
 		return false;
 	}
 

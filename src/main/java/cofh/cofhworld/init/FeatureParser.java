@@ -106,8 +106,7 @@ public class FeatureParser {
 			 */
 			int i = 0;
 			if (WorldProps.replaceStandardGeneration) {
-				log.info("Replacing standard generation with file \"{}\"",
-						WorldProps.worldGenPath.relativize(Paths.get(WorldProps.standardGenFile.getPath())));
+				log.info("Replacing standard generation with file \"{}\"", WorldProps.worldGenPath.relativize(Paths.get(WorldProps.standardGenFile.getPath())));
 				worldGenList.add(WorldProps.standardGenFile); // prioritize this over all other files
 				++i;
 			}
@@ -268,6 +267,7 @@ public class FeatureParser {
 	}
 
 	public static void parseGenerationTag(ConfigContainer genList, String tag, BiFunction<String, Config, EnumActionResult> parseEntry) {
+
 		if (genList.config.hasPath(tag)) {
 			log.trace("Processing `{}` entries", tag);
 			Config genData = genList.config.getConfig(tag);
@@ -280,14 +280,14 @@ public class FeatureParser {
 					} else {
 						log.debug("Parsing `{}` entry '{}':", tag, key);
 						switch (parseEntry.apply(genList.namespace + key, genData.getConfig(key))) {
-						case SUCCESS:
-							log.debug("Parsed `{}` entry successfully: '{}'", tag, key);
-							break;
-						case FAIL:
-							log.error("Error parsing `{}` entry: '{}' > Please check the parameters.", tag, key);
-							break;
-						case PASS:
-							log.error("Error parsing `{}` entry: '{}' > It is a duplicate.", tag, key);
+							case SUCCESS:
+								log.debug("Parsed `{}` entry successfully: '{}'", tag, key);
+								break;
+							case FAIL:
+								log.error("Error parsing `{}` entry: '{}' > Please check the parameters.", tag, key);
+								break;
+							case PASS:
+								log.error("Error parsing `{}` entry: '{}' > It is a duplicate.", tag, key);
 						}
 					}
 				} catch (ConfigException ex) {

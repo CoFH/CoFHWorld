@@ -19,8 +19,7 @@ public class DistributionData {
 			boolean missedFields = false;
 			for (String field : parser.getRequiredFields()) {
 				if (!distObject.hasPath(field)) {
-					log.error("Missing required setting `{}` for distribution type '{}' on feature '{}' at line {}.",
-							field, featureType, featureName, distObject.origin().lineNumber());
+					log.error("Missing required setting `{}` for distribution type '{}' on feature '{}' at line {}.", field, featureType, featureName, distObject.origin().lineNumber());
 					missedFields = true;
 				}
 			}
@@ -42,8 +41,7 @@ public class DistributionData {
 			boolean missedFields = false;
 			for (String field : parser.getRequiredFields()) {
 				if (!distObject.hasPath(field)) {
-					log.error("Missing required setting `{}` for distribution type '{}' on feature '{}' at line {}.",
-							field, featureType, featureName, distObject.origin().lineNumber());
+					log.error("Missing required setting `{}` for distribution type '{}' on feature '{}' at line {}.", field, featureType, featureName, distObject.origin().lineNumber());
 					missedFields = true;
 				}
 			}

@@ -1,8 +1,8 @@
 package cofh.cofhworld.world.generator;
 
-import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockMatcher;

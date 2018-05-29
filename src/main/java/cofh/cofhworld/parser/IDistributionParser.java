@@ -23,8 +23,7 @@ public interface IDistributionParser {
 				if (data.valueType() == ConfigValueType.STRING) {
 					biomeRes = GenRestriction.get(genObject.getString("biome"));
 					if (biomeRes != GenRestriction.NONE) {
-						log.error("Invalid biome restriction {2} on '{1}'. Must be an object to meaningfully function",
-								feature.getFeatureName(), biomeRes.name().toLowerCase(Locale.US));
+						log.error("Invalid biome restriction {2} on '{1}'. Must be an object to meaningfully function", feature.getFeatureName(), biomeRes.name().toLowerCase(Locale.US));
 						throw new InvalidDistributionException("Invalid value for string", data.origin());
 					}
 				} else if (data.valueType() == ConfigValueType.OBJECT) {
@@ -41,25 +40,24 @@ public interface IDistributionParser {
 				ConfigValue data = genObject.getValue("dimension");
 				ConfigList restrictionList = null;
 				switch (data.valueType()) {
-				case STRING:
-					dimRes = GenRestriction.get(genObject.getString("dimension"));
-					if (dimRes != GenRestriction.NONE) {
-						log.error("Invalid dimension restriction {2} on '{1}'. Must be an object to meaningfully function",
-								feature.getFeatureName(), dimRes.name().toLowerCase(Locale.US));
-						throw new InvalidDistributionException("Invalid value for string", data.origin());
-					}
-					break;
-				case OBJECT:
-					dimRes = GenRestriction.get(genObject.getString(field + ".restriction"));
-					field += ".value";
-					// continue
-				case LIST:
-					restrictionList = genObject.getList(field);
-					break;
-				case NUMBER:
-					dimRes = GenRestriction.WHITELIST;
-					feature.addDimension(genObject.getNumber(field).intValue());
-					break;
+					case STRING:
+						dimRes = GenRestriction.get(genObject.getString("dimension"));
+						if (dimRes != GenRestriction.NONE) {
+							log.error("Invalid dimension restriction {2} on '{1}'. Must be an object to meaningfully function", feature.getFeatureName(), dimRes.name().toLowerCase(Locale.US));
+							throw new InvalidDistributionException("Invalid value for string", data.origin());
+						}
+						break;
+					case OBJECT:
+						dimRes = GenRestriction.get(genObject.getString(field + ".restriction"));
+						field += ".value";
+						// continue
+					case LIST:
+						restrictionList = genObject.getList(field);
+						break;
+					case NUMBER:
+						dimRes = GenRestriction.WHITELIST;
+						feature.addDimension(genObject.getNumber(field).intValue());
+						break;
 				}
 				if (restrictionList != null) {
 					for (int i = 0; i < restrictionList.size(); i++) {
@@ -105,7 +103,9 @@ public interface IDistributionParser {
 			}
 		}
 		return feature;
-	};
+	}
+
+	;
 
 	@Nonnull
 	IConfigurableFeatureGenerator getFeature(String featureName, Config genObject, boolean retrogen, Logger log) throws InvalidDistributionException;
