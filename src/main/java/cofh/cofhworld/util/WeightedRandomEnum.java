@@ -4,17 +4,17 @@ import net.minecraft.util.WeightedRandom;
 
 public class WeightedRandomEnum<T extends Enum<T>> extends WeightedRandom.Item {
 
-		public final T value;
+	public final T value;
 
-		public WeightedRandomEnum(T v) {
+	public WeightedRandomEnum(T v) {
 
-			this(v, 100);
-		}
+		this(v, 100);
+	}
 
-		public WeightedRandomEnum(T v, int weight) {
+	public WeightedRandomEnum(T v, int weight) {
 
-			super(weight);
-			this.value = v;
-		}
+		super(weight);
+		this.value = v;
+	}
 
 }

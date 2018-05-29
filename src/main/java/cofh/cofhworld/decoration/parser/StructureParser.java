@@ -27,12 +27,14 @@ import java.util.List;
 
 public class StructureParser implements IGeneratorParser {
 
+	// @formatter:off
 	protected static ArrayList<WeightedRandomEnum<Rotation>> ALL_ROTATION = Lists.newArrayList(
-			new WeightedRandomEnum<Rotation>(Rotation.NONE, 1),
-			new WeightedRandomEnum<Rotation>(Rotation.CLOCKWISE_90, 1),
-			new WeightedRandomEnum<Rotation>(Rotation.CLOCKWISE_180, 1),
-			new WeightedRandomEnum<Rotation>(Rotation.COUNTERCLOCKWISE_90, 1)
-			);
+			new WeightedRandomEnum<>(Rotation.NONE, 1),
+			new WeightedRandomEnum<>(Rotation.CLOCKWISE_90, 1),
+			new WeightedRandomEnum<>(Rotation.CLOCKWISE_180, 1),
+			new WeightedRandomEnum<>(Rotation.COUNTERCLOCKWISE_90, 1)
+	);
+	// @formatter:on
 	protected static ArrayList<WeightedRandomEnum<Mirror>> NO_MIRROR = new ArrayList<>();
 
 	@Override

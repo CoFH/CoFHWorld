@@ -1,7 +1,7 @@
 package cofh.cofhworld.feature.parser;
 
-import cofh.cofhworld.feature.generator.FeatureBase;
 import cofh.cofhworld.feature.IConfigurableFeatureGenerator.GenRestriction;
+import cofh.cofhworld.feature.generator.FeatureBase;
 import cofh.cofhworld.feature.generator.FeatureGenUnderfluid;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.util.WeightedRandomBlock;
@@ -10,7 +10,6 @@ import cofh.cofhworld.util.numbers.INumberProvider;
 import com.typesafe.config.Config;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraftforge.common.DungeonHooks.DungeonMob;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import org.apache.logging.log4j.Logger;

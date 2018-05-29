@@ -39,12 +39,14 @@ public class Utils {
 			state = world.getBlockState(pos);
 			block = state.getBlock();
 		}
+		// @formatter:off
 		while (block.isAir(state, world, pos) ||
 				block.isReplaceable(world, pos) ||
 				block.isWood(world, pos) ||
 				block.isFoliage(world, pos) ||
 				block.isLeaves(state, world, pos) ||
 				block.canBeReplacedByLeaves(state, world, pos));
+		// @formatter:on
 		return y;
 	}
 

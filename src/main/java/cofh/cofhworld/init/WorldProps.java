@@ -139,7 +139,7 @@ public class WorldProps {
 	public static final String FILE_GEN_STANDARD_INTERNAL = "00_minecraft.json";
 	public static final String PATH_GEN_STANDARD_INTERNAL = "assets/cofhworld/world/" + FILE_GEN_STANDARD_INTERNAL;
 
-	public static boolean disableFeatureGeneration;
+	public static boolean disableFeatureGeneration = false;
 	public static boolean replaceStandardGeneration = false;
 	public static boolean enableRetroactiveGeneration = false;
 

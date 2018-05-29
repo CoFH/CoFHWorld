@@ -4,7 +4,6 @@ import cofh.cofhworld.biome.BiomeInfo;
 import cofh.cofhworld.biome.BiomeInfoSet;
 import cofh.cofhworld.feature.IConfigurableFeatureGenerator;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;

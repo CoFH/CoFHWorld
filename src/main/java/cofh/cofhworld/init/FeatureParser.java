@@ -118,8 +118,7 @@ public class FeatureParser {
 			 */
 			int i = 0;
 			if (WorldProps.replaceStandardGeneration) {
-				log.info("Replacing standard generation with file \"{}\"",
-						WorldProps.worldGenPath.relativize(Paths.get(WorldProps.standardGenFile.getPath())));
+				log.info("Replacing standard generation with file \"{}\"", WorldProps.worldGenPath.relativize(Paths.get(WorldProps.standardGenFile.getPath())));
 				worldGenList.add(WorldProps.standardGenFile); // prioritize this over all other files
 				++i;
 			}
@@ -177,11 +176,12 @@ public class FeatureParser {
 			log.trace("World generation file \"{}\" ready to be processed", file);
 			processedGenList.add(genList);
 		}
-		
+
 		// TODO: stream? is it worth it? wrap Config in a holder: store filename, pre-processed priority
 		Collections.sort(processedGenList, new Comparator<Config>() {
 			@Override
 			public int compare(Config l, Config r) {
+
 				long lv = 0, rv = 0;
 				if (l.hasPath("priority")) {
 					try {
@@ -197,7 +197,7 @@ public class FeatureParser {
 						// wrong type
 					}
 				}
-				
+
 				return lv < rv ? 1 : (lv == rv ? 0 : -1);
 			}
 		});
@@ -573,8 +573,7 @@ public class FeatureParser {
 						data = blockElement.getValue("metadata");
 					}
 					if (data != null) {
-						log.warn("Using `metadata` (at line: {}) for blocks is deprecated, and will be removed in the future. Use `properties` instead.",
-								data.origin().lineNumber());
+						log.warn("Using `metadata` (at line: {}) for blocks is deprecated, and will be removed in the future. Use `properties` instead.", data.origin().lineNumber());
 						if (data.valueType() != ConfigValueType.NUMBER) {
 							data = null; // silently consume the error. logic is deprecated anyway.
 						}
@@ -827,29 +826,29 @@ public class FeatureParser {
 		int weight = 100;
 		String type = null;
 		switch (genElement.valueType()) {
-		case LIST:
-			log.warn("Lists are not supported for enum values at line {}.", genElement.origin().lineNumber());
-			return null;
-		case NULL:
-			log.warn("Null enum entry at line {}", genElement.origin().lineNumber());
-			return null;
-		case OBJECT:
-			Config genObject = ((ConfigObject) genElement).toConfig();
-			if (genObject.hasPath("name")) {
-				type = genObject.getString("name");
-			} else {
-				log.warn("Value missing 'name' field at line {}", genElement.origin().lineNumber());
-			}
-			if (genObject.hasPath("weight")) {
-				weight = genObject.getInt("weight");
-			}
-			break;
-		case STRING:
-			type = String.valueOf(genElement.unwrapped());
-			break;
-		default:
-			log.warn("Invalid type for enum at line {}", genElement.origin().lineNumber());
-			return null;
+			case LIST:
+				log.warn("Lists are not supported for enum values at line {}.", genElement.origin().lineNumber());
+				return null;
+			case NULL:
+				log.warn("Null enum entry at line {}", genElement.origin().lineNumber());
+				return null;
+			case OBJECT:
+				Config genObject = ((ConfigObject) genElement).toConfig();
+				if (genObject.hasPath("name")) {
+					type = genObject.getString("name");
+				} else {
+					log.warn("Value missing 'name' field at line {}", genElement.origin().lineNumber());
+				}
+				if (genObject.hasPath("weight")) {
+					weight = genObject.getInt("weight");
+				}
+				break;
+			case STRING:
+				type = String.valueOf(genElement.unwrapped());
+				break;
+			default:
+				log.warn("Invalid type for enum at line {}", genElement.origin().lineNumber());
+				return null;
 		}
 		try {
 			T v = Enum.valueOf(values, type);
@@ -885,51 +884,47 @@ public class FeatureParser {
 	public static INumberProvider parseNumberValue(ConfigValue genElement) {
 
 		switch (genElement.valueType()) {
-		case NUMBER:
-			return new ConstantProvider(((Number) genElement.unwrapped()));
-		case OBJECT:
-			ConfigObject genData = (ConfigObject) genElement;
-			Config genProp = genData.toConfig();
-			switch (genData.size()) {
-			case 1:
-				if (genData.containsKey("value")) {
-					return new ConstantProvider(genProp.getNumber("value"));
-				} else if (genData.containsKey("variance")) {
-					return new SkellamRandomProvider(genProp.getNumber("variance"));
-				} else if (genData.containsKey("world-data")) {
-					return new WorldValueProvider(genProp.getString("world-data"));
+			case NUMBER:
+				return new ConstantProvider(((Number) genElement.unwrapped()));
+			case OBJECT:
+				ConfigObject genData = (ConfigObject) genElement;
+				Config genProp = genData.toConfig();
+				switch (genData.size()) {
+					case 1:
+						if (genData.containsKey("value")) {
+							return new ConstantProvider(genProp.getNumber("value"));
+						} else if (genData.containsKey("variance")) {
+							return new SkellamRandomProvider(genProp.getNumber("variance"));
+						} else if (genData.containsKey("world-data")) {
+							return new WorldValueProvider(genProp.getString("world-data"));
+						}
+						break;
+					case 2:
+						if (genData.containsKey("min") && genData.containsKey("max")) {
+							return new UniformRandomProvider(genProp.getNumber("min"), genProp.getNumber("max"));
+						}
+						break;
+					case 3:
+						INumberProvider a, b;
+						if (genData.containsKey("operation") && genData.containsKey("value-a") && genData.containsKey("value-b")) {
+							a = parseNumberValue(genProp.getValue("value-a"));
+							b = parseNumberValue(genProp.getValue("value-b"));
+							return new OperationProvider(a, b, genProp.getString("operation"));
+						} else if (genData.containsKey("value") && genData.containsKey("min") && genData.containsKey("max")) {
+							INumberProvider v = parseNumberValue(genProp.getValue("value"));
+							a = parseNumberValue(genProp.getValue("min"));
+							b = parseNumberValue(genProp.getValue("max"));
+							return new BoundedProvider(v, a, b);
+						}
+						break;
+					default:
+						throw new Error(String.format("Too many properties on object at line %s", genElement.origin().lineNumber()));
+					case 0:
+						break;
 				}
-				break;
-			case 2:
-				if (genData.containsKey("min") && genData.containsKey("max")) {
-					return new UniformRandomProvider(genProp.getNumber("min"), genProp.getNumber("max"));
-				}
-				break;
-			case 3:
-				INumberProvider a, b;
-				if (genData.containsKey("operation") &&
-						genData.containsKey("value-a") &&
-						genData.containsKey("value-b")) {
-					a = parseNumberValue(genProp.getValue("value-a"));
-					b = parseNumberValue(genProp.getValue("value-b"));
-					return new OperationProvider(a, b, genProp.getString("operation"));
-				} else if (genData.containsKey("value") &&
-						genData.containsKey("min") &&
-						genData.containsKey("max")) {
-					INumberProvider v = parseNumberValue(genProp.getValue("value"));
-					a = parseNumberValue(genProp.getValue("min"));
-					b = parseNumberValue(genProp.getValue("max"));
-					return new BoundedProvider(v, a, b);
-				}
-				break;
+				throw new Error(String.format("Unknown properties on object at line %s", genElement.origin().lineNumber()));
 			default:
-				throw new Error(String.format("Too many properties on object at line %s", genElement.origin().lineNumber()));
-			case 0:
-				break;
-			}
-			throw new Error(String.format("Unknown properties on object at line %s", genElement.origin().lineNumber()));
-		default:
-			throw new Error(String.format("Unsupported data type at line %s", genElement.origin().lineNumber()));
+				throw new Error(String.format("Unsupported data type at line %s", genElement.origin().lineNumber()));
 		}
 	}
 

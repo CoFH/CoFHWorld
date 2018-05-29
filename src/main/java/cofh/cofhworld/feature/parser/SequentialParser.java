@@ -43,19 +43,19 @@ public class SequentialParser implements IFeatureParser {
 		if (genObject.hasPath("dimension")) {
 			ConfigValue data = genObject.getValue("dimension");
 			switch (data.valueType()) {
-			case STRING:
-				dimRes = GenRestriction.get(genObject.getString("dimension"));
-				if (dimRes != GenRestriction.NONE) {
-					log.error("Invalid dimension restriction %2$s on '%1$s'. Must be an object to meaningfully function", featureName, dimRes.name().toLowerCase(Locale.US));
-					return null;
-				}
-				break;
-			case OBJECT:
-				dimRes = GenRestriction.get(genObject.getString("dimension.restriction"));
-				break;
-			case LIST:
-			case NUMBER:
-				dimRes = GenRestriction.WHITELIST;
+				case STRING:
+					dimRes = GenRestriction.get(genObject.getString("dimension"));
+					if (dimRes != GenRestriction.NONE) {
+						log.error("Invalid dimension restriction %2$s on '%1$s'. Must be an object to meaningfully function", featureName, dimRes.name().toLowerCase(Locale.US));
+						return null;
+					}
+					break;
+				case OBJECT:
+					dimRes = GenRestriction.get(genObject.getString("dimension.restriction"));
+					break;
+				case LIST:
+				case NUMBER:
+					dimRes = GenRestriction.WHITELIST;
 			}
 		}
 
@@ -109,17 +109,17 @@ public class SequentialParser implements IFeatureParser {
 			ConfigValue data = genObject.getValue(field);
 			ConfigList restrictionList = null;
 			switch (data.valueType()) {
-			case OBJECT:
-				field += ".value";
-			case LIST:
-				restrictionList = genObject.getList(field);
-				break;
-			case NUMBER:
-				feature.addDimension(genObject.getNumber(field).intValue());
-				break;
-			default:
-				// unreachable
-				break;
+				case OBJECT:
+					field += ".value";
+				case LIST:
+					restrictionList = genObject.getList(field);
+					break;
+				case NUMBER:
+					feature.addDimension(genObject.getNumber(field).intValue());
+					break;
+				default:
+					// unreachable
+					break;
 			}
 			if (restrictionList != null) {
 				for (int i = 0; i < restrictionList.size(); i++) {
