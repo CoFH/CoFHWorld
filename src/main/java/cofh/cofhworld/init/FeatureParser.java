@@ -5,6 +5,7 @@ import cofh.cofhworld.parser.IDistributionParser;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.world.IFeatureGenerator;
 import com.typesafe.config.*;
+import com.typesafe.config.impl.CoFHOrderedParsableFile;
 import net.minecraft.util.EnumActionResult;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
@@ -140,7 +141,7 @@ public class FeatureParser {
 			Config genList;
 			try {
 				log.debug("Parsing world generation file: \"{}\"", file);
-				genList = ConfigFactory.parseFile(genFile, Includer.options).resolve(Includer.resolveOptions);
+				genList = new CoFHOrderedParsableFile(genFile, Includer.options).parse().toConfig().resolve(Includer.resolveOptions);
 			} catch (Throwable t) {
 				log.fatal("Critical error reading from a world generation file: \"{}\" > Please be sure the file is correct!", genFile, t);
 				continue;
@@ -389,7 +390,7 @@ public class FeatureParser {
 			} catch (IOException e) {
 				return null;
 			}
-			return ConfigFactory.parseFileAnySyntax(file, context.parseOptions()).root();
+			return new CoFHOrderedParsableFile(file, context.parseOptions()).parse();
 		}
 
 		@Override
