@@ -64,8 +64,8 @@ public class CoFHWorld {
 		log.info(MOD_NAME + ": Load Complete.");
 	}
 
-	@Mod.EventHandler
-	public void onServerStarted(FMLServerStartingEvent event) {
+	@EventHandler
+	public void onServerStarting(FMLServerStartingEvent event) {
 
 		event.registerServerCommand(new CommandCoFHWorld());
 	}
