@@ -1,0 +1,7 @@
+#ko_KR
+
+cofhworld.reload.usage=Reloads CoFH월드 설정을 재적재합니다.
+cofhworld.reload.successful=설정을 재적재했습니다.
+cofhworld.reload.failed=설정 재적제에 실패했습니다. 로그를 확인하세요.
+cofhworld.list.usage=CoFH월드의 특징을 전부 보여줍니다.
+cofhworld.list=--- CoFH월드의 특징 page %d of %d ---
