@@ -60,17 +60,23 @@ public class WorldGenStructure extends WorldGenerator {
 
 	public WorldGenStructure setDetails(List<WeightedEnum<Rotation>> rot, List<WeightedEnum<Mirror>> mir) {
 
-		if (rot.size() == 1) {
-			placementSettings.setRotation(rot.get(0).value);
-			rot = null;
+		switch (rot.size()) {
+			case 1:
+				placementSettings.setRotation(rot.get(0).value);
+			case 0:
+				rot = null;
+			default:
+				rots = rot;
 		}
-		rots = rot;
 
-		if (mir.size() == 1) {
-			placementSettings.setMirror(mir.get(0).value);
-			mir = null;
+		switch (mir.size()) {
+			case 1:
+				placementSettings.setMirror(mir.get(0).value);
+			case 0:
+				mir = null;
+			default:
+				mirrors = mir;
 		}
-		mirrors = mir;
 		return this;
 	}
 
