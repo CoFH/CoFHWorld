@@ -20,7 +20,7 @@ import java.util.Random;
 public class WorldGenStructure extends WorldGenerator {
 
 	private final PlacementSettings placementSettings = new PlacementSettings();
-	private final Template template = new Template();
+	private final Template template;
 
 	private final List<WeightedNBTTag> templates;
 
@@ -35,8 +35,10 @@ public class WorldGenStructure extends WorldGenerator {
 
 		if (templates.size() > 1) {
 			this.templates = templates;
+			template = null;
 		} else {
 			this.templates = null;
+			template = new Template();
 			template.read(templates.get(0).getCompoundTag());
 		}
 		if (ignoredBlocks.size() > 1) {
@@ -75,29 +77,33 @@ public class WorldGenStructure extends WorldGenerator {
 	@Override
 	public boolean generate(World world, Random random, BlockPos pos) {
 
+		Template template = this.template;
 		if (templates != null) {
+			template = new Template();
 			template.read(WeightedRandom.getRandomItem(random, templates).getCompoundTag());
 		}
 
+		PlacementSettings settings = this.placementSettings.copy();
+
 		// WeightedRandomLong to supply `setSeed` instead of the worldgen random?
-		placementSettings.setRandom(random);
+		settings.setRandom(random);
 
 		if (rots != null) {
-			placementSettings.setRotation(WeightedRandom.getRandomItem(random, rots).value);
+			settings.setRotation(WeightedRandom.getRandomItem(random, rots).value);
 		}
 		if (mirrors != null) {
-			placementSettings.setMirror(WeightedRandom.getRandomItem(random, mirrors).value);
+			settings.setMirror(WeightedRandom.getRandomItem(random, mirrors).value);
 		}
 
 		if (ignoredBlocks != null) {
-			placementSettings.setReplacedBlock(WeightedRandom.getRandomItem(random, ignoredBlocks).block);
+			settings.setReplacedBlock(WeightedRandom.getRandomItem(random, ignoredBlocks).block);
 		}
 
-		BlockPos start = template.getZeroPositionWithTransform(pos, placementSettings.getMirror(), placementSettings.getRotation());
+		BlockPos start = template.getZeroPositionWithTransform(pos, settings.getMirror(), settings.getRotation());
 
-		placementSettings.setIntegrity(integrity.floatValue(world, random, new INumberProvider.DataHolder(pos)));
+		settings.setIntegrity(integrity.floatValue(world, random, new INumberProvider.DataHolder(pos)));
 
-		template.addBlocksToWorld(world, start, placementSettings, 20);
+		template.addBlocksToWorld(world, start, settings, 20);
 
 		return true; // we probably did something. templates don't actually feed back information like that
 	}
