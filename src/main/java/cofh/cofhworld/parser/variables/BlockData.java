@@ -1,6 +1,7 @@
 package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.util.random.WeightedBlock;
+import com.google.common.base.Optional;
 import com.typesafe.config.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -14,8 +15,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.logging.log4j.Level;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static cofh.cofhworld.CoFHWorld.log;
 
@@ -95,6 +98,8 @@ public class BlockData {
 
 						if (prop != null) {
 							state = setValue(state, prop, (String) propEntry.getValue().unwrapped());
+							if (state == null)
+								return null;
 						}
 					}
 					return new WeightedBlock(state, dataTag, weight);
@@ -136,10 +141,17 @@ public class BlockData {
 		return null;
 	}
 
-	private static <T extends Comparable<T>> IBlockState setValue(IBlockState state, IProperty<T> prop, String val) {
+	private static <T extends Comparable<T>> IBlockState setValue(IBlockState state, final IProperty<T> prop, String val) {
 
-		// FIXME: parseValue returns an Optional, must handle
-		return state.withProperty(prop, prop.parseValue(val).get());
+		Optional<T> value = prop.parseValue(val);
+		if (!value.isPresent()) {
+			String[] valid = prop.getAllowedValues().stream().map(prop::getName).collect(Collectors.toList()).toArray(new String[0]);
+			// TODO: implement some edit distance algorithm and make suggestion for best match with minimum similarity
+			log.error("Unknown value `{}` for property '{}'; allowed values are: \n{}", val, prop.getName(), Arrays.toString(valid));
+			return null;
+		} else {
+			return state.withProperty(prop, value.get());
+		}
 	}
 
 }
