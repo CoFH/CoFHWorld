@@ -55,6 +55,38 @@ public enum WorldValueEnum {
 			Vec3i pos = data.getPos("position");
 			return Utils.getSurfaceBlockY(world, pos.getX(), pos.getZ());
 		}
+	}, LOWEST_CHUNK_HORIZON {
+		@Override
+		public long getValue(World world, Random rand, INumberProvider.DataHolder data) {
+
+			Vec3i pos = data.getPos("position");
+			return world.getChunksLowestHorizon(pos.getX(), pos.getZ());
+		}
+	}, SPAWN_X {
+		@Override
+		public long getValue(World world, Random rand, INumberProvider.DataHolder data) {
+
+			return world.getSpawnPoint().getX();
+		}
+	}, SPAWN_Y {
+		@Override
+		public long getValue(World world, Random rand, INumberProvider.DataHolder data) {
+
+			return world.getSpawnPoint().getY();
+		}
+	}, SPAWN_Z {
+		@Override
+		public long getValue(World world, Random rand, INumberProvider.DataHolder data) {
+
+			return world.getSpawnPoint().getZ();
+		}
+	}, CURRENT_X {
+		@Override
+		public long getValue(World world, Random rand, INumberProvider.DataHolder data) {
+
+			Vec3i pos = data.getPos("position");
+			return pos.getX();
+		}
 	}, CURRENT_Y {
 		@Override
 		public long getValue(World world, Random rand, INumberProvider.DataHolder data) {
@@ -62,12 +94,12 @@ public enum WorldValueEnum {
 			Vec3i pos = data.getPos("position");
 			return pos.getY();
 		}
-	}, LOWEST_CHUNK_HORIZON {
+	}, CURRENT_Z {
 		@Override
 		public long getValue(World world, Random rand, INumberProvider.DataHolder data) {
 
 			Vec3i pos = data.getPos("position");
-			return world.getChunksLowestHorizon(pos.getX(), pos.getZ());
+			return pos.getZ();
 		}
 	};
 
