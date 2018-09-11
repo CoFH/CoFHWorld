@@ -108,7 +108,7 @@ public class FeatureParser {
 			int i = 0;
 			if (WorldProps.replaceStandardGeneration) {
 				log.info("Replacing standard generation with file \"{}\"", WorldProps.worldGenPath.relativize(Paths.get(WorldProps.standardGenFile.getPath())));
-				worldGenList.add(WorldProps.standardGenFile); // prioritize this over all other files
+				worldGenList.add(WorldProps.standardGenFile);
 				++i;
 			}
 			addFiles(worldGenList, WorldProps.worldGenDir);
@@ -175,11 +175,11 @@ public class FeatureParser {
 			log.trace("World generation file \"{}\" ready to be processed", file);
 		}
 
-		Collections.sort(processedGenList, (ConfigContainer l, ConfigContainer r) -> {
+		processedGenList.sort((ConfigContainer l, ConfigContainer r) -> {
 
 			long lv = l.priority, rv = r.priority;
 
-			return lv < rv ? 1 : (lv == rv ? 0 : -1);
+			return Long.compare(rv, lv);
 		});
 
 		parseGenerationFiles(processedGenList);
