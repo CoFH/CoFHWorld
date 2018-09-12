@@ -13,7 +13,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenMinableLargeVein extends WorldGenerator {
+public class WorldGenMinableLargeVein extends WorldGen {
 
 	private final List<WeightedBlock> cluster;
 	private final WeightedBlock[] genBlock;
@@ -28,7 +28,7 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 
 	public WorldGenMinableLargeVein(WeightedBlock resource, int clusterSize) {
 
-		this(WorldGenMinableCluster.fabricateList(resource), clusterSize);
+		this(fabricateList(resource), clusterSize);
 	}
 
 	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize) {
@@ -43,12 +43,12 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 
 	public WorldGenMinableLargeVein(WeightedBlock resource, int clusterSize, Block block) {
 
-		this(WorldGenMinableCluster.fabricateList(resource), clusterSize, block);
+		this(fabricateList(resource), clusterSize, block);
 	}
 
 	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, Block block) {
 
-		this(resource, clusterSize, WorldGenMinableCluster.fabricateList(block));
+		this(resource, clusterSize, fabricateList(block));
 	}
 
 	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
@@ -141,7 +141,7 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 							posZ2 += rand.nextInt(2) * directionZ2;
 						}
 
-						r |= WorldGenMinableCluster.generateBlock(world, rand, posX2, posY2, posZ2, genBlock, cluster);
+						r |= generateBlock(world, rand, posX2, posY2, posZ2, genBlock, cluster);
 
 						if (sparse) {
 							blocksVein++;
@@ -151,7 +151,7 @@ public class WorldGenMinableLargeVein extends WorldGenerator {
 					}
 				}
 
-				r |= WorldGenMinableCluster.generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
+				r |= generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
 
 				if (spindly) {
 					blocksVein++;

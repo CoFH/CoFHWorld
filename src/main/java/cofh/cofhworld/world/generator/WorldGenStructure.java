@@ -17,7 +17,7 @@ import net.minecraft.world.gen.structure.template.Template;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenStructure extends WorldGenerator {
+public class WorldGenStructure extends WorldGen {
 
 	private final PlacementSettings placementSettings = new PlacementSettings();
 	private final Template template;

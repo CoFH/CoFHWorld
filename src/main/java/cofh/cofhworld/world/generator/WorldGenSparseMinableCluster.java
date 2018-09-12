@@ -14,7 +14,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenSparseMinableCluster extends WorldGenerator {
+public class WorldGenSparseMinableCluster extends WorldGen {
 
 	private final List<WeightedBlock> cluster;
 	private final INumberProvider genClusterSize;
@@ -27,7 +27,7 @@ public class WorldGenSparseMinableCluster extends WorldGenerator {
 
 	public WorldGenSparseMinableCluster(WeightedBlock resource, int clusterSize) {
 
-		this(WorldGenMinableCluster.fabricateList(resource), clusterSize);
+		this(fabricateList(resource), clusterSize);
 	}
 
 	public WorldGenSparseMinableCluster(List<WeightedBlock> resource, int clusterSize) {
@@ -42,12 +42,12 @@ public class WorldGenSparseMinableCluster extends WorldGenerator {
 
 	public WorldGenSparseMinableCluster(WeightedBlock resource, int clusterSize, Block block) {
 
-		this(WorldGenMinableCluster.fabricateList(resource), clusterSize, block);
+		this(fabricateList(resource), clusterSize, block);
 	}
 
 	public WorldGenSparseMinableCluster(List<WeightedBlock> resource, int clusterSize, Block block) {
 
-		this(resource, clusterSize, WorldGenMinableCluster.fabricateList(block));
+		this(resource, clusterSize, fabricateList(block));
 	}
 
 	public WorldGenSparseMinableCluster(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
@@ -137,7 +137,7 @@ public class WorldGenSparseMinableCluster extends WorldGenerator {
 							continue;
 						}
 
-						r |= WorldGenMinableCluster.generateBlock(world, rand, blockX, blockY, blockZ, genBlock, cluster);
+						r |= generateBlock(world, rand, blockX, blockY, blockZ, genBlock, cluster);
 					}
 				}
 			}

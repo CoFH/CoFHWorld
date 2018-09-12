@@ -12,7 +12,7 @@ import java.util.Random;
  * @deprecated TODO: replace all ints with INumberProvider
  */
 @Deprecated
-public class WorldGenStalagmite extends WorldGenerator {
+public class WorldGenStalagmite extends WorldGen {
 
 	protected final List<WeightedBlock> cluster;
 	protected final WeightedBlock[] baseBlock;
@@ -76,7 +76,7 @@ public class WorldGenStalagmite extends WorldGenerator {
 			--yStart;
 		}
 
-		if (!WorldGenMinableCluster.canGenerateInBlock(world, xStart, yStart++, zStart, baseBlock)) {
+		if (!canGenerateInBlock(world, xStart, yStart++, zStart, baseBlock)) {
 			return false;
 		}
 
@@ -89,12 +89,12 @@ public class WorldGenStalagmite extends WorldGenerator {
 		boolean r = false;
 		for (int x = -size; x <= size; ++x) {
 			for (int z = -size; z <= size; ++z) {
-				if (!WorldGenMinableCluster.canGenerateInBlock(world, xStart + x, yStart - 1, zStart + z, baseBlock)) {
+				if (!canGenerateInBlock(world, xStart + x, yStart - 1, zStart + z, baseBlock)) {
 					continue;
 				}
 				int height = getHeight(x, z, size, rand, maxHeight);
 				for (int y = 0; y < height; ++y) {
-					r |= WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
+					r |= generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
 				}
 			}
 		}

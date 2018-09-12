@@ -13,7 +13,7 @@ import java.util.Random;
  * @deprecated TODO: replace all ints with INumberProvider
  */
 @Deprecated
-public class WorldGenSpike extends WorldGenerator {
+public class WorldGenSpike extends WorldGen {
 
 	private final List<WeightedBlock> cluster;
 	private final WeightedBlock[] genBlock;
@@ -44,7 +44,7 @@ public class WorldGenSpike extends WorldGenerator {
 			--yStart;
 		}
 
-		if (!WorldGenMinableCluster.canGenerateInBlock(world, xStart, yStart, zStart, genBlock)) {
+		if (!canGenerateInBlock(world, xStart, yStart, zStart, genBlock)) {
 			return false;
 		}
 
@@ -77,10 +77,10 @@ public class WorldGenSpike extends WorldGenerator {
 
 					if ((x == 0 && z == 0 || xDist * xDist + zDist * zDist <= layerSize * layerSize) && (x != -width && x != width && z != -width && z != width || rand.nextFloat() <= 0.75F)) {
 
-						WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
+						generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
 
 						if (y != 0 && width > 1) {
-							WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart - y + offsetHeight, zStart + z, genBlock, cluster);
+							generateBlock(world, rand, xStart + x, yStart - y + offsetHeight, zStart + z, genBlock, cluster);
 						}
 					}
 				}

@@ -9,13 +9,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenAdvLakes extends WorldGenerator {
+public class WorldGenAdvLakes extends WorldGen {
 
 	private static final List<WeightedBlock> GAP_BLOCK = Arrays.asList(new WeightedBlock(Blocks.AIR, 0));
 	private final List<WeightedBlock> cluster;
@@ -110,7 +109,7 @@ public class WorldGenAdvLakes extends WorldGenerator {
 								return false;
 							}
 						} else {
-							if (!WorldGenMinableCluster.canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
+							if (!canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
 								return false;
 							}
 						}
@@ -124,9 +123,9 @@ public class WorldGenAdvLakes extends WorldGenerator {
 				for (y = 0; y < height; ++y) {
 					if (spawnBlock[(x * width + z) * height + y]) {
 						if (y < heightOff) {
-							WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
-						} else if (WorldGenMinableCluster.canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
-							WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, gapBlock);
+							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
+						} else if (canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
+							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, gapBlock);
 						}
 					}
 				}
@@ -151,7 +150,7 @@ public class WorldGenAdvLakes extends WorldGenerator {
 						boolean flag = !spawnBlock[(x * width + z) * height + y] && ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
 						if (flag && (solidOutline | y < heightOff || rand.nextInt(2) != 0) && (totalOutline || world.getBlockState(new BlockPos(xStart + x, yStart + y, zStart + z)).getMaterial().isSolid())) {
-							WorldGenMinableCluster.generateBlock(world, rand, xStart + x, yStart + y, zStart + z, outlineBlock);
+							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, outlineBlock);
 						}
 					}
 				}

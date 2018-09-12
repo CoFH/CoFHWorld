@@ -11,7 +11,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenMinablePlate extends WorldGenerator {
+public class WorldGenMinablePlate extends WorldGen {
 
 	private final List<WeightedBlock> cluster;
 	private final WeightedBlock[] genBlock;
@@ -55,7 +55,7 @@ public class WorldGenMinablePlate extends WorldGenerator {
 
 				if (zSize * zSize + xDist <= dist) {
 					for (int posY = y - height; slim ? posY < y + height : posY <= y + height; ++posY) {
-						r |= WorldGenMinableCluster.generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
+						r |= generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
 					}
 				}
 			}

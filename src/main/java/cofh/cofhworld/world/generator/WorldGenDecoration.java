@@ -11,7 +11,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenDecoration extends WorldGenerator {
+public class WorldGenDecoration extends WorldGen {
 
 	private final List<WeightedBlock> cluster;
 	private final WeightedBlock[] genBlock;
@@ -64,19 +64,19 @@ public class WorldGenDecoration extends WorldGenerator {
 				continue;
 			}
 
-			if ((!seeSky || world.canSeeSky(pos)) && WorldGenMinableCluster.canGenerateInBlock(world, x, y - 1, z, onBlock) && WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
+			if ((!seeSky || world.canSeeSky(pos)) && canGenerateInBlock(world, x, y - 1, z, onBlock) && canGenerateInBlock(world, x, y, z, genBlock)) {
 
-				WeightedBlock block = WorldGenMinableCluster.selectBlock(rand, cluster);
+				WeightedBlock block = selectBlock(rand, cluster);
 				int stack = stackHeight.intValue(world, rand, data.setPosition(pos));
 				do {
 					if (!checkStay || (block.block.canPlaceBlockAt(world, pos))) {
-						r |= WorldGenMinableCluster.setBlock(world, pos, block);
+						r |= setBlock(world, pos, block);
 					} else {
 						break;
 					}
 					++y;
 					pos = pos.add(0, 1, 0);
-					if (!WorldGenMinableCluster.canGenerateInBlock(world, x, y, z, genBlock)) {
+					if (!canGenerateInBlock(world, x, y, z, genBlock)) {
 						break;
 					}
 				} while (--stack > 0);

@@ -3,7 +3,6 @@ package cofh.cofhworld.world.generator;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;
@@ -12,7 +11,7 @@ import java.util.Random;
  * @deprecated TODO: replace all ints with INumberProvider
  */
 @Deprecated
-public class WorldGenBoulder extends WorldGenerator {
+public class WorldGenBoulder extends WorldGen {
 
 	private final List<WeightedBlock> cluster;
 	private final WeightedBlock[] genBlock;
@@ -49,7 +48,7 @@ public class WorldGenBoulder extends WorldGenerator {
 				return false;
 			}
 
-			if (WorldGenMinableCluster.canGenerateInBlock(world, xCenter, yCenter - 1, zCenter, genBlock)) {
+			if (canGenerateInBlock(world, xCenter, yCenter - 1, zCenter, genBlock)) {
 
 				int xWidth = minSize + (var > 1 ? rand.nextInt(var) : 0);
 				int yWidth = minSize + (var > 1 ? rand.nextInt(var) : 0);
@@ -70,7 +69,7 @@ public class WorldGenBoulder extends WorldGenerator {
 
 							if (dist <= maxDist) {
 								if (dist >= minDist) {
-									r |= WorldGenMinableCluster.generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, cluster);
+									r |= generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, cluster);
 								} else {
 									r |= world.setBlockToAir(new BlockPos(xCenter + x, yCenter + y, zCenter + z));
 								}

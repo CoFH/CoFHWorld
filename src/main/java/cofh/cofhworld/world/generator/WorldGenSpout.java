@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class WorldGenSpout extends WorldGenerator {
+public class WorldGenSpout extends WorldGen {
 
 	private static enum Shape {
 
@@ -69,7 +69,7 @@ public class WorldGenSpout extends WorldGenerator {
 			for (int x = -radius; x <= radius; ++x) {
 				for (int z = -radius; z <= radius; ++z) {
 					if (shape.inArea(x, z, radius)) {
-						r |= WorldGenMinableCluster.generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, genBlock, cluster);
+						r |= generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, genBlock, cluster);
 					}
 				}
 			}
