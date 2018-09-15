@@ -23,6 +23,8 @@ public class WorldGenBoulder extends WorldGen {
 	public float hollowAmt = 0.1665f;
 	public float hollowVar = 0;
 
+	// TODO: shapes? sphere, cube, ellipsoid? more?
+
 	public WorldGenBoulder(List<WeightedBlock> resource, int minSize, List<WeightedBlock> block) {
 
 		cluster = resource;

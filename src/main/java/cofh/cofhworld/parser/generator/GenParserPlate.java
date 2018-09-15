@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.PlaneShape;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -39,6 +40,9 @@ public class GenParserPlate implements IGeneratorParser {
 			}
 			if (genObject.hasPath("slim")) {
 				r.setSlim(genObject.getBoolean("slim"));
+			}
+			if (genObject.hasPath("shape")) {
+				r.setShape(PlaneShape.valueOf(genObject.getString("shape")));
 			}
 		}
 		return r;

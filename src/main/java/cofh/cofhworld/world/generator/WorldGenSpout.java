@@ -1,35 +1,15 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.PlaneShape;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 public class WorldGenSpout extends WorldGen {
-
-	private static enum Shape {
-
-		CIRCLE {
-			@Override
-			public boolean inArea(int x, int z, int radius) {
-
-				return x * x + z * z <= radius * radius;
-			}
-		}, SQUARE {
-			@Override
-			public boolean inArea(int x, int z, int radius) {
-
-				return true;
-			}
-		};
-
-		public abstract boolean inArea(int x, int z, int radius);
-	}
 
 	private final List<WeightedBlock> cluster;
 	private final WeightedBlock[] genBlock;
@@ -37,7 +17,7 @@ public class WorldGenSpout extends WorldGen {
 	private final INumberProvider radius;
 	private final INumberProvider height;
 
-	private Shape shape = Shape.CIRCLE;
+	private PlaneShape shape = PlaneShape.CIRCLE;
 
 	public WorldGenSpout(List<WeightedBlock> resource, List<WeightedBlock> material, INumberProvider radius, INumberProvider height) {
 
@@ -47,9 +27,9 @@ public class WorldGenSpout extends WorldGen {
 		genBlock = material.toArray(new WeightedBlock[material.size()]);
 	}
 
-	public WorldGenSpout setShape(String shape) {
+	public WorldGenSpout setShape(PlaneShape shape) {
 
-		this.shape = Shape.valueOf(shape.toUpperCase(Locale.US));
+		this.shape = shape;
 		return this;
 	}
 

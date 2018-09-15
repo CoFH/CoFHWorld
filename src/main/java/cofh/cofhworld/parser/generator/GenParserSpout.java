@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.PlaneShape;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.NumberData;
@@ -32,7 +33,7 @@ public class GenParserSpout implements IGeneratorParser {
 		WorldGenSpout r = new WorldGenSpout(resList, matList, radius, height);
 		{
 			if (genObject.hasPath("shape")) {
-				r.setShape(genObject.getString("shape"));
+				r.setShape(PlaneShape.valueOf(genObject.getString("shape")));
 			}
 		}
 		return r;

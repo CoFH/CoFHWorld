@@ -1,12 +1,12 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.PlaneShape;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;
@@ -15,8 +15,11 @@ public class WorldGenMinablePlate extends WorldGen {
 
 	private final List<WeightedBlock> cluster;
 	private final WeightedBlock[] genBlock;
+
 	private final INumberProvider radius;
 	private INumberProvider height;
+
+	private PlaneShape shape = PlaneShape.CIRCLE;
 	private boolean slim;
 
 	public WorldGenMinablePlate(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
@@ -43,17 +46,16 @@ public class WorldGenMinablePlate extends WorldGen {
 
 		++y;
 		int size = radius.intValue(world, rand, data);
-		final int dist = size * size;
+		final PlaneShape shape = this.shape;
 		int height = this.height.intValue(world, rand, data);
 
 		boolean r = false;
 		for (int posX = x - size; posX <= x + size; ++posX) {
-			int xDist = posX - x;
-			xDist *= xDist;
+			int areaX = posX - x;
 			for (int posZ = z - size; posZ <= z + size; ++posZ) {
-				int zSize = posZ - z;
+				int areaZ = posZ - z;
 
-				if (zSize * zSize + xDist <= dist) {
+				if (shape.inArea(areaX, areaZ, size)) {
 					for (int posY = y - height; slim ? posY < y + height : posY <= y + height; ++posY) {
 						r |= generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
 					}
@@ -67,6 +69,12 @@ public class WorldGenMinablePlate extends WorldGen {
 	public WorldGenMinablePlate setSlim(boolean slim) {
 
 		this.slim = slim;
+		return this;
+	}
+
+	public WorldGenMinablePlate setShape(PlaneShape shape) {
+
+		this.shape = shape;
 		return this;
 	}
 
