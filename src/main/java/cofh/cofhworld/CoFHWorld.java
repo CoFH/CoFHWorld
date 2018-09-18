@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod (modid = CoFHWorld.MOD_ID, name = CoFHWorld.MOD_NAME, version = CoFHWorld.VERSION, dependencies = CoFHWorld.DEPENDENCIES, updateJSON = CoFHWorld.UPDATE_URL, certificateFingerprint = "8a6abf2cb9e141b866580d369ba6548732eff25f")
+@Mod (modid = CoFHWorld.MOD_ID, name = CoFHWorld.MOD_NAME, version = CoFHWorld.VERSION, dependencies = CoFHWorld.DEPENDENCIES, updateJSON = CoFHWorld.UPDATE_URL, acceptableRemoteVersions = "*", certificateFingerprint = "8a6abf2cb9e141b866580d369ba6548732eff25f")
 public class CoFHWorld {
 
 	public static final String MOD_ID = "cofhworld";
