@@ -64,6 +64,10 @@ public interface IDistributionParser {
 						ConfigValue val = restrictionList.get(i);
 						if (val.valueType() == ConfigValueType.NUMBER) {
 							feature.addDimension(((Number) val.unwrapped()).intValue());
+						} else if (val.valueType() != ConfigValueType.NULL) {
+							// skip over accidental (and inentional, i guess? we can't tell.) nulls from multiple sequential commas
+							log.error("Invalid dimension entry type `{1}` on line {2}. Number required.", val.valueType().name(), data.origin().lineNumber());
+							throw new InvalidDistributionException("Invalid value for dimension id, expected number got " + val.valueType().name(), data.origin());
 						}
 					}
 				}
