@@ -1,0 +1,7 @@
+#sv_SE
+
+cofhworld.reload.usage=Uppdaterar konfigureringen för CoFHWorld
+cofhworld.reload.successful=Konfigureringen uppdaterades.
+cofhworld.reload.failed=Misslyckades att uppdatera konfigurationen; kolla dina loggar.
+cofhworld.list.usage=Listar upp alla funktioner i CoFHWorld
+cofhworld.list=--- Inlästa funktioner i CoFHWorld, sida %d av %d ---
