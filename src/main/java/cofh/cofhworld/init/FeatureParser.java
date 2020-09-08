@@ -265,6 +265,8 @@ public class FeatureParser {
 			}
 			log.debug("Finished reading \"{}\"", file);
 		}
+
+		processedGenList.size();
 	}
 
 	public static void parseGenerationTag(ConfigContainer genList, String tag, BiFunction<String, Config, EnumActionResult> parseEntry) {
@@ -299,7 +301,7 @@ public class FeatureParser {
 					log.error("Error parsing `{}` entry '{}'{}: {}", tag, key, line, ex.getMessage());
 					continue;
 				} catch (Throwable t) {
-					log.fatal("There was a severe error parsing `{}` entry '{}' on line {}!", tag, key, t, value.origin().lineNumber());
+					log.fatal("There was a severe error parsing `{}` entry '{}' on line {}!", tag, key, value.origin().lineNumber(), t);
 				}
 			}
 			log.trace("Finished processing `{}` entries", tag);

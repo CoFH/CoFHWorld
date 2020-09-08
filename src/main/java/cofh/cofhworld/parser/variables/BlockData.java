@@ -127,7 +127,7 @@ public class BlockData {
 				}
 				return new WeightedBlock(block, min);
 			default:
-				log.error("Invalid type for block entry on line!", blockEntry.origin().lineNumber());
+				log.error("Invalid type for block entry on line {}!", blockEntry.origin().lineNumber());
 				return null;
 		}
 	}
