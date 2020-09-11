@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.distribution;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -32,7 +33,7 @@ public class DistributionSurface extends Distribution {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
-		final int count = this.count.intValue(world, random, new INumberProvider.DataHolder(pos));
+		final int count = this.count.intValue(world, random, new DataHolder(pos));
 
 		worldGen.setDecorationDefaults();
 

@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -45,7 +46,7 @@ public class WorldGenAdvLakes extends WorldGen {
 		int yStart = pos.getY();
 		int zStart = pos.getZ();
 
-		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+		DataHolder data = new DataHolder(pos);
 
 		final int width = this.width.intValue(world, rand, data);
 		final int height = this.height.intValue(world, rand, data);

@@ -1,5 +1,6 @@
 package cofh.cofhworld.data.numbers.operation;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.world.World;
 

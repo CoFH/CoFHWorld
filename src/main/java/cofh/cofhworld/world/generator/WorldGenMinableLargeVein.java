@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -8,7 +9,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;
@@ -82,7 +82,7 @@ public class WorldGenMinableLargeVein extends WorldGen {
 		int y = pos.getY();
 		int z = pos.getZ();
 
-		final int veinSize = genVeinSize.intValue(world, rand, new INumberProvider.DataHolder(pos));
+		final int veinSize = genVeinSize.intValue(world, rand, new DataHolder(pos));
 		final int branchSize = 1 + (veinSize / 30);
 		final int subBranchSize = 1 + (branchSize / 5);
 

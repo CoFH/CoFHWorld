@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -68,7 +69,7 @@ public class WorldGenMinableCluster extends WorldGen {
 		int y = pos.getY();
 		int z = pos.getZ();
 
-		int blocks = MathHelper.clamp(genClusterSize.intValue(world, rand, new INumberProvider.DataHolder(pos)), 1, 42);
+		int blocks = MathHelper.clamp(genClusterSize.intValue(world, rand, new DataHolder(pos)), 1, 42);
 		if (blocks < 4) { // HACK: at 1 and 2 no ores are ever generated. at 3 only 1/3 veins generate
 			return generateTiny(world, rand, blocks, x, y, z);
 		}

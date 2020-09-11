@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.PlaneShape;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -40,7 +41,7 @@ public class WorldGenSpout extends WorldGen {
 		int yCenter = pos.getY();
 		int zCenter = pos.getZ();
 
-		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+		DataHolder data = new DataHolder(pos);
 
 		int height = this.height.intValue(world, rand, data);
 		boolean r = false;

@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.PlaneShape;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
@@ -42,7 +43,7 @@ public class WorldGenMinablePlate extends WorldGen {
 		int y = pos.getY();
 		int z = pos.getZ();
 
-		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+		DataHolder data = new DataHolder(pos);
 
 		++y;
 		int size = radius.intValue(world, rand, data);

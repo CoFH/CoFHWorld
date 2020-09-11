@@ -1,12 +1,12 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;
@@ -48,7 +48,7 @@ public class WorldGenDecoration extends WorldGen {
 		int yStart = start.getY();
 		int zStart = start.getZ();
 
-		INumberProvider.DataHolder data = new INumberProvider.DataHolder(start);
+		DataHolder data = new DataHolder(start);
 
 		final int clusterSize = this.clusterSize.intValue(world, rand, data);
 

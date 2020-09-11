@@ -1,11 +1,11 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;
@@ -38,7 +38,7 @@ public class WorldGenGeode extends WorldGen {
 		int yStart = pos.getY();
 		int zStart = pos.getZ();
 
-		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+		DataHolder data = new DataHolder(pos);
 
 		final int height = this.height.intValue(world, rand, data);
 		final int width = this.width.intValue(world, rand, data);
