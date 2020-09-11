@@ -92,6 +92,18 @@ public class MathProvider implements INumberProvider {
 
 				return a % b;
 			}
+		}, POWER {
+			@Override
+			public long perform(long a, long b) {
+
+				return (long) perform((double) a, (double) b);
+			}
+
+			@Override
+			public double perform(double a, double b) {
+
+				return Math.pow(a, b);
+			}
 		}, MINIMUM {
 			@Override
 			public long perform(long a, long b) {
