@@ -2,6 +2,7 @@ package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.random.WeightedItemStack;
+import cofh.cofhworld.util.random.WeightedString;
 import com.typesafe.config.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -11,7 +12,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 import static cofh.cofhworld.CoFHWorld.log;
 
@@ -39,6 +42,7 @@ public class ItemData {
 		return true;
 	}
 
+	@Nullable
 	public static WeightedItemStack parseItemEntry(ConfigValue itemEntry) {
 
 		if (itemEntry.valueType() == ConfigValueType.NULL) {
@@ -48,8 +52,7 @@ public class ItemData {
 		ItemStack stack;
 
 		if (itemEntry.valueType() != ConfigValueType.OBJECT) {
-			// FIXME: we need to validate against null from the registry
-			stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(String.valueOf(itemEntry.unwrapped()))), 1, metadata);
+			stack = parseItem(itemEntry, stackSize, metadata);
 		} else {
 			Config itemObject = ((ConfigObject) itemEntry).toConfig();
 
@@ -72,19 +75,19 @@ public class ItemData {
 			if (itemObject.hasPath("ore-name")) {
 				String oreName = itemObject.getString("ore-name");
 				if (!Utils.oreNameExists(oreName)) {
-					log.error("Invalid ore name `{}` for item at line {}!", oreName, itemEntry.origin().lineNumber());
+					log.error("Invalid ore-name `{}` for item at line {}!", oreName, itemEntry.origin().lineNumber());
 					return null;
 				}
 				ItemStack oreStack = OreDictionary.getOres(oreName, false).get(0);
 				stack = Utils.cloneStack(oreStack, stackSize);
 			} else {
 				if (!itemObject.hasPath("name")) {
-					log.error("Item entry missing valid name or ore name at line {}!", itemEntry.origin().lineNumber());
+					log.error("Item entry missing valid name or ore-name at line {}!", itemEntry.origin().lineNumber());
 					return null;
 				}
-				stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemObject.getString("name"))), stackSize, metadata);
+				stack = parseItem(itemObject.getValue("name"), stackSize, metadata);
 			}
-			if (itemObject.hasPath("nbt")) {
+			if (stack != null && itemObject.hasPath("nbt")) {
 				try {
 					NBTTagCompound tagCompound = JsonToNBT.getTagFromJson(itemObject.getString("nbt"));
 
@@ -94,7 +97,22 @@ public class ItemData {
 				}
 			}
 		}
-		return new WeightedItemStack(stack, chance);
+		return stack == null ? null : new WeightedItemStack(stack, chance);
+	}
+
+	@Nullable
+	private static ItemStack parseItem(ConfigValue itemName, int stackSize, int metadata) {
+
+		WeightedString name = StringData.parseStringEntry(itemName);
+		if (name != null) {
+			ResourceLocation loc = new ResourceLocation(name.value);
+			if (ForgeRegistries.ITEMS.containsKey(loc)) {
+				return new ItemStack(Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(loc), () -> "Null item registered for `" + loc.toString() + '`'), stackSize, metadata);
+			} else {
+				log.error("No item registered for name `{}` on line {}", loc.toString(), itemName.origin().lineNumber());
+			}
+		}
+		return null;
 	}
 
 }

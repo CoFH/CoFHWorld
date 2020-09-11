@@ -15,10 +15,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.logging.log4j.Level;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static cofh.cofhworld.CoFHWorld.log;
 
@@ -52,6 +52,7 @@ public class BlockData {
 		return true;
 	}
 
+	@Nullable
 	public static WeightedBlock parseBlockEntry(ConfigValue blockEntry, boolean wildcard) {
 
 		final int min = wildcard ? 0 : -1;
@@ -132,6 +133,7 @@ public class BlockData {
 		}
 	}
 
+	@Nullable
 	private static Block parseBlock(String blockName) {
 
 		ResourceLocation loc = new ResourceLocation(blockName);
@@ -141,11 +143,12 @@ public class BlockData {
 		return null;
 	}
 
+	@Nullable
 	private static <T extends Comparable<T>> IBlockState setValue(IBlockState state, final IProperty<T> prop, String val) {
 
 		Optional<T> value = prop.parseValue(val);
 		if (!value.isPresent()) {
-			String[] valid = prop.getAllowedValues().stream().map(prop::getName).collect(Collectors.toList()).toArray(new String[0]);
+			String[] valid = prop.getAllowedValues().stream().map(prop::getName).distinct().toArray(String[]::new);
 			// TODO: implement some edit distance algorithm and make suggestion for best match with minimum similarity
 			log.error("Unknown value `{}` for property '{}'; allowed values are: \n{}", val, prop.getName(), Arrays.toString(valid));
 			return null;

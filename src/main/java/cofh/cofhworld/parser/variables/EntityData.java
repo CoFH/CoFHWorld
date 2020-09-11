@@ -6,6 +6,7 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static cofh.cofhworld.CoFHWorld.log;
@@ -34,6 +35,7 @@ public class EntityData {
 		return true;
 	}
 
+	@Nullable
 	public static WeightedNBTTag parseEntityEntry(ConfigValue entityEntry) {
 
 		switch (entityEntry.valueType()) {

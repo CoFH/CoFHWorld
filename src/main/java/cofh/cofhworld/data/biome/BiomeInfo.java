@@ -4,7 +4,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.TempCategory;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
 
 import java.util.Collection;
 import java.util.Random;
@@ -13,7 +12,7 @@ public class BiomeInfo {
 
 	private final Object data;
 	private final boolean whitelist;
-	private final int type;
+	private final Type type;
 	private final int hash;
 
 	public BiomeInfo(String name) {
@@ -21,10 +20,10 @@ public class BiomeInfo {
 		data = name;
 		hash = name.hashCode();
 		whitelist = true;
-		type = 0;
+		type = Type.BiomeName;
 	}
 
-	public BiomeInfo(Object d, int t, boolean wl) {
+	public BiomeInfo(Object d, Type t, boolean wl) {
 
 		data = d;
 		hash = 0;
@@ -40,24 +39,24 @@ public class BiomeInfo {
 			switch (type) {
 				default:
 					break;
-				case 0:
+				case BiomeName:
 					String name = biome.getRegistryName().toString();
 					r = name.hashCode() == hash && name.equals(data);
 					break;
-				case 1:
-					r = biome.getTempCategory() == data;
-					break;
-				case 2:
-					r = BiomeDictionary.hasType(biome, (Type) data);
-					break;
-				case 4:
+				case BiomeNameList:
 					r = ((Collection<String>) data).contains(biome.getRegistryName().toString());
 					break;
-				case 5:
+				case TemperatureCategory:
+					r = biome.getTempCategory() == data;
+					break;
+				case TemperatureCategoryList:
 					r = ((Collection<TempCategory>) data).contains(biome.getTempCategory());
 					break;
-				case 6:
-					Type[] d = (Type[]) data;
+				case DictionaryType:
+					r = BiomeDictionary.hasType(biome, (BiomeDictionary.Type) data);
+					break;
+				case DictionaryTypeList:
+					BiomeDictionary.Type[] d = (BiomeDictionary.Type[]) data;
 					int c = 0, e = d.length;
 					for (int i = 0; i < e; ++i) {
 						if (BiomeDictionary.hasType(biome, d[i])) {
@@ -66,16 +65,27 @@ public class BiomeInfo {
 					}
 					r = c == e;
 					break;
-				case 7:
+				case RegistryName:
 					ResourceLocation registry = Biome.REGISTRY.getNameForObject(biome);
 					r = registry.hashCode() == hash && registry.equals(data);
 					break;
-				case 8:
+				case RegistryNameList:
 					r = ((Collection<ResourceLocation>) data).contains(Biome.REGISTRY.getNameForObject(biome));
 					break;
 			}
 		}
 		return r == whitelist;
+	}
+
+	public static enum Type {
+		BiomeName,
+		BiomeNameList,
+		TemperatureCategory,
+		TemperatureCategoryList,
+		DictionaryType,
+		DictionaryTypeList,
+		RegistryName,
+		RegistryNameList,
 	}
 
 }
