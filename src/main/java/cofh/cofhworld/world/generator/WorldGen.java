@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -49,9 +50,16 @@ public abstract class WorldGen extends WorldGenerator {
 
 		IBlockState state = world.getBlockState(pos);
 		for (int j = 0, e = mat.length; j < e; ++j) {
-			WeightedBlock genBlock = mat[j];
-			if ((-1 == genBlock.metadata || genBlock.metadata == state.getBlock().getMetaFromState(state)) && (state.getBlock().isReplaceableOreGen(state, world, pos, BlockMatcher.forBlock(genBlock.block)) || state.getBlock().isAssociatedBlock(genBlock.block))) {
-				return true;
+			final WeightedBlock genBlock = mat[j];
+			if (genBlock.state == null) {
+				if ((-1 == genBlock.metadata || genBlock.metadata == state.getBlock().getMetaFromState(state)) &&
+						(state.getBlock().isReplaceableOreGen(state, world, pos, BlockMatcher.forBlock(genBlock.block)) || state.getBlock().isAssociatedBlock(genBlock.block))) {
+					return true;
+				}
+			} else {
+				if (state.getBlock().isReplaceableOreGen(state, world, pos, (IBlockState test) -> test != null && genBlock.state.getProperties().equals(test.getProperties()))) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -88,6 +96,7 @@ public abstract class WorldGen extends WorldGenerator {
 		return false;
 	}
 
+	@Nullable
 	public static WeightedBlock selectBlock(Random rand, List<WeightedBlock> o) {
 
 		int size = o.size();
