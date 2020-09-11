@@ -3,6 +3,7 @@ package cofh.cofhworld.parser.variables;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.operation.BoundedProvider;
+import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
 import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
@@ -10,6 +11,8 @@ import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
+
+import static cofh.cofhworld.parser.variables.ConditionData.parseConditionValue;
 
 public class NumberData {
 
@@ -47,6 +50,10 @@ public class NumberData {
 							a = parseNumberValue(numberObject.getValue("min"));
 							b = parseNumberValue(numberObject.getValue("max"));
 							return new BoundedProvider(v, a, b);
+						} else if (numberProps.containsKey("condition") && numberProps.containsKey("if-true") && numberProps.containsKey("if-false")) {
+							a = parseNumberValue(numberObject.getValue("if-true"));
+							b = parseNumberValue(numberObject.getValue("if-false"));
+							return new ConditionalProvider(parseConditionValue(numberObject.getValue("condition")), a, b);
 						}
 						break;
 					default:
