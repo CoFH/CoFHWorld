@@ -111,6 +111,7 @@ public class GenParserStructure implements IGeneratorParser {
 		if (genObject.hasPath("rotation")) {
 			rots = new ArrayList<>(4);
 			if (!EnumData.parseEnumList(genObject.getValue("rotation"), rots, Rotation.class)) {
+				log.warn("Invalid `rotation` list, structure will not be rotated.");
 				rots.clear();
 			}
 		}
@@ -119,6 +120,7 @@ public class GenParserStructure implements IGeneratorParser {
 		if (genObject.hasPath("mirror")) {
 			mirror = new ArrayList<>(3);
 			if (!EnumData.parseEnumList(genObject.getValue("mirror"), mirror, Mirror.class)) {
+				log.warn("Invalid `mirror` list, structure will not be mirrored.");
 				mirror.clear();
 			}
 		}
