@@ -1,6 +1,16 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.condition.ICondition;
+import cofh.cofhworld.data.condition.operation.BinaryCondition;
+import cofh.cofhworld.data.condition.operation.ComparisonCondition;
+import cofh.cofhworld.data.condition.world.WorldValueCondition;
+import cofh.cofhworld.data.numbers.ConstantProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.data.DataProvider;
+import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.util.random.WeightedNBTTag;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.JsonToNBT;
@@ -16,16 +26,25 @@ import static java.lang.Math.abs;
 
 public class WorldGenDungeon extends WorldGen {
 
+	final private static INumberProvider TWO = new ConstantProvider(2), THREE = new ConstantProvider(3);
+	final private static INumberProvider TWO_OR_THREE = new UniformRandomProvider(TWO, THREE);
+	final private static ICondition IS_AIR = new WorldValueCondition("IS_AIR");
+	final private static ICondition ONE_TO_FIVE = new BinaryCondition(
+			new ComparisonCondition(new DataProvider("holes"), new ConstantProvider(1), "GREATER_THAN_OR_EQUAL"),
+			new ComparisonCondition(new DataProvider("holes"), new ConstantProvider(5), "LESS_THAN_OR_EQUAL"),
+			"AND");
+
 	private final WeightedBlock[] material;
 	private final List<WeightedBlock> spawners;
 	private final List<WeightedBlock> walls;
 	public List<WeightedBlock> chests;
 	public List<WeightedBlock> floor;
-	public int minWidthX = 2, maxWidthX = 3;
-	public int minWidthZ = 2, maxWidthZ = 3;
-	public int minHeight = 3, maxHeight = 3;
-	public int minHoles = 1, maxHoles = 5;
-	public int maxChests = 2, maxChestTries = 3;
+	public List<WeightedBlock> fillBlock;
+	public INumberProvider radiusX = TWO_OR_THREE;
+	public INumberProvider radiusZ = TWO_OR_THREE;
+	public INumberProvider height = THREE;
+	public ICondition validHoleCount = ONE_TO_FIVE, holeCondition = IS_AIR;
+	public INumberProvider chestCount = TWO, chestAttempts = THREE;
 
 	public WorldGenDungeon(List<WeightedBlock> blocks, List<WeightedBlock> material, List<WeightedBlock> spawners) {
 
@@ -34,29 +53,33 @@ public class WorldGenDungeon extends WorldGen {
 		floor = walls;
 		this.spawners = spawners;
 		try {
-			chests = Collections.singletonList(new WeightedBlock(Blocks.CHEST.getDefaultState(), JsonToNBT.getTagFromJson("{LootTable:\"minecraft:chests/simple_dungeon\"}"), 100));
+			chests = Collections.singletonList(new WeightedBlock(Blocks.CHEST.getDefaultState(),
+					Collections.singletonList(new WeightedNBTTag(JsonToNBT.getTagFromJson("{LootTable:\"minecraft:chests/simple_dungeon\"}"))), 100));
 		} catch (NBTException e) {
 			throw new AssertionError("Oops.", e);
 		}
+		fillBlock = Collections.singletonList(new WeightedBlock(Blocks.AIR));
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos pos) {
+	public boolean generate(World world, Random rand, BlockPos start) {
 
-		int xStart = pos.getX();
-		int yStart = pos.getY();
-		int zStart = pos.getZ();
+		int xStart = start.getX();
+		int yStart = start.getY();
+		int zStart = start.getZ();
 		if (yStart <= 2) {
 			return false;
 		}
 
-		int height = nextInt(rand, maxHeight - minHeight + 1) + minHeight;
-		int xWidth = nextInt(rand, maxWidthX - minWidthX + 1) + minWidthX;
-		int zWidth = nextInt(rand, maxWidthZ - minWidthZ + 1) + minWidthZ;
+		DataHolder data = new DataHolder(start);
+
+		final int height = this.height.intValue(world, rand, data);
+		final int xWidth = this.radiusX.intValue(world, rand, data);
+		final int zWidth = this.radiusZ.intValue(world, rand, data);
+		final int floor = yStart - 1, ceiling = yStart + height + 1;
+
 		int holes = 0;
 		int x, y, z;
-
-		int floor = yStart - 1, ceiling = yStart + height + 1;
 
 		for (x = xStart - xWidth - 1; x <= xStart + xWidth + 1; ++x) {
 			for (z = zStart - zWidth - 1; z <= zStart + zWidth + 1; ++z) {
@@ -70,15 +93,16 @@ public class WorldGenDungeon extends WorldGen {
 						return false;
 					}
 
-					if ((abs(x - xStart) == xWidth + 1 || abs(z - zStart) == zWidth + 1) && y == yStart && world.isAirBlock(new BlockPos(x, y, z))
-							&& world.isAirBlock(new BlockPos(x, y + 1, z))) {
+					if (y == yStart && (abs(x - xStart) == xWidth + 1 || abs(z - zStart) == zWidth + 1) &&
+							holeCondition.checkCondition(world, rand, data.setPosition(new BlockPos(x, y, z))) &&
+							holeCondition.checkCondition(world, rand, data.setPosition(new BlockPos(x, y + 1, z)))) {
 						++holes;
 					}
 				}
 			}
 		}
 
-		if (holes < minHoles || holes > maxHoles) {
+		if (!validHoleCount.checkCondition(world, rand, data.setValue("holes", holes))) {
 			return false;
 		}
 
@@ -88,9 +112,9 @@ public class WorldGenDungeon extends WorldGen {
 
 					l: if (y != floor) {
 						if ((abs(x - xStart) != xWidth + 1 && abs(z - zStart) != zWidth + 1)) {
-							world.setBlockToAir(new BlockPos(x, y, z));
+							generateBlock(world, rand, x, y, z, fillBlock);
 						} else if (!canGenerateInBlock(world, x, y - 1, z, material)) {
-							world.setBlockToAir(new BlockPos(x, y, z));
+							generateBlock(world, rand, x, y, z, fillBlock);
 						} else {
 							break l;
 						}
@@ -109,33 +133,32 @@ public class WorldGenDungeon extends WorldGen {
 
 		WeightedBlock chest = selectBlock(rand, chests);
 
-		for (int i = maxChests; i-- > 0;) {
-			for (int j = maxChestTries; j-- > 0;) {
+		for (int i = chestCount.intValue(world, rand, data.setPosition(start)); i-- > 0;) {
+			for (int j = chestAttempts.intValue(world, rand, data); j-- > 0;) {
 				x = xStart + nextInt(rand, xWidth * 2 + 1) - xWidth;
 				z = zStart + nextInt(rand, zWidth * 2 + 1) - zWidth;
-				BlockPos checkPos = new BlockPos(x, yStart,  z);
 
-				if (world.isAirBlock(checkPos)) {
+				if (isBlock(world, x, yStart, z, this.fillBlock)) {
 					int walls = 0;
 
-					if (isWall(world, x - 1, yStart, z)) {
+					if (isBlock(world, x - 1, yStart, z, this.walls)) {
 						++walls;
 					}
 
-					if (isWall(world, x + 1, yStart, z)) {
+					if (isBlock(world, x + 1, yStart, z, this.walls)) {
 						++walls;
 					}
 
-					if (isWall(world, x, yStart, z - 1)) {
+					if (isBlock(world, x, yStart, z - 1, this.walls)) {
 						++walls;
 					}
 
-					if (isWall(world, x, yStart, z + 1)) {
+					if (isBlock(world, x, yStart, z + 1, this.walls)) {
 						++walls;
 					}
 
 					if (walls >= 1 && walls <= 2) {
-						setBlock(world, checkPos, chest);
+						setBlock(world, rand, new BlockPos(x, yStart,  z), chest);
 
 						break;
 					}
@@ -156,11 +179,11 @@ public class WorldGenDungeon extends WorldGen {
 		return rand.nextInt(v);
 	}
 
-	private boolean isWall(World world, int x, int y, int z) {
+	private boolean isBlock(World world, int x, int y, int z, List<WeightedBlock> blocks) {
 
 		IBlockState state = world.getBlockState(new BlockPos(x, y, z));
-		for (int j = 0, e = walls.size(); j < e; ++j) {
-			WeightedBlock genBlock = walls.get(j);
+		for (int j = 0, e = blocks.size(); j < e; ++j) {
+			WeightedBlock genBlock = blocks.get(j);
 			if (state.equals(genBlock.getState()))
 				return true;
 		}
