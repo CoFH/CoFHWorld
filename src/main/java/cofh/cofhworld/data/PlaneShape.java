@@ -103,7 +103,7 @@ public enum PlaneShape {
 		return inArea(x, z, radius);
 	}
 
-	protected boolean inArea(int x, int z, int radius) {
+	public boolean inArea(int x, int z, int radius) {
 
 		int wn = 0;
 		float[] lines = lineArray;
