@@ -4,6 +4,8 @@ import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.PlaneShape;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -19,6 +21,8 @@ public class WorldGenSpout extends WorldGen {
 	private final INumberProvider height;
 
 	private PlaneShape shape = PlaneShape.CIRCLE;
+	private Rotation shapeRot = Rotation.NONE;
+	private Mirror shapeMirror = Mirror.NONE;
 
 	public WorldGenSpout(List<WeightedBlock> resource, List<WeightedBlock> material, INumberProvider radius, INumberProvider height) {
 
@@ -28,9 +32,17 @@ public class WorldGenSpout extends WorldGen {
 		genBlock = material.toArray(new WeightedBlock[material.size()]);
 	}
 
-	public WorldGenSpout setShape(PlaneShape shape) {
+	public WorldGenSpout setShape(PlaneShape shape, Rotation rot, Mirror mirror) {
 
-		this.shape = shape;
+		if (shape != null) {
+			this.shape = shape;
+		}
+		if (rot != null) {
+			this.shapeRot = rot;
+		}
+		if (mirror != null) {
+			this.shapeMirror = mirror;
+		}
 		return this;
 	}
 
@@ -42,6 +54,9 @@ public class WorldGenSpout extends WorldGen {
 		int zCenter = pos.getZ();
 
 		DataHolder data = new DataHolder(pos);
+		final PlaneShape shape = this.shape;
+		final Rotation rot = this.shapeRot;
+		final Mirror mirror = this.shapeMirror;
 
 		int height = this.height.intValue(world, rand, data);
 		boolean r = false;
@@ -49,7 +64,7 @@ public class WorldGenSpout extends WorldGen {
 			int radius = this.radius.intValue(world, rand, data.setPosition(pos.add(0, y, 0)));
 			for (int x = -radius; x <= radius; ++x) {
 				for (int z = -radius; z <= radius; ++z) {
-					if (shape.inArea(x, z, radius)) {
+					if (shape.inArea(x, z, radius, rot, mirror)) {
 						r |= generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, genBlock, cluster);
 					}
 				}

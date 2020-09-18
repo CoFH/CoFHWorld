@@ -6,6 +6,8 @@ import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -21,6 +23,8 @@ public class WorldGenMinablePlate extends WorldGen {
 	private INumberProvider height;
 
 	private PlaneShape shape = PlaneShape.CIRCLE;
+	private Rotation shapeRot = Rotation.NONE;
+	private Mirror shapeMirror = Mirror.NONE;
 	private boolean slim;
 
 	public WorldGenMinablePlate(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
@@ -44,10 +48,12 @@ public class WorldGenMinablePlate extends WorldGen {
 		int z = pos.getZ();
 
 		DataHolder data = new DataHolder(pos);
+		final PlaneShape shape = this.shape;
+		final Rotation rot = this.shapeRot;
+		final Mirror mirror = this.shapeMirror;
 
 		++y;
 		int size = radius.intValue(world, rand, data);
-		final PlaneShape shape = this.shape;
 		int height = this.height.intValue(world, rand, data);
 
 		boolean r = false;
@@ -56,7 +62,7 @@ public class WorldGenMinablePlate extends WorldGen {
 			for (int posZ = z - size; posZ <= z + size; ++posZ) {
 				int areaZ = posZ - z;
 
-				if (shape.inArea(areaX, areaZ, size)) {
+				if (shape.inArea(areaX, areaZ, size, rot, mirror)) {
 					for (int posY = y - height; slim ? posY < y + height : posY <= y + height; ++posY) {
 						r |= generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
 					}
@@ -73,9 +79,17 @@ public class WorldGenMinablePlate extends WorldGen {
 		return this;
 	}
 
-	public WorldGenMinablePlate setShape(PlaneShape shape) {
+	public WorldGenMinablePlate setShape(PlaneShape shape, Rotation rot, Mirror mirror) {
 
-		this.shape = shape;
+		if (shape != null) {
+			this.shape = shape;
+		}
+		if (rot != null) {
+			this.shapeRot = rot;
+		}
+		if (mirror != null) {
+			this.shapeMirror = mirror;
+		}
 		return this;
 	}
 
