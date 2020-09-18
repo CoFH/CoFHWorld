@@ -14,9 +14,24 @@ public class DataHolder {
 		setValue("chunk", new Vec3i(start.getX() >> 4, 0, start.getZ() >> 4));
 	}
 
+	public long getLong(String key) {
+
+		Object r = data.get(key);
+		if (r instanceof Number) {
+			return ((Number) r).longValue();
+		} else {
+			return 0;
+		}
+	}
+
 	public Vec3i getPos(String key) {
 
-		return (Vec3i) data.get(key);
+		Object r = data.get(key);
+		if (r instanceof Vec3i) {
+			return (Vec3i) r;
+		} else {
+			return Vec3i.NULL_VECTOR;
+		}
 	}
 
 	public Vec3i getPosition() {
