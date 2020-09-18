@@ -8,6 +8,11 @@ public class WeightedNBTTag extends WeightedRandom.Item {
 
 	public final NBTBase tag;
 
+	public WeightedNBTTag(NBTBase tag) {
+
+		this(100, tag);
+	}
+
 	public WeightedNBTTag(int weight, NBTBase tag) {
 
 		super(weight);

@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -71,16 +72,16 @@ public abstract class WorldGen extends WorldGenerator {
 
 	public static boolean generateBlock(World world, Random rand, int x, int y, int z, List<WeightedBlock> o) {
 
-		return setBlock(world, new BlockPos(x, y, z), selectBlock(rand, o));
+		return setBlock(world, rand, new BlockPos(x, y, z), selectBlock(rand, o));
 	}
 
-	public static boolean setBlock(World world, BlockPos pos, WeightedBlock ore) {
+	public static boolean setBlock(World world, Random rand, BlockPos pos, WeightedBlock ore) {
 
 		if (ore != null && world.setBlockState(pos, ore.getState(), 2 | 16)) {
 			if (ore.block.hasTileEntity(ore.getState())) {
 				TileEntity tile = world.getTileEntity(pos);
 				if (tile != null) {
-					tile.readFromNBT(ore.getData(tile.writeToNBT(new NBTTagCompound())));
+					tile.readFromNBT(ore.getData(rand, tile.writeToNBT(new NBTTagCompound())));
 				}
 			}
 			return true;
@@ -88,6 +89,7 @@ public abstract class WorldGen extends WorldGenerator {
 		return false;
 	}
 
+	@Nullable
 	public static WeightedBlock selectBlock(Random rand, List<WeightedBlock> o) {
 
 		int size = o.size();

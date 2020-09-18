@@ -74,7 +74,7 @@ public class WorldGenDecoration extends WorldGen {
 				int stack = stackHeight.intValue(world, rand, data.setPosition(pos));
 				do {
 					if (!checkStay || (block.block.canPlaceBlockAt(world, pos))) {
-						r |= setBlock(world, pos, block);
+						r |= setBlock(world, rand, pos, block);
 					} else {
 						break;
 					}

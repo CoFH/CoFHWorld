@@ -1,21 +1,19 @@
 package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.util.random.WeightedNBTTag;
 import com.google.common.base.Optional;
 import com.typesafe.config.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -74,13 +72,11 @@ public class BlockData {
 					return null;
 				}
 				int weight = blockObject.hasPath("weight") ? MathHelper.clamp(blockObject.getInt("weight"), 1, 1000000) : 100;
-				NBTTagCompound dataTag = null;
+				List<WeightedNBTTag> dataTag = null;
 				if (blockObject.hasPath("data-tag")) {
-					try {
-						dataTag = JsonToNBT.getTagFromJson(blockObject.getString("data-tag"));
-					} catch (NBTException e) {
-						log.error("Invalid NBT data defined on line {}.", blockObject.getValue("data-tag").origin().lineNumber());
-						log.catching(Level.DEBUG, e);
+					dataTag = new ArrayList<>();
+					if (!NBTData.parseNBTList(blockObject.getValue("data-tag"), dataTag)) {
+						dataTag = null;
 					}
 				}
 				if (blockObject.hasPath("properties")) {
