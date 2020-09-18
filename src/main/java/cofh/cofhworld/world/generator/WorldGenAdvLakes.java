@@ -15,6 +15,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @deprecated TODO: replace all booleans with ICondition
+ */
+@Deprecated
 public class WorldGenAdvLakes extends WorldGen {
 
 	private static final List<WeightedBlock> GAP_BLOCK = Arrays.asList(new WeightedBlock(Blocks.AIR, 0));

@@ -17,6 +17,10 @@ import net.minecraft.world.gen.structure.template.Template;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @deprecated TODO: replace vanilla Template logic with custom code for better control and features
+ */
+@Deprecated
 public class WorldGenStructure extends WorldGen {
 
 	private final PlacementSettings placementSettings = new PlacementSettings();

@@ -14,6 +14,10 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @deprecated TODO: replace all booleans with ICondition; merge shape variables into a unified object
+ */
+@Deprecated
 public class WorldGenMinablePlate extends WorldGen {
 
 	private final List<WeightedBlock> cluster;

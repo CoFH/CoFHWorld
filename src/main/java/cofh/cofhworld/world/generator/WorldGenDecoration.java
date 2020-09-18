@@ -11,6 +11,10 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @deprecated TODO: replace all booleans with ICondition
+ */
+@Deprecated
 public class WorldGenDecoration extends WorldGen {
 
 	private final List<WeightedBlock> cluster;

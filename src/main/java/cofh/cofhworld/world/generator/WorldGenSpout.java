@@ -12,6 +12,10 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @deprecated TODO: merge shape variables into a unified object
+ */
+@Deprecated
 public class WorldGenSpout extends WorldGen {
 
 	private final List<WeightedBlock> cluster;
