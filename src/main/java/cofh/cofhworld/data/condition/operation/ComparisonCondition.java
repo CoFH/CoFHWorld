@@ -30,14 +30,14 @@ public class ComparisonCondition implements ICondition {
 
 	public static enum Operation {
 
-		EQUAL_TO("==", "===", "equals") {
+		EQUAL_TO("==", "===", "equals", "equal") {
 			@Override
 			public boolean perform(long a, long b) {
 
 				return a == b;
 			}
 		},
-		NOT_EQUAL_TO("!=", "<>", "~=", "inequal", "unequal") {
+		NOT_EQUAL_TO("!=", "<>", "~=", "inequal", "unequal", "not_equal") {
 			@Override
 			public boolean perform(long a, long b) {
 
@@ -58,14 +58,14 @@ public class ComparisonCondition implements ICondition {
 				return a > b;
 			}
 		},
-		LESS_THAN_OR_EQUAL_TO("<=") {
+		LESS_THAN_OR_EQUAL_TO("<=", "less_than_or_equal") {
 			@Override
 			public boolean perform(long a, long b) {
 
 				return a <= b;
 			}
 		},
-		GREATER_THAN_OR_EQUAL_TO(">=") {
+		GREATER_THAN_OR_EQUAL_TO(">=", "greater_than_or_equal") {
 			@Override
 			public boolean perform(long a, long b) {
 
@@ -89,7 +89,7 @@ public class ComparisonCondition implements ICondition {
 			if (mappings == null) {
 				mappings = new Object2ObjectArrayMap<>();
 			}
-			mappings.put(name.toUpperCase(Locale.US).replace('_', '-'), value);
+			mappings.put(name.toUpperCase(Locale.US), value);
 		}
 
 		public static Operation getOperation(String type) {

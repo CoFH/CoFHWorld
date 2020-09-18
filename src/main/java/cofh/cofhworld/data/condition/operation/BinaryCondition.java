@@ -29,14 +29,14 @@ public class BinaryCondition implements ICondition {
 
 	public static enum Operation {
 
-		EQUAL_TO("==", "===", "equals") {
+		EQUAL_TO("==", "===", "equals", "equal") {
 			@Override
 			public boolean perform(boolean a, boolean b) {
 
 				return a == b;
 			}
 		},
-		NOT_EQUAL_TO("!=", "<>", "~=", "inequal", "unequal", "xor", "^") {
+		NOT_EQUAL_TO("!=", "<>", "~=", "inequal", "unequal", "not_equal", "xor", "^") {
 			@Override
 			public boolean perform(boolean a, boolean b) {
 
