@@ -50,6 +50,7 @@ public class EnumData {
 					type = enumObject.getString("name");
 				} else {
 					log.warn("Value missing 'name' field at line {}", enumEntry.origin().lineNumber());
+					return null;
 				}
 				if (enumObject.hasPath("weight")) {
 					weight = enumObject.getInt("weight");
