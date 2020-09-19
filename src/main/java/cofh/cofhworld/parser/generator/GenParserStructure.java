@@ -58,7 +58,7 @@ public class GenParserStructure implements IGeneratorParser {
 			final String dir = FilenameUtils.getFullPath(genObject.origin().filename());
 			if (StringData.parseStringList(genObject.getValue("structure"), files)) {
 				if (files.size() == 0) {
-					log.error("No structures provided for `structure` geenrator!");
+					log.error("No structures provided for `structure` generator!");
 					throw new InvalidGeneratorException("Empty `structure` array", genObject.getValue("structure").origin());
 				}
 				tags.ensureCapacity(files.size());
