@@ -2,6 +2,7 @@ package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.data.DataProvider;
 import cofh.cofhworld.data.numbers.operation.BoundedProvider;
 import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
@@ -32,6 +33,8 @@ public class NumberData {
 							return new SkellamRandomProvider(parseNumberValue(numberObject.getValue("variance")));
 						} else if (numberProps.containsKey("world-data")) {
 							return new WorldValueProvider(numberObject.getString("world-data"));
+						} else if (numberProps.containsKey("generator-data")) {
+							return new DataProvider(numberObject.getString("generator-data"));
 						}
 						break;
 					case 2:
