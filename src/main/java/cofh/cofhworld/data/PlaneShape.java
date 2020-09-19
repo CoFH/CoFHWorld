@@ -11,11 +11,28 @@ public enum PlaneShape {
 
 			return true;
 		}
-	}, CIRCLE {
+	},
+	HOLLOW_SQUARE {
+		@Override
+		public boolean inArea(int x, int z, int radius) {
+
+			int r = radius >> 1;
+			return (Math.abs(x) > r) | (Math.abs(z) > r);
+		}
+	},
+	CIRCLE {
 		@Override
 		public boolean inArea(int x, int z, int radius) {
 
 			return x * x + z * z <= radius * radius;
+		}
+	},
+	HOLLOW_CIRCLE {
+		@Override
+		public boolean inArea(int x, int z, int radius) {
+
+			int r = radius >> 1;
+			return (x * x + z * z <= radius * radius) & (x * x + z * z > r * r);
 		}
 	},
 	RIGHT_TRIANGLE(0, 0, 100, 100, 100, 0),
