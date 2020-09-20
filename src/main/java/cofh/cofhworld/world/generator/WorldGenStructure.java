@@ -10,8 +10,8 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.template.*;
 import net.minecraft.world.gen.feature.template.Template.BlockInfo;
 
@@ -112,7 +112,7 @@ public class WorldGenStructure extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World world, Random random, BlockPos pos) {
+	public boolean generate(IWorld world, Random random, BlockPos pos) {
 
 		Template template = this.template;
 		if (templates != null) {

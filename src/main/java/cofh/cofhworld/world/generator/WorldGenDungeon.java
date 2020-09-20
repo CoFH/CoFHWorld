@@ -16,7 +16,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.Collections;
 import java.util.List;
@@ -62,7 +62,7 @@ public class WorldGenDungeon extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos start) {
+	public boolean generate(IWorld world, Random rand, BlockPos start) {
 
 		int xStart = start.getX();
 		int yStart = start.getY();
@@ -179,7 +179,7 @@ public class WorldGenDungeon extends WorldGen {
 		return rand.nextInt(v);
 	}
 
-	private boolean isBlock(World world, int x, int y, int z, List<WeightedBlock> blocks) {
+	private boolean isBlock(IWorld world, int x, int y, int z, List<WeightedBlock> blocks) {
 
 		BlockState state = world.getBlockState(new BlockPos(x, y, z));
 		for (int j = 0, e = blocks.size(); j < e; ++j) {

@@ -6,7 +6,7 @@ import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.List;
 import java.util.Random;
@@ -35,7 +35,7 @@ public class WorldGenTube extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World worldIn, Random rand, BlockPos position) {
+	public boolean generate(IWorld worldIn, Random rand, BlockPos position) {
 
 		return false;
 	}

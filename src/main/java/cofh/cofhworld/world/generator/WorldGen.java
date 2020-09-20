@@ -7,7 +7,7 @@ import net.minecraft.block.pattern.BlockMatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.Random;
 
 public abstract class WorldGen {
 
-	public abstract boolean generate(World worldIn, Random rand, BlockPos position);
+	public abstract boolean generate(IWorld worldIn, Random rand, BlockPos position);
 
 	public void setDecorationDefaults() {
 
@@ -36,12 +36,12 @@ public abstract class WorldGen {
 		return list;
 	}
 
-	public static boolean canGenerateInBlock(World world, int x, int y, int z, WeightedBlock[] mat) {
+	public static boolean canGenerateInBlock(IWorld world, int x, int y, int z, WeightedBlock[] mat) {
 
 		return canGenerateInBlock(world, new BlockPos(x, y, z), mat);
 	}
 
-	public static boolean canGenerateInBlock(World world, BlockPos pos, WeightedBlock[] mat) {
+	public static boolean canGenerateInBlock(IWorld world, BlockPos pos, WeightedBlock[] mat) {
 
 		if (mat == null || mat.length == 0) {
 			return true;
@@ -61,7 +61,7 @@ public abstract class WorldGen {
 		return false;
 	}
 
-	public static boolean generateBlock(World world, Random rand, int x, int y, int z, WeightedBlock[] mat, List<WeightedBlock> o) {
+	public static boolean generateBlock(IWorld world, Random rand, int x, int y, int z, WeightedBlock[] mat, List<WeightedBlock> o) {
 
 		if (mat == null || mat.length == 0) {
 			return generateBlock(world, rand, x, y, z, o);
@@ -73,12 +73,12 @@ public abstract class WorldGen {
 		return false;
 	}
 
-	public static boolean generateBlock(World world, Random rand, int x, int y, int z, List<WeightedBlock> o) {
+	public static boolean generateBlock(IWorld world, Random rand, int x, int y, int z, List<WeightedBlock> o) {
 
 		return setBlock(world, rand, new BlockPos(x, y, z), selectBlock(rand, o));
 	}
 
-	public static boolean setBlock(World world, Random rand, BlockPos pos, WeightedBlock ore) {
+	public static boolean setBlock(IWorld world, Random rand, BlockPos pos, WeightedBlock ore) {
 
 		if (ore != null && world.setBlockState(pos, ore.getState(), 2 | 16)) {
 			if (ore.block.hasTileEntity(ore.getState())) {

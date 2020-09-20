@@ -8,7 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.List;
 import java.util.Random;
@@ -52,7 +52,7 @@ public class WorldGenMinableCluster extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, BlockPos pos) {
 
 		int x = pos.getX();
 		int y = pos.getY();
@@ -124,7 +124,7 @@ public class WorldGenMinableCluster extends WorldGen {
 		return r;
 	}
 
-	public boolean generateTiny(World world, Random random, int clusterSize, int x, int y, int z) {
+	public boolean generateTiny(IWorld world, Random random, int clusterSize, int x, int y, int z) {
 
 		boolean r = generateBlock(world, random, x, y, z, genBlock, cluster);
 		// not <=; generating up to clusterSize blocks

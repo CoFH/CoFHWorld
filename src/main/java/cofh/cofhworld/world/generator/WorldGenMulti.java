@@ -3,7 +3,7 @@ package cofh.cofhworld.world.generator;
 import cofh.cofhworld.util.random.WeightedWorldGenerator;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class WorldGenMulti extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World world, Random random, BlockPos pos) {
+	public boolean generate(IWorld world, Random random, BlockPos pos) {
 
 		WeightedWorldGenerator gen = WeightedRandom.getRandomItem(random, generators);
 		return gen.generator.generate(world, random, pos);

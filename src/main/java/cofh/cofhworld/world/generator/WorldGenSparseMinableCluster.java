@@ -8,7 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.List;
 import java.util.Random;
@@ -52,7 +52,7 @@ public class WorldGenSparseMinableCluster extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, BlockPos pos) {
 
 		int x = pos.getX();
 		int y = pos.getY();

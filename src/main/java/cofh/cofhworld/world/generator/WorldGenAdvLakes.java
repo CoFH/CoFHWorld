@@ -7,8 +7,8 @@ import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
 import java.util.Collections;
@@ -44,7 +44,7 @@ public class WorldGenAdvLakes extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, BlockPos pos) {
 
 		int xStart = pos.getX();
 		int yStart = pos.getY();

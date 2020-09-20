@@ -9,7 +9,7 @@ import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.List;
 import java.util.Random;
@@ -45,7 +45,7 @@ public class WorldGenMinablePlate extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, BlockPos pos) {
 
 		int x = pos.getX();
 		int y = pos.getY();

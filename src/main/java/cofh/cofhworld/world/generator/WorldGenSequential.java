@@ -1,7 +1,7 @@
 package cofh.cofhworld.world.generator;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.List;
 import java.util.Random;
@@ -24,7 +24,7 @@ public class WorldGenSequential extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World world, Random random, BlockPos pos) {
+	public boolean generate(IWorld world, Random random, BlockPos pos) {
 
 		WorldGen[] generators = this.generators;
 		boolean r = false;

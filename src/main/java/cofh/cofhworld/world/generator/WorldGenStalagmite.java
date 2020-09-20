@@ -2,7 +2,7 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.List;
 import java.util.Random;
@@ -66,7 +66,7 @@ public class WorldGenStalagmite extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, BlockPos pos) {
 
 		int xStart = pos.getX();
 		int yStart = pos.getY();

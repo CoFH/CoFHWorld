@@ -9,7 +9,7 @@ import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.List;
 import java.util.Random;
@@ -51,7 +51,7 @@ public class WorldGenDecoration extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos start) {
+	public boolean generate(IWorld world, Random rand, BlockPos start) {
 
 		int xStart = start.getX();
 		int yStart = start.getY();
