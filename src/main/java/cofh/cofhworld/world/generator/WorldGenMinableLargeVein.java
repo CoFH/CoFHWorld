@@ -1,48 +1,29 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.condition.ConstantCondition;
+import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.Random;
 
-/**
- * @deprecated TODO: replace all booleans with ICondition
- */
-@Deprecated
 public class WorldGenMinableLargeVein extends WorldGen {
 
 	private final List<WeightedBlock> cluster;
-	private final WeightedBlock[] genBlock;
+	private final WeightedBlock[] material;
 	private final INumberProvider genVeinSize;
-	private final boolean sparse;
-	private boolean spindly;
-
-	public WorldGenMinableLargeVein(ItemStack ore, int clusterSize) {
-
-		this(new WeightedBlock(ore), clusterSize);
-	}
-
-	public WorldGenMinableLargeVein(WeightedBlock resource, int clusterSize) {
-
-		this(fabricateList(resource), clusterSize);
-	}
+	private ICondition sparse, spindly;
 
 	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize) {
 
 		this(resource, clusterSize, Blocks.STONE);
-	}
-
-	public WorldGenMinableLargeVein(ItemStack ore, int clusterSize, Block block) {
-
-		this(new WeightedBlock(ore, 1), clusterSize, block);
 	}
 
 	public WorldGenMinableLargeVein(WeightedBlock resource, int clusterSize, Block block) {
@@ -60,6 +41,14 @@ public class WorldGenMinableLargeVein extends WorldGen {
 		this(resource, clusterSize, block, true);
 	}
 
+	public WorldGenMinableLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block) {
+
+		cluster = resource;
+		genVeinSize = clusterSize;
+		material = block.toArray(new WeightedBlock[0]);
+		this.setSparse(ConstantCondition.TRUE);
+	}
+
 	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block, boolean sparze) {
 
 		this(resource, new ConstantProvider(clusterSize), block, sparze);
@@ -69,13 +58,25 @@ public class WorldGenMinableLargeVein extends WorldGen {
 
 		cluster = resource;
 		genVeinSize = clusterSize;
-		genBlock = block.toArray(new WeightedBlock[block.size()]);
-		sparse = sparze;
+		material = block.toArray(new WeightedBlock[0]);
+		sparse = sparze ? ConstantCondition.TRUE : ConstantCondition.FALSE;
 	}
 
+	@Deprecated
 	public WorldGenMinableLargeVein setSpindly(boolean spindly) {
 
+		return setSpindly(spindly ? ConstantCondition.TRUE : ConstantCondition.FALSE);
+	}
+
+	public WorldGenMinableLargeVein setSpindly(ICondition spindly) {
+
 		this.spindly = spindly;
+		return this;
+	}
+
+	public WorldGenMinableLargeVein setSparse(ICondition sparse) {
+
+		this.sparse = sparse;
 		return this;
 	}
 
@@ -86,9 +87,12 @@ public class WorldGenMinableLargeVein extends WorldGen {
 		int y = pos.getY();
 		int z = pos.getZ();
 
-		final int veinSize = genVeinSize.intValue(world, rand, new DataHolder(pos));
+		final DataHolder data = new DataHolder(pos);
+
+		final int veinSize = genVeinSize.intValue(world, rand, data);
 		final int branchSize = 1 + (veinSize / 30);
 		final int subBranchSize = 1 + (branchSize / 5);
+		final boolean sparse = this.sparse.checkCondition(world, rand, data), spindly = this.spindly.checkCondition(world, rand, data);
 
 		boolean r = false;
 		for (int blocksVein = 0; blocksVein <= veinSize; ) {
@@ -145,7 +149,7 @@ public class WorldGenMinableLargeVein extends WorldGen {
 							posZ2 += rand.nextInt(2) * directionZ2;
 						}
 
-						r |= generateBlock(world, rand, posX2, posY2, posZ2, genBlock, cluster);
+						r |= generateBlock(world, rand, posX2, posY2, posZ2, material, cluster);
 
 						if (sparse) {
 							blocksVein++;
@@ -155,7 +159,7 @@ public class WorldGenMinableLargeVein extends WorldGen {
 					}
 				}
 
-				r |= generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
+				r |= generateBlock(world, rand, posX, posY, posZ, material, cluster);
 
 				if (spindly) {
 					blocksVein++;

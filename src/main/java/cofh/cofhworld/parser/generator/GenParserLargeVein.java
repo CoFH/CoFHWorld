@@ -1,6 +1,9 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.condition.ConstantCondition;
+import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserClusterCount;
+import cofh.cofhworld.parser.variables.ConditionData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGenMinableLargeVein;
 import com.typesafe.config.Config;
@@ -22,13 +25,13 @@ public class GenParserLargeVein extends AbstractGenParserClusterCount {
 			throw new InvalidGeneratorException("Invalid `cluster-size`", genObject.getValue("cluster-size").origin());
 		}
 
-		boolean sparse = true, spindly = false;
+		ICondition sparse = ConstantCondition.TRUE, spindly = ConstantCondition.FALSE;
 		{
-			sparse = genObject.hasPath("sparse") ? genObject.getBoolean("sparse") : sparse;
-			spindly = genObject.hasPath("spindly") ? genObject.getBoolean("spindly") : spindly;
+			sparse = genObject.hasPath("sparse") ? ConditionData.parseConditionValue(genObject.getValue("sparse")) : sparse;
+			spindly = genObject.hasPath("spindly") ? ConditionData.parseConditionValue(genObject.getValue("spindly")) : spindly;
 		}
-		WorldGenMinableLargeVein vein = new WorldGenMinableLargeVein(resList, clusterSize, matList, sparse);
-		return vein.setSpindly(spindly);
+		WorldGenMinableLargeVein vein = new WorldGenMinableLargeVein(resList, clusterSize, matList);
+		return vein.setSparse(sparse).setSpindly(spindly);
 	}
 
 }
