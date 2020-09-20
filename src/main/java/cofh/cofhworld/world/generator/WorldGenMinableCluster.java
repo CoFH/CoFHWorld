@@ -15,9 +15,9 @@ import java.util.Random;
 
 public class WorldGenMinableCluster extends WorldGen {
 
-	private final List<WeightedBlock> cluster;
-	private final INumberProvider genClusterSize;
-	private final WeightedBlock[] genBlock;
+	private final List<WeightedBlock> resource;
+	private final WeightedBlock[] material;
+	private final INumberProvider clusterSize;
 
 	public WorldGenMinableCluster(WeightedBlock resource, int clusterSize) {
 
@@ -46,9 +46,9 @@ public class WorldGenMinableCluster extends WorldGen {
 
 	public WorldGenMinableCluster(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block) {
 
-		cluster = resource;
-		genClusterSize = clusterSize;
-		genBlock = block.toArray(new WeightedBlock[0]);
+		this.resource = resource;
+		this.clusterSize = clusterSize;
+		material = block.toArray(new WeightedBlock[0]);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class WorldGenMinableCluster extends WorldGen {
 		int y = pos.getY();
 		int z = pos.getZ();
 
-		int blocks = MathHelper.clamp(genClusterSize.intValue(world, rand, new DataHolder(pos)), 1, 42);
+		int blocks = MathHelper.clamp(clusterSize.intValue(world, rand, new DataHolder(pos)), 1, 42);
 		if (blocks < 4) { // HACK: at 1 and 2 no ores are ever generated. at 3 only 1/3 veins generate
 			return generateTiny(world, rand, blocks, x, y, z);
 		}
@@ -116,7 +116,7 @@ public class WorldGenMinableCluster extends WorldGen {
 						if (zDistSq + xyDistSq >= 1F) {
 							continue;
 						}
-						r |= generateBlock(world, rand, blockX, blockY, blockZ, genBlock, cluster);
+						r |= generateBlock(world, rand, blockX, blockY, blockZ, material, resource);
 					}
 				}
 			}
@@ -126,14 +126,14 @@ public class WorldGenMinableCluster extends WorldGen {
 
 	public boolean generateTiny(IWorld world, Random random, int clusterSize, int x, int y, int z) {
 
-		boolean r = generateBlock(world, random, x, y, z, genBlock, cluster);
+		boolean r = generateBlock(world, random, x, y, z, material, resource);
 		// not <=; generating up to clusterSize blocks
 		for (int i = 1; i < clusterSize; i++) {
 			int d0 = x + random.nextInt(2);
 			int d1 = y + random.nextInt(2);
 			int d2 = z + random.nextInt(2);
 
-			r |= generateBlock(world, random, d0, d1, d2, genBlock, cluster);
+			r |= generateBlock(world, random, d0, d1, d2, material, resource);
 		}
 		return r;
 	}

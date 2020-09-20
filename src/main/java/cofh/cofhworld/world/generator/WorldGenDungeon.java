@@ -39,7 +39,7 @@ public class WorldGenDungeon extends WorldGen {
 	private final List<WeightedBlock> walls;
 	public List<WeightedBlock> chests;
 	public List<WeightedBlock> floor;
-	public List<WeightedBlock> fillBlock;
+	public List<WeightedBlock> filler;
 	public INumberProvider radiusX = TWO_OR_THREE;
 	public INumberProvider radiusZ = TWO_OR_THREE;
 	public INumberProvider height = THREE;
@@ -58,7 +58,7 @@ public class WorldGenDungeon extends WorldGen {
 		} catch (CommandSyntaxException e) {
 			throw new AssertionError("Oops.", e);
 		}
-		fillBlock = Collections.singletonList(new WeightedBlock(Blocks.AIR));
+		filler = Collections.singletonList(new WeightedBlock(Blocks.AIR));
 	}
 
 	@Override
@@ -112,9 +112,9 @@ public class WorldGenDungeon extends WorldGen {
 
 					l: if (y != floor) {
 						if ((abs(x - xStart) != xWidth + 1 && abs(z - zStart) != zWidth + 1)) {
-							generateBlock(world, rand, x, y, z, fillBlock);
+							generateBlock(world, rand, x, y, z, filler);
 						} else if (!canGenerateInBlock(world, x, y - 1, z, material)) {
-							generateBlock(world, rand, x, y, z, fillBlock);
+							generateBlock(world, rand, x, y, z, filler);
 						} else {
 							break l;
 						}
@@ -138,7 +138,7 @@ public class WorldGenDungeon extends WorldGen {
 				x = xStart + nextInt(rand, xWidth * 2 + 1) - xWidth;
 				z = zStart + nextInt(rand, zWidth * 2 + 1) - zWidth;
 
-				if (isBlock(world, x, yStart, z, this.fillBlock)) {
+				if (isBlock(world, x, yStart, z, this.filler)) {
 					int walls = 0;
 
 					if (isBlock(world, x - 1, yStart, z, this.walls)) {

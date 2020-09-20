@@ -12,7 +12,7 @@ public class WorldGenSequential extends WorldGen {
 
 	public WorldGenSequential(List<WorldGen> values) {
 
-		generators = values.toArray(new WorldGen[values.size()]);
+		generators = values.toArray(new WorldGen[0]);
 	}
 
 	@Override

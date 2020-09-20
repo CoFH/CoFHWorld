@@ -14,22 +14,22 @@ import java.util.Random;
 @Deprecated
 public class WorldGenSpike extends WorldGen {
 
-	private final List<WeightedBlock> cluster;
-	private final WeightedBlock[] genBlock;
-	public boolean largeSpikes = true;
-	public int largeSpikeChance = 60;
+	private final List<WeightedBlock> resource;
+	private final WeightedBlock[] material;
 	public int minHeight = 7;
 	public int heightVariance = 4;
 	public int sizeVariance = 2;
 	public int positionVariance = 3;
+	public boolean largeSpikes = true;
+	public int largeSpikeChance = 60;
 	public int minLargeSpikeHeightGain = 10;
 	public int largeSpikeHeightVariance = 30;
 	public int largeSpikeFillerSize = 1;
 
 	public WorldGenSpike(List<WeightedBlock> resource, List<WeightedBlock> block) {
 
-		cluster = resource;
-		genBlock = block.toArray(new WeightedBlock[block.size()]);
+		this.resource = resource;
+		material = block.toArray(new WeightedBlock[0]);
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class WorldGenSpike extends WorldGen {
 			--yStart;
 		}
 
-		if (!canGenerateInBlock(world, xStart, yStart, zStart, genBlock)) {
+		if (!canGenerateInBlock(world, xStart, yStart, zStart, material)) {
 			return false;
 		}
 
@@ -76,10 +76,10 @@ public class WorldGenSpike extends WorldGen {
 
 					if ((x == 0 && z == 0 || xDist * xDist + zDist * zDist <= layerSize * layerSize) && (x != -width && x != width && z != -width && z != width || rand.nextFloat() <= 0.75F)) {
 
-						generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
+						generateBlock(world, rand, xStart + x, yStart + y, zStart + z, material, resource);
 
 						if (y != 0 && width > 1) {
-							generateBlock(world, rand, xStart + x, yStart - y + offsetHeight, zStart + z, genBlock, cluster);
+							generateBlock(world, rand, xStart + x, yStart - y + offsetHeight, zStart + z, material, resource);
 						}
 					}
 				}

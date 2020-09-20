@@ -2,6 +2,7 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
+import cofh.cofhworld.parser.variables.ConditionData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenGeode;
@@ -33,7 +34,7 @@ public class GenParserGeode extends AbstractGenParserBlock {
 		WorldGenGeode r = new WorldGenGeode(resList, matList, list);
 		{
 			if (genObject.hasPath("hollow")) {
-				r.setHollow(genObject.getBoolean("hollow"));
+				r.setHollow(ConditionData.parseConditionValue(genObject.getValue("hollow")));
 			}
 			if (genObject.hasPath("filler")) {
 				list = new ArrayList<>();

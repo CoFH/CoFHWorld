@@ -16,9 +16,9 @@ import java.util.Random;
 
 public class WorldGenMinableLargeVein extends WorldGen {
 
-	private final List<WeightedBlock> cluster;
+	private final List<WeightedBlock> resource;
 	private final WeightedBlock[] material;
-	private final INumberProvider genVeinSize;
+	private final INumberProvider veinSize;
 	private ICondition sparse, spindly;
 
 	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize) {
@@ -43,8 +43,8 @@ public class WorldGenMinableLargeVein extends WorldGen {
 
 	public WorldGenMinableLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block) {
 
-		cluster = resource;
-		genVeinSize = clusterSize;
+		this.resource = resource;
+		veinSize = clusterSize;
 		material = block.toArray(new WeightedBlock[0]);
 		this.setSparse(ConstantCondition.TRUE);
 	}
@@ -56,8 +56,8 @@ public class WorldGenMinableLargeVein extends WorldGen {
 
 	public WorldGenMinableLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block, boolean sparze) {
 
-		cluster = resource;
-		genVeinSize = clusterSize;
+		this.resource = resource;
+		veinSize = clusterSize;
 		material = block.toArray(new WeightedBlock[0]);
 		sparse = sparze ? ConstantCondition.TRUE : ConstantCondition.FALSE;
 	}
@@ -89,7 +89,7 @@ public class WorldGenMinableLargeVein extends WorldGen {
 
 		final DataHolder data = new DataHolder(pos);
 
-		final int veinSize = genVeinSize.intValue(world, rand, data);
+		final int veinSize = this.veinSize.intValue(world, rand, data);
 		final int branchSize = 1 + (veinSize / 30);
 		final int subBranchSize = 1 + (branchSize / 5);
 		final boolean sparse = this.sparse.checkCondition(world, rand, data), spindly = this.spindly.checkCondition(world, rand, data);
@@ -149,7 +149,7 @@ public class WorldGenMinableLargeVein extends WorldGen {
 							posZ2 += rand.nextInt(2) * directionZ2;
 						}
 
-						r |= generateBlock(world, rand, posX2, posY2, posZ2, material, cluster);
+						r |= generateBlock(world, rand, posX2, posY2, posZ2, material, resource);
 
 						if (sparse) {
 							blocksVein++;
@@ -159,7 +159,7 @@ public class WorldGenMinableLargeVein extends WorldGen {
 					}
 				}
 
-				r |= generateBlock(world, rand, posX, posY, posZ, material, cluster);
+				r |= generateBlock(world, rand, posX, posY, posZ, material, resource);
 
 				if (spindly) {
 					blocksVein++;

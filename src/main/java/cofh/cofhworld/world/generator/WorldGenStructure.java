@@ -27,7 +27,7 @@ public class WorldGenStructure extends WorldGen {
 
 	private final List<WeightedNBTTag> templates;
 
-	private List<WeightedEnum<Rotation>> rots;
+	private List<WeightedEnum<Rotation>> rotations;
 	private List<WeightedEnum<Mirror>> mirrors;
 
 	private INumberProvider integrity = new ConstantProvider(2f); // 1++
@@ -35,8 +35,11 @@ public class WorldGenStructure extends WorldGen {
 	public WorldGenStructure(List<WeightedNBTTag> templates, List<WeightedBlock> ignoredBlocks, boolean ignoreEntities) {
 
 		if (templates.size() > 1) {
+			this.template = null;
 			this.templates = templates;
-			template = null;
+			Template template = new Template();
+			for (WeightedNBTTag tag : templates)
+				template.read(tag.getCompoundTag()); // crash here if any are invalid
 		} else {
 			this.templates = null;
 			template = new Template();
@@ -97,7 +100,7 @@ public class WorldGenStructure extends WorldGen {
 			case 0:
 				rot = null;
 			default:
-				rots = rot;
+				rotations = rot;
 		}
 
 		switch (mir.size()) {
@@ -125,8 +128,8 @@ public class WorldGenStructure extends WorldGen {
 		// WeightedRandomLong to supply `setSeed` instead of the worldgen random?
 		settings.setRandom(random);
 
-		if (rots != null) {
-			settings.setRotation(WeightedRandom.getRandomItem(random, rots).value);
+		if (rotations != null) {
+			settings.setRotation(WeightedRandom.getRandomItem(random, rotations).value);
 		}
 		if (mirrors != null) {
 			settings.setMirror(WeightedRandom.getRandomItem(random, mirrors).value);

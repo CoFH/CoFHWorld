@@ -13,7 +13,7 @@ public class WorldGenConsecutive extends WorldGen {
 
 	public WorldGenConsecutive(List<WorldGen> values) {
 
-		generators = values.toArray(new WorldGen[values.size()]);
+		generators = values.toArray(new WorldGen[0]);
 	}
 
 	@Override

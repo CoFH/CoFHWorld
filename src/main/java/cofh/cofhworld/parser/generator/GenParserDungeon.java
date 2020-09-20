@@ -58,7 +58,7 @@ public class GenParserDungeon implements IGeneratorParser {
 			if (genObject.hasPath("fill-block")) {
 				resList = new ArrayList<>();
 				if (BlockData.parseBlockList(genObject.getValue("fill-block"), resList, false)) {
-					r.fillBlock = resList;
+					r.filler = resList;
 				} else {
 					log.warn("Entry specifies invalid blocks for `fill-block` on line {}! Using default.", genObject.getValue("chest").origin().lineNumber());
 				}

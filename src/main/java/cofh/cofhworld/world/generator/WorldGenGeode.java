@@ -1,42 +1,41 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.condition.ConstantCondition;
+import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @deprecated TODO: replace all booleans with ICondition
- */
-@Deprecated
 public class WorldGenGeode extends WorldGen {
 
-	private final List<WeightedBlock> cluster;
+	private final List<WeightedBlock> resource;
 	private final List<WeightedBlock> outline;
-	private final WeightedBlock[] genBlock;
-	private List<WeightedBlock> fillBlock;
-	private boolean hollow;
+	private final WeightedBlock[] material;
+	private List<WeightedBlock> filler;
+	private ICondition hollow;
 	private INumberProvider width;
 	private INumberProvider height;
 
 	public WorldGenGeode(List<WeightedBlock> resource, List<WeightedBlock> material, List<WeightedBlock> cover) {
 
-		cluster = resource;
-		genBlock = material.toArray(new WeightedBlock[material.size()]);
+		this.resource = resource;
+		this.material = material.toArray(new WeightedBlock[0]);
 		outline = cover;
-		fillBlock = null;
-		hollow = false;
+		filler = Collections.singletonList(WeightedBlock.AIR);
+		hollow = ConstantCondition.FALSE;
 		this.setWidth(16);
 		this.setHeight(8);
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, BlockPos pos) {
 
 		int xStart = pos.getX();
 		int yStart = pos.getY();
@@ -58,7 +57,8 @@ public class WorldGenGeode extends WorldGen {
 
 		yStart -= heightOff;
 		boolean[] spawnBlock = new boolean[width * width * height];
-		boolean[] hollowBlock = new boolean[width * width * height];
+		final boolean hollow = this.hollow.checkCondition(world, rand, data);
+		boolean[] hollowBlock = hollow ? spawnBlock : new boolean[width * width * height];
 
 		int W = width - 1, H = height - 1;
 
@@ -97,9 +97,9 @@ public class WorldGenGeode extends WorldGen {
 		for (x = 0; x < width; ++x) {
 			for (z = 0; z < width; ++z) {
 				for (y = 0; y < height; ++y) {
-					boolean flag = (fillBlock != null && hollowBlock[(x * width + z) * height + y]) || spawnBlock[(x * width + z) * height + y] || ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
+					boolean flag = (hollow && hollowBlock[(x * width + z) * height + y]) || spawnBlock[(x * width + z) * height + y] || ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
-					if (flag && !canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
+					if (flag && !canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, material)) {
 						return false;
 					}
 				}
@@ -111,7 +111,7 @@ public class WorldGenGeode extends WorldGen {
 			for (z = 0; z < width; ++z) {
 				for (y = 0; y < height; ++y) {
 					if (spawnBlock[(x * width + z) * height + y]) {
-						boolean t = generateBlock(world, rand, xStart + x, yStart + y, zStart + z, cluster);
+						boolean t = generateBlock(world, rand, xStart + x, yStart + y, zStart + z, resource);
 						r |= t;
 						if (!t) {
 							spawnBlock[(x * width + z) * height + y] = false;
@@ -124,8 +124,8 @@ public class WorldGenGeode extends WorldGen {
 		for (x = 0; x < width; ++x) {
 			for (z = 0; z < width; ++z) {
 				for (y = 0; y < height; ++y) {
-					if (fillBlock != null && hollowBlock[(x * width + z) * height + y]) {
-						r |= generateBlock(world, rand, xStart + x, yStart + y, zStart + z, fillBlock);
+					if (hollow && hollowBlock[(x * width + z) * height + y]) {
+						r |= generateBlock(world, rand, xStart + x, yStart + y, zStart + z, filler);
 					} else {
 						boolean flag = !spawnBlock[(x * width + z) * height + y] && ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
@@ -164,7 +164,7 @@ public class WorldGenGeode extends WorldGen {
 		return this;
 	}
 
-	public WorldGenGeode setHollow(boolean hollow) {
+	public WorldGenGeode setHollow(ICondition hollow) {
 
 		this.hollow = hollow;
 		return this;
@@ -172,7 +172,7 @@ public class WorldGenGeode extends WorldGen {
 
 	public WorldGenGeode setFillBlock(List<WeightedBlock> blocks) {
 
-		this.fillBlock = blocks;
+		this.filler = blocks;
 		return this;
 	}
 

@@ -15,9 +15,9 @@ import java.util.Random;
 
 public class WorldGenSparseMinableCluster extends WorldGen {
 
-	private final List<WeightedBlock> cluster;
-	private final INumberProvider genClusterSize;
+	private final List<WeightedBlock> resource;
 	private final WeightedBlock[] material;
+	private final INumberProvider clusterSize;
 
 	public WorldGenSparseMinableCluster(WeightedBlock resource, int clusterSize) {
 
@@ -46,8 +46,8 @@ public class WorldGenSparseMinableCluster extends WorldGen {
 
 	public WorldGenSparseMinableCluster(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block) {
 
-		cluster = resource;
-		genClusterSize = clusterSize;
+		this.resource = resource;
+		this.clusterSize = clusterSize;
 		material = block.toArray(new WeightedBlock[block.size()]);
 	}
 
@@ -58,7 +58,7 @@ public class WorldGenSparseMinableCluster extends WorldGen {
 		int y = pos.getY();
 		int z = pos.getZ();
 
-		int blocks = MathHelper.clamp(genClusterSize.intValue(world, rand, new DataHolder(pos)), 1, 42);
+		int blocks = MathHelper.clamp(clusterSize.intValue(world, rand, new DataHolder(pos)), 1, 42);
 		float f = rand.nextFloat() * (float) Math.PI;
 		// despite naming, these are not exactly min/max. more like direction
 		float yMin = (y + rand.nextInt(3)) - 2;
@@ -126,7 +126,7 @@ public class WorldGenSparseMinableCluster extends WorldGen {
 							continue;
 						}
 
-						r |= generateBlock(world, rand, blockX, blockY, blockZ, material, cluster);
+						r |= generateBlock(world, rand, blockX, blockY, blockZ, material, resource);
 					}
 				}
 			}
