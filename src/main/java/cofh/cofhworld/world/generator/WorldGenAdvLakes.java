@@ -11,7 +11,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -21,9 +21,9 @@ import java.util.Random;
 @Deprecated
 public class WorldGenAdvLakes extends WorldGen {
 
-	private static final List<WeightedBlock> GAP_BLOCK = Arrays.asList(new WeightedBlock(Blocks.AIR, 0));
+	private static final List<WeightedBlock> GAP_BLOCK = Collections.singletonList(WeightedBlock.AIR);
 	private final List<WeightedBlock> cluster;
-	private final WeightedBlock[] genBlock;
+	private final WeightedBlock[] material;
 	private List<WeightedBlock> outlineBlock = null;
 	private List<WeightedBlock> gapBlock = GAP_BLOCK;
 	private boolean solidOutline = false;
@@ -35,9 +35,9 @@ public class WorldGenAdvLakes extends WorldGen {
 
 		cluster = resource;
 		if (block == null) {
-			genBlock = null;
+			material = null;
 		} else {
-			genBlock = block.toArray(new WeightedBlock[block.size()]);
+			material = block.toArray(new WeightedBlock[0]);
 		}
 		this.setWidth(16);
 		this.setHeight(9);
@@ -114,7 +114,7 @@ public class WorldGenAdvLakes extends WorldGen {
 								return false;
 							}
 						} else {
-							if (!canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
+							if (!canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, material)) {
 								return false;
 							}
 						}
@@ -128,8 +128,8 @@ public class WorldGenAdvLakes extends WorldGen {
 				for (y = 0; y < height; ++y) {
 					if (spawnBlock[(x * width + z) * height + y]) {
 						if (y < heightOff) {
-							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
-						} else if (canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, genBlock)) {
+							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, material, cluster);
+						} else if (canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, material)) {
 							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, gapBlock);
 						}
 					}

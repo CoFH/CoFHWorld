@@ -23,7 +23,7 @@ public class WorldGenDecoration extends WorldGen {
 	private static final ICondition SEE_SKY = new WorldValueCondition("CAN_SEE_SKY"), CHECK_STAY = new WorldValueCondition("BLOCK_CAN_PLACE");
 
 	private final List<WeightedBlock> cluster;
-	private final WeightedBlock[] genBlock;
+	private final WeightedBlock[] material;
 	private final WeightedBlock[] onBlock;
 	private final INumberProvider clusterSize;
 	private ICondition seeSky, checkStay;
@@ -42,9 +42,9 @@ public class WorldGenDecoration extends WorldGen {
 
 		cluster = blocks;
 		clusterSize = count;
-		genBlock = material == null ? null : material.toArray(new WeightedBlock[0]);
+		this.material = material == null ? null : material.toArray(new WeightedBlock[0]);
 		onBlock = on == null ? null : on.toArray(new WeightedBlock[0]);
-		this.setStackHeight(1).setSeeSky(true).setCheckStay(true);
+		this.setStackHeight(1).setSeeSky(SEE_SKY).setCheckStay(CHECK_STAY);
 		this.setXVar(new SkellamRandomProvider(8));
 		this.setYVar(new SkellamRandomProvider(4));
 		this.setZVar(new SkellamRandomProvider(8));
@@ -78,7 +78,7 @@ public class WorldGenDecoration extends WorldGen {
 
 			WeightedBlock block = selectBlock(rand, cluster);
 			if (seeSky.checkCondition(world, rand, data.setPosition(pos).setBlock(block)) &&
-					canGenerateInBlock(world, x, y - 1, z, onBlock) && canGenerateInBlock(world, x, y, z, genBlock)) {
+					canGenerateInBlock(world, x, y - 1, z, onBlock) && canGenerateInBlock(world, x, y, z, material)) {
 
 				int stack = stackHeight.intValue(world, rand, data);
 				do {
@@ -89,7 +89,7 @@ public class WorldGenDecoration extends WorldGen {
 					}
 					++y;
 					pos = pos.add(0, 1, 0);
-					if (!canGenerateInBlock(world, x, y, z, genBlock)) {
+					if (!canGenerateInBlock(world, x, y, z, material)) {
 						break;
 					}
 				} while (--stack > 0);
@@ -98,11 +98,13 @@ public class WorldGenDecoration extends WorldGen {
 		return r;
 	}
 
+	@Deprecated
 	public WorldGenDecoration setSeeSky(boolean seeSky) {
 
 		return setSeeSky(seeSky ? SEE_SKY : ConstantCondition.TRUE);
 	}
 
+	@Deprecated
 	public WorldGenDecoration setCheckStay(boolean checkStay) {
 
 		return setCheckStay(checkStay ? CHECK_STAY : ConstantCondition.TRUE);
