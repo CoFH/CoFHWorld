@@ -14,6 +14,10 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @deprecated TODO: split position variance logic out into something more base so all generators have the logic
+ */
+@Deprecated
 public class WorldGenDecoration extends WorldGen {
 
 	private static final ICondition SEE_SKY = new WorldValueCondition("CAN_SEE_SKY"), CHECK_STAY = new WorldValueCondition("BLOCK_VALUE_CAN_PLACE");
@@ -24,6 +28,7 @@ public class WorldGenDecoration extends WorldGen {
 	private final INumberProvider clusterSize;
 	private ICondition seeSky, checkStay;
 	private INumberProvider stackHeight;
+
 	private INumberProvider xVar;
 	private INumberProvider yVar;
 	private INumberProvider zVar;
