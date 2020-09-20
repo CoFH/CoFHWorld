@@ -5,7 +5,9 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class ConstantCondition implements ICondition{
+public class ConstantCondition implements ICondition {
+
+	final public static ICondition TRUE = new ConstantCondition(true), FALSE = new ConstantCondition(false);
 
 	private boolean value;
 

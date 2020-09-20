@@ -2,6 +2,7 @@ package cofh.cofhworld.util.random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.WeightedRandom;
@@ -17,6 +18,8 @@ import java.util.Random;
  * @author King Lemming
  */
 public final class WeightedBlock extends WeightedRandom.Item {
+
+	public static final WeightedBlock AIR = new WeightedBlock(Blocks.AIR);
 
 	public final Block block;
 	public final int metadata;

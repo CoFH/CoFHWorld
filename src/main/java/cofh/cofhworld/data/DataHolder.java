@@ -1,8 +1,11 @@
 package cofh.cofhworld.data;
 
+import cofh.cofhworld.util.random.WeightedBlock;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+
+import javax.annotation.Nullable;
 
 public class DataHolder {
 
@@ -24,6 +27,37 @@ public class DataHolder {
 		}
 	}
 
+	public double getDouble(String key) {
+
+		Object r = data.get(key);
+		if (r instanceof Number) {
+			return ((Number) r).doubleValue();
+		} else {
+			return 0;
+		}
+	}
+
+	public WeightedBlock getBlock(String key) {
+
+		Object r = data.get(key);
+		if (r instanceof WeightedBlock) {
+			return ((WeightedBlock) r);
+		} else {
+			return WeightedBlock.AIR;
+		}
+	}
+
+	public WeightedBlock getBlock() {
+
+		return getBlock("block");
+	}
+
+	public DataHolder setBlock(WeightedBlock block) {
+
+		setValue("block", block);
+		return this;
+	}
+
 	public Vec3i getPos(String key) {
 
 		Object r = data.get(key);
@@ -39,15 +73,31 @@ public class DataHolder {
 		return getPos("position");
 	}
 
+	public DataHolder setPosition(Vec3i pos) {
+
+		setValue("position", pos);
+		return this;
+	}
+
 	public DataHolder setValue(String key, Object value) {
 
 		data.put(key, value);
 		return this;
 	}
 
-	public DataHolder setPosition(Vec3i pos) {
+	public DataHolder removeValue(String key) {
 
-		setValue("position", pos);
+		data.remove(key);
 		return this;
+	}
+
+	public boolean hasValue(String key) {
+
+		return hasValue(key, null);
+	}
+
+	public boolean hasValue(String key, @Nullable Class<?> type) {
+
+		return data.containsKey(key) && (type == null || type.isInstance(data.get(key)));
 	}
 }

@@ -21,4 +21,10 @@ public class DataProvider implements INumberProvider {
 
 		return data.getLong(key);
 	}
+
+	@Override
+	public double doubleValue(World world, Random rand, DataHolder data) {
+
+		return data.getDouble(key);
+	}
 }
