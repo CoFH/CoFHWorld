@@ -1,6 +1,7 @@
 package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.data.biome.BiomeInfo;
+import cofh.cofhworld.data.biome.BiomeInfo.Type;
 import cofh.cofhworld.data.biome.BiomeInfoRarity;
 import cofh.cofhworld.data.biome.BiomeInfoSet;
 import com.typesafe.config.*;
@@ -8,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -39,6 +41,7 @@ public class BiomeData {
 		return set;
 	}
 
+	@Nullable
 	public static BiomeInfo parseBiomeEntry(ConfigValue biomeEntry) {
 
 		BiomeInfo info = null;
@@ -56,13 +59,17 @@ public class BiomeData {
 				int rarity = obj.hasPath("rarity") ? obj.getInt("rarity") : -1;
 
 				l:
-				if (type.equalsIgnoreCase("name")) {
+				if ("name".equalsIgnoreCase(type)) {
+					if (true) {
+						log.error("Biome display names not supported for biome type at line {}.", biomeEntry.origin().lineNumber());
+						return null;
+					}
 					if (array != null) {
 						List<String> names = array;
 						if (rarity > 0) {
-							info = new BiomeInfoRarity(names, 4, true, rarity);
+							info = new BiomeInfoRarity(names, Type.BiomeNameList, true, rarity);
 						} else {
-							info = new BiomeInfo(names, 4, true);
+							info = new BiomeInfo(names, Type.BiomeNameList, true);
 						}
 					} else {
 						if (rarity > 0) {
@@ -73,42 +80,42 @@ public class BiomeData {
 					}
 				} else {
 					Object data;
-					int t;
-					if (type.equalsIgnoreCase("dictionary")) {
+					Type t;
+					if ("dictionary".equalsIgnoreCase(type)) {
 						if (array != null) {
 							ArrayList<BiomeDictionary.Type> tags = new ArrayList<>(array.size());
 							for (int k = 0, j = array.size(); k < j; k++) {
 								tags.add(BiomeDictionary.Type.getType(array.get(k)));
 							}
 							data = tags.toArray(new BiomeDictionary.Type[tags.size()]);
-							t = 6;
+							t = Type.DictionaryTypeList;
 						} else {
 							data = BiomeDictionary.Type.getType(entry);
-							t = 2;
+							t = Type.DictionaryType;
 						}
-					} else if (type.equalsIgnoreCase("id")) {
+					} else if ("id".equalsIgnoreCase(type)) {
 						if (array != null) {
 							ArrayList<ResourceLocation> ids = new ArrayList<>(array.size());
 							for (int k = 0, j = array.size(); k < j; ++k) {
 								ids.add(new ResourceLocation(array.get(k)));
 							}
 							data = ids;
-							t = 8;
+							t = Type.RegistryNameList;
 						} else {
 							data = new ResourceLocation(entry);
-							t = 7;
+							t = Type.RegistryName;
 						}
-					} else if (type.equalsIgnoreCase("temperature")) {
+					} else if ("temperature".equalsIgnoreCase(type)) {
 						if (array != null) {
 							ArrayList<Biome.TempCategory> temps = new ArrayList<>(array.size());
 							for (int k = 0, j = array.size(); k < j; k++) {
 								temps.add(Biome.TempCategory.valueOf(array.get(k)));
 							}
 							data = EnumSet.copyOf(temps);
-							t = 5;
+							t = Type.TemperatureCategoryList;
 						} else {
 							data = Biome.TempCategory.valueOf(entry);
-							t = 1;
+							t = Type.TemperatureCategory;
 						}
 					} else {
 						log.warn("Biome entry of unknown type");

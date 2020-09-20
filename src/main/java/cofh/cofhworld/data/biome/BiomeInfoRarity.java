@@ -14,7 +14,7 @@ public class BiomeInfoRarity extends BiomeInfo {
 		rarity = r;
 	}
 
-	public BiomeInfoRarity(Object d, int t, boolean wl, int r) {
+	public BiomeInfoRarity(Object d, Type t, boolean wl, int r) {
 
 		super(d, t, wl);
 		rarity = r;

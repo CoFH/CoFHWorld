@@ -2,10 +2,14 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.data.PlaneShape;
 import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.variables.EnumData;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.util.random.WeightedEnum;
 import cofh.cofhworld.world.generator.WorldGenMinablePlate;
 import com.typesafe.config.Config;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
@@ -41,8 +45,30 @@ public class GenParserPlate implements IGeneratorParser {
 			if (genObject.hasPath("slim")) {
 				r.setSlim(genObject.getBoolean("slim"));
 			}
-			if (genObject.hasPath("shape")) {
-				r.setShape(PlaneShape.valueOf(genObject.getString("shape")));
+			{
+				// TODO: abstract into IShapedGenerator
+				PlaneShape shape = null;
+				Rotation rot = null;
+				Mirror mirror = null;
+				if (genObject.hasPath("shape")) {
+					WeightedEnum<PlaneShape> val = EnumData.parseEnumEntry(genObject.getValue("shape"), PlaneShape.class);
+					if (val != null) {
+						shape = val.value;
+					}
+				}
+				if (genObject.hasPath("shape-rotation")) {
+					WeightedEnum<Rotation> val = EnumData.parseEnumEntry(genObject.getValue("shape-rotation"), Rotation.class);
+					if (val != null) {
+						rot = val.value;
+					}
+				}
+				if (genObject.hasPath("shape-mirror")) {
+					WeightedEnum<Mirror> val = EnumData.parseEnumEntry(genObject.getValue("shape-mirror"), Mirror.class);
+					if (val != null) {
+						mirror = val.value;
+					}
+				}
+				r.setShape(shape, rot, mirror);
 			}
 		}
 		return r;

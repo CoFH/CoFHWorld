@@ -2,6 +2,7 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.BlockData;
+import cofh.cofhworld.parser.variables.ConditionData;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGenDecoration;
@@ -26,12 +27,11 @@ public class GenParserDecoration implements IGeneratorParser {
 
 	@Override
 	@Nonnull
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
+	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
 
 		int clusterSize = genObject.getInt("cluster-size"); // TODO: another name?
 		if (clusterSize <= 0) {
-			log.warn("Invalid cluster size for generator '{}'", name);
-			return null;
+			throw new InvalidGeneratorException("Invalid cluster size for generator '" + name + "'", genObject.getValue("cluster-size").origin());
 		}
 
 		ArrayList<WeightedBlock> list = new ArrayList<>();
@@ -46,10 +46,14 @@ public class GenParserDecoration implements IGeneratorParser {
 			}
 		}
 		WorldGenDecoration r = new WorldGenDecoration(resList, clusterSize, matList, list);
-		if (genObject.hasPath("see-sky")) {
+		if (genObject.hasPath("see-sky-condition")) {
+			r.setSeeSky(ConditionData.parseConditionValue(genObject.getValue("see-sky-condition")));
+		} else if (genObject.hasPath("see-sky")) {
 			r.setSeeSky(genObject.getBoolean("see-sky"));
 		}
-		if (genObject.hasPath("check-stay")) {
+		if (genObject.hasPath("check-stay-condition")) {
+			r.setSeeSky(ConditionData.parseConditionValue(genObject.getValue("check-stay-condition")));
+		} else if (genObject.hasPath("check-stay")) {
 			r.setCheckStay(genObject.getBoolean("check-stay"));
 		}
 		if (genObject.hasPath("stack-height")) {

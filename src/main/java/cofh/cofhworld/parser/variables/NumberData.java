@@ -2,7 +2,10 @@ package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.data.DataProvider;
+import cofh.cofhworld.data.numbers.data.DefaultedDataProvider;
 import cofh.cofhworld.data.numbers.operation.BoundedProvider;
+import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
 import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
@@ -10,6 +13,8 @@ import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
+
+import static cofh.cofhworld.parser.variables.ConditionData.parseConditionValue;
 
 public class NumberData {
 
@@ -29,11 +34,15 @@ public class NumberData {
 							return new SkellamRandomProvider(parseNumberValue(numberObject.getValue("variance")));
 						} else if (numberProps.containsKey("world-data")) {
 							return new WorldValueProvider(numberObject.getString("world-data"));
+						} else if (numberProps.containsKey("generator-data")) {
+							return new DataProvider(numberObject.getString("generator-data"));
 						}
 						break;
 					case 2:
 						if (numberProps.containsKey("min") && numberProps.containsKey("max")) {
 							return new UniformRandomProvider(parseNumberValue(numberObject.getValue("min")), parseNumberValue(numberObject.getValue("max")));
+						} else if (numberProps.containsKey("generator-data") && numberProps.containsKey("default-value")) {
+							return new DefaultedDataProvider(numberObject.getString("generator-data"), parseNumberValue(numberObject.getValue("default-value")));
 						}
 						break;
 					case 3:
@@ -47,6 +56,10 @@ public class NumberData {
 							a = parseNumberValue(numberObject.getValue("min"));
 							b = parseNumberValue(numberObject.getValue("max"));
 							return new BoundedProvider(v, a, b);
+						} else if (numberProps.containsKey("condition") && numberProps.containsKey("if-true") && numberProps.containsKey("if-false")) {
+							a = parseNumberValue(numberObject.getValue("if-true"));
+							b = parseNumberValue(numberObject.getValue("if-false"));
+							return new ConditionalProvider(parseConditionValue(numberObject.getValue("condition")), a, b);
 						}
 						break;
 					default:

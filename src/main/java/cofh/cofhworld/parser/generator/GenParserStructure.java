@@ -58,7 +58,7 @@ public class GenParserStructure implements IGeneratorParser {
 			final String dir = FilenameUtils.getFullPath(genObject.origin().filename());
 			if (StringData.parseStringList(genObject.getValue("structure"), files)) {
 				if (files.size() == 0) {
-					log.error("No structures provided for `structure` geenrator!");
+					log.error("No structures provided for `structure` generator!");
 					throw new InvalidGeneratorException("Empty `structure` array", genObject.getValue("structure").origin());
 				}
 				tags.ensureCapacity(files.size());
@@ -111,6 +111,7 @@ public class GenParserStructure implements IGeneratorParser {
 		if (genObject.hasPath("rotation")) {
 			rots = new ArrayList<>(4);
 			if (!EnumData.parseEnumList(genObject.getValue("rotation"), rots, Rotation.class)) {
+				log.warn("Invalid `rotation` list, structure will not be rotated.");
 				rots.clear();
 			}
 		}
@@ -119,6 +120,7 @@ public class GenParserStructure implements IGeneratorParser {
 		if (genObject.hasPath("mirror")) {
 			mirror = new ArrayList<>(3);
 			if (!EnumData.parseEnumList(genObject.getValue("mirror"), mirror, Mirror.class)) {
+				log.warn("Invalid `mirror` list, structure will not be mirrored.");
 				mirror.clear();
 			}
 		}

@@ -3,6 +3,7 @@ package cofh.cofhworld.parser.variables;
 import cofh.cofhworld.util.random.WeightedEnum;
 import com.typesafe.config.*;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static cofh.cofhworld.CoFHWorld.log;
@@ -31,6 +32,7 @@ public class EnumData {
 		return true;
 	}
 
+	@Nullable
 	public static <T extends Enum<T>> WeightedEnum<T> parseEnumEntry(ConfigValue enumEntry, Class<T> values) {
 
 		int weight = 100;
@@ -48,6 +50,7 @@ public class EnumData {
 					type = enumObject.getString("name");
 				} else {
 					log.warn("Value missing 'name' field at line {}", enumEntry.origin().lineNumber());
+					return null;
 				}
 				if (enumObject.hasPath("weight")) {
 					weight = enumObject.getInt("weight");

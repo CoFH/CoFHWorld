@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -10,13 +11,16 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @deprecated TODO: replace vanilla Template logic with custom code for better control and features
+ */
+@Deprecated
 public class WorldGenStructure extends WorldGen {
 
 	private final PlacementSettings placementSettings = new PlacementSettings();
@@ -107,7 +111,7 @@ public class WorldGenStructure extends WorldGen {
 
 		BlockPos start = template.getZeroPositionWithTransform(pos, settings.getMirror(), settings.getRotation());
 
-		settings.setIntegrity(integrity.floatValue(world, random, new INumberProvider.DataHolder(pos)));
+		settings.setIntegrity(integrity.floatValue(world, random, new DataHolder(pos)));
 
 		template.addBlocksToWorld(world, start, settings, 20);
 

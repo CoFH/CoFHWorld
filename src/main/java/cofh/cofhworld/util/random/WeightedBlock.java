@@ -2,11 +2,15 @@ package cofh.cofhworld.util.random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.WeightedRandom;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 
 /**
  * This class essentially allows for ores to be generated in clusters, with Features randomly choosing one or more blocks from a weighted list.
@@ -15,10 +19,12 @@ import java.util.Collection;
  */
 public final class WeightedBlock extends WeightedRandom.Item {
 
+	public static final WeightedBlock AIR = new WeightedBlock(Blocks.AIR);
+
 	public final Block block;
 	public final int metadata;
 	public final IBlockState state;
-	public final NBTTagCompound data;
+	private final List<WeightedNBTTag> data;
 
 	public WeightedBlock(ItemStack ore) {
 
@@ -40,7 +46,7 @@ public final class WeightedBlock extends WeightedRandom.Item {
 		this(ore, metadata, null, 100);
 	}
 
-	public WeightedBlock(Block ore, int metadata, NBTTagCompound data, int weight) {
+	public WeightedBlock(Block ore, int metadata, List<WeightedNBTTag> data, int weight) {
 
 		super(weight);
 		this.block = ore;
@@ -49,7 +55,7 @@ public final class WeightedBlock extends WeightedRandom.Item {
 		this.data = data;
 	}
 
-	public WeightedBlock(IBlockState ore, NBTTagCompound data, int weight) {
+	public WeightedBlock(IBlockState ore, List<WeightedNBTTag> data, int weight) {
 
 		super(weight);
 		this.block = ore.getBlock();
@@ -83,8 +89,9 @@ public final class WeightedBlock extends WeightedRandom.Item {
 		return state == null ? block.getStateFromMeta(metadata) : state;
 	}
 
-	public NBTTagCompound getData(NBTTagCompound source) {
+	public NBTTagCompound getData(Random rand, NBTTagCompound source) {
 
+		NBTTagCompound data = getData(rand);
 		if (data != null) {
 			data.removeTag("x");
 			data.removeTag("y");
@@ -92,6 +99,22 @@ public final class WeightedBlock extends WeightedRandom.Item {
 			source.merge(data);
 		}
 		return source;
+	}
+
+	@Nullable
+	private NBTTagCompound getData(Random rand) {
+
+		if (data == null) {
+			return null;
+		}
+		int size = data.size();
+		if (size == 0) {
+			return null;
+		}
+		if (size > 1) {
+			return WeightedRandom.getRandomItem(rand, data).getCompoundTag();
+		}
+		return data.get(0).getCompoundTag();
 	}
 
 }

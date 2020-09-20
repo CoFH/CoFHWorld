@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.distribution;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import net.minecraft.block.state.IBlockState;
@@ -36,7 +37,7 @@ public class DistributionCave extends Distribution {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
-		INumberProvider.DataHolder data = new INumberProvider.DataHolder(pos);
+		DataHolder data = new DataHolder(pos);
 
 		final int count = this.count.intValue(world, random, data);
 

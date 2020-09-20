@@ -11,6 +11,10 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * @deprecated TODO: implement
+ */
+@Deprecated
 public class WorldGenTube extends WorldGen {
 
 	private final List<WeightedBlock> core, hull;

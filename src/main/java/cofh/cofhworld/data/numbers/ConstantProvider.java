@@ -1,5 +1,6 @@
 package cofh.cofhworld.data.numbers;
 
+import cofh.cofhworld.data.DataHolder;
 import net.minecraft.world.World;
 
 import java.util.Random;

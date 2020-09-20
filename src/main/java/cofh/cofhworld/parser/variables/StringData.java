@@ -3,6 +3,7 @@ package cofh.cofhworld.parser.variables;
 import cofh.cofhworld.util.random.WeightedString;
 import com.typesafe.config.*;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static cofh.cofhworld.CoFHWorld.log;
@@ -31,6 +32,7 @@ public class StringData {
 		return true;
 	}
 
+	@Nullable
 	public static WeightedString parseStringEntry(ConfigValue stringEntry) {
 
 		int weight = 100;
@@ -44,7 +46,7 @@ public class StringData {
 				return null;
 			case OBJECT:
 				Config stringObject = ((ConfigObject) stringEntry).toConfig();
-				if (stringObject.hasPath("name")) { // TODO: rename `name` to `value`
+				if (stringObject.hasPath("name")) {
 					value = stringObject.getString("name");
 				} else {
 					log.warn("Value missing 'name' field at line {}", stringEntry.origin().lineNumber());
