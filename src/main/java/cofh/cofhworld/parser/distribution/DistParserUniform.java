@@ -5,8 +5,8 @@ import cofh.cofhworld.parser.distribution.base.AbstractStoneDistParser;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.distribution.DistributionUniform;
+import cofh.cofhworld.world.generator.WorldGen;
 import com.typesafe.config.Config;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -23,7 +23,7 @@ public class DistParserUniform extends AbstractStoneDistParser {
 
 	@Override
 	@Nonnull
-	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
+	protected Distribution getFeature(String featureName, Config genObject, WorldGen gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		INumberProvider minHeight = NumberData.parseNumberValue(genObject.getValue("min-height"));
 		INumberProvider maxHeight = NumberData.parseNumberValue(genObject.getValue("max-height"));

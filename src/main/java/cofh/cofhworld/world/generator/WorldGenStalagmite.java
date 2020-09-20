@@ -3,7 +3,6 @@ package cofh.cofhworld.world.generator;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;
@@ -16,7 +15,7 @@ public class WorldGenStalagmite extends WorldGen {
 
 	protected final List<WeightedBlock> cluster;
 	protected final WeightedBlock[] baseBlock;
-	protected final WeightedBlock[] genBlock;
+	protected final WeightedBlock[] material;
 	public int minHeight = 7;
 	public int heightVariance = 4;
 	public int sizeVariance = 2;
@@ -29,8 +28,8 @@ public class WorldGenStalagmite extends WorldGen {
 	public WorldGenStalagmite(List<WeightedBlock> resource, List<WeightedBlock> block, List<WeightedBlock> gblock) {
 
 		cluster = resource;
-		baseBlock = block.toArray(new WeightedBlock[block.size()]);
-		genBlock = gblock.toArray(new WeightedBlock[gblock.size()]);
+		baseBlock = block.toArray(new WeightedBlock[0]);
+		material = gblock.toArray(new WeightedBlock[0]);
 	}
 
 	protected int getHeight(int x, int z, int size, Random rand, int height) {
@@ -94,7 +93,7 @@ public class WorldGenStalagmite extends WorldGen {
 				}
 				int height = getHeight(x, z, size, rand, maxHeight);
 				for (int y = 0; y < height; ++y) {
-					r |= generateBlock(world, rand, xStart + x, yStart + y, zStart + z, genBlock, cluster);
+					r |= generateBlock(world, rand, xStart + x, yStart + y, zStart + z, material, cluster);
 				}
 			}
 		}

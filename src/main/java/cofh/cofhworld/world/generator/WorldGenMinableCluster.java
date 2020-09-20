@@ -5,8 +5,7 @@ import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -20,11 +19,6 @@ public class WorldGenMinableCluster extends WorldGen {
 	private final INumberProvider genClusterSize;
 	private final WeightedBlock[] genBlock;
 
-	public WorldGenMinableCluster(ItemStack ore, int clusterSize) {
-
-		this(new WeightedBlock(ore), clusterSize);
-	}
-
 	public WorldGenMinableCluster(WeightedBlock resource, int clusterSize) {
 
 		this(fabricateList(resource), clusterSize);
@@ -33,11 +27,6 @@ public class WorldGenMinableCluster extends WorldGen {
 	public WorldGenMinableCluster(List<WeightedBlock> resource, int clusterSize) {
 
 		this(resource, clusterSize, Blocks.STONE);
-	}
-
-	public WorldGenMinableCluster(ItemStack ore, int clusterSize, Block block) {
-
-		this(new WeightedBlock(ore, 1), clusterSize, block);
 	}
 
 	public WorldGenMinableCluster(WeightedBlock resource, int clusterSize, Block block) {
@@ -59,7 +48,7 @@ public class WorldGenMinableCluster extends WorldGen {
 
 		cluster = resource;
 		genClusterSize = clusterSize;
-		genBlock = block.toArray(new WeightedBlock[block.size()]);
+		genBlock = block.toArray(new WeightedBlock[0]);
 	}
 
 	@Override

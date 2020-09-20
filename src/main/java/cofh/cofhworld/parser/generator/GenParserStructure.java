@@ -10,13 +10,13 @@ import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedEnum;
 import cofh.cofhworld.util.random.WeightedNBTTag;
 import cofh.cofhworld.util.random.WeightedString;
+import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenStructure;
 import com.google.common.collect.Lists;
 import com.typesafe.config.Config;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
@@ -50,7 +50,7 @@ public class GenParserStructure implements IGeneratorParser {
 
 	@Override
 	@Nonnull
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
 
 		ArrayList<WeightedNBTTag> tags = new ArrayList<>();
 		if (genObject.hasPath("structure")) {

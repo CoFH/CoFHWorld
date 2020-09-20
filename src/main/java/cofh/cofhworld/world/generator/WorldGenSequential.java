@@ -2,24 +2,23 @@ package cofh.cofhworld.world.generator;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenSequential extends WorldGenerator {
+public class WorldGenSequential extends WorldGen {
 
-	private final WorldGenerator[] generators;
+	private final WorldGen[] generators;
 
-	public WorldGenSequential(List<WorldGenerator> values) {
+	public WorldGenSequential(List<WorldGen> values) {
 
-		generators = values.toArray(new WorldGenerator[values.size()]);
+		generators = values.toArray(new WorldGen[values.size()]);
 	}
 
 	@Override
 	public void setDecorationDefaults() {
 
-		for (WorldGenerator gen : generators) {
+		for (WorldGen gen : generators) {
 			gen.setDecorationDefaults();
 		}
 	}
@@ -27,11 +26,11 @@ public class WorldGenSequential extends WorldGenerator {
 	@Override
 	public boolean generate(World world, Random random, BlockPos pos) {
 
-		WorldGenerator[] generators = this.generators;
+		WorldGen[] generators = this.generators;
 		boolean r = false;
 
 		for (int i = 0, e = generators.length; i < e; ++i) {
-			WorldGenerator gen = generators[i];
+			WorldGen gen = generators[i];
 			r |= gen.generate(world, random, pos);
 		}
 

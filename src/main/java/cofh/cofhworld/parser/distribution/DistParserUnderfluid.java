@@ -8,11 +8,9 @@ import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedString;
 import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.distribution.DistributionUnderfluid;
+import cofh.cofhworld.world.generator.WorldGen;
 import com.typesafe.config.Config;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraft.block.Blocks;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -30,12 +28,12 @@ public class DistParserUnderfluid extends AbstractDistParser {
 	@Override
 	protected List<WeightedBlock> generateDefaultMaterial() {
 
-		return Arrays.asList(new WeightedBlock(Blocks.DIRT, -1), new WeightedBlock(Blocks.GRASS, -1));
+		return Arrays.asList(new WeightedBlock(Blocks.DIRT), new WeightedBlock(Blocks.GRASS));
 	}
 
 	@Override
 	@Nonnull
-	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
+	protected Distribution getFeature(String featureName, Config genObject, WorldGen gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		boolean water = true;
 		Set<String> fluidList = new HashSet<>();
@@ -49,10 +47,7 @@ public class DistParserUnderfluid extends AbstractDistParser {
 			for (WeightedString str : list) {
 				// ints.add(FluidRegistry.getFluidID(str.type));
 				// NOPE. this NPEs.
-				Fluid fluid = FluidRegistry.getFluid(str.value);
-				if (fluid != null) {
-					fluidList.add(fluid.getName());
-				}
+				fluidList.add(str.value);
 			}
 		}
 

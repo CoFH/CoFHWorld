@@ -4,10 +4,10 @@ import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.random.WeightedBlock;
-import net.minecraft.block.state.IBlockState;
+import cofh.cofhworld.world.generator.WorldGen;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;
@@ -16,11 +16,11 @@ import static cofh.cofhworld.world.generator.WorldGenMinableCluster.canGenerateI
 
 public class DistributionSurface extends Distribution {
 
-	private final WorldGenerator worldGen;
+	private final WorldGen worldGen;
 	private final INumberProvider count;
 	private final WeightedBlock[] matList;
 
-	public DistributionSurface(String name, WorldGenerator worldGen, List<WeightedBlock> matList, INumberProvider count, boolean regen) {
+	public DistributionSurface(String name, WorldGen worldGen, List<WeightedBlock> matList, INumberProvider count, boolean regen) {
 
 		super(name, regen);
 		this.worldGen = worldGen;
@@ -48,7 +48,7 @@ public class DistributionSurface extends Distribution {
 			int y = Utils.getSurfaceBlockY(world, x, z);
 			l:
 			{
-				IBlockState state = world.getBlockState(new BlockPos(x, y, z));
+				BlockState state = world.getBlockState(new BlockPos(x, y, z));
 				if (!state.getBlock().isAir(state, world, new BlockPos(x, y, z)) && canGenerateInBlock(world, x, y, z, matList)) {
 					break l;
 				}

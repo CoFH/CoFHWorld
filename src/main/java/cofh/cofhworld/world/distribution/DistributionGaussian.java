@@ -2,21 +2,21 @@ package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.world.generator.WorldGen;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
 public class DistributionGaussian extends Distribution {
 
-	private final WorldGenerator worldGen;
+	private final WorldGen worldGen;
 	private final INumberProvider count;
 	private final INumberProvider rolls;
 	private final INumberProvider meanY;
 	private final INumberProvider maxVar;
 
-	public DistributionGaussian(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider smoothness, INumberProvider meanY, INumberProvider maxVar, boolean regen) {
+	public DistributionGaussian(String name, WorldGen worldGen, INumberProvider count, INumberProvider smoothness, INumberProvider meanY, INumberProvider maxVar, boolean regen) {
 
 		super(name, regen);
 		this.worldGen = worldGen;

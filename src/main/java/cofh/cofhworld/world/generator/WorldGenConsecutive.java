@@ -2,26 +2,25 @@ package cofh.cofhworld.world.generator;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenConsecutive extends WorldGenerator {
+public class WorldGenConsecutive extends WorldGen {
 
-	private final WorldGenerator[] generators;
+	private final WorldGen[] generators;
 	private int generatorIndex;
 
-	public WorldGenConsecutive(List<WorldGenerator> values) {
+	public WorldGenConsecutive(List<WorldGen> values) {
 
-		generators = values.toArray(new WorldGenerator[values.size()]);
+		generators = values.toArray(new WorldGen[values.size()]);
 	}
 
 	@Override
 	public void setDecorationDefaults() {
 
 		generatorIndex = 0;
-		for (WorldGenerator gen : generators) {
+		for (WorldGen gen : generators) {
 			gen.setDecorationDefaults();
 		}
 	}

@@ -11,10 +11,10 @@ import cofh.cofhworld.data.numbers.data.DataProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedNBTTag;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -53,9 +53,9 @@ public class WorldGenDungeon extends WorldGen {
 		floor = walls;
 		this.spawners = spawners;
 		try {
-			chests = Collections.singletonList(new WeightedBlock(Blocks.CHEST.getDefaultState(),
-					Collections.singletonList(new WeightedNBTTag(JsonToNBT.getTagFromJson("{LootTable:\"minecraft:chests/simple_dungeon\"}"))), 100));
-		} catch (NBTException e) {
+			chests = Collections.singletonList(new WeightedBlock(100, Blocks.CHEST.getDefaultState(),
+					Collections.singletonList(new WeightedNBTTag(JsonToNBT.getTagFromJson("{LootTable:\"minecraft:chests/simple_dungeon\"}")))));
+		} catch (CommandSyntaxException e) {
 			throw new AssertionError("Oops.", e);
 		}
 		fillBlock = Collections.singletonList(new WeightedBlock(Blocks.AIR));
@@ -181,7 +181,7 @@ public class WorldGenDungeon extends WorldGen {
 
 	private boolean isBlock(World world, int x, int y, int z, List<WeightedBlock> blocks) {
 
-		IBlockState state = world.getBlockState(new BlockPos(x, y, z));
+		BlockState state = world.getBlockState(new BlockPos(x, y, z));
 		for (int j = 0, e = blocks.size(); j < e; ++j) {
 			WeightedBlock genBlock = blocks.get(j);
 			if (state.equals(genBlock.getState()))

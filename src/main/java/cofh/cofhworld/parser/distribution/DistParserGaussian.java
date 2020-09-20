@@ -6,8 +6,8 @@ import cofh.cofhworld.parser.distribution.base.AbstractStoneDistParser;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.distribution.DistributionGaussian;
+import cofh.cofhworld.world.generator.WorldGen;
 import com.typesafe.config.Config;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -24,7 +24,7 @@ public class DistParserGaussian extends AbstractStoneDistParser {
 
 	@Override
 	@Nonnull
-	protected Distribution getFeature(String featureName, Config genData, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
+	protected Distribution getFeature(String featureName, Config genData, WorldGen gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		INumberProvider centerHeight = NumberData.parseNumberValue(genData.getValue("center-height"));
 		INumberProvider spread = NumberData.parseNumberValue(genData.getValue("spread"));

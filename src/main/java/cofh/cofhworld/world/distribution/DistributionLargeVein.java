@@ -2,22 +2,22 @@ package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.world.generator.WorldGen;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
 public class DistributionLargeVein extends Distribution {
 
-	private final WorldGenerator worldGen;
+	private final WorldGen worldGen;
 	private final INumberProvider count;
 	private final INumberProvider minY;
 	private INumberProvider veinHeight, veinDiameter;
 	private INumberProvider verticalDensity;
 	private INumberProvider horizontalDensity;
 
-	public DistributionLargeVein(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, boolean regen, INumberProvider height, INumberProvider diameter, INumberProvider vDensity, INumberProvider hDensity) {
+	public DistributionLargeVein(String name, WorldGen worldGen, INumberProvider count, INumberProvider minY, boolean regen, INumberProvider height, INumberProvider diameter, INumberProvider vDensity, INumberProvider hDensity) {
 
 		super(name, regen);
 		this.worldGen = worldGen;

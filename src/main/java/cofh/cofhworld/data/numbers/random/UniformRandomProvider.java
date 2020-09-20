@@ -3,7 +3,7 @@ package cofh.cofhworld.data.numbers.random;
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorldReader;
 
 import java.util.Random;
 
@@ -24,14 +24,14 @@ public class UniformRandomProvider extends SkellamRandomProvider {
 	}
 
 	@Override
-	public long longValue(World world, Random rand, DataHolder data) {
+	public long longValue(IWorldReader world, Random rand, DataHolder data) {
 
 		long min = this.min.longValue(world, rand, data);
 		return getRandomLong(max.longValue(world, rand, data) - min, rand) + min;
 	}
 
 	@Override
-	public double doubleValue(World world, Random rand, DataHolder data) {
+	public double doubleValue(IWorldReader world, Random rand, DataHolder data) {
 
 		double min = this.min.doubleValue(world, rand, data);
 		return getRandomDouble(max.doubleValue(world, rand, data) - min, rand) + min;

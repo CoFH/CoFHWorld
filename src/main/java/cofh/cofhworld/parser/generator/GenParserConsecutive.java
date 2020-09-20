@@ -3,11 +3,11 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.parser.GeneratorData;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenConsecutive;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -32,9 +32,9 @@ public class GenParserConsecutive implements IGeneratorParser {
 
 	@Override
 	@Nonnull
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
 
-		ArrayList<WorldGenerator> gens;
+		ArrayList<WorldGen> gens;
 
 		ConfigValue genData = genObject.getValue("generators");
 		if (genData.valueType() == ConfigValueType.LIST) {

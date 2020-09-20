@@ -2,21 +2,17 @@ package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedNBTTag;
-import com.google.common.base.Optional;
 import com.typesafe.config.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.state.IProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraft.util.registry.Registry;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static cofh.cofhworld.CoFHWorld.log;
 
@@ -80,8 +76,8 @@ public class BlockData {
 					}
 				}
 				if (blockObject.hasPath("properties")) {
-					BlockStateContainer blockstatecontainer = block.getBlockState();
-					IBlockState state = block.getDefaultState();
+					StateContainer<Block, BlockState> blockstatecontainer = block.getStateContainer();
+					BlockState state = block.getDefaultState();
 					for (Map.Entry<String, ConfigValue> propEntry : blockObject.getObject("properties").entrySet()) {
 
 						IProperty<?> prop = blockstatecontainer.getProperty(propEntry.getKey());
@@ -99,22 +95,9 @@ public class BlockData {
 								return null;
 						}
 					}
-					return new WeightedBlock(state, dataTag, weight);
+					return new WeightedBlock(weight, state, dataTag);
 				} else {
-					ConfigValue data = null;
-					if (blockObject.hasPath("data")) {
-						data = blockObject.getValue("data");
-					} else if (blockObject.hasPath("metadata")) {
-						data = blockObject.getValue("metadata");
-					}
-					if (data != null) {
-						log.warn("Using `metadata` (at line: {}) for blocks is deprecated, and will be removed in the future. Use `properties` instead.", data.origin().lineNumber());
-						if (data.valueType() != ConfigValueType.NUMBER) {
-							data = null; // silently consume the error. logic is deprecated anyway.
-						}
-					}
-					int metadata = data != null ? MathHelper.clamp(((Number) data.unwrapped()).intValue(), min, 15) : min;
-					return new WeightedBlock(block, metadata, dataTag, weight);
+					return new WeightedBlock(weight, block, dataTag);
 				}
 			case STRING:
 				block = parseBlock((String) blockEntry.unwrapped());
@@ -122,7 +105,7 @@ public class BlockData {
 					log.error("Invalid block name on line {}!", blockEntry.origin().lineNumber());
 					return null;
 				}
-				return new WeightedBlock(block, min);
+				return new WeightedBlock(block);
 			default:
 				log.error("Invalid type for block entry on line {}!", blockEntry.origin().lineNumber());
 				return null;
@@ -133,14 +116,14 @@ public class BlockData {
 	private static Block parseBlock(String blockName) {
 
 		ResourceLocation loc = new ResourceLocation(blockName);
-		if (ForgeRegistries.BLOCKS.containsKey(loc)) {
-			return ForgeRegistries.BLOCKS.getValue(loc);
+		if (Registry.BLOCK.containsKey(loc)) {
+			return Registry.BLOCK.getValue(loc).get();
 		}
 		return null;
 	}
 
 	@Nullable
-	private static <T extends Comparable<T>> IBlockState setValue(IBlockState state, final IProperty<T> prop, String val) {
+	private static <T extends Comparable<T>> BlockState setValue(BlockState state, final IProperty<T> prop, String val) {
 
 		Optional<T> value = prop.parseValue(val);
 		if (!value.isPresent()) {
@@ -149,7 +132,7 @@ public class BlockData {
 			log.error("Unknown value `{}` for property '{}'; allowed values are: \n{}", val, prop.getName(), Arrays.toString(valid));
 			return null;
 		} else {
-			return state.withProperty(prop, value.get());
+			return state.with(prop, value.get());
 		}
 	}
 

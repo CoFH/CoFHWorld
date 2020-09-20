@@ -5,13 +5,13 @@ import cofh.cofhworld.parser.distribution.base.AbstractStoneDistParser;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.distribution.DistributionLargeVein;
+import cofh.cofhworld.world.generator.WorldGen;
 import com.typesafe.config.Config;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
-public class DistParserFractal extends AbstractStoneDistParser {
+public class DistParserLargeVein extends AbstractStoneDistParser {
 
 	private final String[] FIELDS = new String[] { "generator", "cluster-count", "min-height", "vein-height", "vein-diameter", "vertical-density", "horizontal-density" };
 
@@ -23,7 +23,7 @@ public class DistParserFractal extends AbstractStoneDistParser {
 
 	@Override
 	@Nonnull
-	protected Distribution getFeature(String featureName, Config genData, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
+	protected Distribution getFeature(String featureName, Config genData, WorldGen gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		INumberProvider minY = NumberData.parseNumberValue(genData.getValue("min-height"));
 		INumberProvider h = NumberData.parseNumberValue(genData.getValue("vein-height"));

@@ -5,10 +5,10 @@ import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.ConditionData;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenDecoration;
 import com.typesafe.config.Config;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraft.block.Blocks;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -27,7 +27,7 @@ public class GenParserDecoration implements IGeneratorParser {
 
 	@Override
 	@Nonnull
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
 
 		int clusterSize = genObject.getInt("cluster-size"); // TODO: another name?
 		if (clusterSize <= 0) {

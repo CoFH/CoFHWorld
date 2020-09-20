@@ -4,11 +4,11 @@ import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedWorldGenerator;
+import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenMulti;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class GeneratorData {
 
-	public static WorldGenerator parseGenerator(String def, Config genObject, List<WeightedBlock> defaultMaterial) throws IGeneratorParser.InvalidGeneratorException {
+	public static WorldGen parseGenerator(String def, Config genObject, List<WeightedBlock> defaultMaterial) throws IGeneratorParser.InvalidGeneratorException {
 
 		if (!genObject.hasPath("generator")) {
 			throw new IGeneratorParser.InvalidGeneratorException("No `generator` entry present", genObject.origin());
@@ -27,7 +27,7 @@ public class GeneratorData {
 			List<? extends Config> list = genObject.getConfigList("generator");
 			ArrayList<WeightedWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
-				WorldGenerator gen = parseGeneratorData(def, genElement, defaultMaterial);
+				WorldGen gen = parseGeneratorData(def, genElement, defaultMaterial);
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedWorldGenerator(gen, weight));
 			}
@@ -40,7 +40,7 @@ public class GeneratorData {
 		}
 	}
 
-	public static WorldGenerator parseGeneratorData(String def, Config genObject, List<WeightedBlock> defaultMaterial) throws IGeneratorParser.InvalidGeneratorException {
+	public static WorldGen parseGeneratorData(String def, Config genObject, List<WeightedBlock> defaultMaterial) throws IGeneratorParser.InvalidGeneratorException {
 
 		String name = def;
 		if (genObject.hasPath("type")) {

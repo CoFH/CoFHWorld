@@ -2,20 +2,20 @@ package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.world.generator.WorldGen;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
 public class DistributionUniform extends Distribution {
 
-	private final WorldGenerator worldGen;
+	private final WorldGen worldGen;
 	private final INumberProvider count;
 	private final INumberProvider minY;
 	private final INumberProvider maxY;
 
-	public DistributionUniform(String name, WorldGenerator worldGen, INumberProvider count, INumberProvider minY, INumberProvider maxY, boolean regen) {
+	public DistributionUniform(String name, WorldGen worldGen, INumberProvider count, INumberProvider minY, INumberProvider maxY, boolean regen) {
 
 		super(name, regen);
 		this.worldGen = worldGen;

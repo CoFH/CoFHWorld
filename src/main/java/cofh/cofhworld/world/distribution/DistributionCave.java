@@ -3,10 +3,10 @@ package cofh.cofhworld.world.distribution;
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
-import net.minecraft.block.state.IBlockState;
+import cofh.cofhworld.world.generator.WorldGen;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
@@ -14,12 +14,12 @@ public class DistributionCave extends Distribution {
 
 	private final static INumberProvider GROUND_LEVEL = new WorldValueProvider("GROUND_LEVEL");
 
-	private final WorldGenerator worldGen;
+	private final WorldGen worldGen;
 	private final INumberProvider count;
 	private INumberProvider groundLevel = GROUND_LEVEL;
 	private final boolean ceiling;
 
-	public DistributionCave(String name, WorldGenerator worldGen, boolean ceiling, INumberProvider count, boolean regen) {
+	public DistributionCave(String name, WorldGen worldGen, boolean ceiling, INumberProvider count, boolean regen) {
 
 		super(name, regen);
 		this.worldGen = worldGen;
@@ -57,7 +57,7 @@ public class DistributionCave extends Distribution {
 
 			int stopY = random.nextInt(1 + seaLevel / 2);
 			int y = stopY;
-			IBlockState state;
+			BlockState state;
 			do {
 				state = world.getBlockState(new BlockPos(x, y, z));
 			} while (!state.getBlock().isAir(state, world, new BlockPos(x, y, z)) && ++y < seaLevel);

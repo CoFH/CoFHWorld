@@ -66,11 +66,11 @@ public class BiomeInfo {
 					r = c == e;
 					break;
 				case RegistryName:
-					ResourceLocation registry = Biome.REGISTRY.getNameForObject(biome);
+					ResourceLocation registry = biome.getRegistryName();
 					r = registry.hashCode() == hash && registry.equals(data);
 					break;
 				case RegistryNameList:
-					r = ((Collection<ResourceLocation>) data).contains(Biome.REGISTRY.getNameForObject(biome));
+					r = ((Collection<ResourceLocation>) data).contains(biome.getRegistryName());
 					break;
 			}
 		}

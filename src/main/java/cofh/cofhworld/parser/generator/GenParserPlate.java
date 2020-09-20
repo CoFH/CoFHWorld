@@ -6,12 +6,12 @@ import cofh.cofhworld.parser.variables.EnumData;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedEnum;
+import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenMinablePlate;
 import com.typesafe.config.Config;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -29,7 +29,7 @@ public class GenParserPlate implements IGeneratorParser {
 
 	@Override
 	@Nonnull
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
 
 		int clusterSize = genObject.getInt("radius");
 		if (clusterSize <= 0) {

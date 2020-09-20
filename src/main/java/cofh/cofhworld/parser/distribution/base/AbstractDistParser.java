@@ -7,8 +7,8 @@ import cofh.cofhworld.parser.IGeneratorParser.InvalidGeneratorException;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.distribution.Distribution;
+import cofh.cofhworld.world.generator.WorldGen;
 import com.typesafe.config.Config;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -39,7 +39,7 @@ public abstract class AbstractDistParser implements IDistributionParser {
 
 		INumberProvider numClusters = NumberData.parseNumberValue(genObject.getValue("cluster-count"), 0, Long.MAX_VALUE);
 
-		WorldGenerator generator;
+		WorldGen generator;
 		try {
 			generator = GeneratorData.parseGenerator(getDefaultGenerator(), genObject, defaultMaterial);
 		} catch (InvalidGeneratorException e) {
@@ -51,7 +51,7 @@ public abstract class AbstractDistParser implements IDistributionParser {
 	}
 
 	@Nonnull
-	protected abstract Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log);
+	protected abstract Distribution getFeature(String featureName, Config genObject, WorldGen gen, INumberProvider numClusters, boolean retrogen, Logger log);
 
 	protected String getDefaultGenerator() {
 

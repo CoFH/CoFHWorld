@@ -1,14 +1,12 @@
 package cofh.cofhworld.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
+import net.minecraft.block.BlockState;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.core.util.Loader;
 
 import java.io.*;
@@ -21,15 +19,15 @@ public class Utils {
 
 	public static int getHighestY(World world, int x, int z) {
 
-		return world.getChunkFromBlockCoords(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
+		return world.getChunkAt(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
 	}
 
 	public static int getSurfaceBlockY(World world, int x, int z) {
 
-		int y = world.getChunkFromBlockCoords(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
+		int y = world.getChunkAt(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
 
 		BlockPos pos;
-		IBlockState state;
+		BlockState state;
 		Block block;
 		do {
 			if (--y < 0) {
@@ -41,10 +39,10 @@ public class Utils {
 		}
 		// @formatter:off
 		while (block.isAir(state, world, pos) ||
-				block.isReplaceable(world, pos) ||
-				block.isWood(world, pos) ||
-				block.isFoliage(world, pos) ||
-				block.isLeaves(state, world, pos) ||
+				state.getMaterial().isReplaceable() ||
+				block.isIn(BlockTags.LOGS) ||
+				block.isFoliage(state, world, pos) ||
+				block.isIn(BlockTags.LEAVES)||
 				block.canBeReplacedByLeaves(state, world, pos));
 		// @formatter:on
 		return y;
@@ -52,10 +50,10 @@ public class Utils {
 
 	public static int getTopBlockY(World world, int x, int z) {
 
-		int y = world.getChunkFromBlockCoords(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
+		int y = world.getChunkAt(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
 
 		BlockPos pos;
-		IBlockState state;
+		BlockState state;
 		Block block;
 		do {
 			if (--y < 0) {
@@ -71,30 +69,7 @@ public class Utils {
 	/* FLUID UTILS */
 	public static Fluid lookupFluidForBlock(Block block) {
 
-		if (block == Blocks.FLOWING_WATER) {
-			return FluidRegistry.WATER;
-		}
-		if (block == Blocks.FLOWING_LAVA) {
-			return FluidRegistry.LAVA;
-		}
-		return FluidRegistry.lookupFluidForBlock(block);
-	}
-
-	/* ITEM UTILS */
-	public static ItemStack cloneStack(ItemStack stack, int stackSize) {
-
-		if (stack.isEmpty()) {
-			return ItemStack.EMPTY;
-		}
-		ItemStack retStack = stack.copy();
-		retStack.setCount(stackSize);
-
-		return retStack;
-	}
-
-	public static boolean oreNameExists(String oreName) {
-
-		return OreDictionary.doesOreNameExist(oreName);
+		return Fluids.WATER; // FluidRegistry.lookupFluidForBlock(block);
 	}
 
 	/* FILE UTILS */

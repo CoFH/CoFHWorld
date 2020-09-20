@@ -4,13 +4,14 @@ import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.world.generator.WorldGen;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.block.state.pattern.BlockMatcher;
+import net.minecraft.block.pattern.BlockMatcher;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraftforge.fluids.Fluid;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,12 +20,12 @@ import java.util.Random;
 public class DistributionUnderfluid extends Distribution {
 
 	private final boolean water;
-	private final WorldGenerator worldGen;
+	private final WorldGen worldGen;
 	private final INumberProvider count;
 	private final List<WeightedBlock> matList;
-	private final String[] fluidList;
+	private final ResourceLocation[] fluidList;
 
-	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedBlock> matList, INumberProvider count, boolean regen) {
+	public DistributionUnderfluid(String name, WorldGen worldGen, List<WeightedBlock> matList, INumberProvider count, boolean regen) {
 
 		super(name, regen);
 		this.worldGen = worldGen;
@@ -34,14 +35,14 @@ public class DistributionUnderfluid extends Distribution {
 		fluidList = null;
 	}
 
-	public DistributionUnderfluid(String name, WorldGenerator worldGen, List<WeightedBlock> matList, String[] fluidList, INumberProvider count, boolean regen) {
+	public DistributionUnderfluid(String name, WorldGen worldGen, List<WeightedBlock> matList, String[] fluidList, INumberProvider count, boolean regen) {
 
 		super(name, regen);
 		this.worldGen = worldGen;
 		this.count = count;
 		this.matList = matList;
 		water = false;
-		this.fluidList = fluidList;
+		this.fluidList = Arrays.stream(fluidList).distinct().map(ResourceLocation::new).sorted().toArray(ResourceLocation[]::new);
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class DistributionUnderfluid extends Distribution {
 			int y = Utils.getSurfaceBlockY(world, x, z);
 			l:
 			do {
-				IBlockState state = world.getBlockState(new BlockPos(x, y, z));
+				BlockState state = world.getBlockState(new BlockPos(x, y, z));
 				if (water) {
 					if (state.getMaterial() == Material.WATER) {
 						continue;
@@ -74,12 +75,12 @@ public class DistributionUnderfluid extends Distribution {
 					}
 				} else {
 					Fluid fluid = Utils.lookupFluidForBlock(state.getBlock());
-					if (fluid != null && Arrays.binarySearch(fluidList, fluid.getName()) >= 0) {
+					if (fluid != null && Arrays.binarySearch(fluidList, fluid.getRegistryName()) >= 0) {
 						continue;
 					}
 
 					fluid = Utils.lookupFluidForBlock(world.getBlockState(new BlockPos(x, y + 1, z)).getBlock());
-					if (fluid == null || Arrays.binarySearch(fluidList, fluid.getName()) < 0) {
+					if (fluid == null || Arrays.binarySearch(fluidList, fluid.getRegistryName()) < 0) {
 						continue;
 					}
 				}

@@ -5,10 +5,10 @@ import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.ConditionData;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenDungeon;
 import com.typesafe.config.Config;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraft.block.Blocks;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -27,14 +27,14 @@ public class GenParserDungeon implements IGeneratorParser {
 
 	@Override
 	@Nonnull
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
 
 		ArrayList<WeightedBlock> mobList = new ArrayList<>();
 		if (!BlockData.parseBlockList(genObject.getValue("spawner"), mobList, false)) {
 			log.warn("Entry specifies invalid spawner list for 'dungeon' generator on line {}! Using vanilla's without configuration!",
 					genObject.getValue("spawner").origin().lineNumber());
 			mobList.clear();
-			mobList.add(new WeightedBlock(Blocks.MOB_SPAWNER));
+			mobList.add(new WeightedBlock(Blocks.SPAWNER));
 		}
 
 		WorldGenDungeon r = new WorldGenDungeon(resList, matList, mobList);

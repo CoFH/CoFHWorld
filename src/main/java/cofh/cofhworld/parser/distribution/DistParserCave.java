@@ -5,8 +5,8 @@ import cofh.cofhworld.parser.distribution.base.AbstractStoneDistParser;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.distribution.DistributionCave;
+import cofh.cofhworld.world.generator.WorldGen;
 import com.typesafe.config.Config;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -15,7 +15,7 @@ public class DistParserCave extends AbstractStoneDistParser {
 
 	@Override
 	@Nonnull
-	protected Distribution getFeature(String featureName, Config genObject, WorldGenerator gen, INumberProvider numClusters, boolean retrogen, Logger log) {
+	protected Distribution getFeature(String featureName, Config genObject, WorldGen gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		boolean ceiling = genObject.hasPath("ceiling") && genObject.getBoolean("ceiling");
 		DistributionCave cave = new DistributionCave(featureName, gen, ceiling, numClusters, retrogen);

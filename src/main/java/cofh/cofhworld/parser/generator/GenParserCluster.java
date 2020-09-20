@@ -2,10 +2,10 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.generator.base.AbstractGenParserClusterCount;
 import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenMinableCluster;
 import cofh.cofhworld.world.generator.WorldGenSparseMinableCluster;
 import com.typesafe.config.Config;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -22,7 +22,7 @@ public class GenParserCluster extends AbstractGenParserClusterCount {
 
 	@Override
 	@Nonnull
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
 
 		int clusterSize = genObject.getInt("cluster-size");
 		if (clusterSize <= 0) {

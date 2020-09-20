@@ -1,13 +1,12 @@
 package cofh.cofhworld.world;
 
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
 /**
  * This interface should be implemented on classes which define a world feature to be generated. It is essentially
- * a more robust version of {@link WorldGenerator}, and may include one or more WorldGenerators should you wish.
+ * a more robust version of {@link net.minecraft.world.gen.feature.Feature}, and may include one or more WorldGenerators should you wish.
  *
  * @author King Lemming
  */

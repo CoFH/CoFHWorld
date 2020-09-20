@@ -2,26 +2,25 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.block.state.pattern.BlockMatcher;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.pattern.BlockMatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public abstract class WorldGen extends WorldGenerator {
+public abstract class WorldGen {
 
 	public abstract boolean generate(World worldIn, Random rand, BlockPos position);
 
-	//public abstract void setDecorationDefaults();
+	public void setDecorationDefaults() {
+
+	}
 
 	public static List<WeightedBlock> fabricateList(WeightedBlock resource) {
 
@@ -33,7 +32,7 @@ public abstract class WorldGen extends WorldGenerator {
 	public static List<WeightedBlock> fabricateList(Block resource) {
 
 		List<WeightedBlock> list = new ArrayList<>();
-		list.add(new WeightedBlock(new ItemStack(resource, 1, 0)));
+		list.add(new WeightedBlock(resource));
 		return list;
 	}
 
@@ -48,10 +47,14 @@ public abstract class WorldGen extends WorldGenerator {
 			return true;
 		}
 
-		IBlockState state = world.getBlockState(pos);
+		BlockState state = world.getBlockState(pos);
 		for (int j = 0, e = mat.length; j < e; ++j) {
 			WeightedBlock genBlock = mat[j];
-			if ((-1 == genBlock.metadata || genBlock.metadata == state.getBlock().getMetaFromState(state)) && (state.getBlock().isReplaceableOreGen(state, world, pos, BlockMatcher.forBlock(genBlock.block)) || state.getBlock().isAssociatedBlock(genBlock.block))) {
+			if (
+					genBlock.state == null ?
+					state.isReplaceableOreGen(world, pos, BlockMatcher.forBlock(genBlock.block)) :
+					state.isReplaceableOreGen(world, pos, (test) -> test != null && genBlock.state.getProperties().equals(test.getProperties()))
+			) {
 				return true;
 			}
 		}
@@ -81,7 +84,7 @@ public abstract class WorldGen extends WorldGenerator {
 			if (ore.block.hasTileEntity(ore.getState())) {
 				TileEntity tile = world.getTileEntity(pos);
 				if (tile != null) {
-					tile.readFromNBT(ore.getData(rand, tile.writeToNBT(new NBTTagCompound())));
+					tile.deserializeNBT(ore.getData(rand, tile.serializeNBT()));
 				}
 			}
 			return true;

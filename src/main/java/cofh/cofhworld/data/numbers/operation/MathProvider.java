@@ -2,7 +2,7 @@ package cofh.cofhworld.data.numbers.operation;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorldReader;
 
 import java.util.Locale;
 import java.util.Random;
@@ -20,12 +20,12 @@ public class MathProvider implements INumberProvider {
 		this.operation = Operation.valueOf(type.toUpperCase(Locale.US));
 	}
 
-	public long longValue(World world, Random rand, DataHolder data) {
+	public long longValue(IWorldReader world, Random rand, DataHolder data) {
 
 		return operation.perform(valueA.longValue(world, rand, data), valueB.longValue(world, rand, data));
 	}
 
-	public double doubleValue(World world, Random rand, DataHolder data) {
+	public double doubleValue(IWorldReader world, Random rand, DataHolder data) {
 
 		return operation.perform(valueA.doubleValue(world, rand, data), valueB.doubleValue(world, rand, data));
 	}

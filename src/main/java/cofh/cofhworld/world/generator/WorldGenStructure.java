@@ -10,25 +10,22 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
-import net.minecraft.world.gen.structure.template.Template;
+import net.minecraft.world.gen.feature.template.*;
+import net.minecraft.world.gen.feature.template.Template.BlockInfo;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @deprecated TODO: replace vanilla Template logic with custom code for better control and features
- */
-@Deprecated
 public class WorldGenStructure extends WorldGen {
 
 	private final PlacementSettings placementSettings = new PlacementSettings();
 	private final Template template;
 
 	private final List<WeightedNBTTag> templates;
-
-	private final List<WeightedBlock> ignoredBlocks;
 
 	private List<WeightedEnum<Rotation>> rots;
 	private List<WeightedEnum<Mirror>> mirrors;
@@ -46,12 +43,30 @@ public class WorldGenStructure extends WorldGen {
 			template.read(templates.get(0).getCompoundTag());
 		}
 		if (ignoredBlocks.size() > 1) {
-			this.ignoredBlocks = ignoredBlocks;
-		} else {
-			this.ignoredBlocks = null;
-			if (ignoredBlocks.size() > 0) {
-				placementSettings.setReplacedBlock(ignoredBlocks.get(0).block);
-			}
+			placementSettings.addProcessor(new BlockIgnoreStructureProcessor(Collections.EMPTY_LIST) {
+
+				@Nullable
+				@Override
+				public BlockInfo process(IWorldReader world, BlockPos offset, BlockInfo original, BlockInfo current, PlacementSettings settings) {
+
+					for (WeightedBlock ignoredBlock : ignoredBlocks) {
+						if (ignoredBlock.getState().equals(current.state))
+							return null;
+					}
+					return current;
+				}
+			});
+		} else if (ignoredBlocks.size() > 0) {
+			final WeightedBlock ignoredBlock = ignoredBlocks.get(0);
+			placementSettings.addProcessor(new BlockIgnoreStructureProcessor(Collections.EMPTY_LIST) {
+
+				@Nullable
+				@Override
+				public BlockInfo process(IWorldReader world, BlockPos offset, BlockInfo original, BlockInfo current, PlacementSettings settings) {
+
+					return ignoredBlock.getState().equals(current.state) ? null : current;
+				}
+			});
 		}
 		placementSettings.setIgnoreEntities(ignoreEntities);
 	}
@@ -59,6 +74,18 @@ public class WorldGenStructure extends WorldGen {
 	public WorldGenStructure setIntegrity(INumberProvider itg) {
 
 		integrity = itg;
+		l: {
+			for (StructureProcessor processor : placementSettings.getProcessors()) {
+				if (processor instanceof IntegrityProcessor)
+					break l;
+			}
+			placementSettings.addProcessor(new IntegrityProcessor(0) {
+				public BlockInfo process(IWorldReader world, BlockPos offset, BlockInfo original, BlockInfo current, PlacementSettings settings) {
+					Random rand = settings.getRandom(current.pos);
+					return WorldGenStructure.this.integrity.doubleValue(world, rand, new DataHolder(current.pos)) <= rand.nextFloat() ? null : current;
+				}
+			});
+		}
 		return this;
 	}
 
@@ -105,13 +132,7 @@ public class WorldGenStructure extends WorldGen {
 			settings.setMirror(WeightedRandom.getRandomItem(random, mirrors).value);
 		}
 
-		if (ignoredBlocks != null) {
-			settings.setReplacedBlock(WeightedRandom.getRandomItem(random, ignoredBlocks).block);
-		}
-
 		BlockPos start = template.getZeroPositionWithTransform(pos, settings.getMirror(), settings.getRotation());
-
-		settings.setIntegrity(integrity.floatValue(world, random, new DataHolder(pos)));
 
 		template.addBlocksToWorld(world, start, settings, 20);
 

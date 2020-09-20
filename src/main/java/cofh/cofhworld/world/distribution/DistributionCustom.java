@@ -2,21 +2,21 @@ package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.world.generator.WorldGen;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
 public class DistributionCustom extends Distribution {
 
-	private final WorldGenerator worldGen;
+	private final WorldGen worldGen;
 	private final INumberProvider count;
 	private INumberProvider xPos;
 	private INumberProvider zPos;
 	private INumberProvider yPos;
 
-	public DistributionCustom(String name, WorldGenerator worldGen, INumberProvider count, boolean regen, INumberProvider xPos, INumberProvider yPos, INumberProvider zPos) {
+	public DistributionCustom(String name, WorldGen worldGen, INumberProvider count, boolean regen, INumberProvider xPos, INumberProvider yPos, INumberProvider zPos) {
 
 		super(name, regen);
 		this.worldGen = worldGen;

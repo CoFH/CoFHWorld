@@ -1,7 +1,7 @@
 package cofh.cofhworld.data;
 
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction8;
 
 public abstract class CurveShape {
 
@@ -9,10 +9,10 @@ public abstract class CurveShape {
 
 	public static class DIRECTED extends CurveShape {
 
-		private final EnumFacing direction;
+		private final Direction8 direction;
 		private final INumberProvider rate;
 
-		public DIRECTED(EnumFacing direction, INumberProvider rate) {
+		public DIRECTED(Direction8 direction, INumberProvider rate) {
 
 			this.direction = direction;
 			this.rate = rate;

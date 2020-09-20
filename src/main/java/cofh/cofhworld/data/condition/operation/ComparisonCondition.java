@@ -4,7 +4,7 @@ import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorldReader;
 
 import java.util.Locale;
 import java.util.Random;
@@ -23,7 +23,7 @@ public class ComparisonCondition implements ICondition {
 	}
 
 	@Override
-	public boolean checkCondition(World world, Random rand, DataHolder data) {
+	public boolean checkCondition(IWorldReader world, Random rand, DataHolder data) {
 
 		return operation.perform(valueA.longValue(world, rand, data), valueB.longValue(world, rand, data));
 	}

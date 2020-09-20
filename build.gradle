@@ -1,27 +1,28 @@
-import java.util.regex.Pattern
-
 buildscript {
 	repositories {
+		maven { url 'https://files.minecraftforge.net/maven' }
+		maven { url 'https://plugins.gradle.org/m2/' }
 		jcenter()
-		maven {
-			name = "forge"
-			url = "https://files.minecraftforge.net/maven"
-		}
+		mavenCentral()
 	}
 	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
 	}
 }
+repositories {
+	maven { url 'https://files.minecraftforge.net/maven' }
+	maven { url 'https://plugins.gradle.org/m2/' }
+	jcenter()
+	mavenCentral()
+}
 
-apply plugin: 'java'
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven'
 
 group = "cofh"
 archivesBaseName = "CoFHWorld"
 
-targetCompatibility = "1.8"
-sourceCompatibility = "1.8"
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 // Define properties file
 ext.configFile = file "build.properties"
@@ -38,36 +39,65 @@ configurations {
 	compile.extendsFrom shade
 }
 
+//Pull the mod version from code.
+//project.config.mod_version = pullVersion()
+//version = "${config.mod_version}." + (System.getenv("BUILD_NUMBER") ?: "1")
+
+minecraft {
+	mappings channel: 'snapshot', version: "${config.mcp_mappings}"
+
+	runs {
+		client {
+			workingDirectory project.file('run')
+
+			// Recommended logging data for a userdev environment
+			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+			// Recommended logging level for the console
+			property 'forge.logging.console.level', 'debug'
+
+			mods {
+				cofhworld {
+					source sourceSets.main
+				}
+			}
+		}
+
+		server {
+			workingDirectory project.file('run')
+
+			// Recommended logging data for a userdev environment
+			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+			// Recommended logging level for the console
+			property 'forge.logging.console.level', 'debug'
+
+			mods {
+				cofhworld {
+					source sourceSets.main
+				}
+			}
+		}
+	}
+}
+
 dependencies {
+	minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
 	shade "com.typesafe:config:1.2.1"
 }
 
-//Pull the mod version from code.
-project.config.mod_version = pullVersion()
-version = "${project.config.mod_version}." + (System.getenv("BUILD_NUMBER") ?: "1")
-println "Starting build of ${archivesBaseName}. Version: ${version}"
-println "Using Forge ${config.forge_version}, for Minecraft ${config.mc_version}"
+//processResources {
+//	inputs.property "version", project.version
+//	inputs.property "mc_version", project.config.mc_version
+//
+//	from(sourceSets.main.resources.srcDirs) {
+//		include 'mcmod.info'
+//		expand 'version': project.version, 'mc_version': project.config.mc_version
+//	}
+//	rename '(.+_at.cfg)', 'META-INF/$1'
+//}
 
-minecraft {
-	version = config.mc_version + "-" + config.forge_version
-	mappings = config.mappings
-	runDir = "run"
-	replace '${mod_version}', project.config.mod_version
-	makeObfSourceJar = false
-}
-
-processResources {
-	inputs.property "version", project.version
-	inputs.property "mc_version", project.config.mc_version
-
-	from(sourceSets.main.resources.srcDirs) {
-		include 'mcmod.info'
-		expand 'version': project.version, 'mc_version': project.config.mc_version
-	}
-	rename '(.+_at.cfg)', 'META-INF/$1'
-}
-
-version = "${project.minecraft.version}-${project.version}"
+version = "${config.mc_version}-${config.mod_version}"
 
 jar {
 	classifier = 'universal'
@@ -79,9 +109,9 @@ jar {
 	}
 }
 
-reobfJar {
-	addExtraSrgLine "PK: com/typesafe/config cofh/shade/com/typesafe/config"
-}
+//reobfJar {
+//	addSrgLine "PK: com/typesafe/config cofh/shade/com/typesafe/config"
+//}
 
 task deobfJar(type: Jar) {
 	from sourceSets.main.output
@@ -93,96 +123,100 @@ task srcJar(type: Jar) {
 	classifier = 'sources'
 }
 
-task signJar(type: SignJar, dependsOn: reobfJar) {
-	onlyIf {
-		//Skip of keystore is missing.
-		project.hasProperty('cofh_keyStore')
-	}
-
-	if (project.hasProperty('cofh_keyStore')) {
-		keyStore = project.cofh_keyStore
-		alias = project.cofh_keyStoreAlias
-		storePass = project.cofh_keyStorePass
-		keyPass = project.cofh_keyStorePass
-		inputFile = jar.archivePath
-		outputFile = jar.archivePath
-	}
-}
-
-build.dependsOn signJar
+//task signJar(type: SignJar, dependsOn: reobfJar) {
+//	onlyIf {
+//		//Skip of keystore is missing.
+//		project.hasProperty('cofh_keyStore')
+//	}
+//
+//	if (project.hasProperty('cofh_keyStore')) {
+//		keyStore = project.cofh_keyStore
+//		alias = project.cofh_keyStoreAlias
+//		storePass = project.cofh_keyStorePass
+//		keyPass = project.cofh_keyStorePass
+//		inputFile = jar.archivePath
+//		outputFile = jar.archivePath
+//	}
+//}
+//
+//build.dependsOn signJar
 
 artifacts {
 	archives deobfJar
 	archives srcJar
 }
 
-def pullVersion() {
-	def file = file("src/main/java/cofh/cofhworld/CoFHWorld.java")
-	def version = ""
-	def pattern = Pattern.compile("^\tpublic static final String VERSION = \"([\\d\\.]*)\";\$")
-	file.eachLine { String s ->
-		def matcher = pattern.matcher(s)
-		if (matcher.matches()) {
-			version = matcher.group(1)
-			return
-		}
-	}
-	return version
-}
+//def pullVersion() {
+//	def file = file("src/main/java/cofh/cofhworld/CoFHWorld.java")
+//	def version = ""
+//	def pattern = Pattern.compile("^\tpublic static final String VERSION = \"([\\d\\.]*)\";\$")
+//	file.eachLine { String s ->
+//		def matcher = pattern.matcher(s)
+//		if (matcher.matches()) {
+//			version = matcher.group(1)
+//			return
+//		}
+//	}
+//	return version
+//}
 
 // Configure upload task.
-uploadArchives {
-	repositories {
-		mavenDeployer {
-			if (project.hasProperty("local_maven") || project.hasProperty("maven_pass")) {
-				if (project.hasProperty("maven_pass")) {
-					println "Uploading to remote maven."
-					repository(url: "https://maven_upload.covers1624.net/") {
-						authentication(userName: "cofh", password: project.getProperty("maven_pass"))
-					}
-				} else {
-					println "Uploading to local maven."
-					repository(url: "file://${local_maven}")
-				}
-				pom {
-					groupId = project.group
-					// Force Maven upload to use the <mcversion>-<version> syntax.
-					artifactId = project.archivesBaseName
-					project {
-						name project.archivesBaseName
-						packaging 'jar'
-						description 'CoFHWorld'
-						url 'https://github.com/CoFH/CoFHWorld'
+//uploadArchives {
+//	repositories {
+//		mavenDeployer {
+//			if (project.hasProperty("local_maven") || project.hasProperty("maven_pass")) {
+//				if (project.hasProperty("maven_pass")) {
+//					println "Uploading to remote maven."
+//					repository(url: "https://maven_upload.covers1624.net/") {
+//						authentication(userName: "cofh", password: project.getProperty("maven_pass"))
+//					}
+//				} else {
+//					println "Uploading to local maven."
+//					repository(url: "file://${local_maven}")
+//				}
+//				pom {
+//					groupId = project.group
+//					// Force Maven upload to use the <mcversion>-<version> syntax.
+//					artifactId = project.archivesBaseName
+//					project {
+//						name project.archivesBaseName
+//						packaging 'jar'
+//						description 'CoFHWorld'
+//						url 'https://github.com/CoFH/CoFHWorld'
+//
+//						scm {
+//							url 'https://github.com/CoFH/CoFHWorld'
+//							connection 'scm:git:git://github.com/CoFH/CoFHWorld.git'
+//							developerConnection 'scm:git:git@github.com:CoFH/CoFHWorld.git'
+//						}
+//
+//						issueManagement {
+//							system 'github'
+//							url 'https://github.com/CoFH/Feedback/issues'
+//						}
+//
+//						licenses {
+//							license {
+//								name "CoFH Don't Be a Jerk License"
+//								url 'https://github.com/CoFH/CoFHWorld/blob/master/README.md'
+//								distribution 'repo'
+//							}
+//						}
+//
+//						developers {
+//							developer {
+//								id 'TeamCoFH'
+//								name 'TeamCoFH'
+//								roles { role 'developer' }
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
+//}
 
-						scm {
-							url 'https://github.com/CoFH/CoFHWorld'
-							connection 'scm:git:git://github.com/CoFH/CoFHWorld.git'
-							developerConnection 'scm:git:git@github.com:CoFH/CoFHWorld.git'
-						}
-
-						issueManagement {
-							system 'github'
-							url 'https://github.com/CoFH/Feedback/issues'
-						}
-
-						licenses {
-							license {
-								name "CoFH Don't Be a Jerk License"
-								url 'https://github.com/CoFH/CoFHWorld/blob/master/README.md'
-								distribution 'repo'
-							}
-						}
-
-						developers {
-							developer {
-								id 'TeamCoFH'
-								name 'TeamCoFH'
-								roles { role 'developer' }
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+task setup() {
+	dependsOn 'extractMapped'
 }

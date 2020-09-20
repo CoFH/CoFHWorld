@@ -1,14 +1,12 @@
 package cofh.cofhworld.util.random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.WeightedRandom;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -21,88 +19,57 @@ public final class WeightedBlock extends WeightedRandom.Item {
 
 	public static final WeightedBlock AIR = new WeightedBlock(Blocks.AIR);
 
+	// TODO: wildcard?
 	public final Block block;
-	public final int metadata;
-	public final IBlockState state;
+	public final BlockState state;
 	private final List<WeightedNBTTag> data;
-
-	public WeightedBlock(ItemStack ore) {
-
-		this(ore, 100);
-	}
-
-	public WeightedBlock(ItemStack ore, int weight) {
-
-		this(Block.getBlockFromItem(ore.getItem()), ore.getItemDamage(), null, weight);
-	}
 
 	public WeightedBlock(Block ore) {
 
-		this(ore, 0, null, 100); // some blocks do not have associated items
+		this(100, ore, null);
 	}
 
-	public WeightedBlock(Block ore, int metadata) {
+	public WeightedBlock(BlockState ore) {
 
-		this(ore, metadata, null, 100);
+		this(100, ore, null);
 	}
 
-	public WeightedBlock(Block ore, int metadata, List<WeightedNBTTag> data, int weight) {
+
+	public WeightedBlock(int weight, Block ore, List<WeightedNBTTag> data) {
 
 		super(weight);
 		this.block = ore;
-		this.metadata = metadata;
 		this.state = null;
 		this.data = data;
 	}
 
-	public WeightedBlock(IBlockState ore, List<WeightedNBTTag> data, int weight) {
+	public WeightedBlock(int weight, BlockState ore, List<WeightedNBTTag> data) {
 
 		super(weight);
 		this.block = ore.getBlock();
-		this.metadata = block.getMetaFromState(ore);
 		this.state = ore;
 		this.data = data;
 	}
 
-	public static boolean isBlockContained(Block block, int metadata, Collection<WeightedBlock> list) {
+	public BlockState getState() {
 
-		for (WeightedBlock rb : list) {
-			if (block.equals(rb.block) && (metadata == -1 || rb.metadata == -1 || rb.metadata == metadata)) {
-				return true;
-			}
-		}
-		return false;
+		return state == null ? block.getDefaultState() : state;
 	}
 
-	public static boolean isBlockContained(Block block, int metadata, WeightedBlock[] list) {
+	public CompoundNBT getData(Random rand, CompoundNBT source) {
 
-		for (WeightedBlock rb : list) {
-			if (block.equals(rb.block) && (metadata == -1 || rb.metadata == -1 || rb.metadata == metadata)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public IBlockState getState() {
-
-		return state == null ? block.getStateFromMeta(metadata) : state;
-	}
-
-	public NBTTagCompound getData(Random rand, NBTTagCompound source) {
-
-		NBTTagCompound data = getData(rand);
+		CompoundNBT data = getData(rand);
 		if (data != null) {
-			data.removeTag("x");
-			data.removeTag("y");
-			data.removeTag("z");
+			data.remove("x");
+			data.remove("y");
+			data.remove("z");
 			source.merge(data);
 		}
 		return source;
 	}
 
 	@Nullable
-	private NBTTagCompound getData(Random rand) {
+	private CompoundNBT getData(Random rand) {
 
 		if (data == null) {
 			return null;

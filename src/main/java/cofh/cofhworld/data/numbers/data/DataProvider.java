@@ -2,7 +2,7 @@ package cofh.cofhworld.data.numbers.data;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorldReader;
 
 import java.util.Locale;
 import java.util.Random;
@@ -17,13 +17,13 @@ public class DataProvider implements INumberProvider {
 	}
 
 	@Override
-	public long longValue(World world, Random rand, DataHolder data) {
+	public long longValue(IWorldReader world, Random rand, DataHolder data) {
 
 		return data.getLong(key);
 	}
 
 	@Override
-	public double doubleValue(World world, Random rand, DataHolder data) {
+	public double doubleValue(IWorldReader world, Random rand, DataHolder data) {
 
 		return data.getDouble(key);
 	}

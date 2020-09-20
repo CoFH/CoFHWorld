@@ -1,7 +1,7 @@
 package cofh.cofhworld.data.numbers;
 
 import cofh.cofhworld.data.DataHolder;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorldReader;
 
 import java.util.Random;
 
@@ -17,12 +17,12 @@ public class ConstantProvider implements INumberProvider {
 		this.min = value;
 	}
 
-	public long longValue(World world, Random rand, DataHolder data) {
+	public long longValue(IWorldReader world, Random rand, DataHolder data) {
 
 		return min.longValue();
 	}
 
-	public double doubleValue(World world, Random rand, DataHolder data) {
+	public double doubleValue(IWorldReader world, Random rand, DataHolder data) {
 
 		return min.doubleValue();
 	}

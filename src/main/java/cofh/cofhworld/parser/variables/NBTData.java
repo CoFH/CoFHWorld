@@ -1,10 +1,10 @@
 package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.util.random.WeightedNBTTag;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.typesafe.config.*;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -74,10 +74,10 @@ public class NBTData {
 				log.warn("Invalid NBT entry type at line {}", nbtEntry.origin().lineNumber());
 				return null;
 		}
-		NBTTagCompound tag;
+		CompoundNBT tag;
 		try {
 			tag = JsonToNBT.getTagFromJson(json);
-		} catch (NBTException e) {
+		} catch (CommandSyntaxException e) {
 			log.error("Invalid NBT String at line {}!", jsonOrigin.lineNumber(), e);
 			return null;
 		}

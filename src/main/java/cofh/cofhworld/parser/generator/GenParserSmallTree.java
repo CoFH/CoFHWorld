@@ -3,10 +3,10 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.util.random.WeightedBlock;
+import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenSmallTree;
 import com.typesafe.config.Config;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraft.block.Blocks;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -17,7 +17,7 @@ public class GenParserSmallTree extends AbstractGenParserBlock {
 
 	@Override
 	@Nonnull
-	public WorldGenerator parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
 
 		ArrayList<WeightedBlock> list = new ArrayList<>();
 		ArrayList<WeightedBlock> blocks = new ArrayList<>();

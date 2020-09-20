@@ -1,10 +1,10 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.util.random.WeightedBlock;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.List;
 import java.util.Random;
@@ -60,7 +60,7 @@ public class WorldGenSmallTree extends WorldGen {
 
 		int treeHeight = (heightVariance <= 1 ? 0 : rand.nextInt(heightVariance)) + minHeight;
 		int worldHeight = world.getHeight();
-		IBlockState state;
+		BlockState state;
 		BlockPos offsetPos;
 
 		if (y + treeHeight + 1 <= worldHeight) {
@@ -82,7 +82,7 @@ public class WorldGenSmallTree extends WorldGen {
 							if (radius == 0) {
 								offsetPos = new BlockPos(x, yOffset, z);
 								state = world.getBlockState(offsetPos);
-								if (!(state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().isReplaceable(world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || canGenerateInBlock(world, offsetPos, genBlock))) {
+								if (!(state.getBlock().isIn(BlockTags.LEAVES) || state.getBlock().isAir(state, world, offsetPos) || state.getMaterial().isReplaceable() || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || canGenerateInBlock(world, offsetPos, genBlock))) {
 									return false;
 								}
 
@@ -105,7 +105,7 @@ public class WorldGenSmallTree extends WorldGen {
 										offsetPos = new BlockPos(xOffset, yOffset, zOffset);
 										state = world.getBlockState(offsetPos);
 
-										if (!(state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || canGenerateInBlock(world, offsetPos, genBlock))) {
+										if (!(state.getBlock().isIn(BlockTags.LEAVES) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || canGenerateInBlock(world, offsetPos, genBlock))) {
 											return false;
 										}
 									}
@@ -144,7 +144,7 @@ public class WorldGenSmallTree extends WorldGen {
 							offsetPos = new BlockPos(xOffset, yOffset, zOffset);
 							state = world.getBlockState(offsetPos);
 
-							if (((xPos != radius | zPos != radius) || (!leafVariance || (rand.nextInt(2) != 0 && var12 != 0))) && ((treeChecks && (state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos))) || canGenerateInBlock(world, offsetPos, genBlock))) {
+							if (((xPos != radius | zPos != radius) || (!leafVariance || (rand.nextInt(2) != 0 && var12 != 0))) && ((treeChecks && (state.getBlock().isIn(BlockTags.LEAVES) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos))) || canGenerateInBlock(world, offsetPos, genBlock))) {
 								r |= generateBlock(world, rand, xOffset, yOffset, zOffset, leaves);
 							}
 						}
@@ -155,7 +155,7 @@ public class WorldGenSmallTree extends WorldGen {
 					offsetPos = new BlockPos(x, y + yOffset, z);
 					state = world.getBlockState(offsetPos);
 
-					if ((treeChecks && (state.getBlock().isAir(state, world, offsetPos) || state.getBlock().isLeaves(state, world, offsetPos) || state.getBlock().isReplaceable(world, offsetPos))) || canGenerateInBlock(world, offsetPos, genBlock)) {
+					if ((treeChecks && (state.getBlock().isAir(state, world, offsetPos) || state.getBlock().isIn(BlockTags.LEAVES) || state.getMaterial().isReplaceable())) || canGenerateInBlock(world, offsetPos, genBlock)) {
 						r |= generateBlock(world, rand, x, yOffset + y, z, trunk);
 					}
 				}

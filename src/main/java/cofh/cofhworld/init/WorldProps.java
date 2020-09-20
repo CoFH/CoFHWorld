@@ -62,7 +62,7 @@ public class WorldProps {
 		FeatureParser.registerTemplate("gaussian", new DistParserGaussian());
 		FeatureParser.registerTemplate("uniform", new DistParserUniform());
 		FeatureParser.registerTemplate("surface", new DistParserSurface());
-		FeatureParser.registerTemplate("fractal", new DistParserFractal());
+		FeatureParser.registerTemplate("fractal", new DistParserLargeVein());
 		FeatureParser.registerTemplate("decoration", new DistParserDecoration());
 		FeatureParser.registerTemplate("underwater", new DistParserUnderfluid(true));
 		FeatureParser.registerTemplate("underfluid", new DistParserUnderfluid(false));

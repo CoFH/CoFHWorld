@@ -6,7 +6,7 @@ import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.world.IFeatureGenerator;
 import com.typesafe.config.*;
 import com.typesafe.config.impl.CoFHOrderedParsableFile;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ModContainer;
@@ -269,7 +269,7 @@ public class FeatureParser {
 		processedGenList.size();
 	}
 
-	public static void parseGenerationTag(ConfigContainer genList, String tag, BiFunction<String, Config, EnumActionResult> parseEntry) {
+	public static void parseGenerationTag(ConfigContainer genList, String tag, BiFunction<String, Config, ActionResultType> parseEntry) {
 
 		if (genList.config.hasPath(tag)) {
 			log.trace("Processing `{}` entries", tag);
@@ -310,12 +310,12 @@ public class FeatureParser {
 		}
 	}
 
-	public static EnumActionResult parsePopulateEntry(String featureName, Config genObject) {
+	public static ActionResultType parsePopulateEntry(String featureName, Config genObject) {
 
 		if (genObject.hasPath("enabled")) {
 			if (!genObject.getBoolean("enabled")) {
 				log.debug("\"{}\" is disabled.", featureName);
-				return EnumActionResult.SUCCESS;
+				return ActionResultType.SUCCESS;
 			}
 		}
 
@@ -323,7 +323,7 @@ public class FeatureParser {
 			IFeatureGenerator feature = DistributionData.parseFeature(featureName, genObject);
 			if (feature.getFeatureName() != null) {
 				parsedFeatures.add(feature);
-				return WorldHandler.registerFeature(feature) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
+				return WorldHandler.registerFeature(feature) ? ActionResultType.SUCCESS : ActionResultType.PASS;
 			} else {
 				throw new IDistributionParser.InvalidDistributionException("Distribution doesn't have a name", genObject.origin());
 			}
@@ -332,19 +332,19 @@ public class FeatureParser {
 			log.catching(Level.DEBUG, e);
 		}
 
-		return EnumActionResult.FAIL;
+		return ActionResultType.FAIL;
 	}
 
-	public static EnumActionResult parseStructureEntry(String featureName, Config genObject) {
+	public static ActionResultType parseStructureEntry(String featureName, Config genObject) {
 
 		if (genObject.hasPath("enabled")) {
 			if (!genObject.getBoolean("enabled")) {
 				log.debug("\"{}\" is disabled.", featureName);
-				return EnumActionResult.SUCCESS;
+				return ActionResultType.SUCCESS;
 			}
 		}
 
-		return EnumActionResult.FAIL;
+		return ActionResultType.FAIL;
 	}
 
 	private static class ConfigContainer {

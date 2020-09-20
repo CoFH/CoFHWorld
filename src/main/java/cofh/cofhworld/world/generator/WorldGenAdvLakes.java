@@ -4,10 +4,10 @@ import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
@@ -140,9 +140,11 @@ public class WorldGenAdvLakes extends WorldGen {
 		for (x = 0; x < width; ++x) {
 			for (z = 0; z < width; ++z) {
 				for (y = 0; y < height; ++y) {
-					if (spawnBlock[(x * width + z) * height + y] && world.getBlockState(new BlockPos(xStart + x, yStart + y - 1, zStart + z)).getBlock().equals(Blocks.DIRT) && world.getLightFor(EnumSkyBlock.SKY, new BlockPos(xStart + x, yStart + y, zStart + z)) > 0) {
+					if (spawnBlock[(x * width + z) * height + y] &&
+							world.getBlockState(new BlockPos(xStart + x, yStart + y - 1, zStart + z)).getBlock().equals(Blocks.DIRT) &&
+							world.getLightFor(LightType.SKY, new BlockPos(xStart + x, yStart + y, zStart + z)) > 0) {
 						Biome bgb = world.getBiome(new BlockPos(xStart + x, 0, zStart + z));
-						world.setBlockState(new BlockPos(xStart + x, yStart + y - 1, zStart + z), bgb.topBlock, 2);
+						world.setBlockState(new BlockPos(xStart + x, yStart + y - 1, zStart + z), bgb.getSurfaceBuilderConfig().getTop(), 2);
 					}
 				}
 			}
