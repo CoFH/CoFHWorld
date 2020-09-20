@@ -20,7 +20,7 @@ import java.util.Random;
 @Deprecated
 public class WorldGenDecoration extends WorldGen {
 
-	private static final ICondition SEE_SKY = new WorldValueCondition("CAN_SEE_SKY"), CHECK_STAY = new WorldValueCondition("BLOCK_VALUE_CAN_PLACE");
+	private static final ICondition SEE_SKY = new WorldValueCondition("CAN_SEE_SKY"), CHECK_STAY = new WorldValueCondition("BLOCK_CAN_PLACE");
 
 	private final List<WeightedBlock> cluster;
 	private final WeightedBlock[] genBlock;

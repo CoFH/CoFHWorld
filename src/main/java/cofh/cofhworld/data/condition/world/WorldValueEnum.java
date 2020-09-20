@@ -41,6 +41,22 @@ public enum WorldValueEnum {
 			return data.getBlock().block.canPlaceBlockAt(world, new BlockPos(data.getPosition()));
 		}
 	},
+	CAN_BLOCK_BE_REPLACED_BY_LEAVES {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			BlockPos pos = new BlockPos(data.getPosition());
+			return world.getBlockState(pos).getBlock().canBeReplacedByLeaves(world.getBlockState(pos), world, pos);
+		}
+	},
+	CAN_BLOCK_SUSTAIN_LEAVES {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			BlockPos pos = new BlockPos(data.getPosition());
+			return world.getBlockState(pos).getBlock().canSustainLeaves(world.getBlockState(pos), world, pos);
+		}
+	},
 	CAN_RESPAWN {
 		@Override
 		public boolean getValue(World world, Random rand, DataHolder data) {
@@ -81,6 +97,75 @@ public enum WorldValueEnum {
 		public boolean getValue(World world, Random rand, DataHolder data) {
 
 			return world.isAirBlock(new BlockPos(data.getPosition()));
+		}
+	},
+	IS_BLOCK_FERTILE {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			BlockPos pos = new BlockPos(data.getPosition());
+			return world.getBlockState(pos).getBlock().isFertile(world, pos);
+		}
+	},
+	IS_BLOCK_FOLIAGE {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			BlockPos pos = new BlockPos(data.getPosition());
+			return world.getBlockState(pos).getBlock().isFoliage(world, pos);
+		}
+	},
+	IS_BLOCK_LEAVES {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			BlockPos pos = new BlockPos(data.getPosition());
+			return world.getBlockState(pos).getBlock().isLeaves(world.getBlockState(pos), world, pos);
+		}
+	},
+	IS_BLOCK_LIQUID {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			return world.getBlockState(new BlockPos(data.getPosition())).getMaterial().isLiquid();
+		}
+	},
+	IS_BLOCK_OPAQUE {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			return world.getBlockState(new BlockPos(data.getPosition())).getMaterial().isOpaque();
+		}
+	},
+	IS_BLOCK_PASSABLE {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			BlockPos pos = new BlockPos(data.getPosition());
+			return world.getBlockState(pos).getBlock().isPassable(world, pos);
+		}
+	},
+	IS_BLOCK_REPLACEABLE {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			BlockPos pos = new BlockPos(data.getPosition());
+			return world.getBlockState(pos).getBlock().isReplaceable(world, pos);
+		}
+	},
+	IS_BLOCK_SOLID {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			return world.getBlockState(new BlockPos(data.getPosition())).getMaterial().isSolid();
+		}
+	},
+	IS_BLOCK_WOOD {
+		@Override
+		public boolean getValue(World world, Random rand, DataHolder data) {
+
+			BlockPos pos = new BlockPos(data.getPosition());
+			return world.getBlockState(pos).getBlock().isWood(world, pos);
 		}
 	},
 	IS_HIGH_HUMIDITY {
