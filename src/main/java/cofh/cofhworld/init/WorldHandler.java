@@ -17,6 +17,7 @@ import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.jline.utils.Log;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -194,6 +195,12 @@ public class WorldHandler //implements IWorldGenerator
 	@SubscribeEvent
 	public void handleChunkLoadEvent(ChunkDataEvent.Load event) {
 
+		if (event.getWorld() == null) {
+			// ???
+			Log.debug(() -> "Null World for chunk! It's somewhere, somewhen, somehow, but we can't retrogen in it. At: " +
+					(event.getChunk() == null ? "NULL" /* ??? ??? ??? */ : event.getChunk().getPos().toString()));
+			return;
+		}
 		Dimension dim = event.getWorld().getDimension();
 
 		boolean regen = false;
