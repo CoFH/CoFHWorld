@@ -98,20 +98,32 @@ public class ChunkGenerationHandler {
 					chunksToGen.remove(dim);
 			}
 		} else {
-//			ArrayDeque<ChunkCoord> chunks = chunksToPreGen.get(dim);
-//
-//			if (chunks != null && chunks.size() > 0) {
-//				ChunkCoord c = chunks.pollFirst();
-//				if (pregenC++ == 0 || chunks.size() < 5) {
-//					CoFHWorld.log.info("Pre-Generating " + c.toString() + ".");
-//				} else {
-//					CoFHWorld.log.debug("Pre-Generating " + c.toString() + ".");
-//				}
-//				pregenC &= 63;
-//				world.getChunkFromChunkCoords(c.chunkX, c.chunkZ);
-//			} else if (chunks != null) {
-//				chunksToPreGen.remove(dim);
-//			}
+			final HashSet<Dimension> toRemove = new HashSet<>();
+			synchronized (chunksToPreGen) {
+				chunksToPreGen.forEach((Dimension dim, ArrayDeque<ChunkCoord> chunks) -> {
+					World world = dim.getWorld();
+
+					if (chunks != null && chunks.size() > 0) {
+						ChunkCoord c = chunks.pollFirst();
+						if (pregenC++ == 0 || chunks.size() < 5) {
+							CoFHWorld.log.info("Pre-Generating " + c.toString() + ".");
+						} else {
+							CoFHWorld.log.debug("Pre-Generating " + c.toString() + ".");
+						}
+						pregenC &= 63;
+						long worldSeed = world.getSeed();
+						Random rand = new Random(worldSeed);
+						long xSeed = rand.nextLong() >> 2 + 1L;
+						long zSeed = rand.nextLong() >> 2 + 1L;
+						rand.setSeed(xSeed * c.chunkX + zSeed * c.chunkZ ^ worldSeed);
+						WorldHandler.INSTANCE.generateWorld(rand, c.chunkX, c.chunkZ, world, true);
+					} else {
+						toRemove.add(dim);
+					}
+				});
+				for (Dimension dim : toRemove)
+					chunksToPreGen.remove(dim);
+			}
 		}
 	}
 
