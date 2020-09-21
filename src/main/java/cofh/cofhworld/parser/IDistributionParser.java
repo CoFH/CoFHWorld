@@ -6,7 +6,9 @@ import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.world.IFeatureGenerator;
 import com.google.gson.JsonObject;
 import com.typesafe.config.*;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -62,10 +64,18 @@ public interface IDistributionParser {
 				if (restrictionList != null) {
 					for (int i = 0; i < restrictionList.size(); i++) {
 						ConfigValue val = restrictionList.get(i);
-						if (val.valueType() == ConfigValueType.NUMBER) {
+						if (val.valueType() == ConfigValueType.STRING) {
+							ResourceLocation dimName = new ResourceLocation(String.valueOf(val.unwrapped()));
+							if (Registry.DIMENSION_TYPE.containsKey(dimName)) {
+								feature.addDimension(Registry.DIMENSION_TYPE.getValue(dimName).get().getId());
+							} else {
+								log.error("Invalid dimension entry `{}` on line {}. No dimension with that identifier is registered.", dimName, val.origin().lineNumber());
+							}
+						} else if (val.valueType() == ConfigValueType.NUMBER) {
 							feature.addDimension(((Number) val.unwrapped()).intValue());
+							// don't bother validating registration; dimensions can be created while a world is running
 						} else if (val.valueType() != ConfigValueType.NULL) {
-							// skip over accidental (and inentional, i guess? we can't tell.) nulls from multiple sequential commas
+							// skip over accidental (and intentional, i guess? we can't tell.) nulls from multiple sequential commas
 							log.error("Invalid dimension entry type `{1}` on line {2}. Number required.", val.valueType().name(), data.origin().lineNumber());
 							throw new InvalidDistributionException("Invalid value for dimension id, expected number got " + val.valueType().name(), data.origin());
 						}
