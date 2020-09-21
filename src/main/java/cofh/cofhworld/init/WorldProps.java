@@ -234,7 +234,7 @@ public class WorldProps {
 	public static boolean forceFullRegeneration = true; // TODO: very false
 
 	public static IntValue chanceTreeGrowth;
-	public static int numBedrockLayers = 1;
+	public static int numBedrockLayers = 2;
 	public static int maxBedrockLayers = 8;
 
 }
