@@ -28,8 +28,8 @@ public class WorldProps {
 	public static void preInit() {
 
 		config();
-		ModLoadingContext.get().registerConfig(Type.COMMON, config);
 		FMLJavaModLoadingContext.get().getModEventBus().register(WorldProps.class);
+		ModLoadingContext.get().registerConfig(Type.SERVER, config); // TODO: change to `COMMON` or just ignore forge entirely, since common doesn't do anything
 
 		initFeatures();
 	}
