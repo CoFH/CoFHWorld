@@ -8,8 +8,10 @@ import cofh.cofhworld.world.IFeatureGenerator;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkStatus.Type;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -188,8 +190,6 @@ public class WorldHandler //implements IWorldGenerator
 			return;
 		}
 		Dimension dim = event.getWorld().getDimension();
-
-		boolean regen = false;
 		CompoundNBT tag = (CompoundNBT) event.getData().get(CoFHWorld.MOD_ID);
 
 		if (tag != null && tag.getBoolean("Populating")) {
@@ -201,6 +201,8 @@ public class WorldHandler //implements IWorldGenerator
 
 		ListNBT list = null;
 		ChunkCoord cCoord = new ChunkCoord(event.getChunk());
+
+		boolean regen = false;
 
 		if (tag != null) {
 			boolean genFeatures = false;
@@ -233,10 +235,8 @@ public class WorldHandler //implements IWorldGenerator
 
 		CompoundNBT genTag = event.getData().getCompound(CoFHWorld.MOD_ID);
 
-		ChunkReference chunk = populatingChunks.get(event.getChunk());
-		if (chunk != null) {
+		if (event.getChunk().getStatus().getType() == Type.PROTOCHUNK) {
 			genTag.putBoolean("Populating", true);
-			genTag.putBoolean("HasVillage", chunk.hasVillage);
 			return;
 		}
 		if (WorldProps.enableFlatBedrock) {
@@ -282,7 +282,7 @@ public class WorldHandler //implements IWorldGenerator
 //	}
 
 	/* HELPER FUNCTIONS */
-	public void generateWorld(Random random, int chunkX, int chunkZ, World world, boolean newGen) {
+	public void generateWorld(Random random, int chunkX, int chunkZ, IWorld world, boolean newGen) {
 
 		replaceBedrock(random, chunkX, chunkZ, world, newGen);
 
@@ -297,9 +297,6 @@ public class WorldHandler //implements IWorldGenerator
 			feature.generateFeature(random, chunkX, chunkZ, world, hasVillage, newGen);
 		}
 		//FallingBlock.fallInstantly = false;
-		if (!newGen) {
-			world.getChunk(chunkX, chunkZ).markDirty();
-		}
 	}
 
 	public void generateWorld(Random random, RetroChunkCoord chunk, World world, boolean newGen) {
@@ -332,7 +329,7 @@ public class WorldHandler //implements IWorldGenerator
 		}
 	}
 
-	public void replaceBedrock(Random random, int chunkX, int chunkZ, World world, boolean newGen) {
+	public void replaceBedrock(Random random, int chunkX, int chunkZ, IWorld world, boolean newGen) {
 
 		if (!WorldProps.enableFlatBedrock | !newGen & !WorldProps.enableRetroactiveFlatBedrock) {
 			return;
