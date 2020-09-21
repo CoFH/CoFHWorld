@@ -6,6 +6,11 @@ import cofh.cofhworld.util.Utils;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.config.ModConfig.Type;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,16 +28,27 @@ public class WorldProps {
 	public static void preInit() {
 
 		config();
+		ModLoadingContext.get().registerConfig(Type.COMMON, config);
+		FMLJavaModLoadingContext.get().getModEventBus().register(WorldProps.class);
+
 		initFeatures();
 	}
+
+	private static ForgeConfigSpec config;
+
+	private static BooleanValue replaceStandardGenerationValue;
+	private static BooleanValue enableRetroactiveGenerationValue;
+
+	private static BooleanValue enableFlatBedrockValue;
+	private static BooleanValue enableRetroactiveFlatBedrockValue;
+	private static BooleanValue forceFullRegenerationValue;
+
+	private static IntValue numBedrockLayersValue;
 
 	/* HELPERS */
 	private static void config() {
 
 		final ForgeConfigSpec.Builder config = new ForgeConfigSpec.Builder();
-
-		String category;
-		String comment;
 
 		{
 			config.push("World");
@@ -43,41 +59,73 @@ public class WorldProps {
 							" Flat Bedrock may still be used.")
 					.define("DisableAllGeneration", false);
 
-//			replaceStandardGeneration = config
-//					.comment("If TRUE, standard Minecraft ore generation will be REPLACED." +
-//							" Configure in the 00_minecraft.json file; standard Minecraft defaults have been provided." +
-//							" If you rename the 00_minecraft.json file, this option WILL NOT WORK.")
-//					.define("ReplaceStandardGeneration", replaceStandardGeneration);
+			replaceStandardGenerationValue = config
+					.comment("If TRUE, standard Minecraft ore generation will be REPLACED." +
+							" Configure in the '" + FILE_GEN_STANDARD_INTERNAL + "' file; standard Minecraft defaults have been provided." +
+							" If you rename the '" + FILE_GEN_STANDARD_INTERNAL + "' file, this option WILL NOT WORK.")
+					.define("ReplaceStandardGeneration", replaceStandardGeneration);
 
-//			enableRetroactiveGeneration = config
-//					.comment("If TRUE, world generation handled by CoFH World will be retroactively applied to existing chunks.");
-//					.define("RetroactiveGeneration", false);
+			enableRetroactiveGenerationValue = config
+					.comment("If TRUE, world generation handled by CoFH World will be retroactively applied to existing chunks.")
+					.define("RetroactiveGeneration", enableRetroactiveGeneration);
 
-			chanceTreeGrowth = config
-					.comment("This adjusts the % chance that a tree will grow as normal when it is meant to." +
-							" Reducing this value will mean that trees take longer to grow, on average.")
-					.defineInRange("TreeGrowthChance", 100, 1, 100);
+			{
+				config.push("Trees");
+
+				chanceTreeGrowth = config
+						.comment("This adjusts the % chance that a tree will grow as normal when it is meant to." +
+								" Reducing this value will mean that trees take longer to grow, on average.")
+						.defineInRange("SaplingGrowthChance", 100, 1, 100);
+
+				config.pop();
+			}
 
 			{
 				config.push("Bedrock");
 
-//				enableFlatBedrock = config
-//						.comment("If TRUE, the bedrock layer will be flattened.")
-//						.define("EnableFlatBedrock", enableFlatBedrock);
+				enableFlatBedrockValue = config
+						.comment("If TRUE, the bedrock layer will be flattened.")
+						.define("Flat", enableFlatBedrock);
 
-//				numBedrockLayers = config
-//						.comment("This adjusts the number of layers of Flat Bedrock, if enabled.")
-//						.defineInRange("NumBedrockLayers", 2, 1, maxBedrockLayers);
+				enableRetroactiveFlatBedrockValue = config
+						.comment("If TRUE, Flat Bedrock will retroactively be applied to existing chunks, if retroactive generation is enabled.")
+						.define("FlatRetroactive", enableRetroactiveFlatBedrock);
 
-//				enableRetroactiveFlatBedrock = config
-//						.comment("If TRUE, Flat Bedrock will retroactively be applied to existing chunks, if retroactive generation is enabled.")
-//						.define("EnableRetroactiveFlatBedrock", enableRetroactiveFlatBedrock);
+				numBedrockLayersValue = config
+						.comment("This adjusts the number of layers of Flat Bedrock, if enabled.")
+						.defineInRange("FlatBedrockLayers", numBedrockLayers, 1, maxBedrockLayers);
 
 				config.pop();
 			}
 
 			config.pop();
 		}
+
+		WorldProps.config = config.build();
+	}
+
+	@SubscribeEvent
+	public static void configLoading(final ModConfig.Loading event) {
+
+		refreshConfig();
+	}
+
+	@SubscribeEvent
+	public static void configReloading(final ModConfig.Reloading event) {
+
+		refreshConfig();
+	}
+
+	private static void refreshConfig() {
+
+		replaceStandardGeneration = replaceStandardGenerationValue.get();
+		enableRetroactiveGeneration = enableRetroactiveGenerationValue.get();
+
+		enableFlatBedrock = enableFlatBedrockValue.get();
+		enableRetroactiveFlatBedrock = enableRetroactiveFlatBedrockValue.get();
+		//forceFullRegeneration = forceFullRegenerationValue.get();
+
+		numBedrockLayers = numBedrockLayersValue.get();
 	}
 
 	private static void initFeatures() {
