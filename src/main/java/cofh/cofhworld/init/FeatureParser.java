@@ -199,6 +199,19 @@ public class FeatureParser {
 		}
 	}
 
+//	private static Map<String, ModContainer> apis;
+//
+//	public static Map<String, ModContainer> getLoadedAPIs() {
+//
+//		if (apis == null) {
+//			apis = new HashMap<>();
+//			for (ModContainer m : ModAPIManager.INSTANCE.getAPIList()) {
+//				apis.put(m.getModId(), m);
+//			}
+//		}
+//		return apis;
+//	}
+
 	public static boolean processDependency(ConfigValue value) {
 
 //		String id;
@@ -230,7 +243,7 @@ public class FeatureParser {
 //				return false;
 //		}
 //		if (con == null) {
-//			con = WorldHandler.getLoadedAPIs().get(id);
+//			con = getLoadedAPIs().get(id);
 //			if (con == null) {
 //				log.debug("Dependency '{}' is not loaded.", id);
 //				return false == retComp;

@@ -68,20 +68,6 @@ public class WorldHandler //implements IWorldGenerator
 
 	}
 
-	// TODO: FIXME, Where is the propper place for this, Only used by FeatureParser
-//	private static Map<String, ModContainer> apis;
-//
-//	public static Map<String, ModContainer> getLoadedAPIs() {
-//
-//		if (apis == null) {
-//			apis = new HashMap<>();
-//			for (ModContainer m : ModAPIManager.INSTANCE.getAPIList()) {
-//				apis.put(m.getModId(), m);
-//			}
-//		}
-//		return apis;
-//	}
-
 	public static void register() {
 
 		//GameRegistry.registerWorldGenerator(INSTANCE, 0);
