@@ -1,9 +1,9 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.util.random.WeightedBlock;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.Random;
@@ -14,8 +14,8 @@ import java.util.Random;
 @Deprecated
 public class WorldGenBoulder extends WorldGen {
 
-	private final List<WeightedBlock> cluster;
-	private final WeightedBlock[] genBlock;
+	private final List<WeightedBlock> resource;
+	private final WeightedBlock[] material;
 	private final int size;
 	public int sizeVariance = 2;
 	public int clusters = 3;
@@ -28,9 +28,9 @@ public class WorldGenBoulder extends WorldGen {
 
 	public WorldGenBoulder(List<WeightedBlock> resource, int minSize, List<WeightedBlock> block) {
 
-		cluster = resource;
+		this.resource = resource;
 		size = minSize;
-		genBlock = block.toArray(new WeightedBlock[block.size()]);
+		material = block.toArray(new WeightedBlock[block.size()]);
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class WorldGenBoulder extends WorldGen {
 				return false;
 			}
 
-			if (canGenerateInBlock(world, xCenter, yCenter - 1, zCenter, genBlock)) {
+			if (canGenerateInBlock(world, xCenter, yCenter - 1, zCenter, material)) {
 
 				int xWidth = minSize + (var > 1 ? rand.nextInt(var) : 0);
 				int yWidth = minSize + (var > 1 ? rand.nextInt(var) : 0);
@@ -72,9 +72,9 @@ public class WorldGenBoulder extends WorldGen {
 
 							if (dist <= maxDist) {
 								if (dist >= minDist) {
-									r |= generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, cluster);
+									r |= generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, resource);
 								} else {
-									r |= world.setBlockToAir(new BlockPos(xCenter + x, yCenter + y, zCenter + z));
+									r |= world.setBlockState(new BlockPos(xCenter + x, yCenter + y, zCenter + z), Blocks.AIR.getDefaultState(), 2 | 16);
 								}
 							}
 						}
