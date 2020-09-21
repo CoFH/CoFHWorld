@@ -5,7 +5,7 @@ import cofh.cofhworld.data.biome.BiomeInfoSet;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IFeatureGenerator;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
 
 import java.util.HashSet;
@@ -76,7 +76,7 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		return this;
 	}
 
-	protected boolean canGenerateInBiome(World world, int x, int z, Random rand) {
+	protected boolean canGenerateInBiome(IWorld world, int x, int z, Random rand) {
 
 		if (biomeRestriction != GenRestriction.NONE) {
 			Biome biome = world.getBiome(new BlockPos(x, 0, z));
@@ -93,7 +93,7 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 	}
 
 	@Override
-	public boolean generateFeature(Random random, int chunkX, int chunkZ, World world, boolean hasVillage, boolean newGen) {
+	public boolean generateFeature(Random random, int chunkX, int chunkZ, IWorld world, boolean hasVillage, boolean newGen) {
 
 		if (!newGen && !regen) {
 			return false;
@@ -101,7 +101,7 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		if (hasVillage && !withVillage) {
 			return false;
 		}
-		if (dimensionRestriction != GenRestriction.NONE && dimensionRestriction == GenRestriction.BLACKLIST == dimensions.contains(world.dimension.getType().getId())) {
+		if (dimensionRestriction != GenRestriction.NONE && dimensionRestriction == GenRestriction.BLACKLIST == dimensions.contains(world.getDimension().getType().getId())) {
 			return false;
 		}
 		if (rarity > 1 && random.nextInt(rarity) != 0) {
@@ -110,6 +110,6 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		return generateFeature(random, chunkX * 16 + 8, chunkZ * 16 + 8, world);
 	}
 
-	public abstract boolean generateFeature(Random random, int blockX, int blockZ, World world);
+	public abstract boolean generateFeature(Random random, int blockX, int blockZ, IWorld world);
 
 }

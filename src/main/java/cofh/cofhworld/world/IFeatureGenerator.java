@@ -1,6 +1,6 @@
 package cofh.cofhworld.world;
 
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.Random;
 
@@ -28,6 +28,6 @@ public interface IFeatureGenerator {
 	 * @param newGen     True on initial generation, false on retrogen.
 	 * @return True if generation happened, false otherwise.
 	 */
-	boolean generateFeature(Random random, int chunkX, int chunkZ, World world, boolean hasVillage, boolean newGen);
+	boolean generateFeature(Random random, int chunkX, int chunkZ, IWorld world, boolean hasVillage, boolean newGen);
 
 }

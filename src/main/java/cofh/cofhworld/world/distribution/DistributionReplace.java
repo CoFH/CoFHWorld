@@ -2,7 +2,7 @@ package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.List;
 import java.util.Random;
@@ -20,7 +20,7 @@ public class DistributionReplace extends Distribution {
     }
 
     @Override
-    public boolean generateFeature(Random random, int blockX, int blockZ, World world) {
+    public boolean generateFeature(Random random, int blockX, int blockZ, IWorld world) {
         boolean generated = false;
         for (int x = blockX; x < blockX + 16; x++)
         for (int z = blockZ; z < blockZ + 16; z++) {

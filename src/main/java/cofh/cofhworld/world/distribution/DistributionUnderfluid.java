@@ -11,6 +11,7 @@ import net.minecraft.block.pattern.BlockMatcher;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
@@ -46,7 +47,7 @@ public class DistributionUnderfluid extends Distribution {
 	}
 
 	@Override
-	public boolean generateFeature(Random random, int blockX, int blockZ, World world) {
+	public boolean generateFeature(Random random, int blockX, int blockZ, IWorld world) {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 

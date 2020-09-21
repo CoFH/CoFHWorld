@@ -6,6 +6,7 @@ import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.world.generator.WorldGen;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import java.util.Random;
@@ -33,7 +34,7 @@ public class DistributionCave extends Distribution {
 	}
 
 	@Override
-	public boolean generateFeature(Random random, int blockX, int blockZ, World world) {
+	public boolean generateFeature(Random random, int blockX, int blockZ, IWorld world) {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
