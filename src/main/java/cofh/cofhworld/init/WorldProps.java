@@ -66,8 +66,16 @@ public class WorldProps {
 					.define("ReplaceStandardGeneration", replaceStandardGeneration);
 
 			enableRetroactiveGenerationValue = config
-					.comment("If TRUE, world generation handled by CoFH World will be retroactively applied to existing chunks.")
+					.comment("If TRUE, world generation handled by CoFH World will be retroactively applied to existing chunks." +
+							" This option will NOT apply previously existing generation to chunks that have been loaded before this option was enabled.")
 					.define("RetroactiveGeneration", enableRetroactiveGeneration);
+
+			forceFullRegenerationValue = config
+					.comment("If TRUE, world generation handled by CoFH World will be applied to all existing chunks during retroactive generation." +
+							" This option CIRCUMVENTS the logic CoFH World uses to avoid re-generating things that have already been applied to a chunk." +
+							" ALL chunks loaded while this option is enabled will be re-generated EVERY time they are loaded.")
+					.worldRestart()
+					.define("ForceFullRegeneration", forceFullRegeneration);
 
 			{
 				config.push("Trees");
@@ -123,7 +131,7 @@ public class WorldProps {
 
 		enableFlatBedrock = enableFlatBedrockValue.get();
 		enableRetroactiveFlatBedrock = enableRetroactiveFlatBedrockValue.get();
-		//forceFullRegeneration = forceFullRegenerationValue.get();
+		forceFullRegeneration = forceFullRegenerationValue.get();
 
 		numBedrockLayers = numBedrockLayersValue.get();
 	}

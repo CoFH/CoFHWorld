@@ -291,7 +291,7 @@ public class WorldHandler //implements IWorldGenerator
 	/* HELPER FUNCTIONS */
 	public void generateWorld(Random random, int chunkX, int chunkZ, World world, boolean newGen) {
 
-		replaceBedrock(random, chunkX, chunkZ, world, newGen | WorldProps.forceFullRegeneration);
+		replaceBedrock(random, chunkX, chunkZ, world, newGen);
 
 		if (!newGen & !WorldProps.enableRetroactiveGeneration) {
 			return;
@@ -301,7 +301,7 @@ public class WorldHandler //implements IWorldGenerator
 		boolean hasVillage = pos != null && pos.hasVillage;
 		for (IFeatureGenerator feature : features) {
 			//FallingBlock.fallInstantly = true;
-			feature.generateFeature(random, chunkX, chunkZ, world, hasVillage, newGen | WorldProps.forceFullRegeneration);
+			feature.generateFeature(random, chunkX, chunkZ, world, hasVillage, newGen);
 		}
 		//FallingBlock.fallInstantly = false;
 		if (!newGen) {
@@ -313,7 +313,7 @@ public class WorldHandler //implements IWorldGenerator
 
 		int chunkX = chunk.coord.chunkX, chunkZ = chunk.coord.chunkZ;
 		if ((newGen | WorldProps.enableRetroactiveGeneration) & WorldProps.forceFullRegeneration) {
-			generateWorld(random, chunkX, chunkZ, world, newGen);
+			generateWorld(random, chunkX, chunkZ, world, true);
 			return;
 		}
 
