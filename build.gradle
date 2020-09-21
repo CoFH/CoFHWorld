@@ -102,25 +102,58 @@ version = "${config.mc_version}-${config.mod_version}"
 jar {
 	classifier = 'universal'
 
+	manifest {
+		attributes([
+				"Specification-Title"     : "${config.mod_name}",
+				"Specification-Vendor"    : "Team CoFH",
+				"Specification-Version"   : "${config.mc_version}",
+				"Implementation-Title"    : "${config.mod_id}",
+				"Implementation-Vendor"   : "Team CoFH",
+				"Implementation-Version"  : "${config.mod_version}",
+				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+		])
+	}
+
 	configurations.shade.each { dep ->
 		from(project.zipTree(dep)) {
 			exclude 'META-INF', 'META-INF/**'
 		}
 	}
-}
 
-//reobfJar {
-//	addSrgLine "PK: com/typesafe/config cofh/shade/com/typesafe/config"
-//}
+	finalizedBy "reobfJar"
+}
 
 task deobfJar(type: Jar) {
 	from sourceSets.main.output
 	classifier = 'deobf'
+
+	configurations.shade.each { dep ->
+		from(project.zipTree(dep)) {
+			exclude 'META-INF', 'META-INF/**'
+		}
+	}
+
+	finalizedBy "shadePackagesDeobf"
 }
 
 task srcJar(type: Jar) {
 	from sourceSets.main.allSource
 	classifier = 'sources'
+}
+
+task makeDummyFile {
+	new File("${project.buildDir}/dummy.at").text = "PK: com/typesafe/config cofh/shade/com/typesafe/config"
+}
+
+task shadePackagesDeobf(type: net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace ) {
+	input deobfJar.outputs.files.getSingleFile()
+	mappings file("${project.buildDir}/dummy.at")
+	dependsOn makeDummyFile, deobfJar
+}
+
+task reobfJar(type: net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace ) {
+	extraMapping file("${project.buildDir}/dummy.at")
+	dependsOn makeDummyFile, jar
 }
 
 //task signJar(type: SignJar, dependsOn: reobfJar) {
