@@ -1,9 +1,11 @@
 package cofh.cofhworld.init;
 
-import cofh.cofhworld.CoFHWorld;
 import cofh.cofhworld.parser.distribution.*;
 import cofh.cofhworld.parser.generator.*;
 import cofh.cofhworld.util.Utils;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,33 +29,55 @@ public class WorldProps {
 	/* HELPERS */
 	private static void config() {
 
+		final ForgeConfigSpec.Builder config = new ForgeConfigSpec.Builder();
+
 		String category;
 		String comment;
 
-		category = "World";
+		{
+			config.push("World");
 
-		comment = "If TRUE, CoFH World will not generate features at all. This option is intended for use when you want another mod to handle ore generation but do not want to blank out the various .json files yourself. Flat Bedrock may still be used.";
-		disableFeatureGeneration = CoFHWorld.config.getBoolean("DisableAllGeneration", category, disableFeatureGeneration, comment);
+			disableFeatureGeneration = config
+					.comment("If TRUE, CoFH World will not generate features at all." +
+							" This option is intended for use when you want another mod to handle ore generation but do not want to blank out the various .json files yourself." +
+							" Flat Bedrock may still be used.")
+					.define("DisableAllGeneration", false);
 
-		comment = "If TRUE, standard Minecraft ore generation will be REPLACED. Configure in the 00_minecraft.json file; standard Minecraft defaults have been provided. If you rename the 00_minecraft.json file, this option WILL NOT WORK.";
-		replaceStandardGeneration = CoFHWorld.config.getBoolean("ReplaceStandardGeneration", category, replaceStandardGeneration, comment);
+//			replaceStandardGeneration = config
+//					.comment("If TRUE, standard Minecraft ore generation will be REPLACED." +
+//							" Configure in the 00_minecraft.json file; standard Minecraft defaults have been provided." +
+//							" If you rename the 00_minecraft.json file, this option WILL NOT WORK.")
+//					.define("ReplaceStandardGeneration", replaceStandardGeneration);
 
-		comment = "If TRUE, world generation handled by CoFH World will be retroactively applied to existing chunks.";
-		enableRetroactiveGeneration = CoFHWorld.config.getBoolean("RetroactiveGeneration", category, enableRetroactiveGeneration, comment);
+//			enableRetroactiveGeneration = config
+//					.comment("If TRUE, world generation handled by CoFH World will be retroactively applied to existing chunks.");
+//					.define("RetroactiveGeneration", false);
 
-		comment = "This adjusts the % chance that a tree will grow as normal when it is meant to. Reducing this value will mean that trees take longer to grow, on average.";
-		chanceTreeGrowth = CoFHWorld.config.getInt("TreeGrowthChance", category, chanceTreeGrowth, 1, 100, comment);
+			chanceTreeGrowth = config
+					.comment("This adjusts the % chance that a tree will grow as normal when it is meant to." +
+							" Reducing this value will mean that trees take longer to grow, on average.")
+					.defineInRange("TreeGrowthChance", 100, 1, 100);
 
-		category = "World.Bedrock";
+			{
+				config.push("Bedrock");
 
-		comment = "If TRUE, the bedrock layer will be flattened.";
-		enableFlatBedrock = CoFHWorld.config.getBoolean("EnableFlatBedrock", category, enableFlatBedrock, comment);
+//				enableFlatBedrock = config
+//						.comment("If TRUE, the bedrock layer will be flattened.")
+//						.define("EnableFlatBedrock", enableFlatBedrock);
 
-		comment = "This adjusts the number of layers of Flat Bedrock, if enabled.";
-		numBedrockLayers = CoFHWorld.config.getInt("NumBedrockLayers", category, 2, 1, maxBedrockLayers, comment);
+//				numBedrockLayers = config
+//						.comment("This adjusts the number of layers of Flat Bedrock, if enabled.")
+//						.defineInRange("NumBedrockLayers", 2, 1, maxBedrockLayers);
 
-		comment = "If TRUE, Flat Bedrock will retroactively be applied to existing chunks, if retroactive generation is enabled.";
-		enableRetroactiveFlatBedrock = CoFHWorld.config.getBoolean("EnableRetroactiveFlatBedrock", category, enableRetroactiveFlatBedrock, comment);
+//				enableRetroactiveFlatBedrock = config
+//						.comment("If TRUE, Flat Bedrock will retroactively be applied to existing chunks, if retroactive generation is enabled.")
+//						.define("EnableRetroactiveFlatBedrock", enableRetroactiveFlatBedrock);
+
+				config.pop();
+			}
+
+			config.pop();
+		}
 	}
 
 	private static void initFeatures() {
@@ -143,7 +167,7 @@ public class WorldProps {
 	public static final String FILE_GEN_STANDARD_INTERNAL = "00_minecraft.json";
 	public static final String PATH_GEN_STANDARD_INTERNAL = "assets/cofhworld/world/" + FILE_GEN_STANDARD_INTERNAL;
 
-	public static boolean disableFeatureGeneration = false;
+	public static BooleanValue disableFeatureGeneration;
 	public static boolean replaceStandardGeneration = false;
 	public static boolean enableRetroactiveGeneration = false;
 
@@ -151,7 +175,7 @@ public class WorldProps {
 	public static boolean enableRetroactiveFlatBedrock = false;
 	public static boolean forceFullRegeneration = false;
 
-	public static int chanceTreeGrowth = 100;
+	public static IntValue chanceTreeGrowth;
 	public static int numBedrockLayers = 1;
 	public static int maxBedrockLayers = 8;
 

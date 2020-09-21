@@ -1,9 +1,7 @@
 package cofh.cofhworld;
 
-import cofh.cofhworld.command.CommandCoFHWorld;
 import cofh.cofhworld.init.WorldHandler;
 import cofh.cofhworld.init.WorldProps;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -12,8 +10,6 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.File;
 
 @Mod (CoFHWorld.MOD_ID)
 public class CoFHWorld {
@@ -29,7 +25,7 @@ public class CoFHWorld {
 	public static final String DEPENDENCIES = "required-after:forge@[" + "32.2.36,32.3.0" + ");";
 
 	public static Logger log = LogManager.getLogger(MOD_NAME);
-	public static Configuration config;
+	//public static Configuration config;
 
 	public CoFHWorld() {
 
@@ -46,10 +42,10 @@ public class CoFHWorld {
 	/* INIT */
 	public void preInit(FMLCommonSetupEvent event) {
 
-		WorldProps.configDir = event.getModConfigurationDirectory();
+		//WorldProps.configDir = event.getModConfigurationDirectory();
 
-		config = new Configuration(new File(WorldProps.configDir, "/cofh/world/config.cfg"), VERSION, true);
-		config.load();
+		//config = new Configuration(new File(WorldProps.configDir, "/cofh/world/config.cfg"), VERSION, true);
+		//config.load();
 
 		WorldProps.preInit();
 
@@ -59,14 +55,14 @@ public class CoFHWorld {
 	public void loadComplete(FMLLoadCompleteEvent event) {
 
 		WorldHandler.reloadConfig(false);
-		config.save();
+		//config.save();
 
 		log.info(MOD_NAME + ": Load Complete.");
 	}
 
 	public void onServerStarting(FMLServerStartingEvent event) {
 
-		event.registerServerCommand(new CommandCoFHWorld());
+		//event.registerServerCommand(new CommandCoFHWorld());
 	}
 
 }

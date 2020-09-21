@@ -1,7 +1,8 @@
 package cofh.cofhworld.util;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.chunk.IChunk;
 
 import java.io.Serializable;
 
@@ -17,10 +18,15 @@ public final class ChunkCoord implements Comparable<ChunkCoord>, Serializable {
 	public int chunkX;
 	public int chunkZ;
 
-	public ChunkCoord(Chunk chunk) {
+	public ChunkCoord(IChunk chunk) {
 
-		this.chunkX = chunk.x;
-		this.chunkZ = chunk.z;
+		this.chunkX = chunk.getPos().x;
+		this.chunkZ = chunk.getPos().z;
+	}
+
+	public ChunkCoord(ChunkPos pos) {
+
+		this(pos.x, pos.z);
 	}
 
 	public ChunkCoord(BlockPos pos) {

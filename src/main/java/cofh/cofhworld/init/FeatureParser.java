@@ -7,12 +7,12 @@ import cofh.cofhworld.world.IFeatureGenerator;
 import com.typesafe.config.*;
 import com.typesafe.config.impl.CoFHOrderedParsableFile;
 import net.minecraft.util.ActionResultType;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-import net.minecraftforge.fml.common.versioning.VersionParser;
+//import net.minecraftforge.fml.common.Loader;
+//import net.minecraftforge.fml.common.LoaderState;
+//import net.minecraftforge.fml.common.ModContainer;
+//import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+//import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+//import net.minecraftforge.fml.common.versioning.VersionParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Level;
 
@@ -201,55 +201,56 @@ public class FeatureParser {
 
 	public static boolean processDependency(ConfigValue value) {
 
-		String id;
-		ModContainer con;
-		ArtifactVersion vers = null;
-		boolean retComp = true;
-		switch (value.valueType()) {
-			case STRING:
-				id = (String) value.unwrapped();
-				if (id.contains("@")) {
-					vers = VersionParser.parseVersionReference(id);
-					id = vers.getLabel();
-				}
-				con = Loader.instance().getIndexedModList().get(id);
-				break;
-			case OBJECT:
-				Config data = ((ConfigObject) value).toConfig();
-				id = data.getString("id");
-				con = Loader.instance().getIndexedModList().get(id);
-				if (data.hasPath("version")) {
-					vers = new DefaultArtifactVersion(id, data.getString("version"));
-				}
-				if (data.hasPath("exclude")) {
-					retComp = !data.getBoolean("exclude");
-				}
-				break;
-			default:
-				log.fatal("Invalid dependency at line {}!", value.origin().lineNumber());
-				return false;
-		}
-		if (con == null) {
-			con = WorldHandler.getLoadedAPIs().get(id);
-			if (con == null) {
-				log.debug("Dependency '{}' is not loaded.", id);
-				return false == retComp;
-			}
-		}
-		LoaderState.ModState state = Loader.instance().getModState(con);
-		if (state == LoaderState.ModState.DISABLED || state == LoaderState.ModState.ERRORED) {
-			log.debug("Dependency '{}' is disabled or crashed.", id);
-			return false == retComp;
-		}
-		if (vers != null) {
-			if (retComp != vers.containsVersion(con.getProcessedVersion())) {
-				log.debug("Dependency '{}' has an incompatible version.", id);
-				return false;
-			} else {
-				return true;
-			}
-		}
-		return true == retComp;
+//		String id;
+//		ModContainer con;
+//		ArtifactVersion vers = null;
+//		boolean retComp = true;
+//		switch (value.valueType()) {
+//			case STRING:
+//				id = (String) value.unwrapped();
+//				if (id.contains("@")) {
+//					vers = VersionParser.parseVersionReference(id);
+//					id = vers.getLabel();
+//				}
+//				con = Loader.instance().getIndexedModList().get(id);
+//				break;
+//			case OBJECT:
+//				Config data = ((ConfigObject) value).toConfig();
+//				id = data.getString("id");
+//				con = Loader.instance().getIndexedModList().get(id);
+//				if (data.hasPath("version")) {
+//					vers = new DefaultArtifactVersion(id, data.getString("version"));
+//				}
+//				if (data.hasPath("exclude")) {
+//					retComp = !data.getBoolean("exclude");
+//				}
+//				break;
+//			default:
+//				log.fatal("Invalid dependency at line {}!", value.origin().lineNumber());
+//				return false;
+//		}
+//		if (con == null) {
+//			con = WorldHandler.getLoadedAPIs().get(id);
+//			if (con == null) {
+//				log.debug("Dependency '{}' is not loaded.", id);
+//				return false == retComp;
+//			}
+//		}
+//		LoaderState.ModState state = Loader.instance().getModState(con);
+//		if (state == LoaderState.ModState.DISABLED || state == LoaderState.ModState.ERRORED) {
+//			log.debug("Dependency '{}' is disabled or crashed.", id);
+//			return false == retComp;
+//		}
+//		if (vers != null) {
+//			if (retComp != vers.containsVersion(con.getProcessedVersion())) {
+//				log.debug("Dependency '{}' has an incompatible version.", id);
+//				return false;
+//			} else {
+//				return true;
+//			}
+//		}
+//		return true == retComp;
+		return true;
 	}
 
 	public static void parseGenerationFiles(ArrayList<ConfigContainer> processedGenList) {

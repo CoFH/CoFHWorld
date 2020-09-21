@@ -14,7 +14,7 @@ public enum WorldValueEnum {
 		@Override
 		public long getValue(IWorldReader world, Random rand, DataHolder data) {
 
-			return world.getHeight();
+			return world.getDimension().getActualHeight();
 		}
 	}, SEA_LEVEL {
 		@Override
