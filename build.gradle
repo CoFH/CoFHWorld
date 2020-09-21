@@ -142,8 +142,8 @@ task srcJar(type: Jar) {
 }
 
 task makeDummyFile {
+	new File("${project.buildDir}/dummy.at").mkdirs();
 	new File("${project.buildDir}/dummy.at").text = "PK: com/typesafe/config cofh/shade/com/typesafe/config"
-	dependsOn "compileJava"
 }
 
 task shadePackagesDeobf(type: net.minecraftforge.gradle.userdev.tasks.RenameJarInPlace ) {
