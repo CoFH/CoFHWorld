@@ -175,7 +175,11 @@ public class WorldProps {
 
 		log.info("Verifying or creating base world generation directory...");
 
-		configDir = new File("./config"); // TODO: figure out how to make forge cough this up
+		try {
+			configDir = new File(new File("./config").getCanonicalPath()); // TODO: figure out how to make forge cough this up
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
 		worldGenDir = new File(configDir, "/cofh/world/");
 		worldGenPath = Paths.get(configDir.getPath());
