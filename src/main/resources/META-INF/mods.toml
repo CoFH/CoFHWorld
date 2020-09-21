@@ -1,0 +1,29 @@
+modLoader = "javafml"
+loaderVersion = "[31,)"
+issueTrackerURL = "https://github.com/cofh/feedback"
+
+[[mods]]
+modId = "cofhworld"
+version = "${file.jarVersion}"
+displayName = "CoFH World"
+updateJSONURL = "https://raw.github.com/cofh/version/master/cofh_world/update.json"
+displayURL = "https://teamcofh.com/"
+logoFile = "logo.png"
+credits = "Team CoFH"
+authors = "skyboy, King Lemming"
+description = '''
+Provides advanced and highly customizable world generation capabilities.
+'''
+[[dependencies.cofhworld]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.15,1.16)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.cofhworld]]
+modId = "forge"
+mandatory = true
+versionRange = "[31.2.30,)"
+ordering = "AFTER"
+side = "BOTH"
