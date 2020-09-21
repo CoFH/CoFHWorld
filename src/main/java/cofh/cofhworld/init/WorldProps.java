@@ -175,6 +175,8 @@ public class WorldProps {
 
 		log.info("Verifying or creating base world generation directory...");
 
+		configDir = new File("./config"); // TODO: figure out how to make forge cough this up
+
 		worldGenDir = new File(configDir, "/cofh/world/");
 		worldGenPath = Paths.get(configDir.getPath());
 		try {
@@ -225,11 +227,11 @@ public class WorldProps {
 
 	public static BooleanValue disableFeatureGeneration;
 	public static boolean replaceStandardGeneration = false;
-	public static boolean enableRetroactiveGeneration = false;
+	public static boolean enableRetroactiveGeneration = true; // TODO: false
 
 	public static boolean enableFlatBedrock = false;
 	public static boolean enableRetroactiveFlatBedrock = false;
-	public static boolean forceFullRegeneration = false;
+	public static boolean forceFullRegeneration = true; // TODO: very false
 
 	public static IntValue chanceTreeGrowth;
 	public static int numBedrockLayers = 1;
