@@ -142,7 +142,7 @@ task srcJar(type: Jar) {
 }
 
 task makeDummyFile {
-	new File("${project.buildDir}/dummy.at").mkdirs();
+	new File("${project.buildDir}/").mkdirs();
 	new File("${project.buildDir}/dummy.at").text = "PK: com/typesafe/config cofh/shade/com/typesafe/config"
 }
 
