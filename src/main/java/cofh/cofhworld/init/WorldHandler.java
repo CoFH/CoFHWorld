@@ -32,47 +32,17 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import javax.annotation.Nullable;
 import java.util.*;
 
-//import net.minecraft.world.chunk.IChunkProvider;
-//import net.minecraft.world.gen.IChunkGenerator;
-//import net.minecraftforge.event.terraingen.OreGenEvent;
-//import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType;
-//import net.minecraftforge.event.terraingen.PopulateChunkEvent;
-//import net.minecraftforge.fml.common.IWorldGenerator;
-//import net.minecraftforge.fml.common.ModAPIManager;
-//import net.minecraftforge.fml.common.ModContainer;
-//import net.minecraftforge.fml.common.registry.GameRegistry;
-
-public class WorldHandler //implements IWorldGenerator
-{
+public class WorldHandler {
 
 	public static final WorldHandler INSTANCE = new WorldHandler();
 
 	private static List<IFeatureGenerator> features = new ArrayList<>();
 	private static Set<String> featureNames = new HashSet<>();
-//	private static Set<EventType> standardGenEvents = new HashSet<>();
 	private static LinkedHashList<ChunkReference> populatingChunks = new LinkedHashList<>();
 
 	private static List<Runnable> reloadCallbacks = new LinkedList<>();
 
 	private static long genHash = 0;
-
-	static {
-//		standardGenEvents.add(EventType.ANDESITE);
-//		standardGenEvents.add(EventType.COAL);
-//		standardGenEvents.add(EventType.DIAMOND);
-//		standardGenEvents.add(EventType.DIORITE);
-//		standardGenEvents.add(EventType.DIRT);
-//		standardGenEvents.add(EventType.EMERALD);
-//		standardGenEvents.add(EventType.GOLD);
-//		standardGenEvents.add(EventType.GRANITE);
-//		standardGenEvents.add(EventType.GRAVEL);
-//		standardGenEvents.add(EventType.IRON);
-//		standardGenEvents.add(EventType.LAPIS);
-//		standardGenEvents.add(EventType.REDSTONE);
-//		standardGenEvents.add(EventType.QUARTZ);
-//
-//		standardGenEvents.add(EventType.SILVERFISH);
-	}
 
 	public static void initialize() {
 
@@ -80,11 +50,9 @@ public class WorldHandler //implements IWorldGenerator
 
 	public static void register() {
 
-		//GameRegistry.registerWorldGenerator(INSTANCE, 0);
 		//GameRegistry.registerWorldGenerator((random, chunkX, chunkZ, world, chunkGenerator, chunkProvider) -> populatingChunks.remove(new ChunkReference(world.provider.getDimension(), chunkX, chunkZ)), Integer.MAX_VALUE);
 
 		MinecraftForge.EVENT_BUS.register(INSTANCE);
-//		MinecraftForge.ORE_GEN_BUS.register(INSTANCE);
 	}
 
 	private WorldHandler() {
@@ -101,6 +69,7 @@ public class WorldHandler //implements IWorldGenerator
 		return reloadConfig(true);
 	}
 
+	// FIXME: move all this non-world-handling logic somewhere else.
 	public static boolean reloadConfig(boolean clear) {
 
 		if (WorldProps.disableFeatureGeneration.get()) {
@@ -263,17 +232,6 @@ public class WorldHandler //implements IWorldGenerator
 		event.getData().put(CoFHWorld.MOD_ID, genTag);
 	}
 
-//	@SubscribeEvent (priority = EventPriority.HIGHEST, receiveCanceled = true)
-//	public void handleOreGenEvent(OreGenEvent.GenerateMinable event) {
-//
-//		if (!WorldProps.replaceStandardGeneration) {
-//			return;
-//		}
-//		if (standardGenEvents.contains(event.getType())) {
-//			event.setResult(Result.DENY);
-//		}
-//	}
-
 	@SubscribeEvent
 	public void handleSaplingGrowTreeEvent(SaplingGrowTreeEvent event) {
 
@@ -285,12 +243,6 @@ public class WorldHandler //implements IWorldGenerator
 		}
 	}
 
-	/* IWorldGenerator */
-	//@Override
-//	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
-//
-//		generateWorld(random, chunkX, chunkZ, world, true);
-//	}
 	public static void generate(WorldGenRegion region) {
 
 		INSTANCE.generateWorld(region.getMainChunkX(), region.getMainChunkZ(), region, true);
@@ -362,7 +314,7 @@ public class WorldHandler //implements IWorldGenerator
 		final int maxBedrockLayers = WorldProps.maxBedrockLayers + 1, numBedrockLayers = WorldProps.numBedrockLayers;
 
 		BlockState filler = Blocks.STONE.getDefaultState();
-		int floor = 0, roof = 0;
+		int floor = 0, roof = 0; // arbitrary defaults, just in case the below fails (if your modded dimension's server-side ChunkProvider isn't a subclass; too bad?)
 		{
 			AbstractChunkProvider chunkProvider = world.getChunkProvider();
 			if (chunkProvider instanceof ServerChunkProvider) {
