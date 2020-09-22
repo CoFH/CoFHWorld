@@ -5,16 +5,23 @@ import cofh.cofhworld.init.ChunkGenerationHandler.RetroChunkCoord;
 import cofh.cofhworld.util.ChunkCoord;
 import cofh.cofhworld.util.LinkedHashList;
 import cofh.cofhworld.world.IFeatureGenerator;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.pattern.BlockMatcher;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.SharedSeedRandom;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.AbstractChunkProvider;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus.Type;
 import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.WorldGenRegion;
+import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.world.ChunkDataEvent;
@@ -350,80 +357,61 @@ public class WorldHandler //implements IWorldGenerator
 		if (!WorldProps.enableFlatBedrock | !newGen & !WorldProps.enableRetroactiveFlatBedrock) {
 			return;
 		}
-//		int offsetX = chunkX * 16 + 8;
-//		int offsetZ = chunkZ * 16 + 8;
-//
-//		/* Determine if this is a void age; halt if so. */
-//		boolean isVoidAge = !world.getBlockState(new BlockPos(offsetX, 0, offsetZ)).getBlock().isAssociatedBlock(Blocks.BEDROCK);
-//		isVoidAge |= !world.getBlockState(new BlockPos(offsetX + 4, 0, offsetZ + 4)).getBlock().isAssociatedBlock(Blocks.BEDROCK);
-//		isVoidAge |= !world.getBlockState(new BlockPos(offsetX + 8, 0, offsetZ + 8)).getBlock().isAssociatedBlock(Blocks.BEDROCK);
-//		isVoidAge |= !world.getBlockState(new BlockPos(offsetX + 12, 0, offsetZ + 12)).getBlock().isAssociatedBlock(Blocks.BEDROCK);
-//
-//		if (isVoidAge) {
-//			return;
-//		}
-//		// TODO: pull out the ExtendedStorageArray and edit that directly. faster.
-//		BlockState filler = world.getBiome(new BlockPos(offsetX, 0, offsetZ)).fillerBlock;
-//		// NOTE: filler block is dirt by default, the actual filler block for the biome is part of a method body
-//		int meta = 0; // no meta field for filler
-//		switch (world.provider.getDimension()) {
-//			case -1:
-//				/* This is a hack because Mojang coded the Nether wrong. Are you surprised? */
-//				filler = Blocks.NETHERRACK.getDefaultState();
-//				break;
-//			case 0:
-//				/*
-//				 * Due to above note, overworld gets replaced with stone. other dimensions are on their own for helping us with the filler block
-//				 */
-//				filler = Blocks.STONE.getDefaultState();
-//				break;
-//			case 1:
-//				/* This is a hack because Mojang coded The End wrong. Are you surprised? */
-//				filler = Blocks.END_STONE.getDefaultState();
-//				break;
-//
-//		}
-//		for (int blockX = 0; blockX < 16; blockX++) {
-//			for (int blockZ = 0; blockZ < 16; blockZ++) {
-//				for (int blockY = 5; blockY > WorldProps.numBedrockLayers - 1; blockY--) {
-//					BlockPos pos = new BlockPos(offsetX + blockX, blockY, offsetZ + blockZ);
-//					BlockState state = world.getBlockState(pos);
-//					if (state.getBlock().isAssociatedBlock(Blocks.BEDROCK)) {
-//						world.setBlockState(pos, filler, 2);
-//					}
-//				}
-//				for (int blockY = WorldProps.numBedrockLayers - 1; blockY > 0; blockY--) {
-//					BlockPos pos = new BlockPos(offsetX + blockX, blockY, offsetZ + blockZ);
-//					BlockState state = world.getBlockState(pos);
-//					if (!state.getBlock().isAssociatedBlock(Blocks.BEDROCK)) {
-//						world.setBlockState(pos, Blocks.BEDROCK.getDefaultState(), 2);
-//					}
-//				}
-//			}
-//		}
-//		/* Flatten bedrock on the top as well */
-//		int worldHeight = world.getActualHeight();
-//
-//		if (world.getBlockState(new BlockPos(offsetX, worldHeight - 1, offsetZ)).getBlock().isAssociatedBlock(Blocks.BEDROCK)) {
-//			for (int blockX = 0; blockX < 16; blockX++) {
-//				for (int blockZ = 0; blockZ < 16; blockZ++) {
-//					for (int blockY = worldHeight - 2; blockY > worldHeight - 6; blockY--) {
-//						BlockPos pos = new BlockPos(offsetX + blockX, blockY, offsetZ + blockZ);
-//						BlockState state = world.getBlockState(pos);
-//						if (state.getBlock().isAssociatedBlock(Blocks.BEDROCK)) {
-//							world.setBlockState(pos, filler, 2);
-//						}
-//					}
-//					for (int blockY = worldHeight - WorldProps.numBedrockLayers; blockY < worldHeight - 1; blockY++) {
-//						BlockPos pos = new BlockPos(offsetX + blockX, blockY, offsetZ + blockZ);
-//						BlockState state = world.getBlockState(pos);
-//						if (!state.getBlock().isAssociatedBlock(Blocks.BEDROCK)) {
-//							world.setBlockState(pos, Blocks.BEDROCK.getDefaultState(), 2);
-//						}
-//					}
-//				}
-//			}
-//		}
+		final int offsetX = chunkX * 16 + 8;
+		final int offsetZ = chunkZ * 16 + 8;
+		final int maxBedrockLayers = WorldProps.maxBedrockLayers + 1, numBedrockLayers = WorldProps.numBedrockLayers;
+
+		BlockState filler = Blocks.STONE.getDefaultState();
+		int floor = 0, roof = 0;
+		{
+			AbstractChunkProvider chunkProvider = world.getChunkProvider();
+			if (chunkProvider instanceof ServerChunkProvider) {
+				ServerChunkProvider serverChunkProvider = (ServerChunkProvider) chunkProvider;
+				GenerationSettings settings = serverChunkProvider.getChunkGenerator().getSettings();
+				// interestingly, WorldGenRegion actually stores the ChunkProvider settings, but there is no getter.
+				// looks to me like a method is being erased by the obfuscator because it's not called, making this entire code block required.
+				filler = settings.getDefaultBlock();
+				floor = settings.getBedrockFloorHeight();
+				roof = settings.getBedrockRoofHeight();
+			}
+		}
+		final BlockMatcher bedrockMatcher = BlockMatcher.forBlock(Blocks.BEDROCK);
+		final BlockState bedrock = Blocks.BEDROCK.getDefaultState();
+		final BlockPos.Mutable pos = new BlockPos.Mutable();
+
+		if (floor < 256) {
+			for (int blockX = 0; blockX < 16; blockX++) {
+				for (int blockZ = 0; blockZ < 16; blockZ++) {
+					for (int blockY = maxBedrockLayers; blockY --> 0; ) {
+						BlockState state = world.getBlockState(pos.setPos(offsetX + blockX, floor + blockY, offsetZ + blockZ));
+						if (state.isReplaceableOreGen(world, pos.setPos(offsetX + blockX, floor + blockY, offsetZ + blockZ), bedrockMatcher)) {
+							if (blockY >= numBedrockLayers) {
+								world.setBlockState(pos.setPos(offsetX + blockX, floor + blockY, offsetZ + blockZ), filler, 2 | 16);
+							}
+						} else if (blockY < numBedrockLayers) {
+							world.setBlockState(pos.setPos(offsetX + blockX, floor + blockY, offsetZ + blockZ), bedrock, 2 | 16);
+						}
+					}
+				}
+			}
+		}
+
+		if (roof > 0) {
+			for (int blockX = 0; blockX < 16; blockX++) {
+				for (int blockZ = 0; blockZ < 16; blockZ++) {
+					for (int blockY = maxBedrockLayers; blockY --> 0; ) {
+						BlockState state = world.getBlockState(pos.setPos(offsetX + blockX, roof - blockY, offsetZ + blockZ));
+						if (state.isReplaceableOreGen(world, pos.setPos(offsetX + blockX, roof - blockY, offsetZ + blockZ), bedrockMatcher)) {
+							if (blockY >= numBedrockLayers) {
+								world.setBlockState(pos.setPos(offsetX + blockX, roof - blockY, offsetZ + blockZ), filler, 2 | 16);
+							}
+						} else if (blockY < numBedrockLayers) {
+							world.setBlockState(pos.setPos(offsetX + blockX, roof - blockY, offsetZ + blockZ), bedrock, 2 | 16);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/* CHUNK REFERENCE CLASS */
