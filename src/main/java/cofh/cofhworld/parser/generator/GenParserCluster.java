@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserClusterCount;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
@@ -22,7 +23,7 @@ public class GenParserCluster extends AbstractGenParserClusterCount {
 
 	@Override
 	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
 
 		int clusterSize = genObject.getInt("cluster-size");
 		if (clusterSize <= 0) {

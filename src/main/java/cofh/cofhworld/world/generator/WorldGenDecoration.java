@@ -1,6 +1,7 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.world.WorldValueCondition;
@@ -22,9 +23,9 @@ public class WorldGenDecoration extends WorldGen {
 
 	private static final ICondition SEE_SKY = new WorldValueCondition("CAN_SEE_SKY"), CHECK_STAY = new WorldValueCondition("BLOCK_CAN_PLACE");
 
-	private final List<WeightedBlock> cluster;
-	private final WeightedBlock[] material;
-	private final WeightedBlock[] onBlock;
+	private final List<WeightedBlock> resource;
+	private final Material[] material;
+	private final Material[] onBlock;
 	private final INumberProvider clusterSize;
 	private ICondition seeSky, checkStay;
 	private INumberProvider stackHeight;
@@ -33,17 +34,17 @@ public class WorldGenDecoration extends WorldGen {
 	private INumberProvider yVar;
 	private INumberProvider zVar;
 
-	public WorldGenDecoration(List<WeightedBlock> blocks, int count, List<WeightedBlock> material, List<WeightedBlock> on) {
+	public WorldGenDecoration(List<WeightedBlock> blocks, int count, List<Material> material, List<Material> on) {
 
 		this(blocks, new ConstantProvider(count), material, on);
 	}
 
-	public WorldGenDecoration(List<WeightedBlock> blocks, INumberProvider count, List<WeightedBlock> material, List<WeightedBlock> on) {
+	public WorldGenDecoration(List<WeightedBlock> blocks, INumberProvider count, List<Material> materials, List<Material> on) {
 
-		cluster = blocks;
+		resource = blocks;
 		clusterSize = count;
-		this.material = material == null ? null : material.toArray(new WeightedBlock[0]);
-		onBlock = on == null ? null : on.toArray(new WeightedBlock[0]);
+		material = materials.toArray(new Material[0]);
+		onBlock = on == null ? null : on.toArray(new Material[0]);
 		this.setStackHeight(1).setSeeSky(SEE_SKY).setCheckStay(CHECK_STAY);
 		this.setXVar(new SkellamRandomProvider(8));
 		this.setYVar(new SkellamRandomProvider(4));
@@ -76,7 +77,7 @@ public class WorldGenDecoration extends WorldGen {
 				continue;
 			}
 
-			WeightedBlock block = selectBlock(rand, cluster);
+			WeightedBlock block = selectBlock(rand, resource);
 			if (seeSky.checkCondition(world, rand, data.setPosition(pos).setBlock(block)) &&
 					canGenerateInBlock(world, x, y - 1, z, onBlock) && canGenerateInBlock(world, x, y, z, material)) {
 

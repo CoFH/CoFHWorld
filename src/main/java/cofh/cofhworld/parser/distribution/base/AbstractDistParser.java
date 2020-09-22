@@ -5,24 +5,19 @@ import cofh.cofhworld.parser.GeneratorData;
 import cofh.cofhworld.parser.IDistributionParser;
 import cofh.cofhworld.parser.IGeneratorParser.InvalidGeneratorException;
 import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.generator.WorldGen;
 import com.typesafe.config.Config;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public abstract class AbstractDistParser implements IDistributionParser {
 
 	private final String[] FIELDS = new String[] { "generator", "cluster-count" };
 
-	protected final List<WeightedBlock> defaultMaterial;
-
 	protected AbstractDistParser() {
 
-		defaultMaterial = generateDefaultMaterial();
 	}
 
 	@Override
@@ -30,8 +25,6 @@ public abstract class AbstractDistParser implements IDistributionParser {
 
 		return FIELDS;
 	}
-
-	protected abstract List<WeightedBlock> generateDefaultMaterial();
 
 	@Override
 	@Nonnull
@@ -41,7 +34,7 @@ public abstract class AbstractDistParser implements IDistributionParser {
 
 		WorldGen generator;
 		try {
-			generator = GeneratorData.parseGenerator(getDefaultGenerator(), genObject, defaultMaterial);
+			generator = GeneratorData.parseGenerator(getDefaultGenerator(), genObject);
 		} catch (InvalidGeneratorException e) {
 			log.warn("Invalid generator for '{}' on line {}!", featureName, e.origin().lineNumber());
 			throw new InvalidDistributionException("Invalid generator", e.origin()).causedBy(e);

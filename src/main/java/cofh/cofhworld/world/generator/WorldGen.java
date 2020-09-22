@@ -1,9 +1,9 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.pattern.BlockMatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
@@ -36,12 +36,12 @@ public abstract class WorldGen {
 		return list;
 	}
 
-	public static boolean canGenerateInBlock(IWorld world, int x, int y, int z, WeightedBlock[] mat) {
+	public static boolean canGenerateInBlock(IWorld world, int x, int y, int z, Material[] mat) {
 
 		return canGenerateInBlock(world, new BlockPos(x, y, z), mat);
 	}
 
-	public static boolean canGenerateInBlock(IWorld world, BlockPos pos, WeightedBlock[] mat) {
+	public static boolean canGenerateInBlock(IWorld world, BlockPos pos, Material[] mat) {
 
 		if (mat == null || mat.length == 0) {
 			return true;
@@ -49,19 +49,15 @@ public abstract class WorldGen {
 
 		BlockState state = world.getBlockState(pos);
 		for (int j = 0, e = mat.length; j < e; ++j) {
-			WeightedBlock genBlock = mat[j];
-			if (
-					genBlock.state == null ?
-					state.isReplaceableOreGen(world, pos, BlockMatcher.forBlock(genBlock.block)) :
-					state.isReplaceableOreGen(world, pos, (test) -> test != null && genBlock.state.getProperties().equals(test.getProperties()))
-			) {
+			Material material = mat[j];
+			if (material.test(state)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public static boolean generateBlock(IWorld world, Random rand, int x, int y, int z, WeightedBlock[] mat, List<WeightedBlock> o) {
+	public static boolean generateBlock(IWorld world, Random rand, int x, int y, int z, Material[] mat, List<WeightedBlock> o) {
 
 		if (mat == null || mat.length == 0) {
 			return generateBlock(world, rand, x, y, z, o);

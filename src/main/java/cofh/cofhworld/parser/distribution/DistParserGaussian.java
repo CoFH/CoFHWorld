@@ -2,7 +2,7 @@ package cofh.cofhworld.parser.distribution;
 
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.parser.distribution.base.AbstractStoneDistParser;
+import cofh.cofhworld.parser.distribution.base.AbstractDistParser;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.world.distribution.Distribution;
 import cofh.cofhworld.world.distribution.DistributionGaussian;
@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
-public class DistParserGaussian extends AbstractStoneDistParser {
+public class DistParserGaussian extends AbstractDistParser {
 
 	private final String[] FIELDS = new String[] { "generator", "cluster-count", "center-height", "spread" };
 

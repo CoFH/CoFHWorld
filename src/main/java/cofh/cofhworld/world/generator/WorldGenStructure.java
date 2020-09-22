@@ -1,9 +1,9 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedEnum;
 import cofh.cofhworld.util.random.WeightedNBTTag;
 import net.minecraft.util.Mirror;
@@ -32,7 +32,7 @@ public class WorldGenStructure extends WorldGen {
 
 	private INumberProvider integrity = new ConstantProvider(2f); // 1++
 
-	public WorldGenStructure(List<WeightedNBTTag> templates, List<WeightedBlock> ignoredBlocks, boolean ignoreEntities) {
+	public WorldGenStructure(List<WeightedNBTTag> templates, List<Material> ignoredBlocks, boolean ignoreEntities) {
 
 		if (templates.size() > 1) {
 			this.template = null;
@@ -46,28 +46,29 @@ public class WorldGenStructure extends WorldGen {
 			template.read(templates.get(0).getCompoundTag());
 		}
 		if (ignoredBlocks.size() > 1) {
-			placementSettings.addProcessor(new BlockIgnoreStructureProcessor(Collections.EMPTY_LIST) {
+			final Material[] ignoringBlocks = ignoredBlocks.toArray(new Material[0]);
+			placementSettings.addProcessor(new BlockIgnoreStructureProcessor(Collections.emptyList()) {
 
 				@Nullable
 				@Override
 				public BlockInfo process(IWorldReader world, BlockPos offset, BlockInfo original, BlockInfo current, PlacementSettings settings) {
 
-					for (WeightedBlock ignoredBlock : ignoredBlocks) {
-						if (ignoredBlock.getState().equals(current.state))
+					for (Material ignoredBlock : ignoringBlocks) {
+						if (ignoredBlock.test(current.state))
 							return null;
 					}
 					return current;
 				}
 			});
 		} else if (ignoredBlocks.size() > 0) {
-			final WeightedBlock ignoredBlock = ignoredBlocks.get(0);
-			placementSettings.addProcessor(new BlockIgnoreStructureProcessor(Collections.EMPTY_LIST) {
+			final Material ignoredBlock = ignoredBlocks.get(0);
+			placementSettings.addProcessor(new BlockIgnoreStructureProcessor(Collections.emptyList()) {
 
 				@Nullable
 				@Override
 				public BlockInfo process(IWorldReader world, BlockPos offset, BlockInfo original, BlockInfo current, PlacementSettings settings) {
 
-					return ignoredBlock.getState().equals(current.state) ? null : current;
+					return ignoredBlock.test(current.state) ? null : current;
 				}
 			});
 		}

@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.init.WorldProps;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.BlockData;
@@ -50,7 +51,7 @@ public class GenParserStructure implements IGeneratorParser {
 
 	@Override
 	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
 
 		ArrayList<WeightedNBTTag> tags = new ArrayList<>();
 		if (genObject.hasPath("structure")) {
@@ -89,11 +90,11 @@ public class GenParserStructure implements IGeneratorParser {
 			throw new InvalidGeneratorException("Missing `structure` tag", genObject.origin());
 		}
 
-		resList.clear();
+		matList.clear();
 
-		if (genObject.hasPath("ignored-block") && !BlockData.parseBlockList(genObject.getValue("ignored-block"), resList, false)) {
+		if (genObject.hasPath("ignored-block") && !BlockData.parseMaterialList(genObject.getValue("ignored-block"), matList)) {
 			log.warn("Error parsing `ignored-block`, generating all template blocks instead");
-			resList.clear();
+			matList.clear();
 		}
 
 		boolean ignoreEntities = false;
@@ -101,7 +102,7 @@ public class GenParserStructure implements IGeneratorParser {
 			ignoreEntities = genObject.getBoolean("ignore-entities");
 		}
 
-		WorldGenStructure gen = new WorldGenStructure(tags, resList, ignoreEntities);
+		WorldGenStructure gen = new WorldGenStructure(tags, matList, ignoreEntities);
 
 		if (genObject.hasPath("integrity")) {
 			gen.setIntegrity(NumberData.parseNumberValue(genObject.getValue("integrity"), 0d, 1.01d)); // ensure we don't accidentally a .999...

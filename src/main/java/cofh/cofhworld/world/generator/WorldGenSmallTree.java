@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
@@ -17,8 +18,8 @@ public class WorldGenSmallTree extends WorldGen {
 
 	private final List<WeightedBlock> leaves;
 	private final List<WeightedBlock> trunk;
-	private final WeightedBlock[] material;
-	public WeightedBlock[] genSurface = null;
+	private final Material[] material;
+	public Material[] genSurface = null;
 
 	public int minHeight = 5;
 	public int heightVariance = 3;
@@ -27,11 +28,11 @@ public class WorldGenSmallTree extends WorldGen {
 	public boolean relaxedGrowth = false;
 	public boolean waterLoving = false;
 
-	public WorldGenSmallTree(List<WeightedBlock> resource, List<WeightedBlock> leaf, List<WeightedBlock> block) {
+	public WorldGenSmallTree(List<WeightedBlock> resource, List<WeightedBlock> leaf, List<Material> materials) {
 
 		leaves = leaf;
 		trunk = resource;
-		material = block.toArray(new WeightedBlock[0]);
+		material = materials.toArray(new Material[0]);
 	}
 
 	protected int getLeafRadius(int height, int level, boolean check) {

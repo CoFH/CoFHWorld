@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.ConditionData;
@@ -27,10 +28,10 @@ public class GenParserDungeon implements IGeneratorParser {
 
 	@Override
 	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) {
 
 		ArrayList<WeightedBlock> mobList = new ArrayList<>();
-		if (!BlockData.parseBlockList(genObject.getValue("spawner"), mobList, false)) {
+		if (!BlockData.parseBlockList(genObject.getValue("spawner"), mobList)) {
 			log.warn("Entry specifies invalid spawner list for 'dungeon' generator on line {}! Using vanilla's without configuration!",
 					genObject.getValue("spawner").origin().lineNumber());
 			mobList.clear();
@@ -41,7 +42,7 @@ public class GenParserDungeon implements IGeneratorParser {
 		{
 			if (genObject.hasPath("floor")) {
 				resList = new ArrayList<>();
-				if (BlockData.parseBlockList(genObject.getValue("floor"), resList, false)) {
+				if (BlockData.parseBlockList(genObject.getValue("floor"), resList)) {
 					r.floor = resList;
 				} else {
 					log.warn("Entry specifies invalid block list for `floor` on line {}! Using walls.", genObject.getValue("floor").origin().lineNumber());
@@ -49,7 +50,7 @@ public class GenParserDungeon implements IGeneratorParser {
 			}
 			if (genObject.hasPath("chest")) {
 				resList = new ArrayList<>();
-				if (BlockData.parseBlockList(genObject.getValue("chest"), resList, false)) {
+				if (BlockData.parseBlockList(genObject.getValue("chest"), resList)) {
 					r.chests = resList;
 				} else {
 					log.warn("Entry specifies invalid blocks for `chest` on line {}! Using default.", genObject.getValue("chest").origin().lineNumber());
@@ -57,7 +58,7 @@ public class GenParserDungeon implements IGeneratorParser {
 			}
 			if (genObject.hasPath("fill-block")) {
 				resList = new ArrayList<>();
-				if (BlockData.parseBlockList(genObject.getValue("fill-block"), resList, false)) {
+				if (BlockData.parseBlockList(genObject.getValue("fill-block"), resList)) {
 					r.filler = resList;
 				} else {
 					log.warn("Entry specifies invalid blocks for `fill-block` on line {}! Using default.", genObject.getValue("chest").origin().lineNumber());

@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.distribution;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.IDistributionParser;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -26,15 +27,15 @@ public class DistParserReplace implements IDistributionParser {
     public IConfigurableFeatureGenerator getFeature(String featureName, Config genObject, boolean retrogen, Logger log) throws InvalidDistributionException {
 
         List<WeightedBlock> blockstates = new ArrayList<>();
-        if (!BlockData.parseBlockList(genObject.root().get("block"), blockstates, true)) {
+        if (!BlockData.parseBlockList(genObject.getValue("block"), blockstates)) {
             throw new InvalidDistributionException("`block` not valid", genObject.origin());
         }
 
-        List<WeightedBlock> replacement = new ArrayList<>();
-        if (!BlockData.parseBlockList(genObject.root().get("replacement"), replacement, false)) {
-            throw new InvalidDistributionException("`replacement` not valid", genObject.origin());
+        List<Material> replacement = new ArrayList<>();
+        if (!BlockData.parseMaterialList(genObject.getValue("material"), replacement)) {
+            throw new InvalidDistributionException("`material` not valid", genObject.origin());
         }
 
-        return new DistributionReplace(featureName, retrogen, blockstates, replacement);
+        return new DistributionReplace(featureName, retrogen, replacement, blockstates);
     }
 }

@@ -7,10 +7,12 @@ function initializeCoreMod() {
     var ChunkProvider$generate = ASMAPI.mapMethod("func_202092_b");
     var Biome$addFeature = ASMAPI.mapMethod("func_203611_a");
 
-    function wrapVanillaGenerator(method, stageName, typeName) {
+    function wrapVanillaGenerator(method, stageName, typeName, wrapper) {
 
         if (!typeName)
             typeName = "net/minecraft/world/gen/GenerationStage$Decoration";
+        if (!wrapper)
+            wrapper = "wrapStandard";
 
         var foundOre = false;
         for (var isn = method.instructions.getFirst();
@@ -27,7 +29,7 @@ function initializeCoreMod() {
                 Biome$addFeature.equals(isn.name)) {
                 method.instructions.insertBefore(isn, new MethodInsnNode(opcodes.INVOKESTATIC,
                     "cofh/cofhworld/wrapper/VanillaFeatureWrapper",
-                    "wrap",
+                    wrapper,
                     "(Lnet/minecraft/world/gen/feature/ConfiguredFeature;)Lnet/minecraft/world/gen/feature/ConfiguredFeature;",
                     false));
                 foundOre = false;

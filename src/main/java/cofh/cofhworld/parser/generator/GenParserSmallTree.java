@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -17,22 +18,19 @@ public class GenParserSmallTree extends AbstractGenParserBlock {
 
 	@Override
 	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) {
 
 		ArrayList<WeightedBlock> list = new ArrayList<>();
-		ArrayList<WeightedBlock> blocks = new ArrayList<>();
+		ArrayList<Material> blocks = new ArrayList<>();
 		if (genObject.hasPath("surface")) {
-			if (!BlockData.parseBlockList(genObject.getValue("surface"), blocks, false)) {
-				log.warn("Entry specifies invalid surface for 'smalltree' generator! Using dirt!");
-				blocks.clear();
-				blocks.add(new WeightedBlock(Blocks.GRASS));
-				blocks.add(new WeightedBlock(Blocks.DIRT));
+			if (!BlockData.parseMaterialList(genObject.getValue("surface"), blocks)) {
+				log.warn("Entry specifies invalid surface for 'smalltree' generator! A partial list will be used!");
 			}
 		}
 
 		if (genObject.hasPath("leaves")) {
 			list = new ArrayList<>();
-			if (!BlockData.parseBlockList(genObject.getValue("leaves"), list, true)) {
+			if (!BlockData.parseBlockList(genObject.getValue("leaves"), list)) {
 				log.warn("Entry specifies invalid leaves for 'smalltree' generator!");
 				list.clear();
 			}
@@ -43,7 +41,7 @@ public class GenParserSmallTree extends AbstractGenParserBlock {
 		WorldGenSmallTree r = new WorldGenSmallTree(resList, list, matList);
 		{
 			if (blocks.size() > 0) {
-				r.genSurface = blocks.toArray(new WeightedBlock[blocks.size()]);
+				r.genSurface = blocks.toArray(new Material[0]);
 			}
 
 			if (genObject.hasPath("min-height")) {

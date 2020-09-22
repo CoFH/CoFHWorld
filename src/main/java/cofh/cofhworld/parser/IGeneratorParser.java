@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.world.generator.WorldGen;
@@ -23,7 +24,7 @@ public interface IGeneratorParser {
 	 * @return The {@link WorldGen} to be registered with an IFeatureGenerator
 	 */
 	@Nonnull
-	WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException;
+	WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException;
 
 	String[] getRequiredFields();
 

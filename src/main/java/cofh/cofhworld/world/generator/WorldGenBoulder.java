@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +16,7 @@ import java.util.Random;
 public class WorldGenBoulder extends WorldGen {
 
 	private final List<WeightedBlock> resource;
-	private final WeightedBlock[] material;
+	private final Material[] material;
 	private final int size;
 	public int sizeVariance = 2;
 	public int clusters = 3;
@@ -26,11 +27,11 @@ public class WorldGenBoulder extends WorldGen {
 
 	// TODO: shapes? sphere, cube, ellipsoid? more?
 
-	public WorldGenBoulder(List<WeightedBlock> resource, int minSize, List<WeightedBlock> block) {
+	public WorldGenBoulder(List<WeightedBlock> resource, int minSize, List<Material> materials) {
 
 		this.resource = resource;
 		size = minSize;
-		material = block.toArray(new WeightedBlock[block.size()]);
+		material = materials.toArray(new Material[0]);
 	}
 
 	@Override

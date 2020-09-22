@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.GeneratorData;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -32,7 +33,7 @@ public class GenParserSequential implements IGeneratorParser {
 
 	@Override
 	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
 
 		ArrayList<WorldGen> gens;
 
@@ -41,12 +42,12 @@ public class GenParserSequential implements IGeneratorParser {
 			List<? extends Config> list = genObject.getConfigList("generators");
 			gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
-				WorldGen gen = GeneratorData.parseGenerator(name, genElement.atKey("generator"), matList);
+				WorldGen gen = GeneratorData.parseGenerator(name, genElement.atKey("generator"));
 				gens.add(gen);
 			}
 		} else if (genData.valueType() == ConfigValueType.OBJECT) {
 			gens = new ArrayList<>(1);
-			WorldGen gen = GeneratorData.parseGenerator(name, genObject.getConfig("generators").atKey("generator"), matList);
+			WorldGen gen = GeneratorData.parseGenerator(name, genObject.getConfig("generators").atKey("generator"));
 			gens.add(gen);
 		} else {
 			log.error("Invalid object type for generator on line {}.", genData.origin().lineNumber());

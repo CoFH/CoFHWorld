@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.distribution;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
 import net.minecraft.world.IWorld;
@@ -9,13 +10,13 @@ import java.util.Random;
 
 public class DistributionReplace extends Distribution {
 
-    private final WeightedBlock[] blockstates;
+    private final Material[] blockstates;
     private final List<WeightedBlock> replacement;
 
-    public DistributionReplace(String featureName, boolean retrogen, List<WeightedBlock> blockstates, List<WeightedBlock> replacement) {
+    public DistributionReplace(String featureName, boolean retrogen, List<Material> blockstates, List<WeightedBlock> replacement) {
         super(featureName, retrogen);
 
-        this.blockstates = blockstates.toArray(new WeightedBlock[blockstates.size()]);
+        this.blockstates = blockstates.toArray(new Material[0]);
         this.replacement = replacement;
     }
 

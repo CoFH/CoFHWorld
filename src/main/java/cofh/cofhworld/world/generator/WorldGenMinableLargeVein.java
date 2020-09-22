@@ -1,13 +1,12 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 
@@ -17,55 +16,21 @@ import java.util.Random;
 public class WorldGenMinableLargeVein extends WorldGen {
 
 	private final List<WeightedBlock> resource;
-	private final WeightedBlock[] material;
+	private final Material[] material;
 	private final INumberProvider veinSize;
 	private ICondition sparse, spindly;
 
-	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize) {
+	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, List<Material> materials) {
 
-		this(resource, clusterSize, Blocks.STONE);
+		this(resource, new ConstantProvider(clusterSize), materials);
 	}
 
-	public WorldGenMinableLargeVein(WeightedBlock resource, int clusterSize, Block block) {
-
-		this(fabricateList(resource), clusterSize, block);
-	}
-
-	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, Block block) {
-
-		this(resource, clusterSize, fabricateList(block));
-	}
-
-	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
-
-		this(resource, clusterSize, block, true);
-	}
-
-	public WorldGenMinableLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block) {
+	public WorldGenMinableLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
 
 		this.resource = resource;
 		veinSize = clusterSize;
-		material = block.toArray(new WeightedBlock[0]);
+		material = materials.toArray(new Material[0]);
 		this.setSparse(ConstantCondition.TRUE);
-	}
-
-	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block, boolean sparze) {
-
-		this(resource, new ConstantProvider(clusterSize), block, sparze);
-	}
-
-	public WorldGenMinableLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block, boolean sparze) {
-
-		this.resource = resource;
-		veinSize = clusterSize;
-		material = block.toArray(new WeightedBlock[0]);
-		sparse = sparze ? ConstantCondition.TRUE : ConstantCondition.FALSE;
-	}
-
-	@Deprecated
-	public WorldGenMinableLargeVein setSpindly(boolean spindly) {
-
-		return setSpindly(spindly ? ConstantCondition.TRUE : ConstantCondition.FALSE);
 	}
 
 	public WorldGenMinableLargeVein setSpindly(ICondition spindly) {

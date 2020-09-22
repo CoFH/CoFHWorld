@@ -1,11 +1,10 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IWorld;
@@ -16,39 +15,19 @@ import java.util.Random;
 public class WorldGenMinableCluster extends WorldGen {
 
 	private final List<WeightedBlock> resource;
-	private final WeightedBlock[] material;
+	private final Material[] material;
 	private final INumberProvider clusterSize;
 
-	public WorldGenMinableCluster(WeightedBlock resource, int clusterSize) {
+	public WorldGenMinableCluster(List<WeightedBlock> resource, int clusterSize, List<Material> materials) {
 
-		this(fabricateList(resource), clusterSize);
+		this(resource, new ConstantProvider(clusterSize), materials);
 	}
 
-	public WorldGenMinableCluster(List<WeightedBlock> resource, int clusterSize) {
-
-		this(resource, clusterSize, Blocks.STONE);
-	}
-
-	public WorldGenMinableCluster(WeightedBlock resource, int clusterSize, Block block) {
-
-		this(fabricateList(resource), clusterSize, block);
-	}
-
-	public WorldGenMinableCluster(List<WeightedBlock> resource, int clusterSize, Block block) {
-
-		this(resource, clusterSize, fabricateList(block));
-	}
-
-	public WorldGenMinableCluster(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
-
-		this(resource, new ConstantProvider(clusterSize), block);
-	}
-
-	public WorldGenMinableCluster(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block) {
+	public WorldGenMinableCluster(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
 
 		this.resource = resource;
 		this.clusterSize = clusterSize;
-		material = block.toArray(new WeightedBlock[0]);
+		material = materials.toArray(new Material[0]);
 	}
 
 	@Override

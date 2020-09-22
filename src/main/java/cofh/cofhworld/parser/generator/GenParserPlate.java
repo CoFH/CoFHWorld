@@ -1,6 +1,7 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.data.PlaneShape;
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.EnumData;
@@ -29,7 +30,7 @@ public class GenParserPlate implements IGeneratorParser {
 
 	@Override
 	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
 
 		INumberProvider clusterSize = NumberData.parseNumberValue(genObject.getValue("radius"), 0, 32);
 

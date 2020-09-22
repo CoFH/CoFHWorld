@@ -1,6 +1,7 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
@@ -17,16 +18,16 @@ public class WorldGenGeode extends WorldGen {
 
 	private final List<WeightedBlock> resource;
 	private final List<WeightedBlock> outline;
-	private final WeightedBlock[] material;
+	private final Material[] material;
 	private List<WeightedBlock> filler;
 	private ICondition hollow;
 	private INumberProvider width;
 	private INumberProvider height;
 
-	public WorldGenGeode(List<WeightedBlock> resource, List<WeightedBlock> material, List<WeightedBlock> cover) {
+	public WorldGenGeode(List<WeightedBlock> resource, List<Material> materials, List<WeightedBlock> cover) {
 
 		this.resource = resource;
-		this.material = material.toArray(new WeightedBlock[0]);
+		material = materials.toArray(new Material[0]);
 		outline = cover;
 		filler = Collections.singletonList(WeightedBlock.AIR);
 		hollow = ConstantCondition.FALSE;

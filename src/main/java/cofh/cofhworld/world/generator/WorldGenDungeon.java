@@ -1,6 +1,7 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.operation.BinaryCondition;
 import cofh.cofhworld.data.condition.operation.ComparisonCondition;
@@ -34,7 +35,7 @@ public class WorldGenDungeon extends WorldGen {
 			new ComparisonCondition(new DataProvider("holes"), new ConstantProvider(5), "LESS_THAN_OR_EQUAL"),
 			"AND");
 
-	private final WeightedBlock[] material;
+	private final Material[] material;
 	private final List<WeightedBlock> spawners;
 	private final List<WeightedBlock> walls;
 	public List<WeightedBlock> chests;
@@ -46,9 +47,9 @@ public class WorldGenDungeon extends WorldGen {
 	public ICondition validHoleCount = ONE_TO_FIVE, holeCondition = IS_AIR;
 	public INumberProvider chestCount = TWO, chestAttempts = THREE;
 
-	public WorldGenDungeon(List<WeightedBlock> blocks, List<WeightedBlock> material, List<WeightedBlock> spawners) {
+	public WorldGenDungeon(List<WeightedBlock> blocks, List<Material> materials, List<WeightedBlock> spawners) {
 
-		this.material = material.toArray(new WeightedBlock[0]);
+		material = materials.toArray(new Material[0]);
 		walls = blocks;
 		floor = walls;
 		this.spawners = spawners;

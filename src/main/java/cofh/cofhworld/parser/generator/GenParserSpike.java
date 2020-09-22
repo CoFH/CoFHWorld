@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
@@ -14,7 +15,7 @@ public class GenParserSpike extends AbstractGenParserBlock {
 
 	@Override
 	@Nonnull
-	public WorldGen parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
+	public WorldGen parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) {
 
 		WorldGenSpike r = new WorldGenSpike(resList, matList);
 		{

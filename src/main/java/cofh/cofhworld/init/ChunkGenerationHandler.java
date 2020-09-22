@@ -119,7 +119,7 @@ public class ChunkGenerationHandler {
 
 	public static class RetroChunkCoord {
 
-		private static final Set<String> emptySet = Collections.EMPTY_SET;
+		private static final Set<String> emptySet = Collections.emptySet();
 		public final ChunkCoord coord;
 		public final Set<String> generatedFeatures;
 

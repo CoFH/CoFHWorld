@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.ConditionData;
@@ -18,14 +19,14 @@ public class GenParserGeode extends AbstractGenParserBlock {
 
 	@Override
 	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) {
 
 		ArrayList<WeightedBlock> list = new ArrayList<>();
 		if (!genObject.hasPath("crust")) {
 			log.debug("Entry does not specify crust for 'geode' generator. Using stone.");
 			list.add(new WeightedBlock(Blocks.STONE));
 		} else {
-			if (!BlockData.parseBlockList(genObject.getValue("crust"), list, true)) {
+			if (!BlockData.parseBlockList(genObject.getValue("crust"), list)) {
 				log.warn("Entry specifies invalid crust for 'geode' generator! Using obsidian!");
 				list.clear();
 				list.add(new WeightedBlock(Blocks.OBSIDIAN));
@@ -38,7 +39,7 @@ public class GenParserGeode extends AbstractGenParserBlock {
 			}
 			if (genObject.hasPath("filler")) {
 				list = new ArrayList<>();
-				if (!BlockData.parseBlockList(genObject.getValue("filler"), list, true)) {
+				if (!BlockData.parseBlockList(genObject.getValue("filler"), list)) {
 					log.warn("Entry specifies invalid filler for 'geode' generator! Not filling!");
 				} else {
 					r.setFillBlock(list);

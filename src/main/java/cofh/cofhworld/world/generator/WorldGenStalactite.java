@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -13,7 +14,7 @@ import java.util.Random;
 @Deprecated
 public class WorldGenStalactite extends WorldGenStalagmite {
 
-	public WorldGenStalactite(List<WeightedBlock> resource, List<WeightedBlock> block, List<WeightedBlock> gblock) {
+	public WorldGenStalactite(List<WeightedBlock> resource, List<Material> block, List<Material> gblock) {
 
 		super(resource, block, gblock);
 	}
@@ -45,7 +46,7 @@ public class WorldGenStalactite extends WorldGenStalagmite {
 				}
 				int height = getHeight(x, z, size, rand, maxHeight);
 				for (int y = 0; y < height; ++y) {
-					r |= generateBlock(world, rand, xStart + x, yStart - y, zStart + z, material, cluster);
+					r |= generateBlock(world, rand, xStart + x, yStart - y, zStart + z, material, resource);
 				}
 			}
 		}

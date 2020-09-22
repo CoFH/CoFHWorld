@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser.generator;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -7,7 +8,7 @@ import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenStalactite;
 import cofh.cofhworld.world.generator.WorldGenStalagmite;
 import com.typesafe.config.Config;
-import net.minecraft.block.Blocks;
+import com.typesafe.config.ConfigOrigin;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -25,18 +26,15 @@ public class GenParserStalagmite extends AbstractGenParserBlock {
 
 	@Override
 	@Nonnull
-	public WorldGen parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) {
+	public WorldGen parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
 
-		// TODO: these names need revised
-		ArrayList<WeightedBlock> list = new ArrayList<>();
-		if (!genObject.hasPath("gen-body")) {
-			log.info("Entry does not specify gen body for 'stalagmite' generator. Using air.");
-			list.add(new WeightedBlock(Blocks.AIR));
-		} else {
-			if (!BlockData.parseBlockList(genObject.getValue("gen-body"), list, false)) {
-				log.warn("Entry specifies invalid gen body for 'stalagmite' generator! Using air!");
-				list.clear();
-				list.add(new WeightedBlock(Blocks.AIR));
+		ArrayList<Material> list = new ArrayList<>();
+		{
+			boolean has = genObject.hasPath("surface");
+			if (!has || !BlockData.parseMaterialList(genObject.getValue("surface"), list)) {
+				ConfigOrigin origin = (has ? genObject.getValue("surface").origin() : genObject.origin());
+				log.error("Invalid `surface` specified for generator '{}' on line {}!", generatorName, origin.lineNumber());
+				throw new InvalidGeneratorException(has ? "Invalid `surface` specified" : "`surface` not spcified!", origin);
 			}
 		}
 		WorldGenStalagmite r = stalactite ? new WorldGenStalactite(resList, matList, list) : new WorldGenStalagmite(resList, matList, list);

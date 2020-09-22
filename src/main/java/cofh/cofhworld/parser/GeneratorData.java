@@ -1,5 +1,6 @@
 package cofh.cofhworld.parser;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -17,7 +18,7 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class GeneratorData {
 
-	public static WorldGen parseGenerator(String def, Config genObject, List<WeightedBlock> defaultMaterial) throws IGeneratorParser.InvalidGeneratorException {
+	public static WorldGen parseGenerator(String def, Config genObject) throws IGeneratorParser.InvalidGeneratorException {
 
 		if (!genObject.hasPath("generator")) {
 			throw new IGeneratorParser.InvalidGeneratorException("No `generator` entry present", genObject.origin());
@@ -27,20 +28,20 @@ public class GeneratorData {
 			List<? extends Config> list = genObject.getConfigList("generator");
 			ArrayList<WeightedWorldGenerator> gens = new ArrayList<>(list.size());
 			for (Config genElement : list) {
-				WorldGen gen = parseGeneratorData(def, genElement, defaultMaterial);
+				WorldGen gen = parseGeneratorData(def, genElement);
 				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
 				gens.add(new WeightedWorldGenerator(gen, weight));
 			}
 			return new WorldGenMulti(gens);
 		} else if (genData.valueType() == ConfigValueType.OBJECT) {
-			return parseGeneratorData(def, genObject.getConfig("generator"), defaultMaterial);
+			return parseGeneratorData(def, genObject.getConfig("generator"));
 		} else {
 			log.error("Invalid data type for field 'generator'. > It must be an object or list.");
 			throw new IGeneratorParser.InvalidGeneratorException("Invalid data type", genData.origin());
 		}
 	}
 
-	public static WorldGen parseGeneratorData(String def, Config genObject, List<WeightedBlock> defaultMaterial) throws IGeneratorParser.InvalidGeneratorException {
+	public static WorldGen parseGeneratorData(String def, Config genObject) throws IGeneratorParser.InvalidGeneratorException {
 
 		String name = def;
 		if (genObject.hasPath("type")) {
@@ -73,17 +74,16 @@ public class GeneratorData {
 		if (!parser.isMeta() && !genObject.hasPath("block")) {
 			log.error("Generators cannot generate blocks unless `block` is specified.");
 			throw new IGeneratorParser.InvalidGeneratorException("`block` not specified", genObject.origin());
-		} else if (!BlockData.parseBlockList(genObject.root().get("block"), resList, true) && !parser.isMeta()) {
-			throw new IGeneratorParser.InvalidGeneratorException("`block` not valid", genObject.origin());
+		} else if (!BlockData.parseBlockList(genObject.root().get("block"), resList) && !parser.isMeta()) {
+			throw new IGeneratorParser.InvalidGeneratorException("`block` not valid", genObject.getValue("block").origin());
 		}
 
-		List<WeightedBlock> matList = new ArrayList<>();
-		if (!genObject.hasPath("material")) {
-			log.debug("Using the default material list.");
-			matList = defaultMaterial;
-		} else if (!BlockData.parseBlockList(genObject.root().get("material"), matList, false)) {
-			log.warn("Invalid material list! Using default list.");
-			matList = defaultMaterial;
+		List<Material> matList = new ArrayList<>();
+		if (!parser.isMeta() && !genObject.hasPath("material")) {
+			log.error("Generators cannot generate blocks unless `material` is specified.");
+			throw new IGeneratorParser.InvalidGeneratorException("`material` not specified", genObject.origin());
+		} else if (!BlockData.parseMaterialList(genObject.root().get("material"), matList) && !parser.isMeta()) {
+			throw new IGeneratorParser.InvalidGeneratorException("`material` not valid", genObject.getValue("material").origin());
 		}
 
 		return parser.parseGenerator(parser.isMeta() ? def : name, genObject, log, resList, matList);

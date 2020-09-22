@@ -2,6 +2,7 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.PlaneShape;
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
@@ -20,8 +21,8 @@ import java.util.Random;
 @Deprecated
 public class WorldGenMinablePlate extends WorldGen {
 
-	private final List<WeightedBlock> cluster;
-	private final WeightedBlock[] genBlock;
+	private final List<WeightedBlock> resource;
+	private final Material[] material;
 
 	private final INumberProvider radius;
 	private INumberProvider height;
@@ -31,16 +32,16 @@ public class WorldGenMinablePlate extends WorldGen {
 	private Mirror shapeMirror = Mirror.NONE;
 	private boolean slim;
 
-	public WorldGenMinablePlate(List<WeightedBlock> resource, int clusterSize, List<WeightedBlock> block) {
+	public WorldGenMinablePlate(List<WeightedBlock> resource, int clusterSize, List<Material> materials) {
 
-		this(resource, new UniformRandomProvider(clusterSize, clusterSize + 2), block);
+		this(resource, new UniformRandomProvider(clusterSize, clusterSize + 2), materials);
 	}
 
-	public WorldGenMinablePlate(List<WeightedBlock> resource, INumberProvider clusterSize, List<WeightedBlock> block) {
+	public WorldGenMinablePlate(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
 
-		cluster = resource;
+		this.resource = resource;
 		radius = clusterSize;
-		genBlock = block.toArray(new WeightedBlock[0]);
+		material = materials.toArray(new Material[0]);
 		setHeight(1).setSlim(false);
 	}
 
@@ -68,7 +69,7 @@ public class WorldGenMinablePlate extends WorldGen {
 
 				if (shape.inArea(areaX, areaZ, size, rot, mirror)) {
 					for (int posY = y - height; slim ? posY < y + height : posY <= y + height; ++posY) {
-						r |= generateBlock(world, rand, posX, posY, posZ, genBlock, cluster);
+						r |= generateBlock(world, rand, posX, posY, posZ, material, resource);
 					}
 				}
 			}

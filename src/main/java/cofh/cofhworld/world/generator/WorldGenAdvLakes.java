@@ -22,8 +22,8 @@ import java.util.Random;
 public class WorldGenAdvLakes extends WorldGen {
 
 	private static final List<WeightedBlock> GAP_BLOCK = Collections.singletonList(WeightedBlock.AIR);
-	private final List<WeightedBlock> cluster;
-	private final WeightedBlock[] material;
+	private final List<WeightedBlock> resource;
+	private final cofh.cofhworld.data.block.Material[] material;
 	private List<WeightedBlock> outlineBlock = null;
 	private List<WeightedBlock> gapBlock = GAP_BLOCK;
 	private boolean solidOutline = false;
@@ -31,13 +31,13 @@ public class WorldGenAdvLakes extends WorldGen {
 	private INumberProvider width;
 	private INumberProvider height;
 
-	public WorldGenAdvLakes(List<WeightedBlock> resource, List<WeightedBlock> block) {
+	public WorldGenAdvLakes(List<WeightedBlock> resource, List<cofh.cofhworld.data.block.Material> materials) {
 
-		cluster = resource;
-		if (block == null) {
+		this.resource = resource;
+		if (materials == null) {
 			material = null;
 		} else {
-			material = block.toArray(new WeightedBlock[0]);
+			material = materials.toArray(new cofh.cofhworld.data.block.Material[0]);
 		}
 		this.setWidth(16);
 		this.setHeight(9);
@@ -128,7 +128,7 @@ public class WorldGenAdvLakes extends WorldGen {
 				for (y = 0; y < height; ++y) {
 					if (spawnBlock[(x * width + z) * height + y]) {
 						if (y < heightOff) {
-							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, material, cluster);
+							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, material, resource);
 						} else if (canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, material)) {
 							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, gapBlock);
 						}
