@@ -1,20 +1,23 @@
 function initializeCoreMod() {
 
+    var ASMAPI = Java.type("net.minecraftforge.coremod.api.ASMAPI");
     var opcodes = Java.type('org.objectweb.asm.Opcodes')
     var InsnNode = Java.type("org.objectweb.asm.tree.InsnNode");
     var MethodInsnNode = Java.type("org.objectweb.asm.tree.MethodInsnNode");
-    var ChunkProvider$generate = Java.type("net.minecraftforge.coremod.api.ASMAPI").mapMethod("func_202092_b");
-    var Biome$addFeature = Java.type("net.minecraftforge.coremod.api.ASMAPI").mapMethod("func_203611_a");
+    var ChunkProvider$generate = ASMAPI.mapMethod("func_202092_b");
+    var Biome$addFeature = ASMAPI.mapMethod("func_203611_a");
 
-    function wrapVanillaGenerator(method, stageName) {
+    function wrapVanillaGenerator(method, stageName, typeName) {
+
+        if (!typeName)
+            typeName = "net/minecraft/world/gen/GenerationStage$Decoration";
 
         var foundOre = false;
         for (var isn = method.instructions.getFirst();
             isn != null;
             isn = isn.getNext()) {
-            if (!foundOre &&
-                isn.getOpcode() == opcodes.GETSTATIC &&
-                "net/minecraft/world/gen/GenerationStage$Decoration".equals(isn.owner)) {
+            if (isn.getOpcode() == opcodes.GETSTATIC &&
+                typeName.equals(isn.owner)) {
                 foundOre = stageName.equals(isn.name); // ah, enums. so nice.
             }
             if (foundOre &&
@@ -85,7 +88,21 @@ function initializeCoreMod() {
                 'methodDesc': '(Lnet/minecraft/world/biome/Biome;)V'
             },
             'transformer': function(method) {
+
                 wrapVanillaGenerator(method, "UNDERGROUND_DECORATION");
+                return method;
+            }
+        },
+        'standard_gen_hook_nether_ore': {
+            'target': {
+                'type': 'METHOD',
+                'class': 'net/minecraft/world/biome/NetherBiome',
+                'methodName': '<init>',
+                'methodDesc': '()V'
+            },
+            'transformer': function(method) {
+
+                wrapVanillaGenerator(method, ASMAPI.mapField("field_202290_aj"), "net/minecraft/world/gen/feature/Feature");
                 return method;
             }
         }
