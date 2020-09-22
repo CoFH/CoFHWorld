@@ -231,11 +231,11 @@ public class WorldProps {
 
 	public static BooleanValue disableFeatureGeneration;
 	public static boolean replaceStandardGeneration = false;
-	public static boolean enableRetroactiveGeneration = true; // TODO: false
+	public static boolean enableRetroactiveGeneration = false;
 
 	public static boolean enableFlatBedrock = false;
 	public static boolean enableRetroactiveFlatBedrock = false;
-	public static boolean forceFullRegeneration = true; // TODO: very false
+	public static boolean forceFullRegeneration = false;
 
 	public static IntValue chanceTreeGrowth;
 	public static int numBedrockLayers = 2;
