@@ -226,7 +226,7 @@ public class WorldProps {
 	public static String cannonicalWorldGenDir;
 	public static File standardGenFile;
 
-	public static final String FILE_GEN_STANDARD_INTERNAL = "00_minecraft.json";
+	public static final String FILE_GEN_STANDARD_INTERNAL = "minecraft.json";
 	public static final String PATH_GEN_STANDARD_INTERNAL = "assets/cofhworld/world/" + FILE_GEN_STANDARD_INTERNAL;
 
 	public static BooleanValue disableFeatureGeneration;

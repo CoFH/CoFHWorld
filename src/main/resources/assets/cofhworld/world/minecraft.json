@@ -1,0 +1,552 @@
+{
+	"priority": 1000000000000,
+	"populate": {
+		"dirt": {
+
+			"distribution": "uniform",
+			"generator": {
+				"block": "dirt",
+				"material": "minecraft:stone",
+				"cluster-size": 33
+			},
+			"cluster-count": 10,
+			"min-height": 0,
+			"max-height": 256,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"gravel": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "gravel",
+				"material": "minecraft:stone",
+				"cluster-size": 33
+			},
+			"cluster-count": 8,
+			"min-height": 0,
+			"max-height": 256,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"diorite": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "minecraft:granite",
+				"material": "minecraft:stone",
+				"cluster-size": 33
+			},
+			"cluster-count": 10,
+			"min-height": 0,
+			"max-height": 80,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"granite": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "minecraft:diorite",
+				"material": "minecraft:stone",
+				"cluster-size": 33
+			},
+			"cluster-count": 10,
+			"min-height": 0,
+			"max-height": 80,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"andesite": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "minecraft:andesite",
+				"material": "minecraft:stone",
+				"cluster-size": 33
+			},
+			"cluster-count": 10,
+			"min-height": 0,
+			"max-height": 80,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"coal": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "coal_ore",
+				"material": "minecraft:stone",
+				"cluster-size": 17
+			},
+			"cluster-count": 20,
+			"min-height": 0,
+			"max-height": 128,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"iron": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "iron_ore",
+				"material": "minecraft:stone",
+				"cluster-size": 9
+			},
+			"cluster-count": 20,
+			"min-height": 0,
+			"max-height": 64,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"gold": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "gold_ore",
+				"material": "minecraft:stone",
+				"cluster-size": 9
+			},
+			"cluster-count": 2,
+			"min-height": 0,
+			"max-height": 32,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"redstone": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "redstone_ore",
+				"material": "minecraft:stone",
+				"cluster-size": 8
+			},
+			"cluster-count": 8,
+			"min-height": 0,
+			"max-height": 16,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"diamond": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "diamond_ore",
+				"material": "minecraft:stone",
+				"cluster-size": 8
+			},
+			"cluster-count": 1,
+			"min-height": 0,
+			"max-height": 16,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"lapis": {
+			"distribution": "gaussian",
+			"generator": {
+				"block": "lapis_ore",
+				"material": "minecraft:stone",
+				"cluster-size": 7
+			},
+			"cluster-count": 1,
+			"center-height": 16,
+			"spread": 16,
+			"retrogen": false,
+			"biome": {
+				"restriction": "blacklist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"the_end",
+						"nether"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"mesa_gold": {
+			"enabled": true,
+			"distribution": "uniform",
+			"generator": {
+				"block": {
+					"name": "gold_ore"
+				},
+				"material": "minecraft:stone",
+				"cluster-size": 9
+			},
+			"cluster-count": 20,
+			"min-height": 32,
+			"max-height": 80,
+			"retrogen": false,
+			"biome": {
+				"restriction": "whitelist",
+				"value":
+					{
+						"type": "category",
+						"entry": "mesa"
+					}
+			},
+			"dimension": "all"
+		},
+
+		"sand_disk": {
+			"distribution": "underwater",
+			"generator": {
+				"type": "plate",
+				"block": "sand",
+				"material": ["grass", "dirt"],
+				"radius": {"min": 2, "max": 7},
+				"height": 2
+			},
+			"cluster-count": 3,
+			"material": [],
+			"retrogen": false,
+			"biome": {
+				"restriction": "whitelist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"none",
+						"taiga",
+						"extreme_hills",
+						"jungle",
+						"mesa",
+						"plains",
+						"savanna",
+						"icy",
+						"beach",
+						"forest",
+						"ocean",
+						"desert",
+						"river",
+						"mushroom"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"clay_disk": {
+			"distribution": "underwater",
+			"generator": {
+				"type": "plate",
+				"block": "sand",
+				"material": ["dirt", "clay"],
+				"radius": {"min": 2, "max": 4},
+				"height": 1
+			},
+			"cluster-count": 1,
+			"material": [],
+			"retrogen": false,
+			"biome": {
+				"restriction": "whitelist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"none",
+						"taiga",
+						"extreme_hills",
+						"jungle",
+						"mesa",
+						"plains",
+						"savanna",
+						"icy",
+						"beach",
+						"forest",
+						"ocean",
+						"desert",
+						"river",
+						"mushroom"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"gravel_disk": {
+			"distribution": "underwater",
+			"generator": {
+				"type": "plate",
+				"block": "sand",
+				"material": ["grass", "dirt"],
+				"radius": {"min": 2, "max": 6},
+				"height": 2
+			},
+			"cluster-count": 1,
+			"material": [],
+			"retrogen": false,
+			"biome": {
+				"restriction": "whitelist",
+				"value":
+				{
+					"type": "category",
+					"entry": [
+						"none",
+						"taiga",
+						"extreme_hills",
+						"jungle",
+						"mesa",
+						"plains",
+						"savanna",
+						"icy",
+						"beach",
+						"forest",
+						"ocean",
+						"desert",
+						"river",
+						"mushroom"
+					]
+				}
+			},
+			"dimension": "all"
+		},
+
+		"swamp_clay_disk": {
+			"distribution": "underwater",
+			"generator": {
+				"type": "plate",
+				"block": "sand",
+				"material": ["grass", "dirt"],
+				"radius": {"min": 2, "max": 4},
+				"height": 1
+			},
+			"cluster-count": 1,
+			"material": [],
+			"retrogen": false,
+			"biome": {
+				"restriction": "whitelist",
+				"value":
+				{
+					"type": "category",
+					"entry": "swamp"
+				}
+			},
+			"dimension": "all"
+		},
+
+		"emerald": {
+			"distribution": "uniform",
+			"generator": {
+				"block": {
+					"name": "emerald_ore"
+				},
+				"material": "minecraft:stone",
+				"cluster-size": 1
+			},
+			"cluster-count": {
+				"min": 3,
+				"max": 9
+			},
+			"min-height": 4,
+			"max-height": 28,
+			"retrogen": false,
+			"biome": {
+				"restriction": "whitelist",
+				"value":
+					{
+						"type": "category",
+						"entry": "extreme_hills"
+					}
+			},
+			"dimension": "all"
+		},
+
+		"silverfish": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "infested_stone",
+				"material": "minecraft:stone",
+				"cluster-size": 9
+			},
+			"cluster-count": 7,
+			"min-height": 0,
+			"max-height": 64,
+			"retrogen": false,
+			"biome": {
+				"restriction": "whitelist",
+				"value":
+					{
+						"type": "id",
+						"entry": "extreme_hills"
+					}
+			},
+			"dimension": "all"
+		},
+
+		"quartz": {
+			"distribution": "uniform",
+			"generator": {
+				"block": "nether_quartz_ore",
+				"material": "minecraft:netherrack",
+				"cluster-size": 14
+			},
+			"cluster-count": 16,
+			"min-height": 20,
+			"max-height": 118,
+			"retrogen": false,
+			"biome": {
+				"restriction": "whitelist",
+				"value":
+					{
+						"type": "category",
+						"entry": "nether"
+					}
+			},
+			"dimension": "all"
+		},
+
+		"magma_block": {
+			"distribution": "custom",
+			"generator": {
+				"block": "magma_block",
+				"material": "minecraft:netherrack",
+				"cluster-size": 14
+			},
+			"cluster-count": 4,
+			"x-offset": {"min": 0, "max": 16},
+			"z-offset": {"min": 0, "max": 16},
+			"y-offset": { // world.seaLevel / 2 + 1 - 5 + randomInt(10)
+				"operation": "subtract",
+				"value-a": {
+					"operation": "add",
+					"value-a": {
+						"operation": "divide",
+						"value-a": {"world-data": "SEA_LEVEL"},
+						"value-b": 2
+					},
+					"value-b": 1
+				},
+				"value-b": {
+					"operation": "add",
+					"value-a": 5,
+					"value-b": {"min": 0, "max": 10}
+				}
+			},
+			"retrogen": false,
+			"biome": {
+				"restriction": "whitelist",
+				"value":
+				{
+					"type": "category",
+					"entry": "nether"
+				}
+			},
+			"dimension": "all"
+		}
+	}
+}
