@@ -40,7 +40,7 @@ public class WorldGenMinablePlate extends WorldGen {
 
 		cluster = resource;
 		radius = clusterSize;
-		genBlock = block.toArray(new WeightedBlock[block.size()]);
+		genBlock = block.toArray(new WeightedBlock[0]);
 		setHeight(1).setSlim(false);
 	}
 

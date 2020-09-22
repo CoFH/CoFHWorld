@@ -1,6 +1,7 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.data.PlaneShape;
+import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.EnumData;
 import cofh.cofhworld.parser.variables.NumberData;
@@ -11,7 +12,6 @@ import cofh.cofhworld.world.generator.WorldGenMinablePlate;
 import com.typesafe.config.Config;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.math.MathHelper;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -31,13 +31,9 @@ public class GenParserPlate implements IGeneratorParser {
 	@Nonnull
 	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<WeightedBlock> matList) throws InvalidGeneratorException {
 
-		int clusterSize = genObject.getInt("radius");
-		if (clusterSize <= 0) {
-			log.warn("Invalid `radius` for generator '{}'", name);
-			throw new InvalidGeneratorException("Invalid `radius`", genObject.getValue("radius").origin());
-		}
+		INumberProvider clusterSize = NumberData.parseNumberValue(genObject.getValue("radius"), 0, 32);
 
-		WorldGenMinablePlate r = new WorldGenMinablePlate(resList, MathHelper.clamp(clusterSize, 0, 32), matList);
+		WorldGenMinablePlate r = new WorldGenMinablePlate(resList, clusterSize, matList);
 		{
 			if (genObject.hasPath("height")) {
 				r.setHeight(NumberData.parseNumberValue(genObject.getValue("height"), 0, 64));
