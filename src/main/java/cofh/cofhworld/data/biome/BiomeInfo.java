@@ -20,7 +20,7 @@ public class BiomeInfo {
 		data = name;
 		hash = name.hashCode();
 		whitelist = true;
-		type = Type.BiomeName;
+		type = Type.RegistryName;
 	}
 
 	public BiomeInfo(Object d, Type t, boolean wl) {
@@ -39,12 +39,12 @@ public class BiomeInfo {
 			switch (type) {
 				default:
 					break;
-				case BiomeName:
-					String name = biome.getRegistryName().toString();
+				case Category:
+					String name = biome.getCategory().getName();
 					r = name.hashCode() == hash && name.equals(data);
 					break;
-				case BiomeNameList:
-					r = ((Collection<String>) data).contains(biome.getRegistryName().toString());
+				case CategoryList:
+					r = ((Collection<String>) data).contains(biome.getCategory().getName());
 					break;
 				case TemperatureCategory:
 					r = biome.getTempCategory() == data;
@@ -78,8 +78,8 @@ public class BiomeInfo {
 	}
 
 	public static enum Type {
-		BiomeName,
-		BiomeNameList,
+		Category,
+		CategoryList,
 		TemperatureCategory,
 		TemperatureCategoryList,
 		DictionaryType,

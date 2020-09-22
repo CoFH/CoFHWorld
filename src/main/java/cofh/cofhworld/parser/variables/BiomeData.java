@@ -59,35 +59,24 @@ public class BiomeData {
 				int rarity = obj.hasPath("rarity") ? obj.getInt("rarity") : -1;
 
 				l:
-				if ("name".equalsIgnoreCase(type)) {
-					if (true) {
-						log.error("Biome display names not supported for biome type at line {}.", biomeEntry.origin().lineNumber());
-						return null;
-					}
-					if (array != null) {
-						List<String> names = array;
-						if (rarity > 0) {
-							info = new BiomeInfoRarity(names, Type.BiomeNameList, true, rarity);
-						} else {
-							info = new BiomeInfo(names, Type.BiomeNameList, true);
-						}
-					} else {
-						if (rarity > 0) {
-							info = new BiomeInfoRarity(entry, rarity);
-						} else {
-							info = new BiomeInfo(entry);
-						}
-					}
-				} else {
+				{
 					Object data;
 					Type t;
-					if ("dictionary".equalsIgnoreCase(type)) {
+					if ("category".equalsIgnoreCase(type)) {
+						if (array != null) {
+							data = array;
+							t = Type.CategoryList;
+						} else {
+							data = entry;
+							t = Type.Category;
+						}
+					} else if ("dictionary".equalsIgnoreCase(type)) {
 						if (array != null) {
 							ArrayList<BiomeDictionary.Type> tags = new ArrayList<>(array.size());
 							for (int k = 0, j = array.size(); k < j; k++) {
 								tags.add(BiomeDictionary.Type.getType(array.get(k)));
 							}
-							data = tags.toArray(new BiomeDictionary.Type[tags.size()]);
+							data = tags.toArray(new BiomeDictionary.Type[0]);
 							t = Type.DictionaryTypeList;
 						} else {
 							data = BiomeDictionary.Type.getType(entry);
