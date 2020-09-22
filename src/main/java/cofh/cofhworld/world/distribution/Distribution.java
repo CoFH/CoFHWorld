@@ -7,6 +7,7 @@ import cofh.cofhworld.world.IFeatureGenerator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.feature.Feature;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -93,13 +94,13 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 	}
 
 	@Override
-	public boolean generateFeature(Random random, int chunkX, int chunkZ, IWorld world, boolean hasVillage, boolean newGen) {
+	public boolean generateFeature(Random random, int chunkX, int chunkZ, IWorld world, boolean newGen) {
 
 		if (!newGen && !regen) {
 			return false;
 		}
-		if (hasVillage && !withVillage) {
-			return false;
+		if (!withVillage && !world.getChunk(chunkX, chunkZ).getStructureReferences(Feature.VILLAGE.getStructureName()).isEmpty()) {
+			return false; // TODO: change to 'avoid-structures` default "Village"
 		}
 		if (dimensionRestriction != GenRestriction.NONE && dimensionRestriction == GenRestriction.BLACKLIST == dimensions.contains(world.getDimension().getType().getId())) {
 			return false;

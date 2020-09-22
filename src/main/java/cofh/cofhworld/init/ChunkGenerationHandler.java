@@ -84,12 +84,7 @@ public class ChunkGenerationHandler {
 							CoFHWorld.log.debug("Retro-Generating " + c.toString() + ".");
 						}
 						retroC &= 63;
-						long worldSeed = world.getSeed();
-						Random rand = new Random(worldSeed);
-						long xSeed = rand.nextLong() >> 2 + 1L;
-						long zSeed = rand.nextLong() >> 2 + 1L;
-						rand.setSeed(xSeed * c.chunkX + zSeed * c.chunkZ ^ worldSeed);
-						WorldHandler.INSTANCE.generateWorld(rand, r, world, false);
+						WorldHandler.INSTANCE.generateWorld(r, world, false);
 					} else {
 						toRemove.add(dim);
 					}
@@ -111,12 +106,7 @@ public class ChunkGenerationHandler {
 							CoFHWorld.log.debug("Pre-Generating " + c.toString() + ".");
 						}
 						pregenC &= 63;
-						long worldSeed = world.getSeed();
-						Random rand = new Random(worldSeed);
-						long xSeed = rand.nextLong() >> 2 + 1L;
-						long zSeed = rand.nextLong() >> 2 + 1L;
-						rand.setSeed(xSeed * c.chunkX + zSeed * c.chunkZ ^ worldSeed);
-						WorldHandler.INSTANCE.generateWorld(rand, c.chunkX, c.chunkZ, world, true);
+						WorldHandler.INSTANCE.generateWorld(c.chunkX, c.chunkZ, world, true);
 					} else {
 						toRemove.add(dim);
 					}

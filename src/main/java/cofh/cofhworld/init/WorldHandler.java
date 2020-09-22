@@ -8,18 +8,19 @@ import cofh.cofhworld.world.IFeatureGenerator;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
+import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus.Type;
 import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.gen.WorldGenRegion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.jline.utils.Log;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -180,12 +181,16 @@ public class WorldHandler //implements IWorldGenerator
 //		}
 //	}
 
+	private int GENERATING = 0;
 	@SubscribeEvent
 	public void handleChunkLoadEvent(ChunkDataEvent.Load event) {
 
+		if (GENERATING != 0) {
+			return; // erm... no.
+		}
 		if (event.getWorld() == null) {
 			// ???
-			Log.debug(() -> "Null World for chunk! It's somewhere, somewhen, somehow, but we can't retrogen in it. At: " +
+			CoFHWorld.log.debug(() -> "Null World for chunk! It's somewhere, somewhen, somehow, but we can't retrogen in it. At: " +
 					(event.getChunk() == null ? "NULL" /* ??? ??? ??? */ : event.getChunk().getPos().toString()));
 			return;
 		}
@@ -194,7 +199,6 @@ public class WorldHandler //implements IWorldGenerator
 
 		if (tag != null && tag.getBoolean("Populating")) {
 			ChunkReference chunk = new ChunkReference(dim, event.getChunk().getPos().x, event.getChunk().getPos().z);
-			chunk.hasVillage = tag.getBoolean("HasVillage");
 			populatingChunks.add(chunk);
 			return;
 		}
@@ -280,48 +284,60 @@ public class WorldHandler //implements IWorldGenerator
 //
 //		generateWorld(random, chunkX, chunkZ, world, true);
 //	}
+	public static void generate(WorldGenRegion region) {
+
+		INSTANCE.generateWorld(region.getMainChunkX(), region.getMainChunkZ(), region, true);
+	}
 
 	/* HELPER FUNCTIONS */
-	public void generateWorld(Random random, int chunkX, int chunkZ, IWorld world, boolean newGen) {
+	public void generateWorld(int chunkX, int chunkZ, IWorld world, boolean newGen) {
 
-		replaceBedrock(random, chunkX, chunkZ, world, newGen);
+		replaceBedrock(chunkX, chunkZ, world, newGen);
 
 		if (!newGen & !WorldProps.enableRetroactiveGeneration) {
 			return;
 		}
-		ChunkReference pos = new ChunkReference(world.getDimension(), chunkX, chunkZ);
-		pos = populatingChunks.get(pos);
-		boolean hasVillage = pos != null && pos.hasVillage;
-		for (IFeatureGenerator feature : features) {
-			//FallingBlock.fallInstantly = true;
-			feature.generateFeature(random, chunkX, chunkZ, world, hasVillage, newGen);
+		SharedSeedRandom random = new SharedSeedRandom();
+		long decorationSeed = random.setDecorationSeed(world.getSeed(), chunkX * 16, chunkZ * 16);
+		try {
+			++GENERATING;
+			for (IFeatureGenerator feature : features) {
+				//FallingBlock.fallInstantly = true;
+				feature.generateFeature(random, chunkX, chunkZ, world, newGen);
+			}
+		} finally {
+			--GENERATING;
 		}
 		//FallingBlock.fallInstantly = false;
 	}
 
-	public void generateWorld(Random random, RetroChunkCoord chunk, World world, boolean newGen) {
+	public void generateWorld(RetroChunkCoord chunk, World world, boolean newGen) {
 
 		int chunkX = chunk.coord.chunkX, chunkZ = chunk.coord.chunkZ;
 		if ((newGen | WorldProps.enableRetroactiveGeneration) & WorldProps.forceFullRegeneration) {
-			generateWorld(random, chunkX, chunkZ, world, true);
+			generateWorld(chunkX, chunkZ, world, true);
 			return;
 		}
 
-		replaceBedrock(random, chunkX, chunkZ, world, newGen | WorldProps.forceFullRegeneration);
+		replaceBedrock(chunkX, chunkZ, world, newGen | WorldProps.forceFullRegeneration);
 
 		if (!newGen & !WorldProps.enableRetroactiveGeneration) {
 			return;
 		}
+		SharedSeedRandom random = new SharedSeedRandom();
+		long decorationSeed = random.setDecorationSeed(world.getSeed(), chunkX * 16, chunkZ * 16);
 		Set<String> genned = chunk.generatedFeatures;
-		ChunkReference pos = new ChunkReference(world.getDimension(), chunkX, chunkZ);
-		pos = populatingChunks.get(pos);
-		boolean hasVillage = pos != null && pos.hasVillage;
-		for (IFeatureGenerator feature : features) {
-			if (genned.contains(feature.getFeatureName())) {
-				continue;
+		try {
+			++GENERATING;
+			for (IFeatureGenerator feature : features) {
+				if (genned.contains(feature.getFeatureName())) {
+					continue;
+				}
+				//FallingBlock.fallInstantly = true;
+				feature.generateFeature(random, chunkX, chunkZ, world, newGen | WorldProps.forceFullRegeneration);
 			}
-			//FallingBlock.fallInstantly = true;
-			feature.generateFeature(random, chunkX, chunkZ, world, hasVillage, newGen | WorldProps.forceFullRegeneration);
+		} finally {
+			--GENERATING;
 		}
 		//FallingBlock.fallInstantly = false;
 		if (!newGen) {
@@ -329,7 +345,7 @@ public class WorldHandler //implements IWorldGenerator
 		}
 	}
 
-	public void replaceBedrock(Random random, int chunkX, int chunkZ, IWorld world, boolean newGen) {
+	public void replaceBedrock(int chunkX, int chunkZ, IWorld world, boolean newGen) {
 
 		if (!WorldProps.enableFlatBedrock | !newGen & !WorldProps.enableRetroactiveFlatBedrock) {
 			return;
@@ -416,7 +432,6 @@ public class WorldHandler //implements IWorldGenerator
 		public final Dimension dimension;
 		public final int xPos;
 		public final int zPos;
-		public boolean hasVillage;
 
 		public ChunkReference(Dimension dim, int x, int z) {
 
