@@ -74,9 +74,10 @@ public class WorldGenDungeon extends WorldGen {
 		DataHolder data = new DataHolder(start);
 
 		final int height = this.height.intValue(world, rand, data);
-		final int xWidth = this.radiusX.intValue(world, rand, data);
-		final int zWidth = this.radiusZ.intValue(world, rand, data);
+		final int xWidth = this.radiusX.intValue(world, rand, data.setValue("height", height));
+		final int zWidth = this.radiusZ.intValue(world, rand, data.setValue("radius-x", xWidth));
 		final int floor = yStart - 1, ceiling = yStart + height + 1;
+		data.setValue("radius-z", zWidth);
 
 		int holes = 0;
 		int x, y, z;
@@ -120,12 +121,11 @@ public class WorldGenDungeon extends WorldGen {
 						}
 						continue;
 					}
-					if (canGenerateInBlock(world, x, y, z, material)) {
-						if (y == floor) {
-							generateBlock(world, rand, x, y, z, this.floor);
-						} else {
-							generateBlock(world, rand, x, y, z, walls);
-						}
+					if (y == floor) { // material validated during hole checks
+						generateBlock(world, rand, x, y, z, this.floor);
+					} else if (y == ceiling || // material validated during hole checks
+							canGenerateInBlock(world, x, y, z, material)) {
+						generateBlock(world, rand, x, y, z, walls);
 					}
 				}
 			}
@@ -133,8 +133,8 @@ public class WorldGenDungeon extends WorldGen {
 
 		WeightedBlock chest = selectBlock(rand, chests);
 
-		for (int i = chestCount.intValue(world, rand, data.setPosition(start)); i-- > 0;) {
-			for (int j = chestAttempts.intValue(world, rand, data); j-- > 0;) {
+		for (int i = chestCount.intValue(world, rand, data.setPosition(start).setBlock(chest)); i-- > 0;) {
+			for (int j = chestAttempts.intValue(world, rand, data.setValue("current-chest", i + 1)); j-- > 0;) {
 				x = xStart + nextInt(rand, xWidth * 2 + 1) - xWidth;
 				z = zStart + nextInt(rand, zWidth * 2 + 1) - zWidth;
 
