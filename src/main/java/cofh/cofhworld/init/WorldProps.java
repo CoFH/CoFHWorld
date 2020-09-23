@@ -59,23 +59,31 @@ public class WorldProps {
 							" Flat Bedrock may still be used.")
 					.define("DisableAllGeneration", false);
 
-			replaceStandardGenerationValue = config
-					.comment("If TRUE, standard Minecraft ore generation will be REPLACED." +
-							" Configure in the '" + FILE_GEN_STANDARD_INTERNAL + "' file; standard Minecraft defaults have been provided." +
-							" If you rename the '" + FILE_GEN_STANDARD_INTERNAL + "' file, this option WILL NOT WORK.")
-					.define("ReplaceStandardGeneration", replaceStandardGeneration);
-
 			enableRetroactiveGenerationValue = config
 					.comment("If TRUE, world generation handled by CoFH World will be retroactively applied to existing chunks." +
 							" This option will NOT apply previously existing generation to chunks that have been loaded before this option was enabled.")
 					.define("RetroactiveGeneration", enableRetroactiveGeneration);
 
-			forceFullRegenerationValue = config
-					.comment("If TRUE, world generation handled by CoFH World will be applied to all existing chunks during retroactive generation." +
-							" This option CIRCUMVENTS the logic CoFH World uses to avoid re-generating things that have already been applied to a chunk." +
-							" ALL chunks loaded while this option is enabled will be re-generated EVERY time they are loaded.")
-					.worldRestart()
-					.define("ForceFullRegeneration", forceFullRegeneration);
+//			forceFullRegenerationValue = config
+//					.comment("If TRUE, world generation handled by CoFH World will be applied to all existing chunks during retroactive generation." +
+//							" This option CIRCUMVENTS the logic CoFH World uses to avoid re-generating things that have already been applied to a chunk." +
+//							" ALL chunks loaded while this option is enabled will be re-generated EVERY time they are loaded.")
+//					.worldRestart()
+//					.define("ForceFullRegeneration", forceFullRegeneration);
+
+			{
+				config.push("Control");
+
+				// TODO: convert to `minecraft` directory
+				replaceStandardGenerationValue = config
+						.comment("If TRUE, standard Minecraft ore generation will be REPLACED." +
+								" Configure in the '" + FILE_GEN_STANDARD_INTERNAL + "' file; standard Minecraft defaults have been provided." +
+								" If you rename the '" + FILE_GEN_STANDARD_INTERNAL + "' file, this option WILL NOT WORK.")
+						.worldRestart()
+						.define("ReplaceStandardGeneration", replaceStandardGeneration);
+
+				config.pop();
+			}
 
 			{
 				config.push("Trees");
@@ -96,11 +104,11 @@ public class WorldProps {
 						.define("Flat", enableFlatBedrock);
 
 				enableRetroactiveFlatBedrockValue = config
-						.comment("If TRUE, Flat Bedrock will retroactively be applied to existing chunks, if retroactive generation is enabled.")
+						.comment("If TRUE, Flat Bedrock will retroactively be applied to existing chunks, IF retroactive generation is enabled.")
 						.define("FlatRetroactive", enableRetroactiveFlatBedrock);
 
 				numBedrockLayersValue = config
-						.comment("This adjusts the number of layers of Flat Bedrock, if enabled.")
+						.comment("This adjusts the number of layers of Flat Bedrock, IF enabled.")
 						.defineInRange("FlatBedrockLayers", numBedrockLayers, 1, maxBedrockLayers);
 
 				config.pop();
@@ -126,12 +134,16 @@ public class WorldProps {
 
 	private static void refreshConfig() {
 
-		replaceStandardGeneration = replaceStandardGenerationValue.get();
-		enableRetroactiveGeneration = enableRetroactiveGenerationValue.get();
+		if (disableFeatureGeneration.get()) {
+
+		} else {
+			replaceStandardGeneration = replaceStandardGenerationValue.get();
+			enableRetroactiveGeneration = enableRetroactiveGenerationValue.get();
+//			forceFullRegeneration = forceFullRegenerationValue.get();
+		}
 
 		enableFlatBedrock = enableFlatBedrockValue.get();
 		enableRetroactiveFlatBedrock = enableRetroactiveFlatBedrockValue.get();
-		forceFullRegeneration = forceFullRegenerationValue.get();
 
 		numBedrockLayers = numBedrockLayersValue.get();
 	}
