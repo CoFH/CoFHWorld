@@ -2,6 +2,8 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
+import cofh.cofhworld.parser.variables.ConditionData;
+import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenSpike;
@@ -19,33 +21,23 @@ public class GenParserSpike extends AbstractGenParserBlock {
 
 		WorldGenSpike r = new WorldGenSpike(resList, matList);
 		{
-			if (genObject.hasPath("min-height")) {
-				r.minHeight = genObject.getInt("min-height");
+			if (genObject.hasPath("height")) {
+				r.height = NumberData.parseNumberValue(genObject.getValue("height"));
 			}
-			if (genObject.hasPath("height-variance")) {
-				r.heightVariance = genObject.getInt("height-variance");
+			if (genObject.hasPath("size")) {
+				r.size = NumberData.parseNumberValue(genObject.getValue("size"));
 			}
-			if (genObject.hasPath("size-variance")) {
-				r.sizeVariance = genObject.getInt("size-variance");
+			if (genObject.hasPath("y-variance")) {
+				r.yVariance = NumberData.parseNumberValue(genObject.getValue("y-variance"));
 			}
-			if (genObject.hasPath("position-variance")) {
-				r.positionVariance = genObject.getInt("position-variance");
+			if (genObject.hasPath("layer-size")) {
+				r.layerSize = NumberData.parseNumberValue(genObject.getValue("layer-size"));
 			}
-			// TODO: these fields need addressed. combined into a sub-object?
 			if (genObject.hasPath("large-spikes")) {
-				r.largeSpikes = genObject.getBoolean("large-spikes");
+				r.largeSpikes = ConditionData.parseConditionValue(genObject.getValue("large-spikes"));
 			}
-			if (genObject.hasPath("large-spike-chance")) {
-				r.largeSpikeChance = genObject.getInt("large-spike-chance");
-			}
-			if (genObject.hasPath("min-large-spike-height-gain")) {
-				r.minLargeSpikeHeightGain = genObject.getInt("min-large-spike-height-gain");
-			}
-			if (genObject.hasPath("large-spike-height-variance")) {
-				r.largeSpikeHeightVariance = genObject.getInt("large-spike-height-variance");
-			}
-			if (genObject.hasPath("large-spike-filler-size")) {
-				r.largeSpikeFillerSize = genObject.getInt("large-spike-filler-size");
+			if (genObject.hasPath("large-spike-height-gain")) {
+				r.largeSpikeHeightGain = NumberData.parseNumberValue(genObject.getValue("large-spike-height-gain"));
 			}
 		}
 		return r;
