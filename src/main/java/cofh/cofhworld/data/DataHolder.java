@@ -58,22 +58,22 @@ public class DataHolder {
 		return this;
 	}
 
-	public Vec3i getPos(String key) {
+	public BlockPos getPos(String key) {
 
 		Object r = data.get(key);
-		if (r instanceof Vec3i) {
-			return (Vec3i) r;
+		if (r instanceof BlockPos) {
+			return (BlockPos) r;
 		} else {
-			return Vec3i.NULL_VECTOR;
+			return BlockPos.ZERO;
 		}
 	}
 
-	public Vec3i getPosition() {
+	public BlockPos getPosition() {
 
 		return getPos("position");
 	}
 
-	public DataHolder setPosition(Vec3i pos) {
+	public DataHolder setPosition(BlockPos pos) {
 
 		setValue("position", pos);
 		return this;
