@@ -9,10 +9,13 @@ import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
 import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
+import cofh.cofhworld.data.numbers.world.DirectionalScanner;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
+import cofh.cofhworld.util.random.WeightedEnum;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
+import net.minecraft.util.Direction;
 
 import static cofh.cofhworld.parser.variables.ConditionData.parseConditionValue;
 
@@ -60,6 +63,13 @@ public class NumberData {
 							a = parseNumberValue(numberObject.getValue("if-true"));
 							b = parseNumberValue(numberObject.getValue("if-false"));
 							return new ConditionalProvider(parseConditionValue(numberObject.getValue("condition")), a, b);
+						} else if (numberProps.containsKey("condition") && numberProps.containsKey("limit") && numberProps.containsKey("direction")) {
+							a = parseNumberValue(numberObject.getValue("limit"), 0, 256);
+							WeightedEnum<Direction> dir = EnumData.parseEnumEntry(numberObject.getValue("direction"), Direction.class);
+							if (dir == null) {
+								throw new Error(String.format("Invalid direction provided at line %s", numberObject.getValue("direction").origin().lineNumber()));
+							}
+							return new DirectionalScanner(parseConditionValue(numberObject.getValue("condition")), dir.value, a);
 						}
 						break;
 					default:

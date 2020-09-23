@@ -4,6 +4,7 @@ import cofh.cofhworld.util.random.WeightedEnum;
 import com.typesafe.config.*;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 
 import static cofh.cofhworld.CoFHWorld.log;
@@ -67,7 +68,8 @@ public class EnumData {
 			T v = Enum.valueOf(values, type);
 			return new WeightedEnum<T>(v, weight);
 		} catch (IllegalArgumentException e) {
-			log.error("Invalid enum entry {} on line {}", type, enumEntry.origin().lineNumber());
+			log.error("Invalid enum entry `{}` on line {}, allowed values are: \n{}", type, enumEntry.origin().lineNumber(),
+					Arrays.stream(values.getEnumConstants()).map(Enum::name).toArray(String[]::new));
 		}
 		return null;
 	}
