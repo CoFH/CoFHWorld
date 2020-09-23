@@ -266,7 +266,7 @@ public class FeatureParser {
 		}
 		if (range != null) {
 			if (retComp != range.containsVersion(con.getModInfo().getVersion())) {
-				log.debug("Dependency '{}' has an incompatible version.", id);
+				log.debug("Dependency '{}' has an incompatible version {}.", id, con.getModInfo().getVersion());
 				return false;
 			} else {
 				return true;
