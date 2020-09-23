@@ -1,6 +1,5 @@
 package cofh.cofhworld.world.distribution;
 
-import cofh.cofhworld.data.biome.BiomeInfo;
 import cofh.cofhworld.data.biome.BiomeInfoSet;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import net.minecraft.world.IWorld;
@@ -15,7 +14,7 @@ public class DistributionSequential extends Distribution {
 	public DistributionSequential(String name, List<IConfigurableFeatureGenerator> features, boolean regen) {
 
 		super(name, regen);
-		this.features = features.toArray(new IConfigurableFeatureGenerator[features.size()]);
+		this.features = features.toArray(new IConfigurableFeatureGenerator[0]);
 	}
 
 	public Distribution setBiomeRestriction(GenRestriction restriction) {
@@ -36,11 +35,20 @@ public class DistributionSequential extends Distribution {
 		return this;
 	}
 
-	public Distribution addBiome(BiomeInfo biome) {
+	public Distribution setStructureRestriction(GenRestriction restriction) {
 
-		super.addBiome(biome);
+		super.setStructureRestriction(restriction);
 		for (IConfigurableFeatureGenerator feature : features) {
-			feature.addBiome(biome);
+			feature.setStructureRestriction(restriction);
+		}
+		return this;
+	}
+
+	public Distribution addStructures(String[] structures) {
+
+		super.addStructures(structures);
+		for (IConfigurableFeatureGenerator feature : features) {
+			feature.addStructures(structures);
 		}
 		return this;
 	}
@@ -54,15 +62,6 @@ public class DistributionSequential extends Distribution {
 		return this;
 	}
 
-	public Distribution setWithVillage(boolean inVillage) {
-
-		super.setWithVillage(inVillage);
-		for (IConfigurableFeatureGenerator feature : features) {
-			feature.setWithVillage(inVillage);
-		}
-		return this;
-	}
-
 	@Override
 	public boolean generateFeature(Random random, int blockX, int blockZ, IWorld world) {
 
@@ -71,7 +70,7 @@ public class DistributionSequential extends Distribution {
 		for (IConfigurableFeatureGenerator feature : features) {
 			r |= feature.generateFeature(random, blockX, blockZ, world);
 		}
-		return false;
+		return r;
 	}
 
 }

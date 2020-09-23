@@ -1,6 +1,5 @@
 package cofh.cofhworld.world;
 
-import cofh.cofhworld.data.biome.BiomeInfo;
 import cofh.cofhworld.data.biome.BiomeInfoSet;
 import net.minecraft.world.IWorld;
 
@@ -13,10 +12,10 @@ public interface IConfigurableFeatureGenerator extends IFeatureGenerator {
 
 		public static GenRestriction get(String restriction) {
 
-			if (restriction.equalsIgnoreCase("blacklist")) {
+			if ("blacklist".equalsIgnoreCase(restriction)) {
 				return BLACKLIST;
 			}
-			if (restriction.equalsIgnoreCase("whitelist")) {
+			if ("whitelist".equalsIgnoreCase(restriction)) {
 				return WHITELIST;
 			}
 			return NONE;
@@ -25,18 +24,18 @@ public interface IConfigurableFeatureGenerator extends IFeatureGenerator {
 
 	boolean generateFeature(Random random, int blockX, int blockZ, IWorld world);
 
-	IConfigurableFeatureGenerator setWithVillage(boolean inVillage);
-
 	IConfigurableFeatureGenerator setRarity(int rarity);
 
-	IConfigurableFeatureGenerator addBiome(BiomeInfo biome);
+	IConfigurableFeatureGenerator setStructureRestriction(GenRestriction restriction);
 
-	IConfigurableFeatureGenerator addBiomes(BiomeInfoSet biomes);
-
-	IConfigurableFeatureGenerator addDimension(int dimID);
+	IConfigurableFeatureGenerator addStructures(String[] structures);
 
 	IConfigurableFeatureGenerator setBiomeRestriction(GenRestriction restriction);
 
+	IConfigurableFeatureGenerator addBiomes(BiomeInfoSet biomes);
+
 	IConfigurableFeatureGenerator setDimensionRestriction(GenRestriction restriction);
+
+	IConfigurableFeatureGenerator addDimension(int dimID);
 
 }

@@ -1,17 +1,17 @@
 package cofh.cofhworld.world.distribution;
 
-import cofh.cofhworld.data.biome.BiomeInfo;
 import cofh.cofhworld.data.biome.BiomeInfoSet;
+import cofh.cofhworld.util.LinkedHashList;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IFeatureGenerator;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.Feature;
 
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.Random;
-import java.util.Set;
 
 public abstract class Distribution implements IFeatureGenerator, IConfigurableFeatureGenerator {
 
@@ -19,26 +19,20 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 
 	protected GenRestriction biomeRestriction = GenRestriction.NONE;
 	protected GenRestriction dimensionRestriction = GenRestriction.NONE;
+	protected GenRestriction structureRestriction = GenRestriction.NONE;
 
 	public final boolean regen;
-
-	protected boolean withVillage = true;
 
 	protected int rarity;
 
 	protected final BiomeInfoSet biomes = new BiomeInfoSet(1);
-	protected final Set<Integer> dimensions = new HashSet<>();
+	protected final IntSet dimensions = new IntOpenHashSet();
+	protected final LinkedHashList<String> structures = new LinkedHashList<>(1);
 
 	public Distribution(String name, boolean regen) {
 
 		this.name = name;
 		this.regen = regen;
-	}
-
-	public Distribution setWithVillage(boolean inVillage) {
-
-		this.withVillage = inVillage;
-		return this;
 	}
 
 	public Distribution setRarity(int rarity) {
@@ -47,9 +41,15 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		return this;
 	}
 
-	public Distribution addBiome(BiomeInfo biome) {
+	public Distribution addStructures(String[] structures) {
 
-		biomes.add(biome);
+		this.structures.addAll(Arrays.asList(structures));
+		return this;
+	}
+
+	public Distribution setStructureRestriction(GenRestriction restriction) {
+
+		this.structureRestriction = restriction;
 		return this;
 	}
 
@@ -59,15 +59,15 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		return this;
 	}
 
-	public Distribution addDimension(int dimID) {
-
-		dimensions.add(dimID);
-		return this;
-	}
-
 	public Distribution setBiomeRestriction(GenRestriction restriction) {
 
 		this.biomeRestriction = restriction;
+		return this;
+	}
+
+	public Distribution addDimension(int dimID) {
+
+		dimensions.add(dimID);
 		return this;
 	}
 
@@ -99,8 +99,10 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		if (!newGen && !regen) {
 			return false;
 		}
-		if (!withVillage && !world.getChunk(chunkX, chunkZ).getStructureReferences(Feature.VILLAGE.getStructureName()).isEmpty()) {
-			return false; // TODO: change to 'avoid-structures` default "Village"
+		if (structureRestriction != GenRestriction.NONE) {
+			for (String structure : structures)
+				if (structureRestriction == GenRestriction.WHITELIST == world.getChunk(chunkX, chunkZ).getStructureReferences(structure).isEmpty())
+					return false;
 		}
 		if (dimensionRestriction != GenRestriction.NONE && dimensionRestriction == GenRestriction.BLACKLIST == dimensions.contains(world.getDimension().getType().getId())) {
 			return false;

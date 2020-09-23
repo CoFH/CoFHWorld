@@ -1,6 +1,8 @@
 package cofh.cofhworld.parser;
 
 import cofh.cofhworld.parser.variables.BiomeData;
+import cofh.cofhworld.parser.variables.StringData;
+import cofh.cofhworld.util.random.WeightedString;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.world.IFeatureGenerator;
@@ -12,12 +14,35 @@ import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public interface IDistributionParser {
 
 	static void addFeatureRestrictions(IConfigurableFeatureGenerator feature, Config genObject, Logger log) throws InvalidDistributionException {
 
+		{ // structures
+			GenRestriction structureRes = GenRestriction.NONE;
+			if (genObject.hasPath("structures")) {
+				ConfigValue data = genObject.getValue("structures");
+				if (data.valueType() == ConfigValueType.STRING) {
+					structureRes = GenRestriction.get(genObject.getString("structures"));
+					if (structureRes != GenRestriction.NONE) {
+						log.error("Invalid structure restriction `{}` on '{}'. Must be an object to meaningfully function", structureRes.name().toLowerCase(Locale.US), feature.getFeatureName());
+						throw new InvalidDistributionException("Invalid value for string", data.origin());
+					}
+				} else if (data.valueType() == ConfigValueType.OBJECT) {
+					structureRes = GenRestriction.get(genObject.getString("structures.restriction"));
+					ArrayList<WeightedString> structures = new ArrayList<>();
+					if (StringData.parseStringList(genObject.getValue("structures.value"), structures)) {
+						feature.addStructures(structures.stream().map(str -> str.value).distinct().toArray(String[]::new));
+					} else {
+						log.error("Invalid structure list on '{}'. No values added!", feature.getFeatureName());
+					}
+				}
+			}
+			feature.setStructureRestriction(structureRes);
+		}
 		{ // biomes
 			GenRestriction biomeRes = GenRestriction.NONE;
 			if (genObject.hasPath("biome")) {
@@ -25,7 +50,7 @@ public interface IDistributionParser {
 				if (data.valueType() == ConfigValueType.STRING) {
 					biomeRes = GenRestriction.get(genObject.getString("biome"));
 					if (biomeRes != GenRestriction.NONE) {
-						log.error("Invalid biome restriction {2} on '{1}'. Must be an object to meaningfully function", feature.getFeatureName(), biomeRes.name().toLowerCase(Locale.US));
+						log.error("Invalid biome restriction `{}` on '{}'. Must be an object to meaningfully function", biomeRes.name().toLowerCase(Locale.US), feature.getFeatureName());
 						throw new InvalidDistributionException("Invalid value for string", data.origin());
 					}
 				} else if (data.valueType() == ConfigValueType.OBJECT) {
@@ -45,7 +70,7 @@ public interface IDistributionParser {
 					case STRING:
 						dimRes = GenRestriction.get(genObject.getString("dimension"));
 						if (dimRes != GenRestriction.NONE) {
-							log.error("Invalid dimension restriction {2} on '{1}'. Must be an object to meaningfully function", feature.getFeatureName(), dimRes.name().toLowerCase(Locale.US));
+							log.error("Invalid dimension restriction `{}` on '{}'. Must be an object to meaningfully function", dimRes.name().toLowerCase(Locale.US), feature.getFeatureName());
 							throw new InvalidDistributionException("Invalid value for string", data.origin());
 						}
 						break;
@@ -76,7 +101,7 @@ public interface IDistributionParser {
 							// don't bother validating registration; dimensions can be created while a world is running
 						} else if (val.valueType() != ConfigValueType.NULL) {
 							// skip over accidental (and intentional, i guess? we can't tell.) nulls from multiple sequential commas
-							log.error("Invalid dimension entry type `{1}` on line {2}. Number required.", val.valueType().name(), data.origin().lineNumber());
+							log.error("Invalid dimension entry type `{}` on line {}. Number required.", val.valueType().name(), data.origin().lineNumber());
 							throw new InvalidDistributionException("Invalid value for dimension id, expected number got " + val.valueType().name(), data.origin());
 						}
 					}
@@ -112,9 +137,6 @@ public interface IDistributionParser {
 				feature.setRarity(rarity);
 			}
 			addFeatureRestrictions(feature, genObject, log);
-			if (genObject.hasPath("in-village")) {
-				feature.setWithVillage(genObject.getBoolean("in-village"));
-			}
 		}
 		return feature;
 	}
