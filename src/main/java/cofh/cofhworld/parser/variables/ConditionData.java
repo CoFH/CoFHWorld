@@ -1,16 +1,20 @@
 package cofh.cofhworld.parser.variables;
 
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.operation.BinaryCondition;
 import cofh.cofhworld.data.condition.operation.ComparisonCondition;
 import cofh.cofhworld.data.condition.operation.NotCondition;
 import cofh.cofhworld.data.condition.random.RandomCondition;
+import cofh.cofhworld.data.condition.world.MaterialCondition;
 import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
+
+import java.util.ArrayList;
 
 import static cofh.cofhworld.parser.variables.NumberData.parseNumberValue;
 
@@ -43,6 +47,10 @@ public class ConditionData {
 							return new WorldValueCondition(conditionObject.getString("world-data"));
 						} else if (conditionProps.containsKey("not")) {
 							return new NotCondition(parseConditionValue(conditionObject.getValue("not")));
+						} else if (conditionProps.containsKey("material")) {
+							ArrayList<Material> material = new ArrayList<>();
+							BlockData.parseMaterialList(conditionObject.getValue("material"), material);
+							return new MaterialCondition(material);
 						}
 						break;
 					case 3:
