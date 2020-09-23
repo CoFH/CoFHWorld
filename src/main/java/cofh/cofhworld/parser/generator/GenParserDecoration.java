@@ -54,15 +54,6 @@ public class GenParserDecoration implements IGeneratorParser {
 		if (genObject.hasPath("stack-height")) {
 			r.setStackHeight(NumberData.parseNumberValue(genObject.getValue("stack-height")));
 		}
-		if (genObject.hasPath("x-variance")) {
-			r.setXVar(NumberData.parseNumberValue(genObject.getValue("x-variance"), 0, 15));
-		}
-		if (genObject.hasPath("y-variance")) {
-			r.setYVar(NumberData.parseNumberValue(genObject.getValue("y-variance")));
-		}
-		if (genObject.hasPath("z-variance")) {
-			r.setZVar(NumberData.parseNumberValue(genObject.getValue("z-variance"), 0, 15));
-		}
 		return r;
 	}
 

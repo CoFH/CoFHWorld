@@ -5,13 +5,16 @@ import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.operation.BinaryCondition;
 import cofh.cofhworld.data.condition.operation.ComparisonCondition;
+import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.data.DataProvider;
 import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
+import cofh.cofhworld.data.numbers.world.DirectionalScanner;
 import cofh.cofhworld.util.random.WeightedBlock;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IWorld;
@@ -74,20 +77,15 @@ public class WorldGenSpike extends WorldGen {
 
 		this.resource = resource;
 		material = materials.toArray(new Material[0]);
+		setYVar(new DirectionalScanner(new WorldValueCondition("IS_AIR"), Direction.DOWN, new ConstantProvider(256)));
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
-		int xStart = pos.getX();
-		int yStart = pos.getY();
-		int zStart = pos.getZ();
-
-		final DataHolder data = new DataHolder(pos);
-
-		while (world.isAirBlock(new BlockPos(xStart, yStart, zStart)) && yStart > 2) {
-			--yStart;
-		}
+		int xStart = data.getPosition().getX();
+		int yStart = data.getPosition().getY();
+		int zStart = data.getPosition().getZ();
 
 		if (!canGenerateInBlock(world, xStart, yStart, zStart, material)) {
 			return false;
@@ -117,18 +115,14 @@ public class WorldGenSpike extends WorldGen {
 
 		for (int y = 0; y < height; ++y) {
 			float layerSize = this.layerSize.floatValue(world, rand, data.setValue("layer", y));
-//			if (y >= offsetHeight) {
-//				layerSize = (1.0F - (float) (y - offsetHeight) / (float) originalHeight) * size;
-//			} else {
-//				layerSize = 1;
-//			}
+			// layerSize = y >= offsetHeight ? (1.0F - (float) (y - offsetHeight) / (float) originalHeight) * size : 1;
 			int width = MathHelper.ceil(layerSize);
 
 			for (int x = -width; x <= width; ++x) {
-				float xDist = MathHelper.abs(x) - 0.25F;
+				float xDist = Math.abs(x) - 0.25F;
 
 				for (int z = -width; z <= width; ++z) {
-					float zDist = MathHelper.abs(z) - 0.25F;
+					float zDist = Math.abs(z) - 0.25F;
 
 					if ((x == 0 && z == 0 || xDist * xDist + zDist * zDist <= layerSize * layerSize) && (x != -width && x != width && z != -width && z != width || rand.nextFloat() <= 0.75F)) {
 

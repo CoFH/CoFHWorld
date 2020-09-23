@@ -116,7 +116,7 @@ public class WorldGenStructure extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random random, BlockPos pos) {
+	public boolean generate(IWorld world, Random random, final DataHolder data) {
 
 		Template template = this.template;
 		if (templates != null) {
@@ -136,7 +136,7 @@ public class WorldGenStructure extends WorldGen {
 			settings.setMirror(WeightedRandom.getRandomItem(random, mirrors).value);
 		}
 
-		BlockPos start = template.getZeroPositionWithTransform(pos, settings.getMirror(), settings.getRotation());
+		BlockPos start = template.getZeroPositionWithTransform(data.getPosition(), settings.getMirror(), settings.getRotation());
 
 		template.addBlocksToWorld(world, start, settings, 20);
 

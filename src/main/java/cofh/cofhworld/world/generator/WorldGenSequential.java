@@ -1,6 +1,6 @@
 package cofh.cofhworld.world.generator;
 
-import net.minecraft.util.math.BlockPos;
+import cofh.cofhworld.data.DataHolder;
 import net.minecraft.world.IWorld;
 
 import java.util.List;
@@ -24,14 +24,14 @@ public class WorldGenSequential extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random random, BlockPos pos) {
+	public boolean generate(IWorld world, Random random, final DataHolder data) {
 
 		WorldGen[] generators = this.generators;
 		boolean r = false;
 
 		for (int i = 0, e = generators.length; i < e; ++i) {
 			WorldGen gen = generators[i];
-			r |= gen.generate(world, random, pos);
+			r |= gen.generate(world, random, data.getPosition());
 		}
 
 		return r;

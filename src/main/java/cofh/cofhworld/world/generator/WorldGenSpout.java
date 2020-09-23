@@ -52,21 +52,23 @@ public class WorldGenSpout extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, final DataHolder data) {
+
+		BlockPos pos = data.getPosition();
 
 		int xCenter = pos.getX();
 		int yCenter = pos.getY();
 		int zCenter = pos.getZ();
 
-		DataHolder data = new DataHolder(pos);
 		final PlaneShape shape = this.shape;
 		final Rotation rot = this.shapeRot;
 		final Mirror mirror = this.shapeMirror;
 
 		int height = this.height.intValue(world, rand, data);
+		data.setValue("height", height);
 		boolean r = false;
 		for (int y = 0; y < height; ++y) {
-			int radius = this.radius.intValue(world, rand, data.setPosition(pos.add(0, y, 0)));
+			int radius = this.radius.intValue(world, rand, data.setValue("layer", y).setPosition(pos.add(0, y, 0)));
 			for (int x = -radius; x <= radius; ++x) {
 				for (int z = -radius; z <= radius; ++z) {
 					if (shape.inArea(x, z, radius, rot, mirror)) {

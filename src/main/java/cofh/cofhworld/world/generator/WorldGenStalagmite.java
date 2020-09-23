@@ -1,8 +1,14 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.data.condition.world.WorldValueCondition;
+import cofh.cofhworld.data.numbers.ConstantProvider;
+import cofh.cofhworld.data.numbers.operation.MathProvider;
+import cofh.cofhworld.data.numbers.world.DirectionalScanner;
+import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
 import net.minecraft.world.IWorld;
 
 import java.util.List;
@@ -17,6 +23,9 @@ public class WorldGenStalagmite extends WorldGen {
 	protected final List<WeightedBlock> resource;
 	protected final Material[] baseBlock;
 	protected final Material[] material;
+	private final Direction direction;
+
+
 	public int minHeight = 7;
 	public int heightVariance = 4;
 	public int sizeVariance = 2;
@@ -26,11 +35,20 @@ public class WorldGenStalagmite extends WorldGen {
 	public boolean fat = true;
 	public boolean altSinc = false;
 
-	public WorldGenStalagmite(List<WeightedBlock> resource, List<Material> block, List<Material> gblock) {
+	public WorldGenStalagmite(List<WeightedBlock> resource, List<Material> block, List<Material> gblock, Direction direction) {
 
 		this.resource = resource;
 		baseBlock = block.toArray(new Material[0]);
 		material = gblock.toArray(new Material[0]);
+		this.direction = direction;
+		setYVar(new DirectionalScanner(
+				new WorldValueCondition("IS_AIR"),
+				direction,
+				direction == Direction.UP ? new MathProvider(
+						new ConstantProvider(256),
+						new WorldValueProvider("CURRENT_Y"),
+						"SUBTRACT"
+				) : new WorldValueProvider("CURRENT_Y")));
 	}
 
 	protected int getHeight(int x, int z, int size, Random rand, int height) {
@@ -67,16 +85,15 @@ public class WorldGenStalagmite extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
-		int xStart = pos.getX();
-		int yStart = pos.getY();
-		int zStart = pos.getZ();
-		while (world.isAirBlock(new BlockPos(xStart, yStart, zStart)) && yStart > 0) {
-			--yStart;
-		}
+		final int yMod = direction.getYOffset();
 
-		if (!canGenerateInBlock(world, xStart, yStart++, zStart, baseBlock)) {
+		int xStart = data.getPosition().getX();
+		int yStart = data.getPosition().getY() - yMod;
+		int zStart = data.getPosition().getZ();
+
+		if (!canGenerateInBlock(world, xStart, yStart, zStart, baseBlock)) {
 			return false;
 		}
 
@@ -89,12 +106,12 @@ public class WorldGenStalagmite extends WorldGen {
 		boolean r = false;
 		for (int x = -size; x <= size; ++x) {
 			for (int z = -size; z <= size; ++z) {
-				if (!canGenerateInBlock(world, xStart + x, yStart - 1, zStart + z, baseBlock)) {
+				if (!canGenerateInBlock(world, xStart + x, yStart + yMod, zStart + z, baseBlock)) {
 					continue;
 				}
 				int height = getHeight(x, z, size, rand, maxHeight);
 				for (int y = 0; y < height; ++y) {
-					r |= generateBlock(world, rand, xStart + x, yStart + y, zStart + z, material, resource);
+					r |= generateBlock(world, rand, xStart + x, yStart + y * yMod, zStart + z, material, resource);
 				}
 			}
 		}

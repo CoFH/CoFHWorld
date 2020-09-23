@@ -63,7 +63,9 @@ public class WorldGenDungeon extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random rand, BlockPos start) {
+	public boolean generate(IWorld world, Random rand, final DataHolder data) {
+
+		final BlockPos start = data.getPosition();
 
 		int xStart = start.getX();
 		int yStart = start.getY();
@@ -71,8 +73,6 @@ public class WorldGenDungeon extends WorldGen {
 		if (yStart <= 2) {
 			return false;
 		}
-
-		DataHolder data = new DataHolder(start);
 
 		final int height = this.height.intValue(world, rand, data);
 		final int xWidth = this.radiusX.intValue(world, rand, data.setValue("height", height));

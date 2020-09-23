@@ -3,6 +3,7 @@ package cofh.cofhworld.parser;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.parser.variables.BlockData;
+import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedWorldGenerator;
 import cofh.cofhworld.world.generator.WorldGen;
@@ -86,6 +87,17 @@ public class GeneratorData {
 			throw new IGeneratorParser.InvalidGeneratorException("`material` not valid", genObject.getValue("material").origin());
 		}
 
-		return parser.parseGenerator(parser.isMeta() ? def : name, genObject, log, resList, matList);
+		WorldGen r = parser.parseGenerator(parser.isMeta() ? def : name, genObject, log, resList, matList);
+
+		if (genObject.hasPath("offset.x")) {
+			r.setXVar(NumberData.parseNumberValue(genObject.getValue("offset.x"), -128, 128));
+		}
+		if (genObject.hasPath("offset.y")) {
+			r.setYVar(NumberData.parseNumberValue(genObject.getValue("offset.y")));
+		}
+		if (genObject.hasPath("offset.z")) {
+			r.setZVar(NumberData.parseNumberValue(genObject.getValue("offset.z"), -128, 128));
+		}
+		return r;
 	}
 }

@@ -5,10 +5,10 @@ import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
-import cofh.cofhworld.world.generator.WorldGenStalactite;
 import cofh.cofhworld.world.generator.WorldGenStalagmite;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigOrigin;
+import net.minecraft.util.Direction;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -37,7 +37,7 @@ public class GenParserStalagmite extends AbstractGenParserBlock {
 				throw new InvalidGeneratorException(has ? "Invalid `surface` specified" : "`surface` not spcified!", origin);
 			}
 		}
-		WorldGenStalagmite r = stalactite ? new WorldGenStalactite(resList, matList, list) : new WorldGenStalagmite(resList, matList, list);
+		WorldGenStalagmite r = new WorldGenStalagmite(resList, matList, list, stalactite ? Direction.UP : Direction.DOWN);
 		{
 			if (genObject.hasPath("min-height")) {
 				r.minHeight = genObject.getInt("min-height");

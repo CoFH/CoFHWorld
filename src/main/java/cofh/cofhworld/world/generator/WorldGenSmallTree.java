@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.BlockState;
@@ -53,11 +54,11 @@ public class WorldGenSmallTree extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
-		int x = pos.getX();
-		int y = pos.getY();
-		int z = pos.getZ();
+		int x = data.getPosition().getX();
+		int y = data.getPosition().getY();
+		int z = data.getPosition().getZ();
 
 		int treeHeight = (heightVariance <= 1 ? 0 : rand.nextInt(heightVariance)) + minHeight;
 		int worldHeight = world.getHeight();

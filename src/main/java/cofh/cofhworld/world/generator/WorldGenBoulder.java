@@ -1,5 +1,6 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Blocks;
@@ -35,11 +36,12 @@ public class WorldGenBoulder extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
-		int xCenter = pos.getX();
-		int yCenter = pos.getY();
-		int zCenter = pos.getZ();
+		int xCenter = data.getPosition().getX();
+		int yCenter = data.getPosition().getY();
+		int zCenter = data.getPosition().getZ();
+
 		final int minSize = size, var = sizeVariance;
 		boolean r = false;
 		int i = clusterVariance > 0 ? clusters + rand.nextInt(clusterVariance + 1) : clusters;

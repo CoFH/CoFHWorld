@@ -7,7 +7,6 @@ import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 
 import java.util.Collections;
@@ -36,13 +35,11 @@ public class WorldGenGeode extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
-		int xStart = pos.getX();
-		int yStart = pos.getY();
-		int zStart = pos.getZ();
-
-		DataHolder data = new DataHolder(pos);
+		int xStart = data.getPosition().getX();
+		int yStart = data.getPosition().getY();
+		int zStart = data.getPosition().getZ();
 
 		final int height = this.height.intValue(world, rand, data);
 		final int width = this.width.intValue(world, rand, data);

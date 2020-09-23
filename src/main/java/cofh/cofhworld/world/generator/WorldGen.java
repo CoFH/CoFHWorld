@@ -1,13 +1,18 @@
 package cofh.cofhworld.world.generator;
 
+import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.data.numbers.ConstantProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -16,10 +21,53 @@ import java.util.Random;
 
 public abstract class WorldGen {
 
-	public abstract boolean generate(IWorld worldIn, Random rand, BlockPos position);
+	protected INumberProvider xVar = ConstantProvider.ZERO;
+	protected INumberProvider yVar = ConstantProvider.ZERO;
+	protected INumberProvider zVar = ConstantProvider.ZERO;
+
+	final protected DataHolder getData(IWorld world, Random rand, BlockPos start) {
+
+		DataHolder data = new DataHolder(start);
+		return data.setPosition(getNewOffset(world, rand, data));
+	}
+
+	final protected BlockPos getNewOffset(IWorld world, Random rand, DataHolder data) {
+
+		BlockPos start = data.getPos("start");
+
+		int x = xVar.intValue(world, rand, data.setPosition(start));
+		int z = zVar.intValue(world, rand, data.setPosition(start.add(x, 0, 0)));
+		int y = yVar.intValue(world, rand, data.setPosition(start.add(x, 0, z)));
+		return new BlockPos(start.getX() + x, MathHelper.clamp(start.getY() + y, 0, world.getMaxHeight()), start.getZ() + z);
+	}
+
+	final public boolean generate(IWorld world, Random rand, BlockPos position) {
+
+		return this.generate(world, rand, getData(world, rand, position));
+	}
+
+	protected abstract boolean generate(IWorld world, Random rand, final DataHolder data);
 
 	public void setDecorationDefaults() {
 
+	}
+
+	public WorldGen setXVar(INumberProvider xVar) {
+
+		this.xVar = xVar;
+		return this;
+	}
+
+	public WorldGen setYVar(INumberProvider yVar) {
+
+		this.yVar = yVar;
+		return this;
+	}
+
+	public WorldGen setZVar(INumberProvider zVar) {
+
+		this.zVar = zVar;
+		return this;
 	}
 
 	public static List<WeightedBlock> fabricateList(WeightedBlock resource) {
@@ -41,7 +89,7 @@ public abstract class WorldGen {
 		return canGenerateInBlock(world, new BlockPos(x, y, z), mat);
 	}
 
-	public static boolean canGenerateInBlock(IWorld world, BlockPos pos, Material[] mat) {
+	public static boolean canGenerateInBlock(IWorldReader world, BlockPos pos, Material[] mat) {
 
 		if (mat == null || mat.length == 0) {
 			return true;

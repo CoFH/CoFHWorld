@@ -9,7 +9,6 @@ import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 
 import java.util.List;
@@ -46,13 +45,12 @@ public class WorldGenMinablePlate extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
-		int x = pos.getX();
-		int y = pos.getY();
-		int z = pos.getZ();
+		int x = data.getPosition().getX();
+		int y = data.getPosition().getY();
+		int z = data.getPosition().getZ();
 
-		DataHolder data = new DataHolder(pos);
 		final PlaneShape shape = this.shape;
 		final Rotation rot = this.shapeRot;
 		final Mirror mirror = this.shapeMirror;

@@ -7,7 +7,6 @@ import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 
 import java.util.List;
@@ -46,13 +45,11 @@ public class WorldGenMinableLargeVein extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random rand, BlockPos pos) {
+	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
-		int x = pos.getX();
-		int y = pos.getY();
-		int z = pos.getZ();
-
-		final DataHolder data = new DataHolder(pos);
+		int x = data.getPosition().getX();
+		int y = data.getPosition().getY();
+		int z = data.getPosition().getZ();
 
 		final int veinSize = this.veinSize.intValue(world, rand, data);
 		final int branchSize = 1 + (veinSize / 30);

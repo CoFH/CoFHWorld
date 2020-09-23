@@ -15,24 +15,16 @@ import net.minecraft.world.IWorld;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @deprecated TODO: split position variance logic out into something more base so all generators have the logic
- */
-@Deprecated
 public class WorldGenDecoration extends WorldGen {
 
 	private static final ICondition SEE_SKY = new WorldValueCondition("CAN_SEE_SKY"), CHECK_STAY = new WorldValueCondition("BLOCK_CAN_PLACE");
 
 	private final List<WeightedBlock> resource;
 	private final Material[] material;
-	private final Material[] onBlock;
+	private final Material[] surface;
 	private final INumberProvider clusterSize;
 	private ICondition seeSky, checkStay;
 	private INumberProvider stackHeight;
-
-	private INumberProvider xVar;
-	private INumberProvider yVar;
-	private INumberProvider zVar;
 
 	public WorldGenDecoration(List<WeightedBlock> blocks, int count, List<Material> material, List<Material> on) {
 
@@ -44,7 +36,7 @@ public class WorldGenDecoration extends WorldGen {
 		resource = blocks;
 		clusterSize = count;
 		material = materials.toArray(new Material[0]);
-		onBlock = on == null ? null : on.toArray(new Material[0]);
+		surface = on == null ? null : on.toArray(new Material[0]);
 		this.setStackHeight(1).setSeeSky(SEE_SKY).setCheckStay(CHECK_STAY);
 		this.setXVar(new SkellamRandomProvider(8));
 		this.setYVar(new SkellamRandomProvider(4));
@@ -52,49 +44,45 @@ public class WorldGenDecoration extends WorldGen {
 	}
 
 	@Override
-	public boolean generate(IWorld world, Random rand, BlockPos start) {
-
-		int xStart = start.getX();
-		int yStart = start.getY();
-		int zStart = start.getZ();
-
-		DataHolder data = new DataHolder(start);
+	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
 		final int clusterSize = this.clusterSize.intValue(world, rand, data);
 
 		boolean r = false;
 		for (int l = clusterSize, tries = 0; l-- > 0; ) {
-			int x = xStart + xVar.intValue(world, rand, data.setPosition(start));
-			int z = zStart + zVar.intValue(world, rand, data.setPosition(start.add(x - xStart, 0, 0)));
-			int y = yStart + yVar.intValue(world, rand, data.setPosition(start.add(x - xStart, 0, z - zStart)));
-			BlockPos pos = new BlockPos(x, y, z);
+			BlockPos pos = data.getPosition();
 
-			if (!world.isBlockLoaded(pos)) {
-				++l;
-				if (++tries > 256) {
-					break; // yeah, okay. provided values are somewhere not loaded, we're not just 'missing' at the edges
+			b: {
+				if (!world.isBlockLoaded(pos)) {
+					++l;
+					if (++tries > 256) {
+						break; // yeah, okay. provided values are somewhere not loaded, we're not just 'missing' at the edges
+					}
+					break b;
 				}
-				continue;
-			}
 
-			WeightedBlock block = selectBlock(rand, resource);
-			if (seeSky.checkCondition(world, rand, data.setPosition(pos).setBlock(block)) &&
-					canGenerateInBlock(world, x, y - 1, z, onBlock) && canGenerateInBlock(world, x, y, z, material)) {
+				int x = pos.getX(), y = pos.getY(), z = pos.getZ();
 
-				int stack = stackHeight.intValue(world, rand, data);
-				do {
-					if (checkStay.checkCondition(world, rand, data)) {
-						r |= setBlock(world, rand, pos, block);
-					} else {
-						break;
-					}
-					++y;
-					pos = pos.add(0, 1, 0);
-					if (!canGenerateInBlock(world, x, y, z, material)) {
-						break;
-					}
-				} while (--stack > 0);
+				WeightedBlock block = selectBlock(rand, resource);
+				if (seeSky.checkCondition(world, rand, data.setPosition(pos).setBlock(block)) &&
+						canGenerateInBlock(world, x, y - 1, z, surface) && canGenerateInBlock(world, x, y, z, material)) {
+
+					int stack = stackHeight.intValue(world, rand, data);
+					do {
+						if (checkStay.checkCondition(world, rand, data)) {
+							r |= setBlock(world, rand, pos, block);
+						} else {
+							break;
+						}
+						++y;
+						if (!canGenerateInBlock(world, x, y, z, material)) {
+							break;
+						}
+						pos = pos.add(0, 1, 0);
+					} while (--stack > 0);
+				}
 			}
+			data.setPosition(getNewOffset(world, rand, data));
 		}
 		return r;
 	}
@@ -131,42 +119,6 @@ public class WorldGenDecoration extends WorldGen {
 	public WorldGenDecoration setStackHeight(INumberProvider stackHeight) {
 
 		this.stackHeight = stackHeight;
-		return this;
-	}
-
-	@Deprecated
-	public WorldGenDecoration setXVar(int xVar) {
-
-		return this.setXVar(new ConstantProvider(xVar));
-	}
-
-	public WorldGenDecoration setXVar(INumberProvider xVar) {
-
-		this.xVar = xVar;
-		return this;
-	}
-
-	@Deprecated
-	public WorldGenDecoration setYVar(int yVar) {
-
-		return this.setYVar(new ConstantProvider(yVar));
-	}
-
-	public WorldGenDecoration setYVar(INumberProvider yVar) {
-
-		this.yVar = yVar;
-		return this;
-	}
-
-	@Deprecated
-	public WorldGenDecoration setZVar(int zVar) {
-
-		return this.setZVar(new ConstantProvider(zVar));
-	}
-
-	public WorldGenDecoration setZVar(INumberProvider zVar) {
-
-		this.zVar = zVar;
 		return this;
 	}
 
