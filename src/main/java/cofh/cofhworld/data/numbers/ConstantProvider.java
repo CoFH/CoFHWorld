@@ -7,6 +7,8 @@ import java.util.Random;
 
 public class ConstantProvider implements INumberProvider {
 
+	final public static ConstantProvider ZERO = new ConstantProvider(0);
+
 	protected Number min;
 
 	public ConstantProvider(Number value) {
