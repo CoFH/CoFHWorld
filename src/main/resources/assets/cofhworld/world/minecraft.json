@@ -521,7 +521,7 @@
 			"x-offset": {"min": 0, "max": 16},
 			"z-offset": {"min": 0, "max": 16},
 			"y-offset": { // world.seaLevel / 2 + 1 - 5 + randomInt(10)
-				"operation": "subtract",
+				"operation": "add",
 				"value-a": {
 					"operation": "add",
 					"value-a": {
@@ -529,13 +529,9 @@
 						"value-a": {"world-data": "SEA_LEVEL"},
 						"value-b": 2
 					},
-					"value-b": 1
+					"value-b": -4
 				},
-				"value-b": {
-					"operation": "add",
-					"value-a": 5,
-					"value-b": {"min": 0, "max": 10}
-				}
+				"value-b": {"min": 0, "max": 10}
 			},
 			"retrogen": false,
 			"biome": {
