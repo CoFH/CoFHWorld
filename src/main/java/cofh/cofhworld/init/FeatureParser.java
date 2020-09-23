@@ -7,14 +7,13 @@ import cofh.cofhworld.world.IFeatureGenerator;
 import com.typesafe.config.*;
 import com.typesafe.config.impl.CoFHOrderedParsableFile;
 import net.minecraft.util.ActionResultType;
-//import net.minecraftforge.fml.common.Loader;
-//import net.minecraftforge.fml.common.LoaderState;
-//import net.minecraftforge.fml.common.ModContainer;
-//import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-//import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-//import net.minecraftforge.fml.common.versioning.VersionParser;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.forgespi.language.MavenVersionAdapter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Level;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -27,6 +26,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 
 import static cofh.cofhworld.CoFHWorld.log;
+
+//import net.minecraftforge.fml.common.Loader;
+//import net.minecraftforge.fml.common.LoaderState;
+//import net.minecraftforge.fml.common.ModContainer;
+//import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+//import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+//import net.minecraftforge.fml.common.versioning.VersionParser;
 
 public class FeatureParser {
 
@@ -183,87 +189,90 @@ public class FeatureParser {
 		});
 
 		parseGenerationFiles(processedGenList);
+
+		// clean up
+		apis = null;
 	}
 
 	public static boolean processDependencies(ConfigValue value) {
 
-		if (value.valueType() == ConfigValueType.LIST) {
-			ConfigList list = (ConfigList) value;
-			boolean r = true;
-			for (int i = 0, e = list.size(); i < e; ++i) {
-				r &= processDependency(list.get(i));
+		try {
+			if (value.valueType() == ConfigValueType.LIST) {
+				ConfigList list = (ConfigList) value;
+				boolean r = true;
+				for (int i = 0, e = list.size(); i < e; ++i) {
+					r &= processDependency(list.get(i));
+				}
+				return r;
+			} else {
+				return processDependency(value);
 			}
-			return r;
-		} else {
-			return processDependency(value);
+		} catch (RuntimeException e) {
+			log.catching(e);
 		}
+		return false;
 	}
 
-//	private static Map<String, ModContainer> apis;
-//
-//	public static Map<String, ModContainer> getLoadedAPIs() {
-//
-//		if (apis == null) {
-//			apis = new HashMap<>();
-//			for (ModContainer m : ModAPIManager.INSTANCE.getAPIList()) {
-//				apis.put(m.getModId(), m);
-//			}
-//		}
-//		return apis;
-//	}
+	private static Map<String, ModContainer> apis;
+
+	public static Map<String, ModContainer> getLoadedAPIs() {
+
+		if (apis == null) {
+			apis = new HashMap<>();
+			ModList.get().forEachModContainer((modID, mc) -> apis.put(modID, mc));
+		}
+		return apis;
+	}
 
 	public static boolean processDependency(ConfigValue value) {
 
-//		String id;
-//		ModContainer con;
-//		ArtifactVersion vers = null;
-//		boolean retComp = true;
-//		switch (value.valueType()) {
-//			case STRING:
-//				id = (String) value.unwrapped();
-//				if (id.contains("@")) {
-//					vers = VersionParser.parseVersionReference(id);
-//					id = vers.getLabel();
-//				}
-//				con = Loader.instance().getIndexedModList().get(id);
-//				break;
-//			case OBJECT:
-//				Config data = ((ConfigObject) value).toConfig();
-//				id = data.getString("id");
-//				con = Loader.instance().getIndexedModList().get(id);
-//				if (data.hasPath("version")) {
-//					vers = new DefaultArtifactVersion(id, data.getString("version"));
-//				}
-//				if (data.hasPath("exclude")) {
-//					retComp = !data.getBoolean("exclude");
-//				}
-//				break;
-//			default:
-//				log.fatal("Invalid dependency at line {}!", value.origin().lineNumber());
-//				return false;
-//		}
-//		if (con == null) {
-//			con = getLoadedAPIs().get(id);
-//			if (con == null) {
-//				log.debug("Dependency '{}' is not loaded.", id);
-//				return false == retComp;
-//			}
-//		}
-//		LoaderState.ModState state = Loader.instance().getModState(con);
-//		if (state == LoaderState.ModState.DISABLED || state == LoaderState.ModState.ERRORED) {
-//			log.debug("Dependency '{}' is disabled or crashed.", id);
-//			return false == retComp;
-//		}
-//		if (vers != null) {
-//			if (retComp != vers.containsVersion(con.getProcessedVersion())) {
-//				log.debug("Dependency '{}' has an incompatible version.", id);
-//				return false;
-//			} else {
-//				return true;
-//			}
-//		}
-//		return true == retComp;
-		return true;
+		String id;
+		ModContainer con;
+		VersionRange range = null;
+		boolean retComp = true;
+		switch (value.valueType()) {
+			case STRING:
+				id = (String) value.unwrapped();
+				if (id.contains("@")) {
+					int idx = id.indexOf('@');
+					id = id.substring(0, idx);
+					range = MavenVersionAdapter.createFromVersionSpec(id.substring(idx + 1));
+				}
+				con = getLoadedAPIs().get(id);
+				break;
+			case OBJECT:
+				Config data = ((ConfigObject) value).toConfig();
+				id = data.getString("id");
+				con = getLoadedAPIs().get(id);
+				if (data.hasPath("version")) {
+					range = MavenVersionAdapter.createFromVersionSpec(data.getString("version"));
+				}
+				if (data.hasPath("exclude")) {
+					retComp = !data.getBoolean("exclude");
+				}
+				break;
+			default:
+				log.fatal("Invalid dependency at line {}!", value.origin().lineNumber());
+				return false;
+		}
+		if (con == null) {
+			log.debug("Dependency '{}' is not loaded or disabled.", id);
+			return false == retComp;
+		}
+		ModLoadingStage state = con.getCurrentState();
+		if (state == ModLoadingStage.ERROR) {
+			log.debug("Dependency '{}' is crashed.", id);
+			return false == retComp;
+		}
+		if (range != null) {
+			if (retComp != range.containsVersion(con.getModInfo().getVersion())) {
+				log.debug("Dependency '{}' has an incompatible version.", id);
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return true == retComp;
 	}
 
 	public static void parseGenerationFiles(ArrayList<ConfigContainer> processedGenList) {
