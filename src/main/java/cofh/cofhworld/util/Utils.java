@@ -7,6 +7,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.core.util.Loader;
 
@@ -23,7 +24,7 @@ public class Utils {
 		return world.getChunkAt(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
 	}
 
-	public static int getSurfaceBlockY(IWorld world, int x, int z) {
+	public static int getSurfaceBlockY(IWorldReader world, int x, int z) {
 
 		int y = world.getChunk(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
 

@@ -55,7 +55,7 @@ public enum WorldValueEnum {
 		public long getValue(IWorldReader world, Random rand, DataHolder data) {
 
 			Vec3i pos = data.getPosition();
-			return Utils.getSurfaceBlockY(world.getDimension().getWorld(), pos.getX(), pos.getZ()); // TODO: PROBABLY BAD
+			return Utils.getSurfaceBlockY(world, pos.getX(), pos.getZ());
 		}
 	}, LOWEST_CHUNK_HORIZON {
 		@Override
