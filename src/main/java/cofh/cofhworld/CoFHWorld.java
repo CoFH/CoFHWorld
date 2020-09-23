@@ -1,5 +1,6 @@
 package cofh.cofhworld;
 
+import cofh.cofhworld.command.CommandCoFHWorld;
 import cofh.cofhworld.init.WorldHandler;
 import cofh.cofhworld.init.WorldProps;
 import net.minecraftforge.common.MinecraftForge;
@@ -7,6 +8,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +29,7 @@ public class CoFHWorld {
 
 		modEventBus.addListener(this::preInit);
 		MinecraftForge.EVENT_BUS.addListener(this::onServerStarting);
+		MinecraftForge.EVENT_BUS.addListener(this::onServerStart);
 
 		WorldHandler.register();
 	}
@@ -43,9 +46,12 @@ public class CoFHWorld {
 
 	public void onServerStarting(FMLServerAboutToStartEvent event) {
 
-		//event.registerServerCommand(new CommandCoFHWorld());
-
 		WorldHandler.reloadConfig(true);
+	}
+
+	public void onServerStart(FMLServerStartingEvent event) {
+
+		CommandCoFHWorld.register(event.getCommandDispatcher());
 	}
 
 }

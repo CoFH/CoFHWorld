@@ -1,151 +1,131 @@
-//package cofh.cofhworld.command;
-//
-//import cofh.cofhworld.CoFHWorld;
-//import cofh.cofhworld.init.WorldHandler;
-//import cofh.cofhworld.world.IFeatureGenerator;
-//import net.minecraft.command.CommandBase;
-//import net.minecraft.command.CommandException;
-//import net.minecraft.command.ICommandSender;
-//import net.minecraft.server.MinecraftServer;
-//import net.minecraft.util.text.TextComponentString;
-//import net.minecraft.util.text.TextComponentTranslation;
-//import net.minecraft.util.text.TextFormatting;
-//import net.minecraftforge.server.command.CommandTreeBase;
-//
-//import java.util.List;
-//
-//public class CommandCoFHWorld extends CommandTreeBase {
-//
-//	@Override
-//	public String getName() {
-//
-//		return "cofhworld";
-//	}
-//
-//	@Override
-//	public int getRequiredPermissionLevel() {
-//
-//		return -1;
-//	}
-//
-//	@Override
-//	public String getUsage(ICommandSender sender) {
-//
-//		return "cofhworld.usage";
-//	}
-//
-//	public CommandCoFHWorld() {
-//
-//		addSubcommand(new CommandReload());
-//		addSubcommand(new CommandList());
-//		addSubcommand(new CommandVersion());
-//	}
-//
-//	public static class CommandVersion extends CommandBase {
-//
-//		@Override
-//		public String getName() {
-//
-//			return "version";
-//		}
-//
-//		@Override
-//		public int getRequiredPermissionLevel() {
-//
-//			return -1;
-//		}
-//
-//		@Override
-//		public String getUsage(ICommandSender sender) {
-//
-//			return "cofhworld.version.usage";
-//		}
-//
-//		@Override
-//		public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-//
-//			sender.sendMessage(new TextComponentString(CoFHWorld.VERSION));
-//		}
-//	}
-//
-//	// Command to reload all feature definitions
-//	public static class CommandReload extends CommandBase {
-//
-//		@Override
-//		public String getName() {
-//
-//			return "reload";
-//		}
-//
-//		@Override
-//		public int getRequiredPermissionLevel() {
-//
-//			return 4;
-//		}
-//
-//		@Override
-//		public String getUsage(ICommandSender sender) {
-//
-//			return "cofhworld.reload.usage";
-//		}
-//
-//		@Override
-//		public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-//
-//			if (WorldHandler.reloadConfig()) {
-//				notifyCommandListener(sender, this, "cofhworld.reload.successful");
-//			} else {
-//				notifyCommandListener(sender, this, "cofhworld.reload.failed");
-//			}
-//		}
-//	}
-//
-//	// Command to list all feature definitions
-//	public static class CommandList extends CommandBase {
-//
-//		@Override
-//		public String getName() {
-//
-//			return "list";
-//		}
-//
-//		@Override
-//		public int getRequiredPermissionLevel() {
-//
-//			return 1;
-//		}
-//
-//		@Override
-//		public String getUsage(ICommandSender sender) {
-//
-//			return "cofhworld.list.usage";
-//		}
-//
-//		@Override
-//		public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-//
-//			final int pageSize = 8;
-//			List<IFeatureGenerator> generators = WorldHandler.getFeatures();
-//			int maxPages = (generators.size() - 1) / pageSize;
-//			int page = args.length == 0 ? 0 : CommandBase.parseInt(args[0], 1, maxPages + 1) - 1;
-//
-//			TextComponentTranslation component = new TextComponentTranslation("cofhworld.list", page + 1, maxPages + 1);
-//			component.getStyle().setColor(TextFormatting.GOLD);
-//			sender.sendMessage(component);
-//
-//			if (generators.size() == 0) {
-//				return;
-//			}
-//
-//			StringBuilder b = new StringBuilder();
-//			int maxIndex = Math.min((page + 1) * pageSize, generators.size());
-//			for (int i = page * pageSize; i < maxIndex; ++i) {
-//				b.append("* ").append(generators.get(i).getFeatureName()).append('\n');
-//			}
-//			b.deleteCharAt(b.length() - 1);
-//
-//			sender.sendMessage(new TextComponentString(b.toString()));
-//		}
-//	}
-//
-//}
+package cofh.cofhworld.command;
+
+import cofh.cofhworld.CoFHWorld;
+import cofh.cofhworld.init.WorldHandler;
+import cofh.cofhworld.world.IFeatureGenerator;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fml.ModList;
+
+import java.util.List;
+
+public class CommandCoFHWorld {
+
+	public static void register(CommandDispatcher<CommandSource> dispatcher) {
+
+		dispatcher.register(
+				LiteralArgumentBuilder.<CommandSource>literal("cofhworld")
+						.then(SubCommandVersion.register())
+						.then(SubCommandList.register())
+						.then(SubCommandReload.register())
+		);
+	}
+
+	private static class SubCommandVersion {
+
+		public static ArgumentBuilder<CommandSource, ?> register() {
+
+			return Commands.literal("version")
+					.executes(SubCommandVersion::execute);
+		}
+
+		public static int execute(CommandContext<CommandSource> context) throws CommandException {
+
+			context.getSource().sendFeedback(new StringTextComponent(
+					String.valueOf(ModList.get().getModFileById(CoFHWorld.MOD_ID).getFile().getSubstitutionMap().get().getOrDefault("jarVersion", "DEV"))
+			), true);
+			return 1;
+		}
+	}
+
+	// Command to reload all feature definitions
+	private static class SubCommandReload {
+
+		public static ArgumentBuilder<CommandSource, ?> register() {
+
+			return Commands.literal("reload")
+					.requires(source -> source.hasPermissionLevel(4))
+					.executes(SubCommandReload::execute);
+		}
+
+		public static int execute(CommandContext<CommandSource> context) throws CommandException {
+
+			String key;
+			int rtn = 0;
+			if (WorldHandler.reloadConfig()) {
+				key = "cofhworld.reload.successful";
+				rtn = 1;
+			} else {
+				key = "cofhworld.reload.failed";
+			}
+
+			context.getSource().sendFeedback(new TranslationTextComponent(key), true);
+			return rtn;
+		}
+	}
+
+	// Command to list all feature definitions
+	public static class SubCommandList {
+
+		final private static int PAGE_SIZE = 8;
+
+		public static ArgumentBuilder<CommandSource, ?> register() {
+
+			return Commands.literal("list")
+					.requires(source -> source.hasPermissionLevel(1))
+					.executes(SubCommandList::execute)
+					.then(Commands.argument("page", IntegerArgumentType.integer(1, Math.max(1, (WorldHandler.getFeatures().size() - 1) / PAGE_SIZE) + 1))
+							.executes(SubCommandList::executeWithPage));
+		}
+
+		public static int execute(CommandContext<CommandSource> context) throws CommandException {
+
+			return execute(context, 0);
+		}
+
+		public static int executeWithPage(CommandContext<CommandSource> context) throws CommandException {
+
+			return execute(context, IntegerArgumentType.getInteger(context, "page"));
+		}
+
+		public static int execute(CommandContext<CommandSource> context, int page) throws CommandException {
+
+			List<IFeatureGenerator> generators = WorldHandler.getFeatures();
+			int maxPages = (generators.size() - 1) / PAGE_SIZE;
+
+			TextComponent component = new TranslationTextComponent("cofhworld.list", page + 1, maxPages + 1);
+			component.getStyle().setColor(TextFormatting.GOLD);
+			context.getSource().sendFeedback(component, true);
+
+			if (generators.size() == 0) {
+				component = new StringTextComponent("! EMPTY");
+				component.getStyle().setColor(TextFormatting.DARK_RED);
+				context.getSource().sendFeedback(component, true);
+				return 1;
+			}
+
+			StringBuilder b = new StringBuilder();
+			int maxIndex = Math.min((page + 1) * PAGE_SIZE, generators.size());
+			for (int i = page * PAGE_SIZE; i < maxIndex; ++i) {
+				b.append("* ").append(generators.get(i).getFeatureName()).append('\n');
+			}
+			b.deleteCharAt(b.length() - 1);
+
+			component = new StringTextComponent(b.toString());
+			component.getStyle().setColor(TextFormatting.DARK_BLUE);
+			context.getSource().sendFeedback(component, true);
+			return 1;
+		}
+	}
+
+}
