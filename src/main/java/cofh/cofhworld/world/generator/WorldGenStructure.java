@@ -138,9 +138,7 @@ public class WorldGenStructure extends WorldGen {
 
 		BlockPos start = template.getZeroPositionWithTransform(data.getPosition(), settings.getMirror(), settings.getRotation());
 
-		template.addBlocksToWorld(world, start, settings, 20);
-
-		return true; // we probably did something. templates don't actually feed back information like that
+		return template.addBlocksToWorld(world, start, settings, 20);
 	}
 
 }
