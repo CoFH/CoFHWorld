@@ -2,6 +2,8 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.variables.ConditionData;
+import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenBoulder;
@@ -25,31 +27,26 @@ public class GenParserBoulder implements IGeneratorParser {
 	@Nonnull
 	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
 
-		int clusterSize = genObject.getInt("diameter");
-		if (clusterSize <= 0) {
-			log.warn("Invalid `diameter` for generator '{}'", name);
-			throw new InvalidGeneratorException("Invalid `diameter`", genObject.getValue("diameter").origin());
-		}
-
-		WorldGenBoulder r = new WorldGenBoulder(resList, clusterSize, matList);
+		WorldGenBoulder r = new WorldGenBoulder(resList, NumberData.parseNumberValue(genObject.getValue("diameter")), matList);
 		{
-			if (genObject.hasPath("size-variance")) {
-				r.sizeVariance = genObject.getInt("size-variance");
-			}
-			if (genObject.hasPath("count")) {
-				r.clusters = genObject.getInt("count");
-			}
-			if (genObject.hasPath("count-variance")) {
-				r.clusterVariance = genObject.getInt("count-variance");
+			if (genObject.hasPath("quantity")) {
+				r.quantity = NumberData.parseNumberValue(genObject.getValue("quantity"));
 			}
 			if (genObject.hasPath("hollow")) {
-				r.hollow = genObject.getBoolean("hollow");
+				r.hollow = ConditionData.parseConditionValue(genObject.getValue("hollow"));
 			}
 			if (genObject.hasPath("hollow-size")) {
-				r.hollowAmt = (float) genObject.getDouble("hollow-size");
+				r.hollowAmt = NumberData.parseNumberValue(genObject.getValue("hollow-size"));
 			}
-			if (genObject.hasPath("hollow-variance")) {
-				r.hollowVar = (float) genObject.getDouble("hollow-variance");
+
+			if (genObject.hasPath("variance.x")) {
+				r.xVar = NumberData.parseNumberValue(genObject.getValue("variance.x"));
+			}
+			if (genObject.hasPath("variance.y")) {
+				r.yVar = NumberData.parseNumberValue(genObject.getValue("variance.y"));
+			}
+			if (genObject.hasPath("variance.z")) {
+				r.zVar = NumberData.parseNumberValue(genObject.getValue("variance.z"));
 			}
 		}
 		return r;

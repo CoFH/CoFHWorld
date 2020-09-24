@@ -2,37 +2,57 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.data.condition.ConstantCondition;
+import cofh.cofhworld.data.condition.ICondition;
+import cofh.cofhworld.data.condition.world.WorldValueCondition;
+import cofh.cofhworld.data.numbers.ConstantProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.data.DataProvider;
+import cofh.cofhworld.data.numbers.operation.MathProvider;
+import cofh.cofhworld.data.numbers.operation.UnaryMathProvider;
+import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
+import cofh.cofhworld.data.numbers.world.DirectionalScanner;
+import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
 import net.minecraft.world.IWorld;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @deprecated TODO: replace all ints with INumberProvider
- */
-@Deprecated
 public class WorldGenBoulder extends WorldGen {
 
 	private final List<WeightedBlock> resource;
 	private final Material[] material;
-	private final int size;
-	public int sizeVariance = 2;
-	public int clusters = 3;
-	public int clusterVariance = 0;
-	public boolean hollow = false;
-	public float hollowAmt = 0.1665f;
-	public float hollowVar = 0;
+	private final INumberProvider size;
+
+	public List<WeightedBlock> filler = Collections.singletonList(WeightedBlock.AIR);
+	public ICondition hollow = ConstantCondition.FALSE;
+	public INumberProvider hollowAmt = new UniformRandomProvider(0, 0.1665f);
+
+	public INumberProvider quantity = new ConstantProvider(3);
+
+	public INumberProvider xVar = new MathProvider( // -radius-x / 2 to radius-x / 2 inclusive
+			new UnaryMathProvider(new UnaryMathProvider(new DataProvider("radius-x"), "INCREMENT"), "NEGATE"),
+			new UniformRandomProvider(ConstantProvider.ZERO, new UnaryMathProvider(new DataProvider("radius-x"), "DOUBLE")),
+			"ADD"
+	);
+	public INumberProvider yVar = new UniformRandomProvider(-2, 0);
+	public INumberProvider zVar = new MathProvider(// -radius-z / 2 to radius-z / 2 inclusive
+			new UnaryMathProvider(new UnaryMathProvider(new DataProvider("radius-z"), "INCREMENT"), "NEGATE"),
+			new UniformRandomProvider(ConstantProvider.ZERO, new UnaryMathProvider(new DataProvider("radius-z"), "DOUBLE")),
+			"ADD"
+	);
 
 	// TODO: shapes? sphere, cube, ellipsoid? more?
 
-	public WorldGenBoulder(List<WeightedBlock> resource, int minSize, List<Material> materials) {
+	public WorldGenBoulder(List<WeightedBlock> resource, INumberProvider minSize, List<Material> materials) {
 
 		this.resource = resource;
 		size = minSize;
 		material = materials.toArray(new Material[0]);
+		setOffsetY(new DirectionalScanner(new WorldValueCondition("IS_AIR"), Direction.DOWN, new WorldValueProvider("CURRENT_Y")));
 	}
 
 	@Override
@@ -42,52 +62,43 @@ public class WorldGenBoulder extends WorldGen {
 		int yCenter = data.getPosition().getY();
 		int zCenter = data.getPosition().getZ();
 
-		final int minSize = size, var = sizeVariance;
 		boolean r = false;
-		int i = clusterVariance > 0 ? clusters + rand.nextInt(clusterVariance + 1) : clusters;
+		int i = quantity.intValue(world, rand, data);
 		while (i-- > 0) {
 
-			while (yCenter > minSize && world.isAirBlock(new BlockPos(xCenter, yCenter - 1, zCenter))) {
-				--yCenter;
-			}
-			if (yCenter <= (minSize + var + 1)) {
-				return false;
-			}
+			int xWidth = size.intValue(world, rand, data);
+			int zWidth = size.intValue(world, rand, data.setValue("radius-x", xWidth));
+			int yWidth = size.intValue(world, rand, data.setValue("radius-z", zWidth));
+			data.setValue("radius-y", yWidth);
+			float maxDist = (xWidth + yWidth + zWidth) * 0.333F + 0.5F;
+			maxDist *= maxDist;
+			float minDist = hollow.checkCondition(world, rand, data) ? (xWidth + yWidth + zWidth) * hollowAmt.floatValue(world, rand, data) : 0;
+			minDist *= minDist;
 
-			if (canGenerateInBlock(world, xCenter, yCenter - 1, zCenter, material)) {
+			for (int x = -xWidth; x <= xWidth; ++x) {
+				final int xDist = x * x;
 
-				int xWidth = minSize + (var > 1 ? rand.nextInt(var) : 0);
-				int yWidth = minSize + (var > 1 ? rand.nextInt(var) : 0);
-				int zWidth = minSize + (var > 1 ? rand.nextInt(var) : 0);
-				float maxDist = (xWidth + yWidth + zWidth) * 0.333F + 0.5F;
-				maxDist *= maxDist;
-				float minDist = hollow ? (xWidth + yWidth + zWidth) * (hollowAmt * (1 - rand.nextFloat() * hollowVar)) : 0;
-				minDist *= minDist;
+				for (int z = -zWidth; z <= zWidth; ++z) {
+					final int xzDist = xDist + z * z;
 
-				for (int x = -xWidth; x <= xWidth; ++x) {
-					final int xDist = x * x;
+					for (int y = -yWidth; y <= yWidth; ++y) {
+						final int dist = xzDist + y * y;
 
-					for (int z = -zWidth; z <= zWidth; ++z) {
-						final int xzDist = xDist + z * z;
-
-						for (int y = -yWidth; y <= yWidth; ++y) {
-							final int dist = xzDist + y * y;
-
-							if (dist <= maxDist) {
-								if (dist >= minDist) {
-									r |= generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, resource);
-								} else {
-									r |= world.setBlockState(new BlockPos(xCenter + x, yCenter + y, zCenter + z), Blocks.AIR.getDefaultState(), 2 | 16);
-								}
+						if (dist <= maxDist) {
+							if (dist >= minDist) {
+								r |= generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, material, resource);
+							} else {
+								r |= generateBlock(world, rand, xCenter + x, yCenter + y, zCenter + z, material, filler);
 							}
 						}
 					}
 				}
+
 			}
 
-			xCenter += rand.nextInt(var + minSize * 2) - (minSize + var / 2);
-			zCenter += rand.nextInt(var + minSize * 2) - (minSize + var / 2);
-			yCenter += rand.nextInt((var + 1) * 3) - (var + 1);
+			xCenter += xVar.intValue(world, rand, data);
+			zCenter += yVar.intValue(world, rand, data);
+			yCenter += zVar.intValue(world, rand, data);
 		}
 
 		return r;
