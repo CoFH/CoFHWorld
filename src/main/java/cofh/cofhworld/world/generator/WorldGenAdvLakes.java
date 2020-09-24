@@ -1,11 +1,22 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.block.MaterialPropertyMaterial;
+import cofh.cofhworld.data.condition.ICondition;
+import cofh.cofhworld.data.condition.operation.BinaryCondition;
+import cofh.cofhworld.data.condition.operation.ComparisonCondition;
+import cofh.cofhworld.data.condition.random.RandomCondition;
+import cofh.cofhworld.data.condition.world.MaterialCondition;
+import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.data.DataProvider;
+import cofh.cofhworld.data.numbers.world.DirectionalScanner;
+import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
@@ -15,19 +26,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @deprecated TODO: replace all booleans with ICondition
- */
-@Deprecated
 public class WorldGenAdvLakes extends WorldGen {
 
 	private static final List<WeightedBlock> GAP_BLOCK = Collections.singletonList(WeightedBlock.AIR);
-	private final List<WeightedBlock> resource;
+
 	private final cofh.cofhworld.data.block.Material[] material;
-	private List<WeightedBlock> outlineBlock = null;
+	private final List<WeightedBlock> resource;
+
 	private List<WeightedBlock> gapBlock = GAP_BLOCK;
-	private boolean solidOutline = false;
-	private boolean totalOutline = false;
+
+	private List<WeightedBlock> outlineBlock = null;
+	private ICondition outlineCondition = new BinaryCondition(
+			new BinaryCondition(
+					new ComparisonCondition(
+							new DataProvider("layer"),
+							new DataProvider("fill-height"),
+							"LESS_THAN"),
+					new RandomCondition(),
+					"AND"),
+			new MaterialCondition(Collections.singletonList(new MaterialPropertyMaterial("SOLID"))),
+			"AND");
+
 	private INumberProvider width;
 	private INumberProvider height;
 
@@ -39,8 +58,10 @@ public class WorldGenAdvLakes extends WorldGen {
 		} else {
 			material = materials.toArray(new cofh.cofhworld.data.block.Material[0]);
 		}
-		this.setWidth(16);
-		this.setHeight(9);
+		setWidth(16);
+		setHeight(8);
+
+		setOffsetY(new DirectionalScanner(new WorldValueCondition("IS_AIR"), Direction.DOWN, new WorldValueProvider("CURRENT_Y")));
 	}
 
 	@Override
@@ -51,18 +72,15 @@ public class WorldGenAdvLakes extends WorldGen {
 		int zStart = data.getPosition().getZ();
 
 		final int width = this.width.intValue(world, rand, data);
-		final int height = this.height.intValue(world, rand, data);
+		final int height = this.height.intValue(world, rand, data.setValue("width", width));
+		data.setValue("height", height);
 
-		int widthOff = width / 2;
-		int heightOff = height / 2 + 1;
+		final int widthOff = width / 2;
+		final int heightOff = height / 2;
 
 		xStart -= widthOff;
 		zStart -= widthOff;
 
-		while (yStart > heightOff && world.isAirBlock(new BlockPos(xStart, yStart, zStart))) {
-			--yStart;
-		}
-		--heightOff;
 		if (yStart <= heightOff) {
 			return false;
 		}
@@ -70,7 +88,7 @@ public class WorldGenAdvLakes extends WorldGen {
 		yStart -= heightOff;
 		boolean[] spawnBlock = new boolean[width * width * height];
 
-		int W = width - 1, H = height - 1;
+		final int W = width - 1, H = height - 1;
 
 		for (int i = 0, e = rand.nextInt(4) + 4; i < e; ++i) {
 			double xSize = rand.nextDouble() * 6.0D + 3.0D;
@@ -142,20 +160,23 @@ public class WorldGenAdvLakes extends WorldGen {
 							world.getBlockState(new BlockPos(xStart + x, yStart + y - 1, zStart + z)).getBlock().equals(Blocks.DIRT) &&
 							world.getLightFor(LightType.SKY, new BlockPos(xStart + x, yStart + y, zStart + z)) > 0) {
 						Biome bgb = world.getBiome(new BlockPos(xStart + x, 0, zStart + z));
-						world.setBlockState(new BlockPos(xStart + x, yStart + y - 1, zStart + z), bgb.getSurfaceBuilderConfig().getTop(), 2);
+						setBlockState(world, new BlockPos(xStart + x, yStart + y - 1, zStart + z), bgb.getSurfaceBuilderConfig().getTop());
 					}
 				}
 			}
 		}
 
-		if (outlineBlock != null) {
+		if (outlineBlock != null && outlineBlock.size() > 0) {
+			data.setValue("fill-height", heightOff).setValue("width", width).setValue("height", height);
 			for (x = 0; x < width; ++x) {
 				for (z = 0; z < width; ++z) {
 					for (y = 0; y < height; ++y) {
 						boolean flag = !spawnBlock[(x * width + z) * height + y] && ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
-						if (flag && (solidOutline | y < heightOff || rand.nextInt(2) != 0) && (totalOutline || world.getBlockState(new BlockPos(xStart + x, yStart + y, zStart + z)).getMaterial().isSolid())) {
-							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, outlineBlock);
+						if (flag) {
+							data.setValue("layer", y).setPosition(new BlockPos(xStart + x, yStart + y, zStart + z));
+							if (outlineCondition.checkCondition(world, rand, data))
+								generateBlock(world, rand, xStart + x, yStart + y, zStart + z, outlineBlock);
 						}
 					}
 				}
@@ -189,15 +210,9 @@ public class WorldGenAdvLakes extends WorldGen {
 		return this;
 	}
 
-	public WorldGenAdvLakes setSolidOutline(boolean outline) {
+	public WorldGenAdvLakes setOutlineCondition(ICondition outline) {
 
-		this.solidOutline = outline;
-		return this;
-	}
-
-	public WorldGenAdvLakes setTotalOutline(boolean outline) {
-
-		this.totalOutline = outline;
+		this.outlineCondition = outline;
 		return this;
 	}
 

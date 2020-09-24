@@ -3,6 +3,7 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
+import cofh.cofhworld.parser.variables.ConditionData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenAdvLakes;
@@ -37,11 +38,8 @@ public class GenParserLake extends AbstractGenParserBlock {
 					r.setGapBlock(list);
 				}
 			}
-			if (genObject.hasPath("solid-outline")) {
-				r.setSolidOutline(genObject.getBoolean("solid-outline"));
-			}
-			if (genObject.hasPath("total-outline")) {
-				r.setTotalOutline(genObject.getBoolean("total-outline"));
+			if (genObject.hasPath("outline-condition")) {
+				r.setOutlineCondition(ConditionData.parseConditionValue(genObject.getValue("outline-condition")));
 			}
 		}
 		return r;
