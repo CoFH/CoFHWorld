@@ -1,11 +1,12 @@
 package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.data.block.*;
+import cofh.cofhworld.util.LinkedHashList;
+import cofh.cofhworld.util.Tuple;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedNBTTag;
 import cofh.cofhworld.util.random.WeightedString;
 import com.typesafe.config.*;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.IProperty;
@@ -149,56 +150,63 @@ public class BlockData {
 	}
 
 	@Nullable
-	public static Material parseMaterialEntry(ConfigValue blockEntry) {
+	public static Material parseMaterialEntry(ConfigValue matEntry) {
 
-		switch (blockEntry.valueType()) {
+		switch (matEntry.valueType()) {
 			case BOOLEAN:
 				// true would be "test always passes";
 				// false would be "i don't want a test" since "test never passes" is functionally useless
 			case NULL:
 				return Material.ALWAYS;
 			case OBJECT:
-				Config blockObject = ((ConfigObject) blockEntry).toConfig();
-				Material blockMaterial = null;
+				Config matObject = ((ConfigObject) matEntry).toConfig();
+				Material material = null;
 
-				boolean inclusive = !blockObject.hasPath("inclusive") || blockObject.getBoolean("inclusive");
+				boolean inclusive = !matObject.hasPath("inclusive") || matObject.getBoolean("inclusive");
 
 				Block block = null;
-				if (blockObject.hasPath("name")) {
-					block = parseBlock(blockObject.getString("name"));
+				if (matObject.hasPath("name")) {
+					block = parseBlock(matObject.getString("name"));
 					if (block == null) {
-						log.error("Invalid block name on line {}!", blockObject.getValue("name").origin().lineNumber());
+						log.error("Invalid block name on line {}!", matObject.getValue("name").origin().lineNumber());
 						return null;
 					}
-					blockMaterial = new BlockMaterial(block, inclusive);
-				} else if (blockObject.hasPath("tag")) { // exclusive with name
+					material = new BlockMaterial(block, inclusive);
+				} else if (matObject.hasPath("tag")) { // exclusive with name
 					List<WeightedString> tags = new LinkedList<>();
-					if (StringData.parseStringList(blockObject.getValue("tag"), tags)) {
-						blockMaterial = TagMaterial.of(tags.stream().map((str) -> new ResourceLocation(str.value)).collect(Collectors.toList()), inclusive);
+					if (StringData.parseStringList(matObject.getValue("tag"), tags)) {
+						material = TagMaterial.of(tags.stream().map(str -> new ResourceLocation(str.value)).collect(Collectors.toList()), inclusive);
+					} else {
+						return null;
+					}
+				} else if (matObject.hasPath("fluid")) { // exclusive with name
+					List<WeightedString> tags = new LinkedList<>();
+					if (StringData.parseStringList(matObject.getValue("tag"), tags)) {
+						material = new FluidMaterial(inclusive, tags.stream().map(str -> str.value).distinct().toArray(String[]::new));
 					} else {
 						return null;
 					}
 				}
-				if (blockObject.hasPath("material-type")) {
+				if (matObject.hasPath("material-type")) {
 					List<WeightedString> tags = new LinkedList<>();
-					if (StringData.parseStringList(blockObject.getValue("material-type"), tags)) {
+					if (StringData.parseStringList(matObject.getValue("material-type"), tags)) {
 						Material t = new MaterialPropertyMaterial(inclusive, tags.stream().map(v -> v.value).toArray(String[]::new));
-						blockMaterial = blockMaterial != null ? inclusive ? blockMaterial.and(t) : blockMaterial.or(t) : t;
+						material = material != null ? inclusive ? material.and(t) : material.or(t) : t;
 					} else {
 						return null;
 					}
 				}
-				properties: if (blockObject.hasPath("properties")) {
+				properties: if (matObject.hasPath("properties")) {
 					Material propertyMaterial;
 					if (block == null) {
-						Object2ObjectArrayMap<String, String> properties = new Object2ObjectArrayMap<>();
-						for (Map.Entry<String, ConfigValue> propEntry : blockObject.getObject("properties").entrySet()) {
+						List<Tuple<String, String>> properties = new LinkedHashList<>();
+						for (Map.Entry<String, ConfigValue> propEntry : matObject.getObject("properties").entrySet()) {
 
 							if (propEntry.getValue().valueType() != ConfigValueType.STRING && propEntry.getValue().valueType() != ConfigValueType.NULL) {
 								log.error("Property '{}' is not a string. All block properties must be strings.", propEntry.getKey());
 								properties = null;
 							} else if (properties != null) {
-								properties.put(propEntry.getKey(), (String) propEntry.getValue().unwrapped());
+								properties.add(new Tuple<>(propEntry.getKey(), (String) propEntry.getValue().unwrapped()));
 							}
 						}
 						if (properties == null) {
@@ -208,11 +216,11 @@ public class BlockData {
 							log.debug("`properties` tag had no valid entries, ignoring.");
 							break properties;
 						}
-						propertyMaterial = new PropertyMaterial(properties, inclusive);
+						propertyMaterial = PropertyMaterial.of(properties, inclusive);
 					} else {
 						StateContainer<Block, BlockState> blockstatecontainer = block.getStateContainer();
-						Object2ObjectArrayMap<IProperty<?>, Object> properties = new Object2ObjectArrayMap<>();
-						for (Map.Entry<String, ConfigValue> propEntry : blockObject.getObject("properties").entrySet()) {
+						List<Tuple<IProperty<?>, ?>> properties = new LinkedHashList<>();
+						for (Map.Entry<String, ConfigValue> propEntry : matObject.getObject("properties").entrySet()) {
 
 							IProperty<?> prop = blockstatecontainer.getProperty(propEntry.getKey());
 							if (prop == null) {
@@ -228,11 +236,11 @@ public class BlockData {
 							if (prop != null) {
 								if (propEntry.getValue().valueType() == ConfigValueType.NULL) {
 									if (properties != null)
-										properties.put(prop, null);
+										properties.add(new Tuple<>(prop, null));
 								} else {
 									Optional<?> value = parseValue(prop, (String) propEntry.getValue().unwrapped());
 									if (properties != null && value.isPresent()) {
-										properties.put(prop, value);
+										properties.add(new Tuple<>(prop, value.get()));
 									} else {
 										properties = null;
 									}
@@ -246,28 +254,30 @@ public class BlockData {
 							log.debug("`properties` tag had no valid entries, ignoring.");
 							break properties;
 						}
-						propertyMaterial = new BlockPropertyMaterial(block, properties, inclusive);
+						propertyMaterial = PropertyMaterial.of(block, properties, inclusive);
 					}
-					blockMaterial = blockMaterial != null ? inclusive ? blockMaterial.and(propertyMaterial) : blockMaterial.or(propertyMaterial) : propertyMaterial;
+					if (propertyMaterial != null) {
+						material = material != null ? inclusive ? material.and(propertyMaterial) : material.or(propertyMaterial) : propertyMaterial;
+					}
 				}
-				if (blockMaterial == null) {
-					log.error("Block entry must have property `tag`, `name`, or `properties`!");
+				if (material == null) {
+					log.error("Material entry must have property `tag`, `name`, `fluid`, `material-type`, or `properties`!");
 				}
-				return blockMaterial;
+				return material;
 			case STRING:
-				String blockName = (String) blockEntry.unwrapped();
+				String blockName = (String) matEntry.unwrapped();
 				if (blockName.charAt(0) == '#') {
 					return TagMaterial.of(Collections.singleton(new ResourceLocation(blockName.substring(1))), true);
 				} else {
 					block = parseBlock(blockName);
 					if (block == null) {
-						log.error("Invalid block name on line {}!", blockEntry.origin().lineNumber());
+						log.error("Invalid block name on line {}!", matEntry.origin().lineNumber());
 						return null;
 					}
 					return new BlockMaterial(block, true);
 				}
 			default:
-				log.error("Invalid type for material entry on line {}!", blockEntry.origin().lineNumber());
+				log.error("Invalid type for material entry on line {}!", matEntry.origin().lineNumber());
 				return null;
 		}
 	}

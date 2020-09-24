@@ -4,43 +4,39 @@ import cofh.cofhworld.util.LinkedHashList;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
-public class TagMaterial extends Material {
+public abstract class TagMaterial extends Material {
 
-	final private static TagMaterial INSTANCE = new TagMaterial();
-
-	public static TagMaterial of(Collection<ResourceLocation> tags, boolean inclusive) {
+	@Nullable
+	public static Material of(Collection<ResourceLocation> tags, boolean inclusive) {
 
 		switch (tags.size()) {
 			case 0:
-				return INSTANCE;
+				return null;
 			case 1:
 				return new BlockTagMaterial(tags.iterator().next(), inclusive);
 			default:
-				return new BlockTagsMaterial(new LinkedHashList<ResourceLocation>(tags), inclusive);
+				return new BlockTagsMaterial(new LinkedHashList<>(tags), inclusive);
 		}
 	}
 
-	private TagMaterial() {
+	final protected boolean inclusive;
 
-	}
+	private TagMaterial(boolean inclusive) {
 
-	@Override
-	public boolean test(BlockState blockState) {
-
-		return false;
+		this.inclusive = inclusive;
 	}
 
 	final private static class BlockTagMaterial extends TagMaterial {
 
 		private final ResourceLocation tag;
-		final private boolean inclusive;
 
 		public BlockTagMaterial(ResourceLocation tag, boolean inclusive) {
 
+			super(inclusive);
 			this.tag = tag;
-			this.inclusive = inclusive;
 		}
 
 		@Override
@@ -53,12 +49,11 @@ public class TagMaterial extends Material {
 	final private static class BlockTagsMaterial extends TagMaterial {
 
 		private final LinkedHashList<ResourceLocation> tags;
-		final private boolean inclusive;
 
 		public BlockTagsMaterial(LinkedHashList<ResourceLocation> tags, boolean inclusive) {
 
+			super(inclusive);
 			this.tags = tags;
-			this.inclusive = inclusive;
 		}
 
 		@Override

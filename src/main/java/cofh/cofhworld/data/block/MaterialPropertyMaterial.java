@@ -15,7 +15,7 @@ public class MaterialPropertyMaterial extends Material {
 	public MaterialPropertyMaterial(boolean inclusive, String... properties) {
 
 		this.inclusive = inclusive;
-		this.materials = Arrays.stream(properties).map(v -> Property.valueOf(v.toUpperCase(Locale.US)));
+		this.materials = Arrays.stream(properties).map(v -> Property.valueOf(v.toUpperCase(Locale.US))).distinct();
 	}
 
 	@Override
