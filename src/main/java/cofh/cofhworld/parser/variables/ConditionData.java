@@ -3,6 +3,8 @@ package cofh.cofhworld.parser.variables;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
+import cofh.cofhworld.data.condition.data.DataCondition;
+import cofh.cofhworld.data.condition.data.DefaultedDataCondition;
 import cofh.cofhworld.data.condition.operation.BinaryCondition;
 import cofh.cofhworld.data.condition.operation.ComparisonCondition;
 import cofh.cofhworld.data.condition.operation.NotCondition;
@@ -33,38 +35,49 @@ public class ConditionData {
 			case BOOLEAN:
 				return new ConstantCondition((Boolean) conditionEntry.unwrapped());
 			case OBJECT:
-				ConfigObject conditionProps = (ConfigObject) conditionEntry;
-				Config conditionObject = ((ConfigObject) conditionEntry).toConfig();
-				switch (conditionProps.size()) {
+				ConfigObject condProps = (ConfigObject) conditionEntry;
+				Config condObject = ((ConfigObject) conditionEntry).toConfig();
+				switch (condProps.size()) {
 					case 1:
-						if (conditionProps.containsKey("value")) {
+						if (condProps.containsKey("value")) {
 							// technically this allows "nesting" but really i just want to parse the string in one place. don't tell anyone.
-							return parseConditionValue(conditionObject.getValue("value"));
-						} else if (conditionProps.containsKey("random")) {
+							return parseConditionValue(condObject.getValue("value"));
+						} else if (condProps.containsKey("random")) {
 							// for technical completeness
 							return new RandomCondition();
-						} else if (conditionProps.containsKey("world-data")) {
-							return new WorldValueCondition(conditionObject.getString("world-data"));
-						} else if (conditionProps.containsKey("not")) {
-							return new NotCondition(parseConditionValue(conditionObject.getValue("not")));
-						} else if (conditionProps.containsKey("material")) {
+						} else if (condProps.containsKey("world-data")) {
+							return new WorldValueCondition(condObject.getString("world-data"));
+						} else if (condProps.containsKey("not")) {
+							return new NotCondition(parseConditionValue(condObject.getValue("not")));
+						} else if (condProps.containsKey("material")) {
 							ArrayList<Material> material = new ArrayList<>();
-							BlockData.parseMaterialList(conditionObject.getValue("material"), material);
+							BlockData.parseMaterialList(condObject.getValue("material"), material);
 							return new MaterialCondition(material);
+						} else if (condProps.containsKey("generator-data")) {
+							return new DataCondition(condObject.getString("generator-data"));
+						}
+						break;
+					case 2:
+						if (condProps.containsKey("generator-data")) {
+							if (condProps.containsKey("check-property")) {
+								return new DataCondition(condObject.getString("generator-data"), condObject.getBoolean("check-property"));
+							} else if (condProps.containsKey("default-value")) {
+								return new DefaultedDataCondition(condObject.getString("generator-data"), parseConditionValue(condObject.getValue("default-value")));
+							}
 						}
 						break;
 					case 3:
-						if (conditionProps.containsKey("value-a") && conditionProps.containsKey("value-b")) {
-							if (conditionProps.containsKey("operation")) {
+						if (condProps.containsKey("value-a") && condProps.containsKey("value-b")) {
+							if (condProps.containsKey("operation")) {
 								ICondition a, b;
-								a = parseConditionValue(conditionObject.getValue("value-a"));
-								b = parseConditionValue(conditionObject.getValue("value-b"));
-								return new BinaryCondition(a, b, conditionObject.getString("operation"));
-							} else if (conditionProps.containsKey("comparison")) {
+								a = parseConditionValue(condObject.getValue("value-a"));
+								b = parseConditionValue(condObject.getValue("value-b"));
+								return new BinaryCondition(a, b, condObject.getString("operation"));
+							} else if (condProps.containsKey("comparison")) {
 								INumberProvider a, b;
-								a = parseNumberValue(conditionObject.getValue("value-a"));
-								b = parseNumberValue(conditionObject.getValue("value-b"));
-								return new ComparisonCondition(a, b, conditionObject.getString("comparison"));
+								a = parseNumberValue(condObject.getValue("value-a"));
+								b = parseNumberValue(condObject.getValue("value-b"));
+								return new ComparisonCondition(a, b, condObject.getString("comparison"));
 							}
 						}
 						break;

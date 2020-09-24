@@ -17,6 +17,16 @@ public class DataHolder {
 		setValue("chunk", new Vec3i(start.getX() >> 4, 0, start.getZ() >> 4));
 	}
 
+	public boolean getBool(String key) {
+
+		Object r = data.get(key);
+		if (r instanceof Boolean) {
+			return ((Boolean) r).booleanValue();
+		} else {
+			return false;
+		}
+	}
+
 	public long getLong(String key) {
 
 		Object r = data.get(key);
