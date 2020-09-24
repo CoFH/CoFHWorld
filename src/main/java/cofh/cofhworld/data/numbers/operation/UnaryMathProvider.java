@@ -6,143 +6,61 @@ import net.minecraft.world.IWorldReader;
 
 import java.util.Locale;
 import java.util.Random;
+import java.util.function.DoubleUnaryOperator;
+import java.util.function.LongUnaryOperator;
 
 public class UnaryMathProvider implements INumberProvider {
 
 	protected final INumberProvider value;
-	protected final Operation operation;
+	protected final LongUnaryOperator longValue;
+	protected final DoubleUnaryOperator doubleValue;
 
 	public UnaryMathProvider(INumberProvider valueA, String type) {
 
 		this.value = valueA;
-		this.operation = Operation.valueOf(type.toUpperCase(Locale.US));
+		Operation operation = Operation.valueOf(type.toUpperCase(Locale.US));
+		longValue = operation.longValue;
+		doubleValue = operation.doubleValue;
 	}
 
 	public long longValue(IWorldReader world, Random rand, DataHolder data) {
 
-		return operation.perform(value.longValue(world, rand, data));
+		return longValue.applyAsLong(value.longValue(world, rand, data));
 	}
 
 	public double doubleValue(IWorldReader world, Random rand, DataHolder data) {
 
-		return operation.perform(value.doubleValue(world, rand, data));
+		return doubleValue.applyAsDouble(value.doubleValue(world, rand, data));
 	}
 
 	private static enum Operation { // TODO: more operations before parsing
 
-		ABSOLUTE {
-			@Override
-			public long perform(long a) {
+		ABSOLUTE(Math::abs, Math::abs),
+		NEGATE(a -> -a, a -> -a),
+		INCREMENT(a -> a + 1, a -> a + 1),
+		DECREMENT(a -> a - 1, a -> a - 1),
+		DOUBLE(a -> a + a, a -> a + a),
+		HALF(a -> a / 2, a -> a / 2),
+		SQUARE(a -> a * a, a -> a * a),
+		SQUARE_ROOT(a -> (long)Math.sqrt(a), Math::sqrt),
+		CUBE(a -> a * a * a, a -> a * a * a),
+		CUBE_ROOT(a -> (long)Math.cbrt(a), Math::cbrt),
+		EXP(a -> (long)Math.exp(a), Math::exp),
+		LOG(a -> (long)Math.log(a), Math::log),
+		LOG10(a -> (long)Math.log10(a), Math::log10),
+		CEIL(a -> a, Math::ceil),
+		ROUND(a -> a, Math::round),
+		FLOOR(a -> a, Math::floor);
 
-				return Math.abs(a);
-			}
+		private Operation(LongUnaryOperator longFunc, DoubleUnaryOperator doubleFunc) {
 
-			@Override
-			public double perform(double a) {
+			longValue = longFunc;
+			doubleValue = doubleFunc;
+		}
 
-				return Math.abs(a);
-			}
-		}, NEGATE {
-			@Override
-			public long perform(long a) {
+		public final LongUnaryOperator longValue;
 
-				return -a;
-			}
-
-			@Override
-			public double perform(double a) {
-
-				return -a;
-			}
-		}, INCREMENT {
-			@Override
-			public long perform(long a) {
-
-				return a + 1;
-			}
-
-			@Override
-			public double perform(double a) {
-
-				return a + 1;
-			}
-		}, DOUBLE {
-			@Override
-			public long perform(long a) {
-
-				return a * 2;
-			}
-
-			@Override
-			public double perform(double a) {
-
-				return a * 2;
-			}
-		}, HALF {
-			@Override
-			public long perform(long a) {
-
-				return a / 2;
-			}
-
-			@Override
-			public double perform(double a) {
-
-				return  a / 2;
-			}
-		}, SQUARE {
-			@Override
-			public long perform(long a) {
-
-				return a * a;
-			}
-
-			@Override
-			public double perform(double a) {
-
-				return a * a;
-			}
-		}, SQUARE_ROOT {
-			@Override
-			public long perform(long a) {
-
-				return (long) Math.sqrt(a);
-			}
-
-			@Override
-			public double perform(double a) {
-
-				return Math.sqrt(a);
-			}
-		}, CUBE {
-			@Override
-			public long perform(long a) {
-
-				return a * a * a;
-			}
-
-			@Override
-			public double perform(double a) {
-
-				return a * a * a;
-			}
-		}, CUBE_ROOT {
-			@Override
-			public long perform(long a) {
-
-				return (long) Math.cbrt(a);
-			}
-
-			@Override
-			public double perform(double a) {
-
-				return Math.cbrt(a);
-			}
-		};
-
-		public abstract long perform(long a);
-
-		public abstract double perform(double a);
+		public final DoubleUnaryOperator doubleValue;
 	}
 
 }
