@@ -38,9 +38,9 @@ public class WorldGenDecoration extends WorldGen {
 		material = materials.toArray(new Material[0]);
 		surface = on == null ? null : on.toArray(new Material[0]);
 		this.setStackHeight(1).setSeeSky(SEE_SKY).setCheckStay(CHECK_STAY);
-		this.setXVar(new SkellamRandomProvider(8));
-		this.setYVar(new SkellamRandomProvider(4));
-		this.setZVar(new SkellamRandomProvider(8));
+		this.setOffsetX(new SkellamRandomProvider(8));
+		this.setOffsetY(new SkellamRandomProvider(4));
+		this.setOffsetZ(new SkellamRandomProvider(8));
 	}
 
 	@Override

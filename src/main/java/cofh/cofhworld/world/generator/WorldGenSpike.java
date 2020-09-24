@@ -77,7 +77,7 @@ public class WorldGenSpike extends WorldGen {
 
 		this.resource = resource;
 		material = materials.toArray(new Material[0]);
-		setYVar(new DirectionalScanner(new WorldValueCondition("IS_AIR"), Direction.DOWN, new ConstantProvider(256)));
+		setOffsetY(new DirectionalScanner(new WorldValueCondition("IS_AIR"), Direction.DOWN, new ConstantProvider(256)));
 	}
 
 	@Override

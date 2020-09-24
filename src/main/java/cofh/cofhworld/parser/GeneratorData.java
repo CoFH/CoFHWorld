@@ -90,13 +90,13 @@ public class GeneratorData {
 		WorldGen r = parser.parseGenerator(parser.isMeta() ? def : name, genObject, log, resList, matList);
 
 		if (genObject.hasPath("offset.x")) {
-			r.setXVar(NumberData.parseNumberValue(genObject.getValue("offset.x"), -128, 128));
+			r.setOffsetX(NumberData.parseNumberValue(genObject.getValue("offset.x"), -128, 128));
 		}
 		if (genObject.hasPath("offset.y")) {
-			r.setYVar(NumberData.parseNumberValue(genObject.getValue("offset.y")));
+			r.setOffsetY(NumberData.parseNumberValue(genObject.getValue("offset.y")));
 		}
 		if (genObject.hasPath("offset.z")) {
-			r.setZVar(NumberData.parseNumberValue(genObject.getValue("offset.z"), -128, 128));
+			r.setOffsetZ(NumberData.parseNumberValue(genObject.getValue("offset.z"), -128, 128));
 		}
 		return r;
 	}

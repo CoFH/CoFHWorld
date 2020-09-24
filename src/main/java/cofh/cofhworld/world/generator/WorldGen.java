@@ -21,9 +21,9 @@ import java.util.Random;
 
 public abstract class WorldGen {
 
-	protected INumberProvider xVar = ConstantProvider.ZERO;
-	protected INumberProvider yVar = ConstantProvider.ZERO;
-	protected INumberProvider zVar = ConstantProvider.ZERO;
+	protected INumberProvider xOff = ConstantProvider.ZERO;
+	protected INumberProvider yOff = ConstantProvider.ZERO;
+	protected INumberProvider zOff = ConstantProvider.ZERO;
 
 	final protected DataHolder getData(IWorld world, Random rand, BlockPos start) {
 
@@ -35,9 +35,9 @@ public abstract class WorldGen {
 
 		BlockPos start = data.getPos("start");
 
-		int x = xVar.intValue(world, rand, data.setPosition(start));
-		int z = zVar.intValue(world, rand, data.setPosition(start.add(x, 0, 0)));
-		int y = yVar.intValue(world, rand, data.setPosition(start.add(x, 0, z)));
+		int x = xOff.intValue(world, rand, data.setPosition(start));
+		int z = zOff.intValue(world, rand, data.setPosition(start.add(x, 0, 0)));
+		int y = yOff.intValue(world, rand, data.setPosition(start.add(x, 0, z)));
 		return new BlockPos(start.getX() + x, MathHelper.clamp(start.getY() + y, 0, world.getMaxHeight()), start.getZ() + z);
 	}
 
@@ -52,21 +52,21 @@ public abstract class WorldGen {
 
 	}
 
-	public WorldGen setXVar(INumberProvider xVar) {
+	public WorldGen setOffsetX(INumberProvider xVar) {
 
-		this.xVar = xVar;
+		this.xOff = xVar;
 		return this;
 	}
 
-	public WorldGen setYVar(INumberProvider yVar) {
+	public WorldGen setOffsetY(INumberProvider yVar) {
 
-		this.yVar = yVar;
+		this.yOff = yVar;
 		return this;
 	}
 
-	public WorldGen setZVar(INumberProvider zVar) {
+	public WorldGen setOffsetZ(INumberProvider zVar) {
 
-		this.zVar = zVar;
+		this.zOff = zVar;
 		return this;
 	}
 
