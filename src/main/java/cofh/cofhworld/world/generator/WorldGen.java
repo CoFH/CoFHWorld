@@ -41,7 +41,7 @@ public abstract class WorldGen {
 
 	final public boolean generate(IWorld world, Random rand, BlockPos position) {
 
-		return this.generate(world, rand, getData(world, rand, position));
+		return this.generate(world, rand, getData(world, rand, position.toImmutable()));
 	}
 
 	protected abstract boolean generate(IWorld world, Random rand, final DataHolder data);

@@ -156,8 +156,9 @@ public class WorldProps {
 		FeatureParser.registerTemplate("surface", new DistParserSurface());
 		FeatureParser.registerTemplate("fractal", new DistParserLargeVein());
 		FeatureParser.registerTemplate("decoration", new DistParserDecoration());
-		FeatureParser.registerTemplate("underwater", new DistParserUnderfluid(true));
-		FeatureParser.registerTemplate("underfluid", new DistParserUnderfluid(false));
+		FeatureParser.registerTemplate("under-water", new DistParserUnderMaterial());
+		FeatureParser.registerTemplate("under-fluid", new DistParserUnderMaterial());
+		FeatureParser.registerTemplate("under-material", new DistParserUnderMaterial());
 		FeatureParser.registerTemplate("cave", new DistParserCave());
 		FeatureParser.registerTemplate("sequential", new DistParserSequential());
 		FeatureParser.registerTemplate("custom", new DistParserCustom());

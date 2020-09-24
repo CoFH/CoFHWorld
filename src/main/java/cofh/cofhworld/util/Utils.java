@@ -2,13 +2,11 @@ package cofh.cofhworld.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap.Type;
 import org.apache.logging.log4j.core.util.Loader;
 
 import java.io.*;
@@ -19,14 +17,14 @@ public class Utils {
 	/* BLOCK UTILS */
 	public static final int[][] SIDE_COORD_MOD = { { 0, -1, 0 }, { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 }, { -1, 0, 0 }, { 1, 0, 0 } };
 
-	public static int getHighestY(World world, int x, int z) {
+	public static int getHighestY(IWorldReader world, int x, int z) {
 
-		return world.getChunkAt(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
+		return world.getChunk(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
 	}
 
 	public static int getSurfaceBlockY(IWorldReader world, int x, int z) {
 
-		int y = world.getChunk(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
+		int y = world.getHeight(Type.OCEAN_FLOOR_WG, x, z);
 
 		BlockPos pos;
 		BlockState state;
@@ -66,12 +64,6 @@ public class Utils {
 			block = state.getBlock();
 		} while (block.isAir(state, world, pos));
 		return y;
-	}
-
-	/* FLUID UTILS */
-	public static Fluid lookupFluidForBlock(Block block) {
-
-		return Fluids.WATER; // FluidRegistry.lookupFluidForBlock(block);
 	}
 
 	/* FILE UTILS */

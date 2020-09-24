@@ -5,7 +5,6 @@ import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.world.generator.WorldGen;
-import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 
@@ -46,12 +45,8 @@ public class DistributionSurface extends Distribution {
 			}
 
 			int y = Utils.getSurfaceBlockY(world, x, z);
-			l:
-			{
-				BlockState state = world.getBlockState(new BlockPos(x, y, z));
-				if (!state.getBlock().isAir(state, world, new BlockPos(x, y, z)) && canGenerateInBlock(world, x, y, z, matList)) {
-					break l;
-				}
+
+			if (!canGenerateInBlock(world, x, y, z, matList)) {
 				continue;
 			}
 
