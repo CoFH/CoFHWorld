@@ -2,6 +2,15 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.data.condition.ConstantCondition;
+import cofh.cofhworld.data.condition.ICondition;
+import cofh.cofhworld.data.condition.operation.BinaryCondition;
+import cofh.cofhworld.data.condition.operation.ComparisonCondition;
+import cofh.cofhworld.data.condition.random.RandomCondition;
+import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.data.DataProvider;
+import cofh.cofhworld.data.numbers.operation.UnaryMathProvider;
+import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
@@ -11,23 +20,29 @@ import net.minecraft.world.IWorld;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @deprecated TODO: replace all ints with INumberProvider
- */
-@Deprecated
 public class WorldGenSmallTree extends WorldGen {
 
 	private final List<WeightedBlock> leaves;
 	private final List<WeightedBlock> trunk;
 	private final Material[] material;
-	public Material[] genSurface = null;
+	public Material[] surface = null;
+	public INumberProvider height = new UniformRandomProvider(5, 5 + 3);
 
-	public int minHeight = 5;
-	public int heightVariance = 3;
-	public boolean treeChecks = true;
-	public boolean leafVariance = true;
-	public boolean relaxedGrowth = false;
-	public boolean waterLoving = false;
+	public ICondition treeChecks = ConstantCondition.TRUE;
+	public ICondition waterLoving = ConstantCondition.FALSE; // TODO: more work on this logic
+	public ICondition relaxedGrowth = ConstantCondition.FALSE;
+
+	public ICondition leafVariance = new BinaryCondition(
+			new BinaryCondition(
+					new ComparisonCondition(new UnaryMathProvider(new DataProvider("layer-x"),"abs"), new DataProvider("radius"),"NOT_EQUAL"),
+					new ComparisonCondition(new UnaryMathProvider(new DataProvider("layer-z"),"abs"), new DataProvider("radius"),"NOT_EQUAL"),
+					"OR"),
+			new BinaryCondition(
+					new RandomCondition(),
+					new ComparisonCondition(new DataProvider("layer"), new DataProvider("height"), "NOT_EQUAL"),
+					"AND"),
+			"OR"
+	);
 
 	public WorldGenSmallTree(List<WeightedBlock> resource, List<WeightedBlock> leaf, List<Material> materials) {
 
@@ -36,13 +51,13 @@ public class WorldGenSmallTree extends WorldGen {
 		material = materials.toArray(new Material[0]);
 	}
 
-	protected int getLeafRadius(int height, int level, boolean check) {
+	protected int getLeafRadius(int height, int level, Boolean check) {
 
-		if (check) {
+		if (check != null) {
 			if (level >= 1 + height - 2) {
 				return 2;
 			} else {
-				return relaxedGrowth ? 0 : 1;
+				return check == Boolean.TRUE ? 0 : 1;
 			}
 		}
 
@@ -56,120 +71,150 @@ public class WorldGenSmallTree extends WorldGen {
 	@Override
 	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
-		int x = data.getPosition().getX();
-		int y = data.getPosition().getY();
-		int z = data.getPosition().getZ();
+		final int x = data.getPosition().getX();
+		final int y = data.getPosition().getY();
+		final int z = data.getPosition().getZ();
 
-		int treeHeight = (heightVariance <= 1 ? 0 : rand.nextInt(heightVariance)) + minHeight;
-		int worldHeight = world.getHeight();
+		final Boolean checkValue = relaxedGrowth.checkCondition(world, rand, data) ? Boolean.TRUE : Boolean.FALSE;
+		final boolean waterLoving = this.waterLoving.checkCondition(world, rand, data.setValue("relaxed-growth", checkValue));
+
+		final int treeHeight = height.intValue(world, rand, data.setValue("water-loving", waterLoving));
+		final int worldHeight = world.getMaxHeight();
+		data.setValue("height", treeHeight);
+
 		BlockState state;
 		BlockPos offsetPos;
+		int xOffset;
+		int yOffset;
+		int zOffset;
 
-		if (y + treeHeight + 1 <= worldHeight) {
-			int xOffset;
-			int yOffset;
-			int zOffset;
+		if (y >= worldHeight - treeHeight - 1 || !canGenerateInBlock(world, x, y - 1, z, surface)) {
+			return false;
+		}
 
-			if (!canGenerateInBlock(world, x, y - 1, z, genSurface)) {
+		if (treeChecks.checkCondition(world, rand, data)) {
+			data.setValue("performing-check", true);
+
+			for (yOffset = y; yOffset <= y + 1 + treeHeight; ++yOffset) {
+
+				int radius = getLeafRadius(treeHeight, yOffset - y, checkValue);
+
+				if (y < treeHeight) {
+					offsetPos = new BlockPos(x, yOffset, z);
+					state = getBlockState(world, x, yOffset, z);
+					if (!(state.getBlock().isIn(BlockTags.LEAVES) || state.getBlock().isAir(state, world, offsetPos) || state.getMaterial().isReplaceable() ||
+							state.getBlock().canBeReplacedByLogs(state, world, offsetPos) || canGenerateInBlock(world, offsetPos, material))) {
+						return false;
+					}
+				}
+
+				if (radius == 0) {
+					if (!waterLoving && yOffset >= y + 1) {
+						radius = 1;
+						for (xOffset = x - radius; xOffset <= x + radius; ++xOffset) {
+							for (zOffset = z - radius; zOffset <= z + radius; ++zOffset) {
+								state = getBlockState(world, xOffset, yOffset, zOffset);
+
+								if (state.getMaterial().isLiquid()) {
+									return false;
+								}
+							}
+						}
+					}
+				} else {
+					for (xOffset = x - radius; xOffset <= x + radius; ++xOffset) {
+						for (zOffset = z - radius; zOffset <= z + radius; ++zOffset) {
+							offsetPos = new BlockPos(xOffset, yOffset, zOffset);
+							state = getBlockState(world, xOffset, yOffset, zOffset);
+
+							if (!(state.getBlock().isIn(BlockTags.LEAVES) || state.getBlock().isAir(state, world, offsetPos) ||
+									state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || canGenerateInBlock(world, offsetPos, material))) {
+								return false;
+							}
+						}
+					}
+				}
+			}
+
+			if (y < 1 || !canGenerateInBlock(world, x, y - 1, z, surface)) { // may have triggered other generation (TODO: validate for 1.15+)
 				return false;
 			}
 
-			if (y < worldHeight - treeHeight - 1) {
-				if (treeChecks) {
-					for (yOffset = y; yOffset <= y + 1 + treeHeight; ++yOffset) {
+			offsetPos = new BlockPos(x, y - 1, z);
+			state = getBlockState(world, x, y - 1, z);
+			state.getBlock().onPlantGrow(state, world, offsetPos, new BlockPos(x, y, z));
+			data.removeValue("performing-check");
+		} else {
+			data.setValue("performing-check", true);
 
-						int radius = getLeafRadius(treeHeight, yOffset - y, true);
+			for (yOffset = y; yOffset <= y + 1 + treeHeight; ++yOffset) {
 
-						if (yOffset >= 0 & yOffset < worldHeight) {
-							if (radius == 0) {
-								offsetPos = new BlockPos(x, yOffset, z);
-								state = world.getBlockState(offsetPos);
-								if (!(state.getBlock().isIn(BlockTags.LEAVES) || state.getBlock().isAir(state, world, offsetPos) || state.getMaterial().isReplaceable() || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || canGenerateInBlock(world, offsetPos,
-										material))) {
-									return false;
-								}
+				int radius = getLeafRadius(treeHeight, yOffset - y, checkValue);
 
-								if (!waterLoving && yOffset >= y + 1) {
-									radius = 1;
-									for (xOffset = x - radius; xOffset <= x + radius; ++xOffset) {
-										for (zOffset = z - radius; zOffset <= z + radius; ++zOffset) {
-											offsetPos = new BlockPos(xOffset, yOffset, zOffset);
-											state = world.getBlockState(offsetPos);
-
-											if (state.getMaterial().isLiquid()) {
-												return false;
-											}
-										}
-									}
-								}
-							} else {
-								for (xOffset = x - radius; xOffset <= x + radius; ++xOffset) {
-									for (zOffset = z - radius; zOffset <= z + radius; ++zOffset) {
-										offsetPos = new BlockPos(xOffset, yOffset, zOffset);
-										state = world.getBlockState(offsetPos);
-
-										if (!(state.getBlock().isIn(BlockTags.LEAVES) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos) || canGenerateInBlock(world, offsetPos,
-												material))) {
-											return false;
-										}
-									}
-								}
-							}
-						} else {
-							return false;
-						}
-					}
-
-					if (!canGenerateInBlock(world, x, y - 1, z, genSurface)) {
+				if (y < treeHeight) {
+					if (!(canGenerateInBlock(world, x, yOffset, z, material))) {
 						return false;
 					}
-					offsetPos = new BlockPos(x, y - 1, z);
-					state = world.getBlockState(offsetPos);
-					state.getBlock().onPlantGrow(state, world, offsetPos, new BlockPos(x, y, z));
 				}
 
-				boolean r = false;
+				if (radius == 0) {
+					if (!waterLoving && yOffset >= y + 1) {
+						radius = 1;
+						for (xOffset = x - radius; xOffset <= x + radius; ++xOffset) {
+							for (zOffset = z - radius; zOffset <= z + radius; ++zOffset) {
+								state = getBlockState(world, xOffset, yOffset, zOffset);
 
-				for (yOffset = y; yOffset <= y + treeHeight; ++yOffset) {
-
-					int var12 = yOffset - (y + treeHeight);
-					int radius = getLeafRadius(treeHeight, yOffset - y, false);
-					if (radius <= 0) {
-						continue;
+								if (state.getMaterial().isLiquid()) {
+									return false;
+								}
+							}
+						}
 					}
-
+				} else {
 					for (xOffset = x - radius; xOffset <= x + radius; ++xOffset) {
-						int xPos = xOffset - x, t;
-						xPos = (xPos + (t = xPos >> 31)) ^ t;
-
 						for (zOffset = z - radius; zOffset <= z + radius; ++zOffset) {
-							int zPos = zOffset - z;
-							zPos = (zPos + (t = zPos >> 31)) ^ t;
-							offsetPos = new BlockPos(xOffset, yOffset, zOffset);
-							state = world.getBlockState(offsetPos);
-
-							if (((xPos != radius | zPos != radius) || (!leafVariance || (rand.nextInt(2) != 0 && var12 != 0))) && ((treeChecks && (state.getBlock().isIn(BlockTags.LEAVES) || state.getBlock().isAir(state, world, offsetPos) || state.getBlock().canBeReplacedByLeaves(state, world, offsetPos))) || canGenerateInBlock(world, offsetPos,
-									material))) {
-								r |= generateBlock(world, rand, xOffset, yOffset, zOffset, leaves);
+							if (!(canGenerateInBlock(world, xOffset, yOffset, zOffset, material))) {
+								return false;
 							}
 						}
 					}
 				}
+			}
 
-				for (yOffset = 0; yOffset < treeHeight; ++yOffset) {
-					offsetPos = new BlockPos(x, y + yOffset, z);
-					state = world.getBlockState(offsetPos);
+			if (!canGenerateInBlock(world, x, y - 1, z, surface)) { // may have triggered other generation (TODO: validate for 1.15+)
+				return false;
+			}
+			data.removeValue("performing-check");
+		}
 
-					if ((treeChecks && (state.getBlock().isAir(state, world, offsetPos) || state.getBlock().isIn(BlockTags.LEAVES) || state.getMaterial().isReplaceable())) || canGenerateInBlock(world, offsetPos,
-							material)) {
-						r |= generateBlock(world, rand, x, yOffset + y, z, trunk);
+		boolean r = false;
+
+		for (yOffset = y; yOffset <= y + treeHeight; ++yOffset) {
+			data.setValue("layer", yOffset - y);
+
+			final int radius = getLeafRadius(treeHeight, yOffset - y, null);
+			if (radius <= 0) {
+				continue;
+			}
+			data.setValue("radius", radius);
+
+			for (xOffset = x - radius; xOffset <= x + radius; ++xOffset) {
+				data.setValue("layer-x", xOffset - x);
+
+				for (zOffset = z - radius; zOffset <= z + radius; ++zOffset) {
+
+					if (leafVariance.checkCondition(world, rand, data.setValue("layer-z", zOffset - z))) {
+						r |= generateBlock(world, rand, xOffset, yOffset, zOffset, leaves); // area already validated
 					}
 				}
-
-				return r;
 			}
 		}
-		return false;
+
+		for (yOffset = 0; yOffset < treeHeight; ++yOffset) {
+			r |= generateBlock(world, rand, x, yOffset + y, z, trunk); // area already validated, always replace leaves
+		}
+
+		return r;
 	}
 
 }

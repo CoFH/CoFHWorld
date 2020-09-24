@@ -3,11 +3,12 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
+import cofh.cofhworld.parser.variables.ConditionData;
+import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenSmallTree;
 import com.typesafe.config.Config;
-import net.minecraft.block.Blocks;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -29,10 +30,8 @@ public class GenParserSmallTree extends AbstractGenParserBlock {
 		}
 
 		if (genObject.hasPath("leaves")) {
-			list = new ArrayList<>();
 			if (!BlockData.parseBlockList(genObject.getValue("leaves"), list)) {
 				log.warn("Entry specifies invalid leaves for 'smalltree' generator!");
-				list.clear();
 			}
 		} else {
 			log.info("Entry does not specify leaves for 'smalltree' generator! There are none!");
@@ -41,27 +40,24 @@ public class GenParserSmallTree extends AbstractGenParserBlock {
 		WorldGenSmallTree r = new WorldGenSmallTree(resList, list, matList);
 		{
 			if (blocks.size() > 0) {
-				r.genSurface = blocks.toArray(new Material[0]);
+				r.surface = blocks.toArray(new Material[0]);
 			}
 
-			if (genObject.hasPath("min-height")) {
-				r.minHeight = genObject.getInt("min-height");
-			}
-			if (genObject.hasPath("height-variance")) {
-				r.heightVariance = genObject.getInt("height-variance");
+			if (genObject.hasPath("height")) {
+				r.height = NumberData.parseNumberValue(genObject.getValue("height"));
 			}
 
 			if (genObject.hasPath("tree-checks")) {
-				r.treeChecks = genObject.getBoolean("tree-checks");
+				r.treeChecks = ConditionData.parseConditionValue(genObject.getValue("tree-checks"));
 			}
 			if (genObject.hasPath("relaxed-growth")) {
-				r.relaxedGrowth = genObject.getBoolean("relaxed-growth");
+				r.relaxedGrowth = ConditionData.parseConditionValue(genObject.getValue("relaxed-growth"));
 			}
 			if (genObject.hasPath("water-loving")) {
-				r.waterLoving = genObject.getBoolean("water-loving");
+				r.waterLoving = ConditionData.parseConditionValue(genObject.getValue("water-loving"));
 			}
 			if (genObject.hasPath("leaf-variance")) {
-				r.leafVariance = genObject.getBoolean("leaf-variance");
+				r.leafVariance = ConditionData.parseConditionValue(genObject.getValue("leaf-variance"));
 			}
 		}
 		return r;
