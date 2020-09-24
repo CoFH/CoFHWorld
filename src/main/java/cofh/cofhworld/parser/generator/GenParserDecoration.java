@@ -52,7 +52,7 @@ public class GenParserDecoration implements IGeneratorParser {
 			r.setSeeSky(genObject.getBoolean("see-sky"));
 		}
 		if (genObject.hasPath("check-stay-condition")) {
-			r.setSeeSky(ConditionData.parseConditionValue(genObject.getValue("check-stay-condition")));
+			r.setCheckStay(ConditionData.parseConditionValue(genObject.getValue("check-stay-condition")));
 		} else if (genObject.hasPath("check-stay")) {
 			r.setCheckStay(genObject.getBoolean("check-stay"));
 		}
