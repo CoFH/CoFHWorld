@@ -5,7 +5,6 @@ import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.WeightedRandom;
@@ -15,7 +14,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -70,23 +68,9 @@ public abstract class WorldGen {
 		return this;
 	}
 
-	public static List<WeightedBlock> fabricateList(WeightedBlock resource) {
-
-		List<WeightedBlock> list = new ArrayList<>();
-		list.add(resource);
-		return list;
-	}
-
-	public static List<WeightedBlock> fabricateList(Block resource) {
-
-		List<WeightedBlock> list = new ArrayList<>();
-		list.add(new WeightedBlock(resource));
-		return list;
-	}
-
 	public static boolean canGenerateInBlock(IWorld world, int x, int y, int z, Material[] mat) {
 
-		return canGenerateInBlock(world, new BlockPos(x, y, z), mat);
+		return canGenerateInBlock(world, getPos(x, y, z), mat);
 	}
 
 	public static boolean canGenerateInBlock(IWorldReader world, BlockPos pos, Material[] mat) {
@@ -119,7 +103,7 @@ public abstract class WorldGen {
 
 	public static boolean generateBlock(IWorld world, Random rand, int x, int y, int z, List<WeightedBlock> o) {
 
-		return setBlock(world, rand, new BlockPos(x, y, z), selectBlock(rand, o));
+		return setBlock(world, rand, getPos(x, y, z), selectBlock(rand, o));
 	}
 
 	public static boolean setBlock(IWorld world, Random rand, BlockPos pos, WeightedBlock ore) {
@@ -145,6 +129,11 @@ public abstract class WorldGen {
 		return r;
 	}
 
+	public static BlockState getBlockState(IWorld world, int x, int y, int z) {
+
+		return world.getBlockState(getPos(x, y, z));
+	}
+
 	@Nullable
 	public static WeightedBlock selectBlock(Random rand, List<WeightedBlock> o) {
 
@@ -157,5 +146,12 @@ public abstract class WorldGen {
 		}
 		return o.get(0);
 	}
+
+	private static BlockPos getPos(int x, int y, int z) {
+
+		return THREAD_POS.get().setPos(x, y, z);
+	}
+
+	private static final ThreadLocal<BlockPos.Mutable> THREAD_POS = ThreadLocal.withInitial(BlockPos.Mutable::new);
 
 }

@@ -182,7 +182,7 @@ public class WorldGenDungeon extends WorldGen {
 
 	private boolean isBlock(IWorld world, int x, int y, int z, List<WeightedBlock> blocks) {
 
-		BlockState state = world.getBlockState(new BlockPos(x, y, z));
+		BlockState state = getBlockState(world, x, y, z);
 		for (int j = 0, e = blocks.size(); j < e; ++j) {
 			WeightedBlock genBlock = blocks.get(j);
 			if (state.equals(genBlock.getState()))
