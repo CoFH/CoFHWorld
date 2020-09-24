@@ -44,7 +44,7 @@ public class WorldGenAdvLakes extends WorldGen {
 							"LESS_THAN"),
 					new RandomCondition(),
 					"AND"),
-			new MaterialCondition(Collections.singletonList(new MaterialPropertyMaterial("SOLID"))),
+			new MaterialCondition(Collections.singletonList(new MaterialPropertyMaterial(true, "SOLID"))),
 			"AND");
 
 	private INumberProvider width;

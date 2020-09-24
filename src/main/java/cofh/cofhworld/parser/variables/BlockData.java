@@ -173,7 +173,17 @@ public class BlockData {
 						return null;
 					}
 				}
+				if (blockObject.hasPath("material-type")) {
+					List<WeightedString> tags = new LinkedList<>();
+					if (StringData.parseStringList(blockObject.getValue("material-type"), tags)) {
+						Material t = new MaterialPropertyMaterial(inclsuive, tags.stream().map(v -> v.value).toArray(String[]::new));
+						blockMaterial = blockMaterial != null ? inclsuive ? blockMaterial.and(t) : blockMaterial.or(t) : t;
+					} else {
+						return null;
+					}
+				}
 				if (blockObject.hasPath("properties")) {
+					Material propertyMaterial;
 					if (block == null) {
 						Object2ObjectArrayMap<String, String> properties = new Object2ObjectArrayMap<>();
 						for (Map.Entry<String, ConfigValue> propEntry : blockObject.getObject("properties").entrySet()) {
@@ -184,8 +194,7 @@ public class BlockData {
 								properties.put(propEntry.getKey(), (String) propEntry.getValue().unwrapped());
 							}
 						}
-						Material t = new PropertyMaterial(properties, inclsuive);
-						blockMaterial = blockMaterial != null ? inclsuive ? blockMaterial.and(t) : blockMaterial.or(t) : t;
+						propertyMaterial = new PropertyMaterial(properties, inclsuive);
 					} else {
 						StateContainer<Block, BlockState> blockstatecontainer = block.getStateContainer();
 						Object2ObjectArrayMap<IProperty<?>, Object> properties = new Object2ObjectArrayMap<>();
@@ -217,8 +226,9 @@ public class BlockData {
 						if (properties == null) {
 							return null;
 						}
-						blockMaterial = new BlockPropertyMaterial(block, properties,inclsuive);
+						propertyMaterial = new BlockPropertyMaterial(block, properties, inclsuive);
 					}
+					blockMaterial = blockMaterial != null ? inclsuive ? blockMaterial.and(propertyMaterial) : blockMaterial.or(propertyMaterial) : propertyMaterial;
 				}
 				if (blockMaterial == null) {
 					log.error("Block entry must have property `tag`, `name`, or `properties`!");

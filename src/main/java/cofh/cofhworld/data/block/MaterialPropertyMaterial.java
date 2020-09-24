@@ -10,9 +10,11 @@ import java.util.stream.Stream;
 public class MaterialPropertyMaterial extends Material {
 
 	private final Stream<Property> materials;
+	private final boolean inclusive;
 
-	public MaterialPropertyMaterial(String... properties) {
+	public MaterialPropertyMaterial(boolean inclusive, String... properties) {
 
+		this.inclusive = inclusive;
 		this.materials = Arrays.stream(properties).map(v -> Property.valueOf(v.toUpperCase(Locale.US)));
 	}
 
@@ -21,7 +23,7 @@ public class MaterialPropertyMaterial extends Material {
 
 		final net.minecraft.block.material.Material material = blockState.getMaterial();
 
-		return materials.allMatch(prop -> prop.test(material));
+		return inclusive ? materials.allMatch(prop -> prop.test(material)) : materials.noneMatch(prop -> prop.test(material));
 	}
 
 	public static enum Property {
