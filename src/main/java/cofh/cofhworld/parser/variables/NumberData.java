@@ -7,6 +7,7 @@ import cofh.cofhworld.data.numbers.data.DefaultedDataProvider;
 import cofh.cofhworld.data.numbers.operation.BoundedProvider;
 import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
+import cofh.cofhworld.data.numbers.operation.UnaryMathProvider;
 import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.data.numbers.world.DirectionalScanner;
@@ -46,6 +47,8 @@ public class NumberData {
 							return new UniformRandomProvider(parseNumberValue(numberObject.getValue("min")), parseNumberValue(numberObject.getValue("max")));
 						} else if (numberProps.containsKey("generator-data") && numberProps.containsKey("default-value")) {
 							return new DefaultedDataProvider(numberObject.getString("generator-data"), parseNumberValue(numberObject.getValue("default-value")));
+						} else if (numberProps.containsKey("operation") && numberProps.containsKey("value")) {
+							return new UnaryMathProvider(parseNumberValue(numberObject.getValue("value")), numberObject.getString("operation"));
 						}
 						break;
 					case 3:
