@@ -3,6 +3,8 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
 import cofh.cofhworld.parser.variables.BlockData;
+import cofh.cofhworld.parser.variables.ConditionData;
+import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenStalagmite;
@@ -28,40 +30,31 @@ public class GenParserStalagmite extends AbstractGenParserBlock {
 	@Nonnull
 	public WorldGen parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
 
-		ArrayList<Material> list = new ArrayList<>();
+		ArrayList<Material> surfList = new ArrayList<>();
 		{
 			boolean has = genObject.hasPath("surface");
-			if (!has || !BlockData.parseMaterialList(genObject.getValue("surface"), list)) {
+			if (!has || !BlockData.parseMaterialList(genObject.getValue("surface"), surfList)) {
 				ConfigOrigin origin = (has ? genObject.getValue("surface").origin() : genObject.origin());
 				log.error("Invalid `surface` specified for generator '{}' on line {}!", generatorName, origin.lineNumber());
 				throw new InvalidGeneratorException(has ? "Invalid `surface` specified" : "`surface` not spcified!", origin);
 			}
 		}
-		WorldGenStalagmite r = new WorldGenStalagmite(resList, matList, list, stalactite ? Direction.UP : Direction.DOWN);
+		WorldGenStalagmite r = new WorldGenStalagmite(resList, matList, surfList, stalactite ? Direction.UP : Direction.DOWN);
 		{
-			if (genObject.hasPath("min-height")) {
-				r.minHeight = genObject.getInt("min-height");
+			if (genObject.hasPath("height")) {
+				r.height = NumberData.parseNumberValue(genObject.getValue("height"));
 			}
-			if (genObject.hasPath("height-variance")) {
-				r.heightVariance = genObject.getInt("height-variance");
-			}
-			if (genObject.hasPath("size-variance")) {
-				r.sizeVariance = genObject.getInt("size-variance");
-			}
-			if (genObject.hasPath("height-mod")) {
-				r.heightMod = genObject.getInt("height-mod");
-			}
-			if (genObject.hasPath("gen-size")) {
-				r.genSize = genObject.getInt("gen-size");
+			if (genObject.hasPath("size")) {
+				r.size = NumberData.parseNumberValue(genObject.getValue("size"));
 			}
 			if (genObject.hasPath("smooth")) {
-				r.smooth = genObject.getBoolean("smooth");
+				r.smooth = ConditionData.parseConditionValue(genObject.getValue("smooth"));
 			}
 			if (genObject.hasPath("fat")) {
-				r.fat = genObject.getBoolean("fat");
+				r.fat = ConditionData.parseConditionValue(genObject.getValue("fat"));
 			}
 			if (genObject.hasPath("alt-sinc")) {
-				r.altSinc = genObject.getBoolean("alt-sinc");
+				r.altSinc = ConditionData.parseConditionValue(genObject.getValue("alt-sinc"));
 			}
 		}
 		return r;

@@ -2,9 +2,14 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.data.condition.ConstantCondition;
+import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
+import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.data.DataProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
+import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.data.numbers.world.DirectionalScanner;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -14,34 +19,33 @@ import net.minecraft.world.IWorld;
 import java.util.List;
 import java.util.Random;
 
-/**
- * @deprecated TODO: replace all ints with INumberProvider
- */
-@Deprecated
 public class WorldGenStalagmite extends WorldGen {
 
 	protected final List<WeightedBlock> resource;
-	protected final Material[] baseBlock;
+	protected final Material[] surface;
 	protected final Material[] material;
 	private final Direction direction;
 
+	public INumberProvider height = new UniformRandomProvider(7, 7 + 4);
+	public INumberProvider size = new MathProvider(
+			new MathProvider(
+					new DataProvider("height"),
+					new ConstantProvider(5),
+					"DIVIDE"),
+			new UniformRandomProvider(0, 2),
+			"ADD");
 
-	public int minHeight = 7;
-	public int heightVariance = 4;
-	public int sizeVariance = 2;
-	public int heightMod = 5;
-	public int genSize = 0;
-	public boolean smooth = false;
-	public boolean fat = true;
-	public boolean altSinc = false;
+	public ICondition fat = ConstantCondition.TRUE;
+	public ICondition smooth = ConstantCondition.FALSE;
+	public ICondition altSinc = ConstantCondition.FALSE;
 
-	public WorldGenStalagmite(List<WeightedBlock> resource, List<Material> block, List<Material> gblock, Direction direction) {
+	public WorldGenStalagmite(List<WeightedBlock> resource, List<Material> surface, List<Material> materials, Direction direction) {
 
 		this.resource = resource;
-		baseBlock = block.toArray(new Material[0]);
-		material = gblock.toArray(new Material[0]);
+		this.surface = surface.toArray(new Material[0]);
+		material = materials.toArray(new Material[0]);
 		this.direction = direction;
-		setYVar(new DirectionalScanner(
+		setOffsetY(new DirectionalScanner(
 				new WorldValueCondition("IS_AIR"),
 				direction,
 				direction == Direction.UP ? new MathProvider(
@@ -51,7 +55,7 @@ public class WorldGenStalagmite extends WorldGen {
 				) : new WorldValueProvider("CURRENT_Y")));
 	}
 
-	protected int getHeight(int x, int z, int size, Random rand, int height) {
+	protected int getHeight(int x, int z, int size, Random rand, int height, boolean fat, boolean smooth, boolean altSinc) {
 
 		if (smooth) {
 			if ((x * x + z * z) * 4 >= size * size * 5) {
@@ -89,27 +93,28 @@ public class WorldGenStalagmite extends WorldGen {
 
 		final int yMod = direction.getYOffset();
 
-		int xStart = data.getPosition().getX();
-		int yStart = data.getPosition().getY() - yMod;
-		int zStart = data.getPosition().getZ();
+		final int xStart = data.getPosition().getX();
+		final int yStart = data.getPosition().getY() - yMod;
+		final int zStart = data.getPosition().getZ();
 
-		if (!canGenerateInBlock(world, xStart, yStart, zStart, baseBlock)) {
+		if (!canGenerateInBlock(world, xStart, yStart, zStart, surface)) {
 			return false;
 		}
 
-		int maxHeight = (heightVariance > 0 ? rand.nextInt(heightVariance) : 0) + minHeight;
+		final boolean fat = this.fat.checkCondition(world, rand, data);
+		final boolean smooth = this.smooth.checkCondition(world, rand, data.setValue("fat", fat));
+		final boolean altSinc = this.altSinc.checkCondition(world, rand, data.setValue("smooth",smooth));
 
-		int size = (genSize > 0 ? genSize : maxHeight / heightMod);
-		if (sizeVariance > 0) {
-			size += rand.nextInt(sizeVariance);
-		}
+		final int maxHeight = height.intValue(world, rand, data.setValue("altSinc", altSinc));
+		final int size = this.size.intValue(world, rand, data.setValue("height", maxHeight));
+
 		boolean r = false;
 		for (int x = -size; x <= size; ++x) {
 			for (int z = -size; z <= size; ++z) {
-				if (!canGenerateInBlock(world, xStart + x, yStart + yMod, zStart + z, baseBlock)) {
+				if (!canGenerateInBlock(world, xStart + x, yStart + yMod, zStart + z, surface)) {
 					continue;
 				}
-				int height = getHeight(x, z, size, rand, maxHeight);
+				int height = getHeight(x, z, size, rand, maxHeight, fat, smooth, altSinc);
 				for (int y = 0; y < height; ++y) {
 					r |= generateBlock(world, rand, xStart + x, yStart + y * yMod, zStart + z, material, resource);
 				}
