@@ -19,7 +19,7 @@ public abstract class Material implements Predicate<BlockState> {
 	public abstract boolean test(BlockState blockState);
 
 	@Override
-	public Material and(Predicate<? super BlockState> other) {
+	final public Material and(Predicate<? super BlockState> other) {
 
 		return new Material() {
 
@@ -32,7 +32,7 @@ public abstract class Material implements Predicate<BlockState> {
 	}
 
 	@Override
-	public Material negate() {
+	final public Material negate() {
 
 		return new Material() {
 
@@ -45,7 +45,7 @@ public abstract class Material implements Predicate<BlockState> {
 	}
 
 	@Override
-	public Material or(Predicate<? super BlockState> other) {
+	final public Material or(Predicate<? super BlockState> other) {
 
 
 		return new Material() {
@@ -57,7 +57,4 @@ public abstract class Material implements Predicate<BlockState> {
 			}
 		};
 	}
-
-	//@Override
-	//public abstract boolean test(BlockState blockState);
 }
