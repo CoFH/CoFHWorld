@@ -28,18 +28,18 @@ public class BlockData {
 			return false;
 		}
 
+		boolean r = true;
 		if (blockEntry.valueType() == ConfigValueType.LIST) {
 			ConfigList blockList = (ConfigList) blockEntry;
 
 			for (int i = 0, e = blockList.size(); i < e; i++) {
 				WeightedBlock entry = parseBlockEntry(blockList.get(i));
 				if (entry == null) {
-					return false;
+					r = false;
+					continue;
 				}
 				list.add(entry);
 			}
-		} else if (blockEntry.valueType() == ConfigValueType.NULL) {
-			return true;
 		} else {
 			WeightedBlock entry = parseBlockEntry(blockEntry);
 			if (entry == null) {
@@ -47,7 +47,7 @@ public class BlockData {
 			}
 			list.add(entry);
 		}
-		return true;
+		return r;
 	}
 
 	@Nullable
@@ -122,40 +122,46 @@ public class BlockData {
 			return false;
 		}
 
+		boolean r = true;
 		if (blockEntry.valueType() == ConfigValueType.LIST) {
 			ConfigList blockList = (ConfigList) blockEntry;
 
 			for (int i = 0, e = blockList.size(); i < e; i++) {
 				Material entry = parseMaterialEntry(blockList.get(i));
 				if (entry == null) {
-					return false;
+					r = false; // parse all of them if we can
+					continue;
 				}
-				list.add(entry);
+				if (entry != Material.ALWAYS) {
+					list.add(entry); // empty arrays always pass
+				}
 			}
-		} else if (blockEntry.valueType() == ConfigValueType.NULL) {
-			return true;
 		} else {
 			Material entry = parseMaterialEntry(blockEntry);
 			if (entry == null) {
 				return false;
 			}
-			list.add(entry);
+			if (entry != Material.ALWAYS) {
+				list.add(entry); // empty arrays always pass
+			}
 		}
-		return true;
+		return r;
 	}
 
 	@Nullable
 	public static Material parseMaterialEntry(ConfigValue blockEntry) {
 
 		switch (blockEntry.valueType()) {
+			case BOOLEAN:
+				// true would be "test always passes";
+				// false would be "i don't want a test" since "test never passes" is functionally useless
 			case NULL:
-				log.warn("Null Block entry on line {}!", blockEntry.origin().lineNumber());
-				return null;
+				return Material.ALWAYS;
 			case OBJECT:
 				Config blockObject = ((ConfigObject) blockEntry).toConfig();
 				Material blockMaterial = null;
 
-				boolean inclsuive = !blockObject.hasPath("inclusive") || blockObject.getBoolean("inclusive");
+				boolean inclusive = !blockObject.hasPath("inclusive") || blockObject.getBoolean("inclusive");
 
 				Block block = null;
 				if (blockObject.hasPath("name")) {
@@ -164,11 +170,11 @@ public class BlockData {
 						log.error("Invalid block name on line {}!", blockObject.getValue("name").origin().lineNumber());
 						return null;
 					}
-					blockMaterial = new BlockMaterial(block, inclsuive);
+					blockMaterial = new BlockMaterial(block, inclusive);
 				} else if (blockObject.hasPath("tag")) { // exclusive with name
 					List<WeightedString> tags = new LinkedList<>();
 					if (StringData.parseStringList(blockObject.getValue("tag"), tags)) {
-						blockMaterial = TagMaterial.of(tags.stream().map((str) -> new ResourceLocation(str.value)).collect(Collectors.toList()), inclsuive);
+						blockMaterial = TagMaterial.of(tags.stream().map((str) -> new ResourceLocation(str.value)).collect(Collectors.toList()), inclusive);
 					} else {
 						return null;
 					}
@@ -176,13 +182,13 @@ public class BlockData {
 				if (blockObject.hasPath("material-type")) {
 					List<WeightedString> tags = new LinkedList<>();
 					if (StringData.parseStringList(blockObject.getValue("material-type"), tags)) {
-						Material t = new MaterialPropertyMaterial(inclsuive, tags.stream().map(v -> v.value).toArray(String[]::new));
-						blockMaterial = blockMaterial != null ? inclsuive ? blockMaterial.and(t) : blockMaterial.or(t) : t;
+						Material t = new MaterialPropertyMaterial(inclusive, tags.stream().map(v -> v.value).toArray(String[]::new));
+						blockMaterial = blockMaterial != null ? inclusive ? blockMaterial.and(t) : blockMaterial.or(t) : t;
 					} else {
 						return null;
 					}
 				}
-				if (blockObject.hasPath("properties")) {
+				properties: if (blockObject.hasPath("properties")) {
 					Material propertyMaterial;
 					if (block == null) {
 						Object2ObjectArrayMap<String, String> properties = new Object2ObjectArrayMap<>();
@@ -190,11 +196,19 @@ public class BlockData {
 
 							if (propEntry.getValue().valueType() != ConfigValueType.STRING && propEntry.getValue().valueType() != ConfigValueType.NULL) {
 								log.error("Property '{}' is not a string. All block properties must be strings.", propEntry.getKey());
-							} else {
+								properties = null;
+							} else if (properties != null) {
 								properties.put(propEntry.getKey(), (String) propEntry.getValue().unwrapped());
 							}
 						}
-						propertyMaterial = new PropertyMaterial(properties, inclsuive);
+						if (properties == null) {
+							return null;
+						}
+						if (properties.size() == 0) {
+							log.debug("`properties` tag had no valid entries, ignoring.");
+							break properties;
+						}
+						propertyMaterial = new PropertyMaterial(properties, inclusive);
 					} else {
 						StateContainer<Block, BlockState> blockstatecontainer = block.getStateContainer();
 						Object2ObjectArrayMap<IProperty<?>, Object> properties = new Object2ObjectArrayMap<>();
@@ -203,10 +217,12 @@ public class BlockData {
 							IProperty<?> prop = blockstatecontainer.getProperty(propEntry.getKey());
 							if (prop == null) {
 								log.warn("Block '{}' does not have property '{}'.", block.getRegistryName(), propEntry.getKey());
+								properties = null;
 							}
 							if (propEntry.getValue().valueType() != ConfigValueType.STRING && propEntry.getValue().valueType() != ConfigValueType.NULL) {
 								log.error("Property '{}' is not a string. All block properties must be strings.", propEntry.getKey());
 								prop = null;
+								properties = null;
 							}
 
 							if (prop != null) {
@@ -226,9 +242,13 @@ public class BlockData {
 						if (properties == null) {
 							return null;
 						}
-						propertyMaterial = new BlockPropertyMaterial(block, properties, inclsuive);
+						if (properties.size() == 0) {
+							log.debug("`properties` tag had no valid entries, ignoring.");
+							break properties;
+						}
+						propertyMaterial = new BlockPropertyMaterial(block, properties, inclusive);
 					}
-					blockMaterial = blockMaterial != null ? inclsuive ? blockMaterial.and(propertyMaterial) : blockMaterial.or(propertyMaterial) : propertyMaterial;
+					blockMaterial = blockMaterial != null ? inclusive ? blockMaterial.and(propertyMaterial) : blockMaterial.or(propertyMaterial) : propertyMaterial;
 				}
 				if (blockMaterial == null) {
 					log.error("Block entry must have property `tag`, `name`, or `properties`!");
