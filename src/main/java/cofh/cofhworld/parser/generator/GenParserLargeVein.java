@@ -3,8 +3,10 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
+import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserClusterCount;
 import cofh.cofhworld.parser.variables.ConditionData;
+import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenMinableLargeVein;
@@ -20,11 +22,7 @@ public class GenParserLargeVein extends AbstractGenParserClusterCount {
 	@Nonnull
 	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
 
-		int clusterSize = genObject.getInt("cluster-size");
-		if (clusterSize <= 0) {
-			log.warn("Invalid `cluster-size` for generator '{}'", name);
-			throw new InvalidGeneratorException("Invalid `cluster-size`", genObject.getValue("cluster-size").origin());
-		}
+		INumberProvider clusterSize = NumberData.parseNumberValue(genObject.getValue("cluster-size"));
 
 		ICondition sparse = ConstantCondition.TRUE, spindly = ConstantCondition.FALSE;
 		{

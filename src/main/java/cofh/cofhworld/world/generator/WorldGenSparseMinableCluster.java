@@ -2,7 +2,6 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.MathHelper;
@@ -16,11 +15,6 @@ public class WorldGenSparseMinableCluster extends WorldGen {
 	private final List<WeightedBlock> resource;
 	private final Material[] material;
 	private final INumberProvider clusterSize;
-
-	public WorldGenSparseMinableCluster(List<WeightedBlock> resource, int clusterSize, List<Material> block) {
-
-		this(resource, new ConstantProvider(clusterSize), block);
-	}
 
 	public WorldGenSparseMinableCluster(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> block) {
 
@@ -36,7 +30,7 @@ public class WorldGenSparseMinableCluster extends WorldGen {
 		int y = data.getPosition().getY();
 		int z = data.getPosition().getZ();
 
-		int blocks = MathHelper.clamp(clusterSize.intValue(world, rand, data), 1, 42);
+		int blocks = clusterSize.intValue(world, rand, data);
 		float f = rand.nextFloat() * (float) Math.PI;
 		// despite naming, these are not exactly min/max. more like direction
 		float yMin = (y + rand.nextInt(3)) - 2;

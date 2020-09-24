@@ -2,7 +2,6 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.math.MathHelper;
@@ -16,11 +15,6 @@ public class WorldGenMinableCluster extends WorldGen {
 	private final List<WeightedBlock> resource;
 	private final Material[] material;
 	private final INumberProvider clusterSize;
-
-	public WorldGenMinableCluster(List<WeightedBlock> resource, int clusterSize, List<Material> materials) {
-
-		this(resource, new ConstantProvider(clusterSize), materials);
-	}
 
 	public WorldGenMinableCluster(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
 
@@ -36,7 +30,7 @@ public class WorldGenMinableCluster extends WorldGen {
 		int y = data.getPosition().getY();
 		int z = data.getPosition().getZ();
 
-		int blocks = MathHelper.clamp(clusterSize.intValue(world, rand, data), 1, 42);
+		int blocks = clusterSize.intValue(world, rand, data);
 		if (blocks < 4) { // HACK: at 1 and 2 no ores are ever generated. at 3 only 1/3 veins generate
 			return generateTiny(world, rand, blocks, x, y, z);
 		}

@@ -1,6 +1,7 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.ConditionData;
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class GenParserDecoration implements IGeneratorParser {
 
-	private static String[] FIELDS = new String[] { "block", "cluster-size" };
+	private static String[] FIELDS = new String[] { "block", "quantity" };
 
 	@Override
 	public String[] getRequiredFields() {
@@ -29,10 +30,7 @@ public class GenParserDecoration implements IGeneratorParser {
 	@Nonnull
 	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
 
-		int clusterSize = genObject.getInt("cluster-size"); // TODO: another name?
-		if (clusterSize <= 0) {
-			throw new InvalidGeneratorException("Invalid cluster size for generator '" + name + "'", genObject.getValue("cluster-size").origin());
-		}
+		INumberProvider clusterSize = NumberData.parseNumberValue(genObject.getValue("quantity"));
 
 		ArrayList<Material> list = new ArrayList<>();
 		if (genObject.hasPath("surface")) {
