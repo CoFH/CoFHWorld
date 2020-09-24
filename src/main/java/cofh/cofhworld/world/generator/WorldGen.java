@@ -124,7 +124,7 @@ public abstract class WorldGen {
 
 	public static boolean setBlock(IWorld world, Random rand, BlockPos pos, WeightedBlock ore) {
 
-		if (ore != null && world.setBlockState(pos, ore.getState(), 2 | 16)) {
+		if (ore != null && setBlockState(world, pos, ore.getState())) {
 			if (ore.block.hasTileEntity(ore.getState())) {
 				TileEntity tile = world.getTileEntity(pos);
 				if (tile != null) {
@@ -134,6 +134,15 @@ public abstract class WorldGen {
 			return true;
 		}
 		return false;
+	}
+
+	public static boolean setBlockState(IWorld world, BlockPos pos, BlockState state) {
+
+		boolean r = world.setBlockState(pos, state, 2 | 16);
+		if (r && !state.getFluidState().isEmpty()) {
+			world.getPendingFluidTicks().scheduleTick(pos, state.getFluidState().getFluid(), 0);
+		}
+		return r;
 	}
 
 	@Nullable
