@@ -77,6 +77,7 @@ public class BuilderSpike extends BuilderSize<WorldGenSpike> {
 	public BuilderSpike(List<WeightedBlock> resource, List<Material> material) {
 
 		super(resource, material);
+		size = SIZE;
 	}
 
 	public void setHeight(INumberProvider height) {

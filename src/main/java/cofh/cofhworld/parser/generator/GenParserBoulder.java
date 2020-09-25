@@ -34,6 +34,9 @@ public class GenParserBoulder implements IGeneratorParser {
 		if (genObject.hasPath("quantity")) {
 			builder.setQuantity(NumberData.parseNumberValue(genObject.getValue("quantity")));
 		}
+
+		// TODO set filler
+
 		if (genObject.hasPath("hollow")) {
 			builder.setHollow(ConditionData.parseConditionValue(genObject.getValue("hollow")));
 		}

@@ -1,4 +1,4 @@
-package cofh.cofhworld.data;
+package cofh.cofhworld.data.shape;
 
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.util.Direction8;

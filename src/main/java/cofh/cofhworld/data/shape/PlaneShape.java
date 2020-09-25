@@ -1,4 +1,4 @@
-package cofh.cofhworld.data;
+package cofh.cofhworld.data.shape;
 
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
