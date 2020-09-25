@@ -5,7 +5,6 @@ import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.world.generator.WorldGen;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
 
 import java.util.Random;
 
@@ -32,18 +31,19 @@ public class DistributionUniform extends Distribution {
 
 		DataHolder data = new DataHolder(pos);
 
-		final int count = this.count.intValue(world, random, data);
-		final int minY = Math.max(this.minY.intValue(world, random, data), 0), maxY = this.maxY.intValue(world, random, data);
+		final int minY = this.minY.intValue(world, random, data), maxY = this.maxY.intValue(world, random, data.setValue("min-height",minY));
 		if (minY > maxY) {
 			return false;
 		}
+		final int count = this.count.intValue(world, random, data.setValue("max-height", maxY));
+		data.setValue("cluster-count", count);
 
 		worldGen.setDecorationDefaults();
 
 		boolean generated = false;
 		for (int i = 0; i < count; i++) {
 			int x = blockX + random.nextInt(16);
-			int y = minY + (minY != maxY ? random.nextInt(maxY - minY) : 0);
+			int y = minY + (minY != maxY ? random.nextInt(maxY - minY + 1) : 0);
 			int z = blockZ + random.nextInt(16);
 			if (!canGenerateInBiome(world, x, z, random)) {
 				continue;

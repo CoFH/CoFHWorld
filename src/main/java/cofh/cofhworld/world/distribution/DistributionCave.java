@@ -7,7 +7,6 @@ import cofh.cofhworld.world.generator.WorldGen;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
 
 import java.util.Random;
 
@@ -41,11 +40,13 @@ public class DistributionCave extends Distribution {
 		DataHolder data = new DataHolder(pos);
 
 		final int count = this.count.intValue(world, random, data);
+		data.setValue("cluster-count", count);
 
 		worldGen.setDecorationDefaults();
 
 		boolean generated = false;
 		for (int i = 0; i < count; i++) {
+			data.setValue("cluster-current", i);
 			int x = blockX + random.nextInt(16);
 			int z = blockZ + random.nextInt(16);
 			if (!canGenerateInBiome(world, x, z, random)) {

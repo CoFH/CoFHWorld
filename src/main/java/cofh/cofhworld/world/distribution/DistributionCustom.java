@@ -35,8 +35,10 @@ public class DistributionCustom extends Distribution {
 		worldGen.setDecorationDefaults();
 
 		int e = count.intValue(world, random, data);
+		data.setValue("cluster-count", e);
 		boolean r = false;
 		for (int i = 0; i < e; ++i) {
+			data.setValue("cluster-current", i);
 			int x = xPos.intValue(world, random, data.setPosition(pos));
 			int z = zPos.intValue(world, random, data.setPosition(pos.add(x, 0, 0)));
 			int y = yPos.intValue(world, random, data.setPosition(pos.add(x, 0, z)));

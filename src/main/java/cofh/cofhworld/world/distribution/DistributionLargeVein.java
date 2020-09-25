@@ -52,12 +52,13 @@ public class DistributionLargeVein extends Distribution {
 		DataHolder data = new DataHolder(pos);
 
 		final int veinDiameter = this.veinDiameter.intValue(world, random, data);
-		final int horizontalDensity = this.horizontalDensity.intValue(world, random, data);
-		final int veinHeight = this.veinHeight.intValue(world, random, data);
-		final int verticalDensity = this.verticalDensity.intValue(world, random, data);
+		final int horizontalDensity = this.horizontalDensity.intValue(world, random, data.setValue("vein-diameter", veinDiameter));
+		final int veinHeight = this.veinHeight.intValue(world, random, data.setValue("horizontal-density", horizontalDensity));
+		final int verticalDensity = this.verticalDensity.intValue(world, random, data.setValue("vein-height", veinHeight));
 
-		final int blockY = minY.intValue(world, random, data);
-		final int count = this.count.intValue(world, random, data);
+		final int blockY = minY.intValue(world, random, data.setValue("vertical-density", verticalDensity));
+		final int count = this.count.intValue(world, random, data.setValue("min-height", blockY));
+		data.setValue("cluster-count", count);
 
 		Random dRand = new Random(world.getSeed());
 		long l = (dRand.nextLong() / 2L) * 2L + 1L;
