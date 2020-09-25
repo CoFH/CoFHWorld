@@ -1,6 +1,7 @@
 package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.block.MaterialPropertyMaterial;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.operation.BinaryCondition;
@@ -15,7 +16,6 @@ import cofh.cofhworld.data.numbers.world.DirectionalScanner;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -30,7 +30,7 @@ public class WorldGenAdvLakes extends WorldGen {
 
 	private static final List<WeightedBlock> GAP_BLOCK = Collections.singletonList(WeightedBlock.AIR);
 
-	private final cofh.cofhworld.data.block.Material[] material;
+	private final Material[] material;
 	private final List<WeightedBlock> resource;
 
 	private List<WeightedBlock> gapBlock = GAP_BLOCK;
@@ -50,13 +50,13 @@ public class WorldGenAdvLakes extends WorldGen {
 	private INumberProvider width;
 	private INumberProvider height;
 
-	public WorldGenAdvLakes(List<WeightedBlock> resource, List<cofh.cofhworld.data.block.Material> materials) {
+	public WorldGenAdvLakes(List<WeightedBlock> resource, List<Material> materials) {
 
 		this.resource = resource;
 		if (materials == null) {
 			material = null;
 		} else {
-			material = materials.toArray(new cofh.cofhworld.data.block.Material[0]);
+			material = materials.toArray(new Material[0]);
 		}
 		setWidth(16);
 		setHeight(8);
@@ -125,7 +125,7 @@ public class WorldGenAdvLakes extends WorldGen {
 
 					if (flag) {
 						if (y >= heightOff) {
-							Material material = getBlockState(world, xStart + x, yStart + y, zStart + z).getMaterial();
+							net.minecraft.block.material.Material material = getBlockState(world, xStart + x, yStart + y, zStart + z).getMaterial();
 							if (material.isLiquid()) {
 								return false;
 							}

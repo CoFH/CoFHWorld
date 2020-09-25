@@ -9,7 +9,7 @@ import cofh.cofhworld.parser.variables.ConditionData;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
-import cofh.cofhworld.world.generator.WorldGenMinableLargeVein;
+import cofh.cofhworld.world.generator.WorldGenLargeVein;
 import com.typesafe.config.Config;
 import org.apache.logging.log4j.Logger;
 
@@ -29,7 +29,7 @@ public class GenParserLargeVein extends AbstractGenParserClusterCount {
 			sparse = genObject.hasPath("sparse") ? ConditionData.parseConditionValue(genObject.getValue("sparse")) : sparse;
 			spindly = genObject.hasPath("spindly") ? ConditionData.parseConditionValue(genObject.getValue("spindly")) : spindly;
 		}
-		WorldGenMinableLargeVein vein = new WorldGenMinableLargeVein(resList, clusterSize, matList);
+		WorldGenLargeVein vein = new WorldGenLargeVein(resList, clusterSize, matList);
 		return vein.setSparse(sparse).setSpindly(spindly);
 	}
 

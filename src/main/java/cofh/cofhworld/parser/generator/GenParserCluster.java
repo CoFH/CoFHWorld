@@ -6,8 +6,8 @@ import cofh.cofhworld.parser.generator.base.AbstractGenParserClusterCount;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
-import cofh.cofhworld.world.generator.WorldGenMinableCluster;
-import cofh.cofhworld.world.generator.WorldGenSparseMinableCluster;
+import cofh.cofhworld.world.generator.WorldGenCluster.Tiny;
+import cofh.cofhworld.world.generator.WorldGenCluster.Sparse;
 import com.typesafe.config.Config;
 import org.apache.logging.log4j.Logger;
 
@@ -30,9 +30,9 @@ public class GenParserCluster extends AbstractGenParserClusterCount {
 		INumberProvider clusterSize = NumberData.parseNumberValue(genObject.getValue("cluster-size"), 0, 64);
 
 		if (sparse) {
-			return new WorldGenSparseMinableCluster(resList, clusterSize, matList);
+			return new Sparse(resList, clusterSize, matList);
 		}
-		return new WorldGenMinableCluster(resList, clusterSize, matList);
+		return new Tiny(resList, clusterSize, matList);
 	}
 
 }

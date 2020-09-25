@@ -17,7 +17,7 @@ import java.util.Random;
  * @deprecated TODO: replace all booleans with ICondition; merge shape variables into a unified object
  */
 @Deprecated
-public class WorldGenMinablePlate extends WorldGen {
+public class WorldGenPlate extends WorldGen {
 
 	private final List<WeightedBlock> resource;
 	private final Material[] material;
@@ -30,7 +30,7 @@ public class WorldGenMinablePlate extends WorldGen {
 	private Mirror shapeMirror = Mirror.NONE;
 	private boolean slim;
 
-	public WorldGenMinablePlate(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
+	public WorldGenPlate(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
 
 		this.resource = resource;
 		radius = clusterSize;
@@ -70,13 +70,13 @@ public class WorldGenMinablePlate extends WorldGen {
 		return r;
 	}
 
-	public WorldGenMinablePlate setSlim(boolean slim) {
+	public WorldGenPlate setSlim(boolean slim) {
 
 		this.slim = slim;
 		return this;
 	}
 
-	public WorldGenMinablePlate setShape(PlaneShape shape, Rotation rot, Mirror mirror) {
+	public WorldGenPlate setShape(PlaneShape shape, Rotation rot, Mirror mirror) {
 
 		if (shape != null) {
 			this.shape = shape;
@@ -90,13 +90,13 @@ public class WorldGenMinablePlate extends WorldGen {
 		return this;
 	}
 
-	public WorldGenMinablePlate setHeight(int height) {
+	public WorldGenPlate setHeight(int height) {
 
 		this.height = new ConstantProvider(height);
 		return this;
 	}
 
-	public WorldGenMinablePlate setHeight(INumberProvider height) {
+	public WorldGenPlate setHeight(INumberProvider height) {
 
 		this.height = height;
 		return this;

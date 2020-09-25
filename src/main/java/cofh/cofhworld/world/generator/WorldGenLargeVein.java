@@ -11,14 +11,14 @@ import net.minecraft.world.IWorld;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenMinableLargeVein extends WorldGen {
+public class WorldGenLargeVein extends WorldGen {
 
 	private final List<WeightedBlock> resource;
 	private final Material[] material;
 	private final INumberProvider veinSize;
 	private ICondition sparse, spindly;
 
-	public WorldGenMinableLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
+	public WorldGenLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
 
 		this.resource = resource;
 		veinSize = clusterSize;
@@ -26,13 +26,13 @@ public class WorldGenMinableLargeVein extends WorldGen {
 		this.setSparse(ConstantCondition.TRUE);
 	}
 
-	public WorldGenMinableLargeVein setSpindly(ICondition spindly) {
+	public WorldGenLargeVein setSpindly(ICondition spindly) {
 
 		this.spindly = spindly;
 		return this;
 	}
 
-	public WorldGenMinableLargeVein setSparse(ICondition sparse) {
+	public WorldGenLargeVein setSparse(ICondition sparse) {
 
 		this.sparse = sparse;
 		return this;

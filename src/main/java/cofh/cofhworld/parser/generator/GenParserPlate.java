@@ -9,7 +9,7 @@ import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedEnum;
 import cofh.cofhworld.world.generator.WorldGen;
-import cofh.cofhworld.world.generator.WorldGenMinablePlate;
+import cofh.cofhworld.world.generator.WorldGenPlate;
 import com.typesafe.config.Config;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -34,7 +34,7 @@ public class GenParserPlate implements IGeneratorParser {
 
 		INumberProvider clusterSize = NumberData.parseNumberValue(genObject.getValue("radius"), 0, 32);
 
-		WorldGenMinablePlate r = new WorldGenMinablePlate(resList, clusterSize, matList);
+		WorldGenPlate r = new WorldGenPlate(resList, clusterSize, matList);
 		{
 			if (genObject.hasPath("height")) {
 				r.setHeight(NumberData.parseNumberValue(genObject.getValue("height"), 0, 64));

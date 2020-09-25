@@ -12,7 +12,7 @@ import net.minecraft.world.IWorld;
 import java.util.List;
 import java.util.Random;
 
-import static cofh.cofhworld.world.generator.WorldGenMinableCluster.canGenerateInBlock;
+import static cofh.cofhworld.world.generator.WorldGen.canGenerateInBlock;
 
 public class DistributionTopBlock extends Distribution {
 
