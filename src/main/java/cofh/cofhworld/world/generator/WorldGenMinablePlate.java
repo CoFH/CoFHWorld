@@ -5,7 +5,6 @@ import cofh.cofhworld.data.PlaneShape;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -31,11 +30,6 @@ public class WorldGenMinablePlate extends WorldGen {
 	private Mirror shapeMirror = Mirror.NONE;
 	private boolean slim;
 
-	public WorldGenMinablePlate(List<WeightedBlock> resource, int clusterSize, List<Material> materials) {
-
-		this(resource, new UniformRandomProvider(clusterSize, clusterSize + 2), materials);
-	}
-
 	public WorldGenMinablePlate(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
 
 		this.resource = resource;
@@ -57,7 +51,7 @@ public class WorldGenMinablePlate extends WorldGen {
 
 		++y;
 		int size = radius.intValue(world, rand, data);
-		int height = this.height.intValue(world, rand, data);
+		int height = this.height.intValue(world, rand, data.setValue("radius", radius));
 
 		boolean r = false;
 		for (int posX = x - size; posX <= x + size; ++posX) {

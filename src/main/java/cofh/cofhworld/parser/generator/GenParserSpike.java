@@ -27,8 +27,8 @@ public class GenParserSpike extends AbstractGenParserBlock {
 			if (genObject.hasPath("size")) {
 				r.size = NumberData.parseNumberValue(genObject.getValue("size"));
 			}
-			if (genObject.hasPath("y-variance")) {
-				r.yVariance = NumberData.parseNumberValue(genObject.getValue("y-variance"));
+			if (genObject.hasPath("variance-y")) {
+				r.yVariance = NumberData.parseNumberValue(genObject.getValue("variance-y"));
 			}
 			if (genObject.hasPath("layer-size")) {
 				r.layerSize = NumberData.parseNumberValue(genObject.getValue("layer-size"));

@@ -42,7 +42,8 @@ public class WorldGenGeode extends WorldGen {
 		int zStart = data.getPosition().getZ();
 
 		final int height = this.height.intValue(world, rand, data);
-		final int width = this.width.intValue(world, rand, data);
+		final int width = this.width.intValue(world, rand, data.setValue("height", height));
+		data.setValue("width", width);
 
 		int heightOff = height / 2;
 		int widthOff = width / 2;
@@ -57,6 +58,7 @@ public class WorldGenGeode extends WorldGen {
 		boolean[] spawnBlock = new boolean[width * width * height];
 		final boolean hollow = this.hollow.checkCondition(world, rand, data);
 		boolean[] hollowBlock = hollow ? spawnBlock : new boolean[width * width * height];
+		data.setValue("hollow", hollow);
 
 		int W = width - 1, H = height - 1;
 

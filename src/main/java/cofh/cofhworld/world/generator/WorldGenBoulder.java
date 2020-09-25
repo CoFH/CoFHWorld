@@ -15,6 +15,7 @@ import cofh.cofhworld.data.numbers.world.DirectionalScanner;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 
 import java.util.Collections;
@@ -58,13 +59,17 @@ public class WorldGenBoulder extends WorldGen {
 	@Override
 	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
-		int xCenter = data.getPosition().getX();
-		int yCenter = data.getPosition().getY();
-		int zCenter = data.getPosition().getZ();
+		BlockPos pos = data.getPosition();
+
+		int xCenter = pos.getX();
+		int yCenter = pos.getY();
+		int zCenter = pos.getZ();
 
 		boolean r = false;
 		int i = quantity.intValue(world, rand, data);
+		data.setValue("quantity", i);
 		while (i-- > 0) {
+			data.setValue("quantity-current", i);
 
 			int xWidth = size.intValue(world, rand, data);
 			int zWidth = size.intValue(world, rand, data.setValue("radius-x", xWidth));
@@ -96,9 +101,15 @@ public class WorldGenBoulder extends WorldGen {
 
 			}
 
-			xCenter += xVar.intValue(world, rand, data);
-			zCenter += yVar.intValue(world, rand, data);
-			yCenter += zVar.intValue(world, rand, data);
+			{
+				int xOff = xVar.intValue(world, rand, data);
+				int zOff = zVar.intValue(world, rand, data.setPosition(pos.add(xOff, 0, 0)));
+				int yOff = yVar.intValue(world, rand, data.setPosition(pos.add(xOff, 0, zOff)));
+				xCenter += xOff;
+				zCenter += zOff;
+				yCenter += yOff;
+				data.setPosition(pos = new BlockPos(xCenter, yCenter, zCenter));
+			}
 		}
 
 		return r;

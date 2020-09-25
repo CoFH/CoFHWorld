@@ -4,7 +4,6 @@ import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
-import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.world.IWorld;
@@ -18,11 +17,6 @@ public class WorldGenMinableLargeVein extends WorldGen {
 	private final Material[] material;
 	private final INumberProvider veinSize;
 	private ICondition sparse, spindly;
-
-	public WorldGenMinableLargeVein(List<WeightedBlock> resource, int clusterSize, List<Material> materials) {
-
-		this(resource, new ConstantProvider(clusterSize), materials);
-	}
 
 	public WorldGenMinableLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
 
@@ -54,7 +48,8 @@ public class WorldGenMinableLargeVein extends WorldGen {
 		final int veinSize = this.veinSize.intValue(world, rand, data);
 		final int branchSize = 1 + (veinSize / 30);
 		final int subBranchSize = 1 + (branchSize / 5);
-		final boolean sparse = this.sparse.checkCondition(world, rand, data), spindly = this.spindly.checkCondition(world, rand, data);
+		final boolean sparse = this.sparse.checkCondition(world, rand, data.setValue("cluster-size", veinSize)),
+				spindly = this.spindly.checkCondition(world, rand, data.setValue("sparse", sparse));
 
 		boolean r = false;
 		for (int blocksVein = 0; blocksVein <= veinSize; ) {

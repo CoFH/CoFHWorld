@@ -26,11 +26,6 @@ public class WorldGenDecoration extends WorldGen {
 	private ICondition seeSky, checkStay;
 	private INumberProvider stackHeight;
 
-	public WorldGenDecoration(List<WeightedBlock> blocks, int count, List<Material> material, List<Material> on) {
-
-		this(blocks, new ConstantProvider(count), material, on);
-	}
-
 	public WorldGenDecoration(List<WeightedBlock> blocks, INumberProvider count, List<Material> materials, List<Material> on) {
 
 		resource = blocks;
@@ -47,10 +42,11 @@ public class WorldGenDecoration extends WorldGen {
 	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
 		final int clusterSize = this.clusterSize.intValue(world, rand, data);
+		data.setValue("quantity", clusterSize);
 
 		boolean r = false;
 		for (int l = clusterSize, tries = 0; l-- > 0; ) {
-			BlockPos pos = data.getPosition();
+			BlockPos pos = data.setValue("quantity-current", l).getPosition();
 
 			b: {
 				if (!world.isBlockLoaded(pos)) {
@@ -64,7 +60,7 @@ public class WorldGenDecoration extends WorldGen {
 				int x = pos.getX(), y = pos.getY(), z = pos.getZ();
 
 				WeightedBlock block = selectBlock(rand, resource);
-				if (seeSky.checkCondition(world, rand, data.setPosition(pos).setBlock(block)) &&
+				if (seeSky.checkCondition(world, rand, data.setBlock(block)) &&
 						canGenerateInBlock(world, x, y - 1, z, surface) && canGenerateInBlock(world, x, y, z, material)) {
 
 					int stack = stackHeight.intValue(world, rand, data);

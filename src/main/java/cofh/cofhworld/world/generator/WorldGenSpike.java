@@ -99,7 +99,7 @@ public class WorldGenSpike extends WorldGen {
 		{
 			int posVar = yVariance.intValue(world, rand, data);
 			yStart += posVar;
-			data.setValue("position-variance", posVar).setPosition(new BlockPos(xStart, yStart, zStart));
+			data.setValue("variance-y", posVar).setPosition(new BlockPos(xStart, yStart, zStart));
 		}
 
 		if (largeSpikes.checkCondition(world, rand, data)) {
