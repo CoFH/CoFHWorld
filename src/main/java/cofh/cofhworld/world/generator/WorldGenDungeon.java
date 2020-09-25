@@ -3,23 +3,12 @@ package cofh.cofhworld.world.generator;
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ICondition;
-import cofh.cofhworld.data.condition.operation.BinaryCondition;
-import cofh.cofhworld.data.condition.operation.ComparisonCondition;
-import cofh.cofhworld.data.condition.world.WorldValueCondition;
-import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.data.DataProvider;
-import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.util.random.WeightedNBTTag;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -27,39 +16,35 @@ import static java.lang.Math.abs;
 
 public class WorldGenDungeon extends WorldGen {
 
-	final private static INumberProvider TWO = new ConstantProvider(2), THREE = new ConstantProvider(3);
-	final private static INumberProvider TWO_OR_THREE = new UniformRandomProvider(TWO, THREE);
-	final private static ICondition IS_AIR = new WorldValueCondition("IS_AIR");
-	final private static ICondition ONE_TO_FIVE = new BinaryCondition(
-			new ComparisonCondition(new DataProvider("holes"), new ConstantProvider(1), "GREATER_THAN_OR_EQUAL"),
-			new ComparisonCondition(new DataProvider("holes"), new ConstantProvider(5), "LESS_THAN_OR_EQUAL"),
-			"AND");
-
+	private final List<WeightedBlock> walls;
 	private final Material[] material;
 	private final List<WeightedBlock> spawners;
-	private final List<WeightedBlock> walls;
-	public List<WeightedBlock> chests;
-	public List<WeightedBlock> floor;
-	public List<WeightedBlock> filler;
-	public INumberProvider radiusX = TWO_OR_THREE;
-	public INumberProvider radiusZ = TWO_OR_THREE;
-	public INumberProvider height = THREE;
-	public ICondition validHoleCount = ONE_TO_FIVE, holeCondition = IS_AIR;
-	public INumberProvider chestCount = TWO, chestAttempts = THREE;
+	private final List<WeightedBlock> floor;
+	private final List<WeightedBlock> chests;
+	private final List<WeightedBlock> filler;
+	private final INumberProvider radiusX;
+	private final INumberProvider radiusZ;
+	private final INumberProvider height;
+	private final ICondition validHoleCount, holeCondition;
+	private final INumberProvider chestCount, chestAttempts;
 
-	public WorldGenDungeon(List<WeightedBlock> blocks, List<Material> materials, List<WeightedBlock> spawners) {
+	public WorldGenDungeon(List<WeightedBlock> blocks, List<Material> materials, List<WeightedBlock> spawners, List<WeightedBlock> floor,
+			List<WeightedBlock> chests, List<WeightedBlock> filler, INumberProvider radiusX, INumberProvider radiusZ, INumberProvider height,
+			ICondition validHoleCount, ICondition holeCondition, INumberProvider chestCount, INumberProvider chestAttempts) {
 
-		material = materials.toArray(new Material[0]);
 		walls = blocks;
-		floor = walls;
+		material = materials.toArray(new Material[0]);
 		this.spawners = spawners;
-		try {
-			chests = Collections.singletonList(new WeightedBlock(100, Blocks.CHEST.getDefaultState(),
-					Collections.singletonList(new WeightedNBTTag(JsonToNBT.getTagFromJson("{LootTable:\"minecraft:chests/simple_dungeon\"}")))));
-		} catch (CommandSyntaxException e) {
-			throw new AssertionError("Oops.", e);
-		}
-		filler = Collections.singletonList(new WeightedBlock(Blocks.AIR));
+		this.floor = floor;
+		this.chests = chests;
+		this.filler = filler;
+		this.radiusX = radiusX;
+		this.radiusZ = radiusZ;
+		this.height = height;
+		this.validHoleCount = validHoleCount;
+		this.holeCondition = holeCondition;
+		this.chestCount = chestCount;
+		this.chestAttempts = chestAttempts;
 	}
 
 	@Override

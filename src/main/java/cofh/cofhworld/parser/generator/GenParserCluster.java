@@ -26,9 +26,10 @@ public class GenParserCluster extends AbstractGenParserClusterCount {
 	@Nonnull
 	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
 
-		return new BuilderCluster(resList, matList).
-				setClusterSize(NumberData.parseNumberValue(genObject.getValue("cluster-size"), 0, 64)).
-				setType(sparse ? Type.SPARSE : Type.TINY).build();
+		BuilderCluster builder = new BuilderCluster(resList, matList);
+		builder.setSize(NumberData.parseNumberValue(genObject.getValue("cluster-size"), 0, 64));
+		builder.setType(sparse ? Type.SPARSE : Type.TINY);
+		return builder.build();
 	}
 
 }

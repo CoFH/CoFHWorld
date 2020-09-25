@@ -53,7 +53,7 @@ public class DataHolder {
 		if (r instanceof WeightedBlock) {
 			return ((WeightedBlock) r);
 		} else {
-			return WeightedBlock.AIR;
+			return WeightedBlock.AIR_VOID;
 		}
 	}
 

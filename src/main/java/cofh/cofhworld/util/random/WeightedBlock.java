@@ -17,7 +17,9 @@ import java.util.Random;
  */
 public final class WeightedBlock extends WeightedRandom.Item {
 
-	public static final WeightedBlock AIR = new WeightedBlock(Blocks.AIR);
+	public static final WeightedBlock AIR_NORM = new WeightedBlock(Blocks.AIR);
+	public static final WeightedBlock AIR_CAVE = new WeightedBlock(Blocks.CAVE_AIR);
+	public static final WeightedBlock AIR_VOID = new WeightedBlock(Blocks.VOID_AIR);
 
 	// TODO: wildcard?
 	public final Block block;

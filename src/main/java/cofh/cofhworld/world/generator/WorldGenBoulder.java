@@ -28,7 +28,7 @@ public class WorldGenBoulder extends WorldGen {
 	private final Material[] material;
 	private final INumberProvider size;
 
-	public List<WeightedBlock> filler = Collections.singletonList(WeightedBlock.AIR);
+	public List<WeightedBlock> filler = Collections.singletonList(WeightedBlock.AIR_NORM);
 	public ICondition hollow = ConstantCondition.FALSE;
 	public INumberProvider hollowAmt = new UniformRandomProvider(0, 0.1665f);
 

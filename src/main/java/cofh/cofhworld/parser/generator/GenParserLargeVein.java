@@ -1,15 +1,12 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.condition.ConstantCondition;
-import cofh.cofhworld.data.condition.ICondition;
-import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserClusterCount;
+import cofh.cofhworld.parser.generator.builders.BuilderLargeVein;
 import cofh.cofhworld.parser.variables.ConditionData;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
-import cofh.cofhworld.world.generator.WorldGenLargeVein;
 import com.typesafe.config.Config;
 import org.apache.logging.log4j.Logger;
 
@@ -20,17 +17,21 @@ public class GenParserLargeVein extends AbstractGenParserClusterCount {
 
 	@Override
 	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
+	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) {
 
-		INumberProvider clusterSize = NumberData.parseNumberValue(genObject.getValue("cluster-size"));
+		BuilderLargeVein builder = new BuilderLargeVein(resList, matList);
 
-		ICondition sparse = ConstantCondition.TRUE, spindly = ConstantCondition.FALSE;
-		{
-			sparse = genObject.hasPath("sparse") ? ConditionData.parseConditionValue(genObject.getValue("sparse")) : sparse;
-			spindly = genObject.hasPath("spindly") ? ConditionData.parseConditionValue(genObject.getValue("spindly")) : spindly;
+		builder.setSize(NumberData.parseNumberValue(genObject.getValue("cluster-size")));
+
+		if (genObject.hasPath("sparse")) {
+			builder.setSparse(ConditionData.parseConditionValue(genObject.getValue("sparse")));
 		}
-		WorldGenLargeVein vein = new WorldGenLargeVein(resList, clusterSize, matList);
-		return vein.setSparse(sparse).setSpindly(spindly);
+
+		if (genObject.hasPath("spindly")) {
+			builder.setSpindly(ConditionData.parseConditionValue(genObject.getValue("spindly")));
+		}
+
+		return builder.build();
 	}
 
 }

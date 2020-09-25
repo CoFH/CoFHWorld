@@ -28,7 +28,7 @@ import java.util.Random;
 
 public class WorldGenAdvLakes extends WorldGen {
 
-	private static final List<WeightedBlock> GAP_BLOCK = Collections.singletonList(WeightedBlock.AIR);
+	private static final List<WeightedBlock> GAP_BLOCK = Collections.singletonList(WeightedBlock.AIR_NORM);
 
 	private final Material[] material;
 	private final List<WeightedBlock> resource;

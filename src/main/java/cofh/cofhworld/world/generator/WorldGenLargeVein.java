@@ -2,7 +2,6 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -16,26 +15,16 @@ public class WorldGenLargeVein extends WorldGen {
 	private final List<WeightedBlock> resource;
 	private final Material[] material;
 	private final INumberProvider veinSize;
-	private ICondition sparse, spindly;
+	private final ICondition sparse, spindly;
 
-	public WorldGenLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials) {
+	public WorldGenLargeVein(List<WeightedBlock> resource, INumberProvider clusterSize, List<Material> materials, ICondition sparse,
+			ICondition spindly) {
 
 		this.resource = resource;
 		veinSize = clusterSize;
 		material = materials.toArray(new Material[0]);
-		this.setSparse(ConstantCondition.TRUE);
-	}
-
-	public WorldGenLargeVein setSpindly(ICondition spindly) {
-
-		this.spindly = spindly;
-		return this;
-	}
-
-	public WorldGenLargeVein setSparse(ICondition sparse) {
-
 		this.sparse = sparse;
-		return this;
+		this.spindly = spindly;
 	}
 
 	@Override

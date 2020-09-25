@@ -28,7 +28,7 @@ public class WorldGenGeode extends WorldGen {
 		this.resource = resource;
 		material = materials.toArray(new Material[0]);
 		outline = cover;
-		filler = Collections.singletonList(WeightedBlock.AIR);
+		filler = Collections.singletonList(WeightedBlock.AIR_NORM);
 		hollow = ConstantCondition.FALSE;
 		this.setWidth(16);
 		this.setHeight(8);
