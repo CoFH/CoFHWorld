@@ -46,7 +46,14 @@ public class GeneratorData {
 
 		String name = def;
 		if (genObject.hasPath("type")) {
-			name = genObject.getString("type");
+			ConfigValue typeVal = genObject.getValue("type");
+			if (typeVal.valueType() == ConfigValueType.STRING) {
+				name = String.valueOf(typeVal.unwrapped());
+			} else if (typeVal.valueType() == ConfigValueType.OBJECT && genObject.hasPath("type.name")) {
+				name = genObject.getString("type.name");
+			} else {
+				throw new IGeneratorParser.InvalidGeneratorException("Generator `type` entry not valid", genObject.origin());
+			}
 			if (null == FeatureParser.getGenerator(name)) {
 				log.warn("Unknown generator '{}'! using '{}'", name, def);
 				name = def;
