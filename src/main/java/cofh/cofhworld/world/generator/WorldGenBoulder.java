@@ -2,15 +2,9 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.world.WorldValueCondition;
-import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.data.DataProvider;
-import cofh.cofhworld.data.numbers.operation.MathProvider;
-import cofh.cofhworld.data.numbers.operation.UnaryMathProvider;
-import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.data.numbers.world.DirectionalScanner;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -18,7 +12,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -28,31 +21,31 @@ public class WorldGenBoulder extends WorldGen {
 	private final Material[] material;
 	private final INumberProvider size;
 
-	public List<WeightedBlock> filler = Collections.singletonList(WeightedBlock.AIR_NORM);
-	public ICondition hollow = ConstantCondition.FALSE;
-	public INumberProvider hollowAmt = new UniformRandomProvider(0, 0.1665f);
+	private final List<WeightedBlock> filler;
+	private final ICondition hollow;
+	private final INumberProvider hollowAmt;
 
-	public INumberProvider quantity = new ConstantProvider(3);
+	private final INumberProvider quantity;
 
-	public INumberProvider xVar = new MathProvider( // -radius-x / 2 to radius-x / 2 inclusive
-			new UnaryMathProvider(new UnaryMathProvider(new DataProvider("radius-x"), "INCREMENT"), "NEGATE"),
-			new UniformRandomProvider(ConstantProvider.ZERO, new UnaryMathProvider(new DataProvider("radius-x"), "DOUBLE")),
-			"ADD"
-	);
-	public INumberProvider yVar = new UniformRandomProvider(-2, 0);
-	public INumberProvider zVar = new MathProvider(// -radius-z / 2 to radius-z / 2 inclusive
-			new UnaryMathProvider(new UnaryMathProvider(new DataProvider("radius-z"), "INCREMENT"), "NEGATE"),
-			new UniformRandomProvider(ConstantProvider.ZERO, new UnaryMathProvider(new DataProvider("radius-z"), "DOUBLE")),
-			"ADD"
-	);
+	private final INumberProvider xVar;
+	private final INumberProvider yVar;
+	private final INumberProvider zVar;
 
 	// TODO: shapes? sphere, cube, ellipsoid? more?
 
-	public WorldGenBoulder(List<WeightedBlock> resource, INumberProvider minSize, List<Material> materials) {
+	public WorldGenBoulder(List<WeightedBlock> resource, INumberProvider minSize, List<Material> materials, List<WeightedBlock> filler,
+			ICondition hollow, INumberProvider hollowAmt, INumberProvider quantity, INumberProvider xVar, INumberProvider yVar, INumberProvider zVar) {
 
 		this.resource = resource;
 		size = minSize;
 		material = materials.toArray(new Material[0]);
+		this.filler = filler;
+		this.hollow = hollow;
+		this.hollowAmt = hollowAmt;
+		this.quantity = quantity;
+		this.xVar = xVar;
+		this.yVar = yVar;
+		this.zVar = zVar;
 		setOffsetY(new DirectionalScanner(new WorldValueCondition("IS_AIR"), Direction.DOWN, new WorldValueProvider("CURRENT_Y")));
 	}
 

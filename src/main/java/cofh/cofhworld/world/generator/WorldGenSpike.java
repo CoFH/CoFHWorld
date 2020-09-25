@@ -3,16 +3,10 @@ package cofh.cofhworld.world.generator;
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ICondition;
-import cofh.cofhworld.data.condition.operation.BinaryCondition;
-import cofh.cofhworld.data.condition.operation.ComparisonCondition;
 import cofh.cofhworld.data.condition.world.WorldValueCondition;
-import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.data.DataProvider;
-import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
-import cofh.cofhworld.data.numbers.operation.MathProvider;
-import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.data.numbers.world.DirectionalScanner;
+import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -24,60 +18,33 @@ import java.util.Random;
 
 public class WorldGenSpike extends WorldGen {
 
-	private static final INumberProvider SEVEN = new ConstantProvider(7);
-	private static final INumberProvider HALF_SEVEN = new MathProvider(SEVEN, new ConstantProvider(2), "DIVIDE");
-	private static final INumberProvider SEVEN_PLUS_FOUR = new ConstantProvider(7 + 4);
-
 	private final List<WeightedBlock> resource;
 	private final Material[] material;
 
-	public INumberProvider height = new UniformRandomProvider(SEVEN, SEVEN_PLUS_FOUR);
+	private final INumberProvider height;
 
-	public INumberProvider size = new MathProvider(
-			new MathProvider(
-					new DataProvider("height"),
-					HALF_SEVEN,
-					"DIVIDE"),
-			new UniformRandomProvider(0, 2),
-			"ADD");
+	private final  INumberProvider size;
 
-	public INumberProvider yVariance = new ConditionalProvider(
-			new ComparisonCondition(
-					new DataProvider("size"),
-					new ConstantProvider(1),
-					"GREATER_THAN"),
-			new UniformRandomProvider(-1, 3),
-			new ConstantProvider(0));
+	private final  INumberProvider yVariance;
 
-	public ICondition largeSpikes = new BinaryCondition(
-			new ComparisonCondition(new DataProvider("size"), new ConstantProvider(1), "GREATER_THAN"),
-			new ComparisonCondition(new UniformRandomProvider(0, 60), new ConstantProvider(0), "EQUAL_TO"),
-			"AND");
+	private final  ICondition largeSpikes;
 
-	public INumberProvider largeSpikeHeightGain = new UniformRandomProvider(10, 40);
+	private final  INumberProvider largeSpikeHeightGain;
 
-	public INumberProvider layerSize = new ConditionalProvider(
-			new ComparisonCondition(new DataProvider("layer"), new DataProvider("height-gain"), "GREATER_THAN_OR_EQUAL"),
-			new MathProvider(
-					new MathProvider(
-							new ConstantProvider(1),
-							new MathProvider(
-									new MathProvider(
-											new DataProvider("layer"),
-											new DataProvider("height-gain"),
-											"SUBTRACT"),
-									new DataProvider("original-height"),
-									"DIVIDE"),
-							"SUBTRACT"),
-					new DataProvider("size"),
-					"MULTIPLY"),
-			new ConstantProvider(1));
+	private final  INumberProvider layerSize;
 
-	public WorldGenSpike(List<WeightedBlock> resource, List<Material> materials) {
+	public WorldGenSpike(List<WeightedBlock> resource, List<Material> materials, INumberProvider height, INumberProvider size,
+			INumberProvider yVariance, ICondition largeSpikes, INumberProvider largeSpikeHeightGain, INumberProvider layerSize) {
 
 		this.resource = resource;
 		material = materials.toArray(new Material[0]);
-		setOffsetY(new DirectionalScanner(new WorldValueCondition("IS_AIR"), Direction.DOWN, new ConstantProvider(256)));
+		this.height = height;
+		this.size = size;
+		this.yVariance = yVariance;
+		this.largeSpikes = largeSpikes;
+		this.largeSpikeHeightGain = largeSpikeHeightGain;
+		this.layerSize = layerSize;
+		setOffsetY(new DirectionalScanner(new WorldValueCondition("IS_AIR"), Direction.DOWN, new WorldValueProvider("CURRENT_Y")));
 	}
 
 	@Override

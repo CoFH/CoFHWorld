@@ -2,10 +2,8 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.world.WorldValueCondition;
-import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -17,22 +15,23 @@ import java.util.Random;
 
 public class WorldGenDecoration extends WorldGen {
 
-	private static final ICondition SEE_SKY = new WorldValueCondition("CAN_SEE_SKY"), CHECK_STAY = new WorldValueCondition("BLOCK_CAN_PLACE");
-
 	private final List<WeightedBlock> resource;
 	private final Material[] material;
 	private final Material[] surface;
 	private final INumberProvider clusterSize;
-	private ICondition seeSky, checkStay;
-	private INumberProvider stackHeight;
+	private final ICondition seeSky, checkStay;
+	private final INumberProvider stackHeight;
 
-	public WorldGenDecoration(List<WeightedBlock> blocks, INumberProvider count, List<Material> materials, List<Material> on) {
+	public WorldGenDecoration(List<WeightedBlock> blocks, INumberProvider count, List<Material> materials, List<Material> on, ICondition seeSky,
+			ICondition checkStay, INumberProvider stackHeight) {
 
 		resource = blocks;
 		clusterSize = count;
 		material = materials.toArray(new Material[0]);
 		surface = on == null ? null : on.toArray(new Material[0]);
-		this.setStackHeight(1).setSeeSky(SEE_SKY).setCheckStay(CHECK_STAY);
+		this.seeSky = seeSky;
+		this.checkStay = checkStay;
+		this.stackHeight = stackHeight;
 		this.setOffsetX(new SkellamRandomProvider(8));
 		this.setOffsetY(new SkellamRandomProvider(4));
 		this.setOffsetZ(new SkellamRandomProvider(8));
@@ -81,41 +80,6 @@ public class WorldGenDecoration extends WorldGen {
 			data.setPosition(getNewOffset(world, rand, data));
 		}
 		return r;
-	}
-
-	@Deprecated
-	public WorldGenDecoration setSeeSky(boolean seeSky) {
-
-		return setSeeSky(seeSky ? SEE_SKY : ConstantCondition.TRUE);
-	}
-
-	@Deprecated
-	public WorldGenDecoration setCheckStay(boolean checkStay) {
-
-		return setCheckStay(checkStay ? CHECK_STAY : ConstantCondition.TRUE);
-	}
-
-	public WorldGenDecoration setSeeSky(ICondition seeSky) {
-
-		this.seeSky = seeSky;
-		return this;
-	}
-
-	public WorldGenDecoration setCheckStay(ICondition checkStay) {
-
-		this.checkStay = checkStay;
-		return this;
-	}
-
-	public WorldGenDecoration setStackHeight(int stackHeight) {
-
-		return this.setStackHeight(new ConstantProvider(stackHeight));
-	}
-
-	public WorldGenDecoration setStackHeight(INumberProvider stackHeight) {
-
-		this.stackHeight = stackHeight;
-		return this;
 	}
 
 }
