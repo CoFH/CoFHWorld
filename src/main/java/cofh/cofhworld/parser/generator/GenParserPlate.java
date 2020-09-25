@@ -20,7 +20,7 @@ import java.util.List;
 
 public class GenParserPlate implements IGeneratorParser {
 
-	private static String[] FIELDS = new String[] { "block", "radius" };
+	private static String[] FIELDS = new String[] { "block", "material", "radius" };
 
 	@Override
 	public String[] getRequiredFields() {

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class GenParserDecoration implements IGeneratorParser {
 
-	private static String[] FIELDS = new String[] { "block", "quantity" };
+	private static String[] FIELDS = new String[] { "block", "material", "quantity" };
 
 	@Override
 	public String[] getRequiredFields() {

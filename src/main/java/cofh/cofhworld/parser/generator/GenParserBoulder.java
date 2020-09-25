@@ -15,7 +15,7 @@ import java.util.List;
 
 public class GenParserBoulder implements IGeneratorParser {
 
-	private static String[] FIELDS = new String[] { "block", "diameter" };
+	private static String[] FIELDS = new String[] { "block", "material", "diameter" };
 
 	@Override
 	public String[] getRequiredFields() {

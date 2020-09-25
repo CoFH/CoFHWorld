@@ -20,7 +20,7 @@ import java.util.List;
 
 public class GenParserSpout implements IGeneratorParser {
 
-	private static String[] FIELDS = new String[] { "block", "radius", "height" };
+	private static String[] FIELDS = new String[] { "block", "material", "radius", "height" };
 
 	@Override
 	public String[] getRequiredFields() {

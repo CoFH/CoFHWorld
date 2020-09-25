@@ -33,11 +33,11 @@ public class GenParserStalagmite extends AbstractGenParserBlock {
 		ArrayList<Material> surfList = new ArrayList<>();
 		{
 			boolean has = genObject.hasPath("surface");
-			if (!has || !BlockData.parseMaterialList(genObject.getValue("surface"), surfList)) {
+			if (has && !BlockData.parseMaterialList(genObject.getValue("surface"), surfList)) {
 				ConfigOrigin origin = (has ? genObject.getValue("surface").origin() : genObject.origin());
 				log.error("Invalid `surface` specified for generator '{}' on line {}!", generatorName, origin.lineNumber());
 				throw new InvalidGeneratorException(has ? "Invalid `surface` specified" : "`surface` not spcified!", origin);
-			}
+			} // TODO: make required?
 		}
 		WorldGenStalagmite r = new WorldGenStalagmite(resList, matList, surfList, stalactite ? Direction.UP : Direction.DOWN);
 		{
