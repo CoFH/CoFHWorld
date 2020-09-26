@@ -3,9 +3,9 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.GeneratorData;
 import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.generator.builders.BuilderSequential;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
-import cofh.cofhworld.world.generator.WorldGenSequential;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
@@ -54,7 +54,10 @@ public class GenParserSequential implements IGeneratorParser {
 			throw new InvalidGeneratorException("Invalid object type", genData.origin());
 		}
 
-		return new WorldGenSequential(gens);
+		BuilderSequential builder = new BuilderSequential();
+		builder.setGenerators(gens);;
+
+		return builder.build();
 	}
 
 }

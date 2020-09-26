@@ -2,15 +2,8 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
-import cofh.cofhworld.data.condition.operation.BinaryCondition;
-import cofh.cofhworld.data.condition.operation.ComparisonCondition;
-import cofh.cofhworld.data.condition.random.RandomCondition;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.data.DataProvider;
-import cofh.cofhworld.data.numbers.operation.UnaryMathProvider;
-import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
@@ -25,30 +18,27 @@ public class WorldGenSmallTree extends WorldGen {
 	private final List<WeightedBlock> leaves;
 	private final List<WeightedBlock> trunk;
 	private final Material[] material;
-	public Material[] surface = null;
-	public INumberProvider height = new UniformRandomProvider(5, 5 + 3);
+	private final Material[] surface;
+	private final INumberProvider height;
 
-	public ICondition treeChecks = ConstantCondition.TRUE;
-	public ICondition waterLoving = ConstantCondition.FALSE; // TODO: more work on this logic
-	public ICondition relaxedGrowth = ConstantCondition.FALSE;
+	private final ICondition treeChecks;
+	private final ICondition waterLoving; // TODO: more work on this logic
+	private final ICondition relaxedGrowth;
 
-	public ICondition leafVariance = new BinaryCondition(
-			new BinaryCondition(
-					new ComparisonCondition(new UnaryMathProvider(new DataProvider("layer-x"),"abs"), new DataProvider("radius"),"NOT_EQUAL"),
-					new ComparisonCondition(new UnaryMathProvider(new DataProvider("layer-z"),"abs"), new DataProvider("radius"),"NOT_EQUAL"),
-					"OR"),
-			new BinaryCondition(
-					new RandomCondition(),
-					new ComparisonCondition(new DataProvider("layer"), new DataProvider("height"), "NOT_EQUAL"),
-					"AND"),
-			"OR"
-	);
+	private final ICondition leafVariance;
 
-	public WorldGenSmallTree(List<WeightedBlock> resource, List<WeightedBlock> leaf, List<Material> materials) {
+	public WorldGenSmallTree(List<WeightedBlock> resource, List<WeightedBlock> leaf, List<Material> materials, Material[] surface,
+			INumberProvider height, ICondition treeChecks, ICondition waterLoving, ICondition relaxedGrowth, ICondition leafVariance) {
 
 		leaves = leaf;
 		trunk = resource;
 		material = materials.toArray(new Material[0]);
+		this.surface = surface;
+		this.height = height;
+		this.treeChecks = treeChecks;
+		this.waterLoving = waterLoving;
+		this.relaxedGrowth = relaxedGrowth;
+		this.leafVariance = leafVariance;
 	}
 
 	protected int getLeafRadius(int height, int level, Boolean check) {

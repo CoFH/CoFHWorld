@@ -3,6 +3,7 @@ package cofh.cofhworld.parser.generator;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.init.WorldProps;
 import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.generator.builders.BuilderStructure;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.EnumData;
 import cofh.cofhworld.parser.variables.NumberData;
@@ -12,8 +13,6 @@ import cofh.cofhworld.util.random.WeightedEnum;
 import cofh.cofhworld.util.random.WeightedNBTTag;
 import cofh.cofhworld.util.random.WeightedString;
 import cofh.cofhworld.world.generator.WorldGen;
-import cofh.cofhworld.world.generator.WorldGenStructure;
-import com.google.common.collect.Lists;
 import com.typesafe.config.Config;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.Mirror;
@@ -30,16 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GenParserStructure implements IGeneratorParser {
-
-	// @formatter:off
-	protected static ArrayList<WeightedEnum<Rotation>> ALL_ROTATION = Lists.newArrayList(
-			new WeightedEnum<>(Rotation.NONE, 1),
-			new WeightedEnum<>(Rotation.CLOCKWISE_90, 1),
-			new WeightedEnum<>(Rotation.CLOCKWISE_180, 1),
-			new WeightedEnum<>(Rotation.COUNTERCLOCKWISE_90, 1)
-	);
-	// @formatter:on
-	protected static ArrayList<WeightedEnum<Mirror>> NO_MIRROR = new ArrayList<>();
 
 	private static String[] FIELDS = new String[] { "structure" };
 
@@ -90,45 +79,41 @@ public class GenParserStructure implements IGeneratorParser {
 			throw new InvalidGeneratorException("Missing `structure` tag", genObject.origin());
 		}
 
+		BuilderStructure builder = new BuilderStructure();
+		builder.setTemplates(tags);
+
 		matList.clear();
 
-		if (genObject.hasPath("ignored-block") && !BlockData.parseMaterialList(genObject.getValue("ignored-block"), matList)) {
-			log.warn("Error parsing `ignored-block`, generating all template blocks instead");
-			matList.clear();
+		if (genObject.hasPath("ignored-block")) {
+			if (!BlockData.parseMaterialList(genObject.getValue("ignored-block"), matList))
+				log.warn("Error parsing `ignored-block`, a partial list will be used");
+			builder.setIgnoredBlocks(matList);
 		}
-
-		boolean ignoreEntities = false;
 		if (genObject.hasPath("ignore-entities")) {
-			ignoreEntities = genObject.getBoolean("ignore-entities");
+			builder.setIgnoreEntities(genObject.getBoolean("ignore-entities"));
 		}
-
-		WorldGenStructure gen = new WorldGenStructure(tags, matList, ignoreEntities);
 
 		if (genObject.hasPath("integrity")) {
-			gen.setIntegrity(NumberData.parseNumberValue(genObject.getValue("integrity"), 0d, 1.01d)); // ensure we don't accidentally a .999...
+			builder.setIntegrity(NumberData.parseNumberValue(genObject.getValue("integrity"), 0d, 1.01d)); // ensure we don't accidentally a .999...
 		}
 
-		ArrayList<WeightedEnum<Rotation>> rots = ALL_ROTATION;
 		if (genObject.hasPath("rotation")) {
-			rots = new ArrayList<>(4);
+			ArrayList<WeightedEnum<Rotation>> rots = new ArrayList<>(4);
 			if (!EnumData.parseEnumList(genObject.getValue("rotation"), rots, Rotation.class)) {
-				log.warn("Invalid `rotation` list, structure will not be rotated.");
-				rots.clear();
+				log.warn("Invalid `rotation` list, a partial list will be used.");
 			}
+			builder.setRotations(rots);
 		}
 
-		ArrayList<WeightedEnum<Mirror>> mirror = NO_MIRROR;
 		if (genObject.hasPath("mirror")) {
-			mirror = new ArrayList<>(3);
+			ArrayList<WeightedEnum<Mirror>> mirror = new ArrayList<>(3);
 			if (!EnumData.parseEnumList(genObject.getValue("mirror"), mirror, Mirror.class)) {
-				log.warn("Invalid `mirror` list, structure will not be mirrored.");
-				mirror.clear();
+				log.warn("Invalid `mirror` list, a partial list will be used");
 			}
+			builder.setMirrors(mirror);
 		}
 
-		gen.setDetails(rots, mirror);
-
-		return gen;
+		return builder.build();
 	}
 
 	@Override
