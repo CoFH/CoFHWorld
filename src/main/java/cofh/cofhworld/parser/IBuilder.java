@@ -1,5 +1,7 @@
 package cofh.cofhworld.parser;
 
+import javax.annotation.Nonnull;
+
 public interface IBuilder<T> {
 
 	/**
@@ -8,5 +10,6 @@ public interface IBuilder<T> {
 	 *
 	 * @return the configured instance.
 	 */
+	@Nonnull
 	T build();
 }

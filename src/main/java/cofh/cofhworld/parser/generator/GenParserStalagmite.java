@@ -2,12 +2,12 @@ package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
+import cofh.cofhworld.parser.generator.builders.BuilderStalagmite;
 import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.ConditionData;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGen;
-import cofh.cofhworld.world.generator.WorldGenStalagmite;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigOrigin;
 import net.minecraft.util.Direction;
@@ -39,25 +39,25 @@ public class GenParserStalagmite extends AbstractGenParserBlock {
 				throw new InvalidGeneratorException(has ? "Invalid `surface` specified" : "`surface` not spcified!", origin);
 			} // TODO: make required?
 		}
-		WorldGenStalagmite r = new WorldGenStalagmite(resList, matList, surfList, stalactite ? Direction.UP : Direction.DOWN);
-		{
-			if (genObject.hasPath("height")) {
-				r.height = NumberData.parseNumberValue(genObject.getValue("height"));
-			}
-			if (genObject.hasPath("size")) {
-				r.size = NumberData.parseNumberValue(genObject.getValue("size"));
-			}
-			if (genObject.hasPath("smooth")) {
-				r.smooth = ConditionData.parseConditionValue(genObject.getValue("smooth"));
-			}
-			if (genObject.hasPath("fat")) {
-				r.fat = ConditionData.parseConditionValue(genObject.getValue("fat"));
-			}
-			if (genObject.hasPath("alt-sinc")) {
-				r.altSinc = ConditionData.parseConditionValue(genObject.getValue("alt-sinc"));
-			}
+		BuilderStalagmite builder = new BuilderStalagmite(resList, matList);
+		builder.setSurface(surfList);
+		builder.setDirection(stalactite ? Direction.UP : Direction.DOWN);
+		if (genObject.hasPath("height")) {
+			builder.setHeight(NumberData.parseNumberValue(genObject.getValue("height")));
 		}
-		return r;
+		if (genObject.hasPath("size")) {
+			builder.setSize(NumberData.parseNumberValue(genObject.getValue("size")));
+		}
+		if (genObject.hasPath("smooth")) {
+			builder.setSmooth(ConditionData.parseConditionValue(genObject.getValue("smooth")));
+		}
+		if (genObject.hasPath("fat")) {
+			builder.setFat(ConditionData.parseConditionValue(genObject.getValue("fat")));
+		}
+		if (genObject.hasPath("alt-sinc")) {
+			builder.setAltSinc(ConditionData.parseConditionValue(genObject.getValue("alt-sinc")));
+		}
+		return builder.build();
 	}
 
 }

@@ -2,16 +2,10 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.block.MaterialPropertyMaterial;
 import cofh.cofhworld.data.condition.ICondition;
-import cofh.cofhworld.data.condition.operation.BinaryCondition;
-import cofh.cofhworld.data.condition.operation.ComparisonCondition;
-import cofh.cofhworld.data.condition.random.RandomCondition;
-import cofh.cofhworld.data.condition.world.MaterialCondition;
 import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.data.DataProvider;
 import cofh.cofhworld.data.numbers.world.DirectionalScanner;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -22,37 +16,28 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class WorldGenAdvLakes extends WorldGen {
 
-	private static final List<WeightedBlock> GAP_BLOCK = Collections.singletonList(WeightedBlock.AIR_NORM);
-
 	private final Material[] material;
 	private final List<WeightedBlock> resource;
 
-	private List<WeightedBlock> gapBlock = GAP_BLOCK;
+	private final List<WeightedBlock> filler;
 
-	private List<WeightedBlock> outlineBlock = null;
-	private ICondition outlineCondition = new BinaryCondition(
-			new BinaryCondition(
-					new ComparisonCondition(
-							new DataProvider("layer"),
-							new DataProvider("fill-height"),
-							"LESS_THAN"),
-					new RandomCondition(),
-					"AND"),
-			new MaterialCondition(Collections.singletonList(new MaterialPropertyMaterial(true, "SOLID"))),
-			"AND");
+	private final List<WeightedBlock> outline;
+	private final ICondition outlineCondition;
 
 	private INumberProvider width;
 	private INumberProvider height;
 
-	public WorldGenAdvLakes(List<WeightedBlock> resource, List<Material> materials) {
+	public WorldGenAdvLakes(List<WeightedBlock> resource, List<Material> materials, List<WeightedBlock> filler, List<WeightedBlock> outline, ICondition outlineCondition) {
 
 		this.resource = resource;
+		this.filler = filler;
+		this.outline = outline;
+		this.outlineCondition = outlineCondition;
 		if (materials == null) {
 			material = null;
 		} else {
@@ -89,14 +74,25 @@ public class WorldGenAdvLakes extends WorldGen {
 		boolean[] spawnBlock = new boolean[width * width * height];
 
 		final int W = width - 1, H = height - 1;
+		// width 16; height 8
 
 		for (int i = 0, e = rand.nextInt(4) + 4; i < e; ++i) {
 			double xSize = rand.nextDouble() * 6.0D + 3.0D;
+			// 6 + 3 = 9; 6 * 2 = 12; + 3 = 15; 9 * 2 = 18
 			double ySize = rand.nextDouble() * 4.0D + 2.0D;
+			// 4 + 2 = 6; 4 * 2 = 8; + 2 = 10; 6 * 2 = 12
 			double zSize = rand.nextDouble() * 6.0D + 3.0D;
+			// (WIDTH + WIDTH_OFFSET * 2) / 3 + (WIDTH + WIDTH_OFFSET * 2) / 6?
 			double xCenter = rand.nextDouble() * (width - xSize - 2.0D) + 1.0D + xSize / 2.0D;
+			// (16 - 9 - 2) + 1 + 4.5 = 10.5; (16 - 3 - 2) + 1 + 1.5 = 13.5;
+			// ( 0 - 0 - 0) + 1 + 4.5 =  5.5; ( 0 - 0 - 0) + 1 + 1.5 =  2.5;
+			// ( 8 - 4.5 - 1) + 1 + 4.5 =  8; ( 8 - 1.5 - 1) + 1 + 1.5 =  8; equally distributed around center width
 			double yCenter = rand.nextDouble() * (height - ySize - 4.0D) + 2.0D + ySize / 2.0D;
+			// (8 - 6 - 4) + 2 + 3 = 3; (8 - 2 - 4) + 2 + 1 = 5;
+			// (0 - 0 - 0) + 2 + 3 = 5; (0 - 0 - 0) + 2 + 1 = 3;
+			// (4 - 3 - 2) + 2 + 3 = 4; (4 - 1 - 2) + 2 + 1 = 4; equally distributed around center height.
 			double zCenter = rand.nextDouble() * (width - zSize - 2.0D) + 1.0D + zSize / 2.0D;
+			// (WIDTH - zSize - WIDTH_OFFSET * 2) + WIDTH_OFFSET + zSize / 2; ?
 
 			for (int x = 1; x < W; ++x) {
 				for (int z = 1; z < W; ++z) {
@@ -146,7 +142,7 @@ public class WorldGenAdvLakes extends WorldGen {
 						if (y < heightOff) {
 							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, material, resource);
 						} else if (canGenerateInBlock(world, xStart + x, yStart + y, zStart + z, material)) {
-							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, gapBlock);
+							generateBlock(world, rand, xStart + x, yStart + y, zStart + z, filler);
 						}
 					}
 				}
@@ -166,7 +162,7 @@ public class WorldGenAdvLakes extends WorldGen {
 			}
 		}
 
-		if (outlineBlock != null && outlineBlock.size() > 0) {
+		if (outline != null && outline.size() > 0) {
 			data.setValue("fill-height", heightOff).setValue("width", width).setValue("height", height);
 			for (x = 0; x < width; ++x) {
 				for (z = 0; z < width; ++z) {
@@ -176,7 +172,7 @@ public class WorldGenAdvLakes extends WorldGen {
 						if (flag) {
 							data.setValue("layer", y).setPosition(new BlockPos(xStart + x, yStart + y, zStart + z));
 							if (outlineCondition.checkCondition(world, rand, data))
-								generateBlock(world, rand, xStart + x, yStart + y, zStart + z, outlineBlock);
+								generateBlock(world, rand, xStart + x, yStart + y, zStart + z, outline);
 						}
 					}
 				}
@@ -207,24 +203,6 @@ public class WorldGenAdvLakes extends WorldGen {
 	public WorldGenAdvLakes setHeight(INumberProvider height) {
 
 		this.height = height;
-		return this;
-	}
-
-	public WorldGenAdvLakes setOutlineCondition(ICondition outline) {
-
-		this.outlineCondition = outline;
-		return this;
-	}
-
-	public WorldGenAdvLakes setOutlineBlock(List<WeightedBlock> blocks) {
-
-		this.outlineBlock = blocks;
-		return this;
-	}
-
-	public WorldGenAdvLakes setGapBlock(List<WeightedBlock> blocks) {
-
-		this.gapBlock = blocks;
 		return this;
 	}
 

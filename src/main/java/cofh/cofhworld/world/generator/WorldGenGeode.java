@@ -2,14 +2,12 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
 import net.minecraft.world.IWorld;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -18,18 +16,19 @@ public class WorldGenGeode extends WorldGen {
 	private final List<WeightedBlock> resource;
 	private final List<WeightedBlock> outline;
 	private final Material[] material;
-	private List<WeightedBlock> filler;
-	private ICondition hollow;
+	private final List<WeightedBlock> filler;
+	private final ICondition hollow;
+
 	private INumberProvider width;
 	private INumberProvider height;
 
-	public WorldGenGeode(List<WeightedBlock> resource, List<Material> materials, List<WeightedBlock> cover) {
+	public WorldGenGeode(List<WeightedBlock> resource, List<Material> materials, List<WeightedBlock> cover, List<WeightedBlock> filler, ICondition hollow) {
 
 		this.resource = resource;
 		material = materials.toArray(new Material[0]);
 		outline = cover;
-		filler = Collections.singletonList(WeightedBlock.AIR_NORM);
-		hollow = ConstantCondition.FALSE;
+		this.filler = filler;
+		this.hollow = hollow;
 		this.setWidth(16);
 		this.setHeight(8);
 	}
@@ -161,18 +160,6 @@ public class WorldGenGeode extends WorldGen {
 	public WorldGenGeode setHeight(INumberProvider height) {
 
 		this.height = height;
-		return this;
-	}
-
-	public WorldGenGeode setHollow(ICondition hollow) {
-
-		this.hollow = hollow;
-		return this;
-	}
-
-	public WorldGenGeode setFillBlock(List<WeightedBlock> blocks) {
-
-		this.filler = blocks;
 		return this;
 	}
 

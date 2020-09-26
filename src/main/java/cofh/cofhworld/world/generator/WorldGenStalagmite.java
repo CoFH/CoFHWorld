@@ -2,14 +2,11 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.data.DataProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
-import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.data.numbers.world.DirectionalScanner;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -26,25 +23,25 @@ public class WorldGenStalagmite extends WorldGen {
 	protected final Material[] material;
 	private final Direction direction;
 
-	public INumberProvider height = new UniformRandomProvider(7, 7 + 4);
-	public INumberProvider size = new MathProvider(
-			new MathProvider(
-					new DataProvider("height"),
-					new ConstantProvider(5),
-					"DIVIDE"),
-			new UniformRandomProvider(0, 2),
-			"ADD");
+	private final INumberProvider height;
+	private final INumberProvider size;
 
-	public ICondition fat = ConstantCondition.TRUE;
-	public ICondition smooth = ConstantCondition.FALSE;
-	public ICondition altSinc = ConstantCondition.FALSE;
+	private final ICondition fat;
+	private final ICondition smooth;
+	private final ICondition altSinc;
 
-	public WorldGenStalagmite(List<WeightedBlock> resource, List<Material> surface, List<Material> materials, Direction direction) {
+	public WorldGenStalagmite(List<WeightedBlock> resource, List<Material> surface, List<Material> materials, Direction direction,
+			INumberProvider height, INumberProvider size, ICondition fat, ICondition smooth, ICondition altSinc) {
 
 		this.resource = resource;
-		this.surface = surface.toArray(new Material[0]);
+		this.surface = surface == null ? null : surface.toArray(new Material[0]);
 		material = materials.toArray(new Material[0]);
 		this.direction = direction;
+		this.height = height;
+		this.size = size;
+		this.fat = fat;
+		this.smooth = smooth;
+		this.altSinc = altSinc;
 		setOffsetY(new DirectionalScanner(
 				new WorldValueCondition("IS_AIR"),
 				direction,
