@@ -1,55 +1,31 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.Field.Type;
+import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderDecoration;
-import cofh.cofhworld.parser.variables.BlockData;
-import cofh.cofhworld.parser.variables.ConditionData;
-import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.world.generator.WorldGen;
-import com.typesafe.config.Config;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-
-public class GenParserDecoration implements IGeneratorParser {
+public class GenParserDecoration extends AbstractGenParserResource {
 
 	private static String[] FIELDS = new String[] { "block", "material", "quantity" };
 
 	@Override
-	public String[] getRequiredFields() {
+	public FieldBuilder getFields(FieldBuilder fields) {
 
-		return FIELDS;
-	}
+		fields = super.getFields(fields);
+		fields.setBuilder(BuilderDecoration::new);
 
-	@Override
-	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
+		fields.addRequiredField("quantity", Type.NUMBER, BuilderDecoration::setSize);
 
-		BuilderDecoration builder = new BuilderDecoration(resList, matList);
+		fields.addOptionalField("stack-height", Type.NUMBER, BuilderDecoration::setStackHeight);
 
-		builder.setSize(NumberData.parseNumberValue(genObject.getValue("quantity")));
+		fields.addOptionalField("surface", Type.MATERIAL_LIST, BuilderDecoration::setSurface);
 
-		ArrayList<Material> list = new ArrayList<>();
-		if (genObject.hasPath("surface")) {
-			if (!BlockData.parseMaterialList(genObject.getValue("surface"), list)) {
-				log.warn("Entry specifies invalid surface for 'decoration' generator! A partial list will be used!");
-			}
-			builder.setSurface(list);
-		}
-		if (genObject.hasPath("see-sky")) {
-			builder.setSeeSky(ConditionData.parseConditionValue(genObject.getValue("see-sky")));
-		}
-		if (genObject.hasPath("check-stay")) {
-			builder.setCheckStay(ConditionData.parseConditionValue(genObject.getValue("check-stay")));
-		}
-		if (genObject.hasPath("stack-height")) {
-			builder.setStackHeight(NumberData.parseNumberValue(genObject.getValue("stack-height")));
-		}
-		return builder.build();
+		fields.addOptionalField("see-sky", Type.CONDITION, BuilderDecoration::setSeeSky);
+
+		fields.addOptionalField("check-stay", Type.CONDITION, BuilderDecoration::setCheckStay);
+
+		return fields;
 	}
 
 }

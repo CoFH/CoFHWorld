@@ -1,45 +1,25 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.shape.Shape2D;
-import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.Field.Type;
+import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderSpout;
-import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.parser.variables.ShapeData;
-import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.world.generator.WorldGen;
-import com.typesafe.config.Config;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-
-public class GenParserSpout implements IGeneratorParser {
-
-	private static String[] FIELDS = new String[] { "block", "material", "radius", "height" };
+public class GenParserSpout extends AbstractGenParserResource {
 
 	@Override
-	public String[] getRequiredFields() {
+	public FieldBuilder getFields(FieldBuilder fields) {
 
-		return FIELDS;
-	}
+		fields = super.getFields(fields);
+		fields.setBuilder(BuilderSpout::new);
 
-	@Override
-	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
+		fields.addRequiredField("radius", Type.NUMBER, BuilderSpout::setRadius);
 
-		BuilderSpout builder = new BuilderSpout(resList, matList);
+		fields.addOptionalField("height", Type.NUMBER, BuilderSpout::setHeight);
 
-		builder.setRadius(NumberData.parseNumberValue(genObject.getValue("radius"), 0, 64));
-		builder.setHeight(NumberData.parseNumberValue(genObject.getValue("height")));
+		fields.addOptionalField("shape", Type.SHAPE_2D, BuilderSpout::setShape);
 
-		if (genObject.hasPath("shape")) {
-			Shape2D shape = ShapeData.parse2DShapeEntry(genObject.getValue("shape"));
-			if (shape != null) {
-				builder.setShape(shape);
-			}
-		}
-		return builder.build();
+		return fields;
 	}
 
 }

@@ -1,53 +1,26 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.data.shape.Shape2D;
-import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.Field.Type;
+import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderPlate;
-import cofh.cofhworld.parser.variables.ConditionData;
-import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.parser.variables.ShapeData;
-import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.world.generator.WorldGen;
-import com.typesafe.config.Config;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-
-public class GenParserPlate implements IGeneratorParser {
-
-	private static String[] FIELDS = new String[] { "block", "material", "radius" };
+public class GenParserPlate extends AbstractGenParserResource {
 
 	@Override
-	public String[] getRequiredFields() {
+	public FieldBuilder getFields(FieldBuilder fields) {
 
-		return FIELDS;
-	}
+		fields = super.getFields(fields);
+		fields.setBuilder(BuilderPlate::new);
 
-	@Override
-	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
+		fields.addRequiredField("radius", Type.NUMBER, BuilderPlate::setRadius);
 
-		BuilderPlate builder = new BuilderPlate(resList, matList);
+		fields.addOptionalField("height", Type.NUMBER, BuilderPlate::setHeight);
+		fields.addOptionalField("slim", Type.CONDITION, BuilderPlate::setSlim);
 
-		builder.setRadius(NumberData.parseNumberValue(genObject.getValue("radius"), 0, 32));
+		fields.addOptionalField("shape", Type.SHAPE_2D, BuilderPlate::setShape);
 
-		if (genObject.hasPath("height")) {
-			builder.setHeight(NumberData.parseNumberValue(genObject.getValue("height"), 0, 64));
-		}
-
-		if (genObject.hasPath("slim")) {
-			builder.setSlim(ConditionData.parseConditionValue(genObject.getValue("slim")));
-		}
-
-		if (genObject.hasPath("shape")) {
-			Shape2D shape = ShapeData.parse2DShapeEntry(genObject.getValue("shape"));
-			if (shape != null) {
-				builder.setShape(shape);
-			}
-		}
-		return builder.build();
+		return fields;
 	}
 
 }

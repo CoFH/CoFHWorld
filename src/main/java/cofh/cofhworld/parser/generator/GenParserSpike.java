@@ -1,46 +1,29 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
+import cofh.cofhworld.parser.Field.Type;
+import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderSpike;
-import cofh.cofhworld.parser.variables.ConditionData;
-import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.world.generator.WorldGen;
-import com.typesafe.config.Config;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-
-public class GenParserSpike extends AbstractGenParserBlock {
+public class GenParserSpike extends AbstractGenParserResource {
 
 	@Override
-	@Nonnull
-	public WorldGen parseGenerator(String generatorName, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) {
+	public FieldBuilder getFields(FieldBuilder fields) {
 
-		BuilderSpike r = new BuilderSpike(resList, matList);
-		{
-			if (genObject.hasPath("height")) {
-				r.setHeight(NumberData.parseNumberValue(genObject.getValue("height")));
-			}
-			if (genObject.hasPath("size")) {
-				r.setSize(NumberData.parseNumberValue(genObject.getValue("size")));
-			}
-			if (genObject.hasPath("variance-y")) {
-				r.setyVariance(NumberData.parseNumberValue(genObject.getValue("variance-y")));
-			}
-			if (genObject.hasPath("layer-size")) {
-				r.setLayerSize(NumberData.parseNumberValue(genObject.getValue("layer-size")));
-			}
-			if (genObject.hasPath("large-spikes")) {
-				r.setLargeSpikes(ConditionData.parseConditionValue(genObject.getValue("large-spikes")));
-			}
-			if (genObject.hasPath("large-spike-height-gain")) {
-				r.setLargeSpikeHeightGain(NumberData.parseNumberValue(genObject.getValue("large-spike-height-gain")));
-			}
-		}
-		return r.build();
+		fields = super.getFields(fields);
+		fields.setBuilder(BuilderSpike::new);
+
+		fields.addOptionalField("height", Type.NUMBER, BuilderSpike::setHeight);
+		fields.addOptionalField("size", Type.NUMBER, BuilderSpike::setSize);
+
+		fields.addOptionalField("variance-y", Type.NUMBER, BuilderSpike::setyVariance);
+
+		fields.addOptionalField("layer-size", Type.NUMBER, BuilderSpike::setLayerSize);
+
+		fields.addOptionalField("large-spike", Type.CONDITION, BuilderSpike::setLargeSpikes);
+		fields.addOptionalField("large-spike-height-gain", Type.NUMBER, BuilderSpike::setLargeSpikeHeightGain);
+
+		return fields;
 	}
 
 }

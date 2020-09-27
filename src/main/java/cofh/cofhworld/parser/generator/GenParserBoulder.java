@@ -1,59 +1,31 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.Field.Type;
+import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderBoulder;
-import cofh.cofhworld.parser.variables.ConditionData;
-import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.world.generator.WorldGen;
-import com.typesafe.config.Config;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-
-public class GenParserBoulder implements IGeneratorParser {
-
-	private static String[] FIELDS = new String[] { "block", "material", "diameter" };
+public class GenParserBoulder extends AbstractGenParserResource {
 
 	@Override
-	public String[] getRequiredFields() {
+	public FieldBuilder getFields(FieldBuilder fields) {
 
-		return FIELDS;
-	}
+		fields = super.getFields(fields);
+		fields.setBuilder(BuilderBoulder::new);
 
-	@Override
-	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
+		fields.addRequiredField("diameter", Type.NUMBER, BuilderBoulder::setSize);
 
-		BuilderBoulder builder = new BuilderBoulder(resList, matList);
+		fields.addOptionalField("quantity", Type.NUMBER, BuilderBoulder::setQuantity);
 
-		builder.setSize(NumberData.parseNumberValue(genObject.getValue("diameter")));
+		fields.addOptionalField("hollow", Type.CONDITION, BuilderBoulder::setHollow);
+		fields.addOptionalField("hollow-size", Type.NUMBER, BuilderBoulder::setHollowAmt);
+		fields.addOptionalField("filler", Type.BLOCK_LIST, BuilderBoulder::setFiller);
 
-		if (genObject.hasPath("quantity")) {
-			builder.setQuantity(NumberData.parseNumberValue(genObject.getValue("quantity")));
-		}
+		fields.addOptionalField("variance.x", Type.NUMBER, BuilderBoulder::setxVar);
+		fields.addOptionalField("variance.y", Type.NUMBER, BuilderBoulder::setyVar);
+		fields.addOptionalField("variance.z", Type.NUMBER, BuilderBoulder::setzVar);
 
-		// TODO set filler
-
-		if (genObject.hasPath("hollow")) {
-			builder.setHollow(ConditionData.parseConditionValue(genObject.getValue("hollow")));
-		}
-		if (genObject.hasPath("hollow-size")) {
-			builder.setHollowAmt(NumberData.parseNumberValue(genObject.getValue("hollow-size")));
-		}
-
-		if (genObject.hasPath("variance.x")) {
-			builder.setxVar(NumberData.parseNumberValue(genObject.getValue("variance.x")));
-		}
-		if (genObject.hasPath("variance.y")) {
-			builder.setyVar(NumberData.parseNumberValue(genObject.getValue("variance.y")));
-		}
-		if (genObject.hasPath("variance.z")) {
-			builder.setzVar(NumberData.parseNumberValue(genObject.getValue("variance.z")));
-		}
-		return builder.build();
+		return fields;
 	}
 
 }

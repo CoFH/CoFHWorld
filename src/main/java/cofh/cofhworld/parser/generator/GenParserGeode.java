@@ -1,54 +1,24 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.parser.generator.base.AbstractGenParserBlock;
+import cofh.cofhworld.parser.Field.Type;
+import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderGeode;
-import cofh.cofhworld.parser.variables.BlockData;
-import cofh.cofhworld.parser.variables.ConditionData;
-import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.world.generator.WorldGen;
-import com.typesafe.config.Config;
-import net.minecraft.block.Blocks;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-
-public class GenParserGeode extends AbstractGenParserBlock {
+public class GenParserGeode extends AbstractGenParserResource {
 
 	@Override
-	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) {
+	public FieldBuilder getFields(FieldBuilder fields) {
 
-		ArrayList<WeightedBlock> list = new ArrayList<>();
-		if (!genObject.hasPath("crust")) { // TODO: require?
-			log.debug("Entry does not specify crust for 'geode' generator. Using stone.");
-			list.add(new WeightedBlock(Blocks.STONE));
-		} else {
-			if (!BlockData.parseBlockList(genObject.getValue("crust"), list)) {
-				if (list.size() > 0) {
-					log.warn("Entry specifies invalid crust for 'geode' generator! A partial list will be used!");
-				} else {
-					log.warn("Entry specifies invalid crust for 'geode' generator! Using stone!");
-					list.add(new WeightedBlock(Blocks.STONE));
-				}
-			}
-		}
-		BuilderGeode builder = new BuilderGeode(resList, matList);
-		builder.setOutline(list);
-		if (genObject.hasPath("hollow")) {
-			builder.setHollow(ConditionData.parseConditionValue(genObject.getValue("hollow")));
-		}
-		if (genObject.hasPath("filler")) {
-			list = new ArrayList<>();
-			if (!BlockData.parseBlockList(genObject.getValue("filler"), list)) {
-				log.warn("Entry specifies invalid filler for 'geode' generator! Not filling!");
-			} else {
-				builder.setFiller(list);
-			}
-		}
-		return builder.build();
+		fields = super.getFields(fields);
+		fields.setBuilder(BuilderGeode::new);
+
+		fields.addOptionalField("crust", Type.BLOCK_LIST, BuilderGeode::setOutline, "outline"); // TODO: require?
+
+		fields.addOptionalField("hollow", Type.CONDITION, BuilderGeode::setHollow);
+		fields.addOptionalField("filler", Type.BLOCK_LIST, BuilderGeode::setFiller, "fill-block");
+
+		return fields;
 	}
 
 }

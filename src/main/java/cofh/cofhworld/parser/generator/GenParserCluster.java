@@ -1,19 +1,11 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.parser.generator.base.AbstractGenParserClusterCount;
+import cofh.cofhworld.parser.Field.Type;
+import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderCluster;
-import cofh.cofhworld.parser.generator.builders.BuilderCluster.Type;
-import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.world.generator.WorldGen;
-import com.typesafe.config.Config;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-
-public class GenParserCluster extends AbstractGenParserClusterCount {
+public class GenParserCluster extends AbstractGenParserResource {
 
 	private final boolean sparse;
 
@@ -23,13 +15,18 @@ public class GenParserCluster extends AbstractGenParserClusterCount {
 	}
 
 	@Override
-	@Nonnull
-	public WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException {
+	public FieldBuilder getFields(FieldBuilder fields) {
 
-		BuilderCluster builder = new BuilderCluster(resList, matList);
-		builder.setSize(NumberData.parseNumberValue(genObject.getValue("cluster-size"), 0, 64));
-		builder.setType(sparse ? Type.SPARSE : Type.TINY);
-		return builder.build();
+		fields = super.getFields(fields);
+		fields.setBuilder(() -> {
+			BuilderCluster builder = new BuilderCluster();
+			builder.setType(sparse ? BuilderCluster.Type.SPARSE : BuilderCluster.Type.TINY); // TODO: via config?
+			return builder;
+		});
+
+		fields.addRequiredField("cluster-size", Type.NUMBER, BuilderCluster::setSize);
+
+		return fields;
 	}
 
 }
