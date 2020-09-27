@@ -23,6 +23,16 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class BlockData {
 
+	public static List<WeightedBlock> parseBlockList(ConfigValue blockEntry) {
+
+		List<WeightedBlock> list = new ArrayList<>();
+		if (!parseBlockList(blockEntry, list))
+			;
+
+		return list;
+	}
+
+
 	public static boolean parseBlockList(ConfigValue blockEntry, List<WeightedBlock> list) {
 
 		if (blockEntry == null) {
@@ -115,6 +125,15 @@ public class BlockData {
 				log.error("Invalid type for block entry on line {}!", blockEntry.origin().lineNumber());
 				return null;
 		}
+	}
+
+	public static List<Material> parseMaterialList(ConfigValue materialEntry) {
+
+		List<Material> list = new ArrayList<>();
+		if (!parseMaterialList(materialEntry, list))
+			;
+
+		return list;
 	}
 
 	public static boolean parseMaterialList(ConfigValue blockEntry, List<Material> list) {

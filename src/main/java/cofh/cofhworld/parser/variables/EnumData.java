@@ -4,12 +4,25 @@ import cofh.cofhworld.util.random.WeightedEnum;
 import com.typesafe.config.*;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static cofh.cofhworld.CoFHWorld.log;
 
 public class EnumData {
+
+	public static <T extends Enum<T>> List<WeightedEnum<T>> parseEnumList(ConfigValue enumEntry, Class<T> values) {
+
+		ArrayList<WeightedEnum<T>> list = new ArrayList<>();
+		if (parseEnumList(enumEntry, list, values)) {
+			return list;
+		} else {
+			; // TODO: log
+			return list;
+		}
+
+	}
 
 	public static <T extends Enum<T>> boolean parseEnumList(ConfigValue enumEntry, List<WeightedEnum<T>> list, Class<T> values) {
 

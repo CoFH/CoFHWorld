@@ -30,10 +30,10 @@ public class ConditionData {
 				if ("random".equalsIgnoreCase(value)) {
 					return new RandomCondition();
 				} else {
-					return new ConstantCondition(Boolean.parseBoolean(value));
+					return Boolean.parseBoolean(value) ? ConstantCondition.TRUE : ConstantCondition.FALSE;
 				}
 			case BOOLEAN:
-				return new ConstantCondition((Boolean) conditionEntry.unwrapped());
+				return ((Boolean) conditionEntry.unwrapped()) ? ConstantCondition.TRUE : ConstantCondition.FALSE;
 			case OBJECT:
 				ConfigObject condProps = (ConfigObject) conditionEntry;
 				Config condObject = ((ConfigObject) conditionEntry).toConfig();

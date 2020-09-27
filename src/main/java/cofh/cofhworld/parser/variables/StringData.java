@@ -4,11 +4,21 @@ import cofh.cofhworld.util.random.WeightedString;
 import com.typesafe.config.*;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 import static cofh.cofhworld.CoFHWorld.log;
 
 public class StringData {
+
+	public static List<WeightedString> parseStringList(ConfigValue stringEntry) {
+
+		List<WeightedString> list = new ArrayList<>();
+		if (!parseStringList(stringEntry, list))
+			;
+
+		return list;
+	}
 
 	public static boolean parseStringList(ConfigValue stringEntry, List<WeightedString> list) {
 
