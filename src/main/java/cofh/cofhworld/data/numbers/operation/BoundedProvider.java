@@ -1,6 +1,7 @@
 package cofh.cofhworld.data.numbers.operation;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.world.IWorldReader;
 
@@ -10,6 +11,11 @@ public class BoundedProvider implements INumberProvider {
 
 	protected final INumberProvider value;
 	protected final INumberProvider min, max;
+
+	public BoundedProvider(INumberProvider value, Number min, Number max) {
+
+		this(value, new ConstantProvider(min), new ConstantProvider(max));
+	}
 
 	public BoundedProvider(INumberProvider value, INumberProvider min, INumberProvider max) {
 
