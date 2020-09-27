@@ -122,6 +122,9 @@ public abstract class WorldGen {
 
 	public static boolean setBlockState(IWorld world, BlockPos pos, BlockState state) {
 
+		int y = pos.getY();
+		if (y < 0 | y > world.getHeight())
+			return false;
 		boolean r = world.setBlockState(pos, state, 2 | 16);
 		if (r && !state.getFluidState().isEmpty()) {
 			world.getPendingFluidTicks().scheduleTick(pos, state.getFluidState().getFluid(), 0);

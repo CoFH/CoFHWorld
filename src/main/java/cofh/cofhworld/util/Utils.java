@@ -6,7 +6,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
-import net.minecraft.world.gen.Heightmap.Type;
 import org.apache.logging.log4j.core.util.Loader;
 
 import java.io.*;
@@ -24,7 +23,7 @@ public class Utils {
 
 	public static int getSurfaceBlockY(IWorldReader world, int x, int z) {
 
-		int y = world.getHeight(Type.OCEAN_FLOOR_WG, x, z);
+		int y = getHighestY(world, x, z);
 
 		BlockPos pos;
 		BlockState state;
@@ -50,7 +49,7 @@ public class Utils {
 
 	public static int getTopBlockY(IWorld world, int x, int z) {
 
-		int y = world.getChunk(new BlockPos(x, 0, z)).getTopFilledSegment() + 16;
+		int y = getHighestY(world, x, z);
 
 		BlockPos pos;
 		BlockState state;
