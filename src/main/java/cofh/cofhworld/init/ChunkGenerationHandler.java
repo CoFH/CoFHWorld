@@ -153,6 +153,12 @@ public class ChunkGenerationHandler {
 
 			return coord.hashCode();
 		}
+
+		@Override
+		public String toString() {
+
+			return coord.toString() + '&' + generatedFeatures.toString();
+		}
 	}
 
 }

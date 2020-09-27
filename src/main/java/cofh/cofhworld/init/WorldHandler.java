@@ -3,7 +3,6 @@ package cofh.cofhworld.init;
 import cofh.cofhworld.CoFHWorld;
 import cofh.cofhworld.init.ChunkGenerationHandler.RetroChunkCoord;
 import cofh.cofhworld.util.ChunkCoord;
-import cofh.cofhworld.util.LinkedHashList;
 import cofh.cofhworld.world.IFeatureGenerator;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -38,7 +37,6 @@ public class WorldHandler {
 
 	private static List<IFeatureGenerator> features = new ArrayList<>();
 	private static Set<String> featureNames = new HashSet<>();
-	private static LinkedHashList<ChunkReference> populatingChunks = new LinkedHashList<>();
 
 	private static List<Runnable> reloadCallbacks = new LinkedList<>();
 
@@ -157,12 +155,11 @@ public class WorldHandler {
 //		}
 //	}
 
-	private int GENERATING = 0;
 	@SubscribeEvent
 	public void handleChunkLoadEvent(ChunkDataEvent.Load event) {
 
-		if (GENERATING != 0) {
-			return; // erm... no.
+		if (event.getStatus() != Type.LEVELCHUNK) {
+			return;
 		}
 		if (event.getWorld() == null) {
 			// ???
@@ -172,12 +169,6 @@ public class WorldHandler {
 		}
 		Dimension dim = event.getWorld().getDimension();
 		CompoundNBT tag = (CompoundNBT) event.getData().get(CoFHWorld.MOD_ID);
-
-		if (tag != null && tag.getBoolean("Populating")) {
-			ChunkReference chunk = new ChunkReference(dim, event.getChunk().getPos().x, event.getChunk().getPos().z);
-			populatingChunks.add(chunk);
-			return;
-		}
 
 		ListNBT list = null;
 		ChunkCoord cCoord = new ChunkCoord(event.getChunk());
@@ -216,7 +207,6 @@ public class WorldHandler {
 		CompoundNBT genTag = event.getData().getCompound(CoFHWorld.MOD_ID);
 
 		if (event.getChunk().getStatus().getType() == Type.PROTOCHUNK) {
-			genTag.putBoolean("Populating", true);
 			return;
 		}
 		if (WorldProps.enableFlatBedrock) {
@@ -230,6 +220,11 @@ public class WorldHandler {
 		genTag.putLong("Hash", genHash);
 
 		event.getData().put(CoFHWorld.MOD_ID, genTag);
+		if (event.getData().contains("Level", NBT.TAG_COMPOUND)) {
+			// forge provides the wrong tag between LOAD and SAVE, so duplicate this over here if it exists just in case it stays wrong or gets fixed.
+			// need to stay consistent somehow.
+			event.getData().getCompound("Level").put(CoFHWorld.MOD_ID, genTag);
+		}
 	}
 
 	@SubscribeEvent
@@ -258,14 +253,9 @@ public class WorldHandler {
 		}
 		SharedSeedRandom random = new SharedSeedRandom();
 		long decorationSeed = random.setDecorationSeed(world.getSeed(), chunkX * 16, chunkZ * 16);
-		try {
-			++GENERATING;
-			for (IFeatureGenerator feature : features) {
-				//FallingBlock.fallInstantly = true;
-				feature.generateFeature(random, chunkX, chunkZ, world, newGen);
-			}
-		} finally {
-			--GENERATING;
+		for (IFeatureGenerator feature : features) {
+			//FallingBlock.fallInstantly = true;
+			feature.generateFeature(random, chunkX, chunkZ, world, newGen);
 		}
 		//FallingBlock.fallInstantly = false;
 	}
@@ -286,17 +276,12 @@ public class WorldHandler {
 		SharedSeedRandom random = new SharedSeedRandom();
 		long decorationSeed = random.setDecorationSeed(world.getSeed(), chunkX * 16, chunkZ * 16);
 		Set<String> genned = chunk.generatedFeatures;
-		try {
-			++GENERATING;
-			for (IFeatureGenerator feature : features) {
-				if (genned.contains(feature.getFeatureName())) {
-					continue;
-				}
-				//FallingBlock.fallInstantly = true;
-				feature.generateFeature(random, chunkX, chunkZ, world, newGen | WorldProps.forceFullRegeneration);
+		for (IFeatureGenerator feature : features) {
+			if (genned.contains(feature.getFeatureName())) {
+				continue;
 			}
-		} finally {
-			--GENERATING;
+			//FallingBlock.fallInstantly = true;
+			feature.generateFeature(random, chunkX, chunkZ, world, newGen | WorldProps.forceFullRegeneration);
 		}
 		//FallingBlock.fallInstantly = false;
 		if (!newGen) {
