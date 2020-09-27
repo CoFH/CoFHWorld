@@ -5,6 +5,7 @@ import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.world.IWorldReader;
 
+import java.util.Objects;
 import java.util.Random;
 
 public class BoundedProvider implements INumberProvider {
@@ -14,7 +15,7 @@ public class BoundedProvider implements INumberProvider {
 
 	public BoundedProvider(INumberProvider value, Number min, Number max) {
 
-		this(value, new ConstantProvider(min), new ConstantProvider(max));
+		this(Objects.requireNonNull(value), new ConstantProvider(min), new ConstantProvider(max));
 	}
 
 	public BoundedProvider(INumberProvider value, INumberProvider min, INumberProvider max) {

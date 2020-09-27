@@ -14,7 +14,7 @@ public class BuilderCluster extends BuilderSize<WorldGenCluster> {
 		this.type = type;
 	}
 
-	public void setSize(INumberProvider value) {
+	public void setSize(INumberProvider size) {
 
 		super.setSize(new BoundedProvider(size, 0, 64));
 	}
