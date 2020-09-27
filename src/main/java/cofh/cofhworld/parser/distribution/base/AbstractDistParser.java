@@ -50,8 +50,4 @@ public abstract class AbstractDistParser implements IDistributionParser {
 	@Nonnull
 	protected abstract Distribution getFeature(String featureName, Config genObject, WorldGen gen, INumberProvider numClusters, boolean retrogen, Logger log);
 
-	protected String getDefaultGenerator() {
-
-		return "cluster";
-	}
 }

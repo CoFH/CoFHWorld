@@ -34,10 +34,4 @@ public class DistParserLargeVein extends AbstractDistParser {
 		return new DistributionLargeVein(featureName, gen, numClusters, minY, retrogen, h, d, vD, hD);
 	}
 
-	@Override
-	protected String getDefaultGenerator() {
-
-		return "large-vein";
-	}
-
 }

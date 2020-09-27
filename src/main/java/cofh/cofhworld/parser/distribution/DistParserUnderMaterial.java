@@ -16,16 +16,17 @@ import java.util.List;
 
 public class DistParserUnderMaterial extends AbstractDistParser {
 
-	public DistParserUnderMaterial() {
-
-	}
-
 	@Override
 	@Nonnull
 	protected Distribution getFeature(String featureName, Config genObject, WorldGen gen, INumberProvider numClusters, boolean retrogen, Logger log) {
 
 		ArrayList<Material> surface = null;
-		if (genObject.hasPath("fluid")) {
+		if (genObject.hasPath("surface")) {
+			surface = new ArrayList<>();
+			if (!BlockData.parseMaterialList(genObject.getValue("surface"), surface)) {
+				log.warn("Invalid surface list! A partial list will be used.");
+			}
+		} else if (genObject.hasPath("fluid")) {
 			surface = new ArrayList<>();
 			if (!BlockData.parseMaterialList(genObject.getValue("fluid"), surface)) {
 				log.warn("Invalid fluid list! A partial list will be used.");
@@ -45,12 +46,6 @@ public class DistParserUnderMaterial extends AbstractDistParser {
 			}
 		}
 		return new DistributionUnderMaterial(featureName, gen, materials, surface, numClusters, retrogen);
-	}
-
-	@Override
-	protected String getDefaultGenerator() {
-
-		return "plate";
 	}
 
 }

@@ -12,6 +12,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,8 +79,8 @@ public class WorldProps {
 				// TODO: convert to `minecraft` directory
 				replaceStandardGenerationValue = config
 						.comment("If TRUE, standard Minecraft ore generation will be REPLACED." +
-								" Configure in the '" + FILE_GEN_STANDARD_INTERNAL + "' file; standard Minecraft defaults have been provided." +
-								" If you rename the '" + FILE_GEN_STANDARD_INTERNAL + "' file, this option WILL NOT WORK.")
+								" Configure in the '" + STANDARD_GEN_FILE_INTERNAL + "' file; standard Minecraft defaults have been provided." +
+								" If you rename the '" + STANDARD_GEN_FILE_INTERNAL + "' file, this option WILL NOT WORK.")
 						.worldRestart()
 						.define("ReplaceStandardGeneration", replaceStandardGeneration);
 
@@ -156,10 +157,10 @@ public class WorldProps {
 		FeatureParser.registerTemplate("uniform", new DistParserUniform());
 		FeatureParser.registerTemplate("surface", new DistParserSurface());
 		FeatureParser.registerTemplate("fractal", new DistParserLargeVein());
-		FeatureParser.registerTemplate("decoration", new DistParserDecoration());
+		FeatureParser.registerTemplate("decoration", new DistParserSurface());
+		FeatureParser.registerTemplate("under-material", new DistParserUnderMaterial());
 		FeatureParser.registerTemplate("underwater", new DistParserUnderMaterial());
 		FeatureParser.registerTemplate("under-fluid", new DistParserUnderMaterial());
-		FeatureParser.registerTemplate("under-material", new DistParserUnderMaterial());
 		FeatureParser.registerTemplate("cave", new DistParserCave());
 		FeatureParser.registerTemplate("sequential", new DistParserSequential());
 		FeatureParser.registerTemplate("custom", new DistParserCustom());
@@ -182,8 +183,8 @@ public class WorldProps {
 		FeatureParser.registerGenerator("stalactite", new GenParserStalagmite(true));
 		FeatureParser.registerGenerator("small-tree", new GenParserSmallTree());
 		FeatureParser.registerGenerator("spout", new GenParserSpout());
-		// meta-generators
 		FeatureParser.registerGenerator("structure", new GenParserStructure());
+		// meta-generators
 		FeatureParser.registerGenerator("sequential", new GenParserSequential());
 		FeatureParser.registerGenerator("consecutive", new GenParserConsecutive());
 
@@ -191,17 +192,21 @@ public class WorldProps {
 
 		configDir = FMLPaths.CONFIGDIR.get().toFile();
 
-		worldGenDir = new File(configDir, "/cofh/world/");
+		try {
+			worldGenDir = new File(configDir, "/cofh/world/").getCanonicalFile();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		worldGenPath = Paths.get(configDir.getPath());
 		try {
-			cannonicalWorldGenDir = worldGenDir.getCanonicalPath();
+			canonicalWorldGenDir = worldGenDir.getCanonicalPath();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
 		if (!worldGenDir.exists()) {
 			try {
-				if (!worldGenDir.mkdir()) {
+				if (!worldGenDir.mkdirs()) {
 					throw new Error("Could not create directory (unspecified error).");
 				} else {
 					log.info("Created world generation directory.");
@@ -211,11 +216,16 @@ public class WorldProps {
 				return;
 			}
 		}
-		standardGenFile = new File(worldGenDir, FILE_GEN_STANDARD_INTERNAL);
+
+		canonicalStandardGenDir = FilenameUtils.normalize(canonicalWorldGenDir + STANDARD_GEN_DIR_INTERNAL);
+		standardGenDir = new File(worldGenDir, STANDARD_GEN_DIR_INTERNAL);
+		standardGenFile = new File(standardGenDir, STANDARD_GEN_FILE_INTERNAL);
 
 		try {
+			if (!standardGenDir.exists() && standardGenDir.mkdirs())
+				log.info("Created standard generation directory.");
 			if (standardGenFile.createNewFile()) {
-				Utils.copyFileUsingStream(PATH_GEN_STANDARD_INTERNAL, standardGenFile);
+				Utils.copyFileUsingStream(STANDARD_GEN_ASSET_INTERNAL, standardGenFile);
 				log.info("Created standard generation json.");
 			} else if (!standardGenFile.exists()) {
 				throw new Error("Unable to create standard generation json (unspecified error).");
@@ -233,11 +243,15 @@ public class WorldProps {
 	/* WORLD */
 	public static Path worldGenPath;
 	public static File worldGenDir;
-	public static String cannonicalWorldGenDir;
+	public static String canonicalWorldGenDir;
+
+	public static File standardGenDir;
+	public static String canonicalStandardGenDir;
 	public static File standardGenFile;
 
-	public static final String FILE_GEN_STANDARD_INTERNAL = "minecraft.json";
-	public static final String PATH_GEN_STANDARD_INTERNAL = "assets/cofhworld/world/" + FILE_GEN_STANDARD_INTERNAL;
+	public static final String STANDARD_GEN_DIR_INTERNAL = "/minecraft/";
+	public static final String STANDARD_GEN_FILE_INTERNAL = "minecraft.json";
+	public static final String STANDARD_GEN_ASSET_INTERNAL = "assets/cofhworld/world/" + STANDARD_GEN_FILE_INTERNAL;
 
 	public static BooleanValue disableFeatureGeneration;
 	public static boolean replaceStandardGeneration = false;

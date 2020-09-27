@@ -80,6 +80,17 @@ public class FeatureParser {
 	public static void addFiles(ArrayList<File> list, File folder) {
 
 		final String logPath = WorldProps.worldGenPath.relativize(Paths.get(folder.getPath())).toString();
+
+		if (!WorldProps.replaceStandardGeneration) {
+			try {
+				if (FilenameUtils.directoryContains(WorldProps.canonicalStandardGenDir, folder.getPath())) {
+					log.trace("Not scanning standard Minecraft generation folder \"{}\"", logPath);
+					return;
+				}
+			} catch (IOException e) {
+				// can't throw
+			}
+		}
 		log.trace("Scanning folder \"{}\": ", logPath);
 
 		final AtomicInteger dirs = new AtomicInteger(0);
@@ -89,6 +100,14 @@ public class FeatureParser {
 				return false;
 			} else if (new File(file, name).isDirectory()) {
 				dirs.incrementAndGet();
+				if (!WorldProps.replaceStandardGeneration) {
+					try {
+						if (FilenameUtils.directoryContains(WorldProps.canonicalStandardGenDir, file.getPath()))
+								return false;
+					} catch (IOException e) {
+						// can't throw
+					}
+				}
 				return !"includes".equalsIgnoreCase(name);
 			}
 			return name.toLowerCase(Locale.US).endsWith(".json");
@@ -114,14 +133,13 @@ public class FeatureParser {
 			 */
 			int i = 0;
 			if (WorldProps.replaceStandardGeneration) {
-				log.info("Replacing standard generation with file \"{}\"", WorldProps.worldGenPath.relativize(Paths.get(WorldProps.standardGenFile.getPath())));
-				worldGenList.add(WorldProps.standardGenFile);
-				++i;
+				log.info("Replacing standard generation with files in \"{}\"", WorldProps.worldGenPath.relativize(Paths.get(WorldProps.standardGenDir.getPath())));
+				addFiles(worldGenList, WorldProps.standardGenDir);
 			}
 			addFiles(worldGenList, WorldProps.worldGenDir);
 			for (int e = worldGenList.size(); i < e; ++i) {
 				File genFile = worldGenList.get(i);
-				if (genFile.equals(WorldProps.standardGenFile)) {
+				if (genFile.equals(WorldProps.standardGenDir)) {
 					worldGenList.remove(i);
 					break;
 				}
@@ -154,6 +172,7 @@ public class FeatureParser {
 				continue;
 			}
 
+			log.debug("Checking dependencies.");
 			if (genList.hasPath("dependencies") && !processDependencies(genList.getValue("dependencies"))) {
 				log.debug("Unmet dependencies to load file \"{}\"", file);
 				continue;
@@ -253,7 +272,7 @@ public class FeatureParser {
 				}
 				break;
 			default:
-				log.fatal("Invalid dependency at line {}!", value.origin().lineNumber());
+				log.error("Invalid dependency at line {}! Must be String or Object.", value.origin().lineNumber());
 				return false;
 		}
 		if (con == null) {
@@ -270,6 +289,7 @@ public class FeatureParser {
 				log.debug("Dependency '{}' has an incompatible version {}.", id, con.getModInfo().getVersion());
 				return false;
 			} else {
+				log.trace("Dependency '{}' has compatible version {}.", id, con.getModInfo().getVersion());
 				return true;
 			}
 		}
@@ -315,6 +335,10 @@ public class FeatureParser {
 								break;
 							case PASS:
 								log.error("Error parsing `{}` entry: '{}' > It is a duplicate.", tag, key);
+								break;
+							case CONSUME:
+								log.debug("`{}` entry '{}' is disabled.", tag, key);
+								break;
 						}
 					}
 				} catch (ConfigException ex) {
@@ -338,8 +362,7 @@ public class FeatureParser {
 
 		if (genObject.hasPath("enabled")) {
 			if (!genObject.getBoolean("enabled")) {
-				log.debug("\"{}\" is disabled.", featureName);
-				return ActionResultType.SUCCESS;
+				return ActionResultType.CONSUME;
 			}
 		}
 
@@ -352,8 +375,8 @@ public class FeatureParser {
 				throw new IDistributionParser.InvalidDistributionException("Distribution doesn't have a name", genObject.origin());
 			}
 		} catch (IDistributionParser.InvalidDistributionException e) {
-			log.error("Distribution '{}' failed to parse its entry on line {}!", featureName, e.origin().lineNumber());
 			log.catching(Level.DEBUG, e);
+			log.error("Distribution '{}' failed to parse its entry on line {}!", featureName, e.origin().lineNumber());
 		}
 
 		return ActionResultType.FAIL;

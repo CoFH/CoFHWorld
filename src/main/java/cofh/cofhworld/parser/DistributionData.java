@@ -18,6 +18,7 @@ public class DistributionData {
 		if (parser != null) {
 			boolean missedFields = false;
 			for (String field : parser.getRequiredFields()) {
+				log.trace("Checking for field {}", field);
 				if (!distObject.hasPath(field)) {
 					log.error("Missing required setting `{}` for distribution type '{}' on feature '{}' at line {}.", field, featureType, featureName, distObject.origin().lineNumber());
 					missedFields = true;
@@ -40,6 +41,7 @@ public class DistributionData {
 		if (parser != null) {
 			boolean missedFields = false;
 			for (String field : parser.getRequiredFields()) {
+				log.trace("Checking for field {}", field);
 				if (!distObject.hasPath(field)) {
 					log.error("Missing required setting `{}` for distribution type '{}' on feature '{}' at line {}.", field, featureType, featureName, distObject.origin().lineNumber());
 					missedFields = true;

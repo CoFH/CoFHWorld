@@ -34,7 +34,7 @@ public class StructreData {
 			for (WeightedString file : files) {
 				String path = FilenameUtils.normalize(dir + file.value);
 				try {
-					if (!FilenameUtils.directoryContains(WorldProps.cannonicalWorldGenDir, path)) {
+					if (!FilenameUtils.directoryContains(WorldProps.canonicalWorldGenDir, path)) {
 						throw new InvalidGeneratorException("Structure NBT file not contained in worldgen folder", stringEntry.origin());
 					}
 				} catch (IOException e) {

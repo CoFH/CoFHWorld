@@ -23,17 +23,21 @@ public interface IDistributionParser {
 		{ // structures
 			GenRestriction structureRes = GenRestriction.NONE;
 			if (genObject.hasPath("structures")) {
+				log.trace("'{}' has structure restrictions", feature.getFeatureName());
 				ConfigValue data = genObject.getValue("structures");
 				if (data.valueType() == ConfigValueType.STRING) {
 					structureRes = GenRestriction.get(genObject.getString("structures"));
+					log.trace("'{}' has explicit structure restriction type {}", feature.getFeatureName(), structureRes.name());
 					if (structureRes != GenRestriction.NONE) {
 						log.error("Invalid structure restriction `{}` on '{}'. Must be an object to meaningfully function", structureRes.name().toLowerCase(Locale.US), feature.getFeatureName());
 						throw new InvalidDistributionException("Invalid value for string", data.origin());
 					}
 				} else if (data.valueType() == ConfigValueType.OBJECT) {
 					structureRes = GenRestriction.get(genObject.getString("structures.restriction"));
+					log.trace("'{}' has explicit structure restriction type {}", feature.getFeatureName(), structureRes.name());
 					ArrayList<WeightedString> structures = new ArrayList<>();
 					if (StringData.parseStringList(genObject.getValue("structures.value"), structures)) {
+						log.trace("'{}' has structure restriction for values {}", feature.getFeatureName(), structures);
 						feature.addStructures(structures.stream().map(str -> str.value).distinct().toArray(String[]::new));
 					} else {
 						log.error("Invalid structure list on '{}'. No values added!", feature.getFeatureName());
@@ -45,15 +49,18 @@ public interface IDistributionParser {
 		{ // biomes
 			GenRestriction biomeRes = GenRestriction.NONE;
 			if (genObject.hasPath("biome")) {
+				log.trace("'{}' has biome restrictions", feature.getFeatureName());
 				ConfigValue data = genObject.getValue("biome");
 				if (data.valueType() == ConfigValueType.STRING) {
 					biomeRes = GenRestriction.get(genObject.getString("biome"));
+					log.trace("'{}' has explicit biome restriction type {}", feature.getFeatureName(), biomeRes.name());
 					if (biomeRes != GenRestriction.NONE) {
 						log.error("Invalid biome restriction `{}` on '{}'. Must be an object to meaningfully function", biomeRes.name().toLowerCase(Locale.US), feature.getFeatureName());
 						throw new InvalidDistributionException("Invalid value for string", data.origin());
 					}
 				} else if (data.valueType() == ConfigValueType.OBJECT) {
 					biomeRes = GenRestriction.get(genObject.getString("biome.restriction"));
+					log.trace("'{}' has explicit biome restriction type {}", feature.getFeatureName(), biomeRes.name());
 					feature.addBiomes(BiomeData.parseBiomeRestrictions(genObject.getConfig("biome")));
 				}
 			}
@@ -62,12 +69,14 @@ public interface IDistributionParser {
 		{// dimensions
 			GenRestriction dimRes = GenRestriction.NONE;
 			if (genObject.hasPath("dimension")) {
+				log.trace("'{}' has dimension restrictions", feature.getFeatureName());
 				String field = "dimension";
 				ConfigValue data = genObject.getValue("dimension");
 				ConfigList restrictionList = null;
 				switch (data.valueType()) {
 					case STRING:
 						dimRes = GenRestriction.get(genObject.getString("dimension"));
+						log.trace("'{}' has explicit dimension restriction type {}", feature.getFeatureName(), dimRes.name());
 						if (dimRes != GenRestriction.NONE) {
 							log.error("Invalid dimension restriction `{}` on '{}'. Must be an object to meaningfully function", dimRes.name().toLowerCase(Locale.US), feature.getFeatureName());
 							throw new InvalidDistributionException("Invalid value for string", data.origin());
@@ -75,6 +84,7 @@ public interface IDistributionParser {
 						break;
 					case OBJECT:
 						dimRes = GenRestriction.get(genObject.getString(field + ".restriction"));
+						log.trace("'{}' has explicit dimension restriction type {}", feature.getFeatureName(), dimRes.name());
 						field += ".value";
 						// continue
 					case LIST:
@@ -82,12 +92,14 @@ public interface IDistributionParser {
 						break;
 					case NUMBER:
 						dimRes = GenRestriction.WHITELIST;
+						log.trace("'{}' has implicit dimension restriction type {} for value {}", feature.getFeatureName(), dimRes.name(), data.unwrapped());
 						feature.addDimension(genObject.getNumber(field).intValue());
 						break;
 				}
 				if (restrictionList != null) {
 					for (int i = 0; i < restrictionList.size(); i++) {
 						ConfigValue val = restrictionList.get(i);
+						log.trace("'{}' has dimension restriction for value {}", feature.getFeatureName(), val.unwrapped());
 						if (val.valueType() == ConfigValueType.STRING) {
 							ResourceLocation dimName = new ResourceLocation(String.valueOf(val.unwrapped()));
 							if (Registry.DIMENSION_TYPE.containsKey(dimName)) {
@@ -126,13 +138,16 @@ public interface IDistributionParser {
 		boolean retrogen = false;
 		if (genObject.hasPath("retrogen")) {
 			retrogen = genObject.getBoolean("retrogen");
-		}
+			log.trace("'{}' has retrogen setting {}", featureName, retrogen);
+		} else
+			log.trace("'{}' will not retrogen", featureName);
 
 		IConfigurableFeatureGenerator feature = getFeature(featureName, genObject, retrogen, log);
 
 		{
 			if (genObject.hasPath("chunk-chance")) {
 				int rarity = MathHelper.clamp(genObject.getInt("chunk-chance"), 1, 1000000000);
+				log.trace("'{}' has rarity setting {}", featureName, rarity);
 				feature.setRarity(rarity);
 			}
 			addFeatureRestrictions(feature, genObject, log);
