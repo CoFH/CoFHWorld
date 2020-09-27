@@ -78,7 +78,7 @@ public class Shape2D {
 
 	private Rotation getRandomRotation(Random rand) {
 
-		switch (shapes.size()) {
+		switch (rotations.size()) {
 			case 0:
 				return Rotation.NONE;
 			case 1:
@@ -90,7 +90,7 @@ public class Shape2D {
 
 	private Mirror getRandomMirror(Random rand) {
 
-		switch (shapes.size()) {
+		switch (mirrors.size()) {
 			case 0:
 				return Mirror.NONE;
 			case 1:
