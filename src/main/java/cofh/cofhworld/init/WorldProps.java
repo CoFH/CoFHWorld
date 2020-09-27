@@ -11,6 +11,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
 import java.io.IOException;
@@ -188,11 +189,7 @@ public class WorldProps {
 
 		log.info("Verifying or creating base world generation directory...");
 
-		try {
-			configDir = new File(new File("./config").getCanonicalPath()); // TODO: figure out how to make forge cough this up
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		configDir = FMLPaths.CONFIGDIR.get().toFile();
 
 		worldGenDir = new File(configDir, "/cofh/world/");
 		worldGenPath = Paths.get(configDir.getPath());
