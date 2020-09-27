@@ -9,12 +9,26 @@ import java.util.List;
 
 public abstract class BaseBuilder<T extends WorldGen> implements IBuilder<T> {
 
-	protected final List<WeightedBlock> resource;
-	protected final List<Material> material;
+	protected List<WeightedBlock> resource;
+	protected List<Material> material;
 
-	public BaseBuilder(List<WeightedBlock> resource, List<Material> material) {
+	final public void setResource(List<WeightedBlock> resource) {
 
 		this.resource = resource;
+	}
+
+	final public void setMaterial(List<Material> material) {
+
 		this.material = material;
+	}
+
+	public static void SET_RESOURCE(IBuilder<?> builder, List<WeightedBlock> resource) {
+
+		((BaseBuilder<?>)builder).setResource(resource); // because you cannot reference instance methods of abstract classes for lambdas
+	}
+
+	public static void SET_MATERIAL(IBuilder<?> builder, List<Material> material) {
+
+		((BaseBuilder<?>)builder).setMaterial(material); // because you cannot reference instance methods of abstract classes for lambdas
 	}
 }

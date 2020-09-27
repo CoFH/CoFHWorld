@@ -1,15 +1,10 @@
 package cofh.cofhworld.parser;
 
-import cofh.cofhworld.data.block.Material;
-import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.world.generator.WorldGen;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigOrigin;
 import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
-import java.util.List;
 
 public interface IGeneratorParser {
 
@@ -23,15 +18,10 @@ public interface IGeneratorParser {
 	 * @param matList   The processed list of materials to generate in
 	 * @return The {@link WorldGen} to be registered with an IFeatureGenerator
 	 */
-	@Nonnull
-	WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException;
+//	@Nonnull
+//	WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException;
 
-	String[] getRequiredFields();
-
-	default boolean isMeta() {
-
-		return false;
-	}
+	FieldBuilder getFields(FieldBuilder fields);
 
 	class InvalidGeneratorException extends Exception {
 

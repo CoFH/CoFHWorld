@@ -6,7 +6,6 @@ import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.parser.generator.builders.base.BuilderSize;
-import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGenDecoration;
 
 import java.util.List;
@@ -22,11 +21,6 @@ public class BuilderDecoration extends BuilderSize<WorldGenDecoration> {
 	private ICondition checkStay = CHECK_STAY;
 
 	private INumberProvider stackHeight = ONE;
-
-	public BuilderDecoration(List<WeightedBlock> resource, List<Material> material) {
-
-		super(resource, material);
-	}
 
 	public void setSurface(List<Material> surface) {
 

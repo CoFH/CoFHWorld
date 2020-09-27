@@ -1,6 +1,5 @@
 package cofh.cofhworld.parser.generator.builders;
 
-import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.operation.BinaryCondition;
 import cofh.cofhworld.data.condition.operation.ComparisonCondition;
@@ -11,10 +10,7 @@ import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.parser.generator.builders.base.BuilderSize;
-import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGenSpike;
-
-import java.util.List;
 
 public class BuilderSpike extends BuilderSize<WorldGenSpike> {
 
@@ -74,9 +70,8 @@ public class BuilderSpike extends BuilderSize<WorldGenSpike> {
 
 	private INumberProvider layerSize = LAYER_SIZE;
 
-	public BuilderSpike(List<WeightedBlock> resource, List<Material> material) {
+	public BuilderSpike() {
 
-		super(resource, material);
 		size = SIZE;
 	}
 

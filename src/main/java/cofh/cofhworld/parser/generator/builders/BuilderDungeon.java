@@ -1,6 +1,5 @@
 package cofh.cofhworld.parser.generator.builders;
 
-import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.operation.BinaryCondition;
 import cofh.cofhworld.data.condition.operation.ComparisonCondition;
@@ -8,6 +7,7 @@ import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.data.DataProvider;
+import cofh.cofhworld.data.numbers.operation.BoundedProvider;
 import cofh.cofhworld.data.numbers.operation.UnaryMathProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.parser.generator.builders.base.BaseBuilder;
@@ -41,7 +41,7 @@ public class BuilderDungeon extends BaseBuilder<WorldGenDungeon> {
 	}
 
 	private List<WeightedBlock> spawners = AIR_FILLER;
-	private List<WeightedBlock> floor;
+	private List<WeightedBlock> floor = null;
 	private List<WeightedBlock> filler = AIR_FILLER;
 	private List<WeightedBlock> chests = DUNGEON_CHEST;
 
@@ -53,12 +53,6 @@ public class BuilderDungeon extends BaseBuilder<WorldGenDungeon> {
 
 	private ICondition holeCount = ONE_TO_FIVE;
 	private ICondition holeCond = IS_AIR;
-
-	public BuilderDungeon(List<WeightedBlock> resource, List<Material> material) {
-
-		super(resource, material);
-		floor = resource;
-	}
 
 	public void setSpawners(List<WeightedBlock> spawners) {
 
@@ -102,7 +96,7 @@ public class BuilderDungeon extends BaseBuilder<WorldGenDungeon> {
 
 	public void setChestAttempts(INumberProvider chestAttempts) {
 
-		this.chestAttempts = chestAttempts;
+		this.chestAttempts = new BoundedProvider(chestAttempts, 1, 5);
 	}
 
 	public void setHoleCount(ICondition holeCount) {
@@ -117,6 +111,10 @@ public class BuilderDungeon extends BaseBuilder<WorldGenDungeon> {
 
 	@Override
 	public WorldGenDungeon build() {
+
+		if (floor == null) {
+			floor = resource;
+		}
 
 		return new WorldGenDungeon(resource, material, spawners, floor, chests, filler, radiusX, radiusZ, height, holeCount, holeCond, chestCount, chestAttempts);
 	}

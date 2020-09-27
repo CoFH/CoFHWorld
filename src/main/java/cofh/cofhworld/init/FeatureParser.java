@@ -1,8 +1,6 @@
 package cofh.cofhworld.init;
 
-import cofh.cofhworld.parser.DistributionData;
-import cofh.cofhworld.parser.IDistributionParser;
-import cofh.cofhworld.parser.IGeneratorParser;
+import cofh.cofhworld.parser.*;
 import cofh.cofhworld.world.IFeatureGenerator;
 import com.typesafe.config.*;
 import com.typesafe.config.impl.CoFHOrderedParsableFile;
@@ -37,7 +35,7 @@ import static cofh.cofhworld.CoFHWorld.log;
 public class FeatureParser {
 
 	private static HashMap<String, IDistributionParser> distributionHandlers = new HashMap<>();
-	private static HashMap<String, IGeneratorParser> generatorHandlers = new HashMap<>();
+	private static HashMap<String, GeneratorFields> generatorHandlers = new HashMap<>();
 	public static ArrayList<IFeatureGenerator> parsedFeatures = new ArrayList<>();
 
 	private FeatureParser() {
@@ -49,7 +47,7 @@ public class FeatureParser {
 		return distributionHandlers.get(distribution);
 	}
 
-	public static IGeneratorParser getGenerator(String generator) {
+	public static GeneratorFields getGenerator(String generator) {
 
 		return generatorHandlers.get(generator);
 	}
@@ -69,7 +67,7 @@ public class FeatureParser {
 
 		// TODO: provide this function through IFeatureHandler?
 		if (!generatorHandlers.containsKey(generator)) {
-			generatorHandlers.put(generator, handler);
+			generatorHandlers.put(generator, handler.getFields(new FieldBuilder()).build());
 			return true;
 		}
 		log.error("Attempted to register duplicate generator '{}'!", generator);

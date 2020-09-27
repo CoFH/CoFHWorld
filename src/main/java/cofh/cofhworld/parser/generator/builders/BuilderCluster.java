@@ -1,24 +1,22 @@
 package cofh.cofhworld.parser.generator.builders;
 
-import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.operation.BoundedProvider;
 import cofh.cofhworld.parser.generator.builders.base.BuilderSize;
-import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGenCluster;
-
-import java.util.List;
 
 public class BuilderCluster extends BuilderSize<WorldGenCluster> {
 
 	private Type type = Type.TINY;
 
-	public BuilderCluster(List<WeightedBlock> resource, List<Material> material) {
-
-		super(resource, material);
-	}
-
 	public void setType(Type type) {
 
 		this.type = type;
+	}
+
+	public void setSize(INumberProvider value) {
+
+		super.setSize(new BoundedProvider(size, 0, 64));
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import cofh.cofhworld.data.numbers.data.DataProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.parser.generator.builders.base.BuilderSize;
-import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.world.generator.WorldGenStalagmite;
 import net.minecraft.util.Direction;
 
@@ -36,9 +35,8 @@ public class BuilderStalagmite extends BuilderSize<WorldGenStalagmite> {
 	private ICondition smooth = ConstantCondition.FALSE;
 	private ICondition altSinc = ConstantCondition.FALSE;
 
-	public BuilderStalagmite(List<WeightedBlock> resource, List<Material> material) {
+	public BuilderStalagmite() {
 
-		super(resource, material);
 		size = SIZE;
 	}
 

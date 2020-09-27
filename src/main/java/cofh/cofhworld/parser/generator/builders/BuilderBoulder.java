@@ -1,6 +1,5 @@
 package cofh.cofhworld.parser.generator.builders;
 
-import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
@@ -44,11 +43,6 @@ public class BuilderBoulder extends BuilderSize<WorldGenBoulder> {
 	private INumberProvider xVar = X_VAR;
 	private INumberProvider yVar = Y_VAR;
 	private INumberProvider zVar = Z_VAR;
-
-	public BuilderBoulder(List<WeightedBlock> resource, List<Material> material) {
-
-		super(resource, material);
-	}
 
 	public void setFiller(List<WeightedBlock> filler) {
 

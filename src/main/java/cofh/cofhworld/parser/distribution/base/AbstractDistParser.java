@@ -3,6 +3,7 @@ package cofh.cofhworld.parser.distribution.base;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.parser.GeneratorData;
 import cofh.cofhworld.parser.IDistributionParser;
+import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.IGeneratorParser.InvalidGeneratorException;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.world.distribution.Distribution;
@@ -34,7 +35,10 @@ public abstract class AbstractDistParser implements IDistributionParser {
 
 		WorldGen generator;
 		try {
-			generator = GeneratorData.parseGenerator(getDefaultGenerator(), genObject);
+			if (!genObject.hasPath("generator")) {
+				throw new IGeneratorParser.InvalidGeneratorException("No `generator` entry present", genObject.origin());
+			}
+			generator = GeneratorData.parseGenerator(genObject.getValue("generator"));
 		} catch (InvalidGeneratorException e) {
 			log.warn("Invalid generator for '{}' on line {}!", featureName, e.origin().lineNumber());
 			throw new InvalidDistributionException("Invalid generator", e.origin()).causedBy(e);

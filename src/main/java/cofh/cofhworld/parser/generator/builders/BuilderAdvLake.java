@@ -1,6 +1,5 @@
 package cofh.cofhworld.parser.generator.builders;
 
-import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.block.MaterialPropertyMaterial;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.operation.BinaryCondition;
@@ -35,11 +34,6 @@ public class BuilderAdvLake extends BaseBuilder<WorldGenAdvLakes> {
 	private List<WeightedBlock> outline = null;
 	private ICondition outlineCondition = OUTLINE;
 
-	public BuilderAdvLake(List<WeightedBlock> resource, List<Material> material) {
-
-		super(resource, material);
-	}
-
 	public void setOutlineCondition(ICondition outline) {
 
 		this.outlineCondition = outline;
@@ -47,12 +41,12 @@ public class BuilderAdvLake extends BaseBuilder<WorldGenAdvLakes> {
 
 	public void setOutline(List<WeightedBlock> blocks) {
 
-		this.outline = blocks;
+		if (blocks.size() > 0) this.outline = blocks;
 	}
 
 	public void setFiller(List<WeightedBlock> blocks) {
 
-		this.filler = blocks;
+		if (blocks.size() > 0) this.filler = blocks;
 	}
 
 	@Nonnull

@@ -42,34 +42,14 @@ public class BuilderSmallTree extends BuilderSize<WorldGenSmallTree> {
 
 	private ICondition leafVariance = LEAF_VARIANCE;
 
-	public BuilderSmallTree(List<WeightedBlock> resource, List<Material> material) {
-
-		super(resource, material);
-	}
-
-	public List<WeightedBlock> getLeaves() {
-
-		return leaves;
-	}
-
 	public void setLeaves(List<WeightedBlock> leaves) {
 
 		this.leaves = leaves;
 	}
 
-	public Material[] getSurface() {
+	public void setSurface(List<Material> surface) {
 
-		return surface;
-	}
-
-	public void setSurface(Material[] surface) {
-
-		this.surface = surface;
-	}
-
-	public INumberProvider getHeight() {
-
-		return height;
+		if (surface.size() > 0) this.surface = surface.toArray(new Material[0]);
 	}
 
 	public void setHeight(INumberProvider height) {
@@ -77,19 +57,9 @@ public class BuilderSmallTree extends BuilderSize<WorldGenSmallTree> {
 		this.height = height;
 	}
 
-	public ICondition getTreeChecks() {
-
-		return treeChecks;
-	}
-
 	public void setTreeChecks(ICondition treeChecks) {
 
 		this.treeChecks = treeChecks;
-	}
-
-	public ICondition getWaterLoving() {
-
-		return waterLoving;
 	}
 
 	public void setWaterLoving(ICondition waterLoving) {
@@ -97,19 +67,9 @@ public class BuilderSmallTree extends BuilderSize<WorldGenSmallTree> {
 		this.waterLoving = waterLoving;
 	}
 
-	public ICondition getRelaxedGrowth() {
-
-		return relaxedGrowth;
-	}
-
 	public void setRelaxedGrowth(ICondition relaxedGrowth) {
 
 		this.relaxedGrowth = relaxedGrowth;
-	}
-
-	public ICondition getLeafVariance() {
-
-		return leafVariance;
 	}
 
 	public void setLeafVariance(ICondition leafVariance) {

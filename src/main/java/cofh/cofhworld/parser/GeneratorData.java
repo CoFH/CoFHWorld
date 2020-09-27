@@ -1,50 +1,73 @@
 package cofh.cofhworld.parser;
 
-import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.init.FeatureParser;
-import cofh.cofhworld.parser.variables.BlockData;
 import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedWorldGenerator;
 import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenMulti;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigValue;
-import com.typesafe.config.ConfigValueType;
+import com.typesafe.config.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static cofh.cofhworld.CoFHWorld.log;
 
 public class GeneratorData {
 
-	public static WorldGen parseGenerator(String def, Config genObject) throws IGeneratorParser.InvalidGeneratorException {
+	public static ArrayList<WorldGen> parseGenerators(ConfigValue genData) throws IGeneratorParser.InvalidGeneratorException {
 
-		if (!genObject.hasPath("generator")) {
-			throw new IGeneratorParser.InvalidGeneratorException("No `generator` entry present", genObject.origin());
-		}
-		ConfigValue genData = genObject.getValue("generator");
+		ArrayList<WorldGen> gens = new ArrayList<>(1);
+
 		if (genData.valueType() == ConfigValueType.LIST) {
-			List<? extends Config> list = genObject.getConfigList("generator");
+			ConfigList list = (ConfigList) genData;
+			gens.ensureCapacity(list.size());
+			for (ConfigValue genElement : list) {
+				if (genElement.valueType() == ConfigValueType.OBJECT) {
+					Config elementConfig = ((ConfigObject) genElement).toConfig();
+					WorldGen gen = parseGeneratorData(elementConfig);
+					gens.add(gen);
+				} else {
+					log.error("Invalid data type for field 'generator'. > It must be an object.");
+					throw new IGeneratorParser.InvalidGeneratorException("Invalid data type", genElement.origin());
+				}
+			}
+		} else if (genData.valueType() == ConfigValueType.OBJECT) {
+			gens.add(parseGeneratorData(((ConfigObject) genData).toConfig()));
+		} else {
+			log.error("Invalid data type for field 'generator'. > It must be an object or list.");
+			throw new IGeneratorParser.InvalidGeneratorException("Invalid data type", genData.origin());
+		}
+
+		return gens;
+	}
+
+	public static WorldGen parseGenerator(ConfigValue genData) throws IGeneratorParser.InvalidGeneratorException {
+
+		if (genData.valueType() == ConfigValueType.LIST) {
+			ConfigList list = (ConfigList) genData;
 			ArrayList<WeightedWorldGenerator> gens = new ArrayList<>(list.size());
-			for (Config genElement : list) {
-				WorldGen gen = parseGeneratorData(def, genElement);
-				int weight = genElement.hasPath("weight") ? genElement.getInt("weight") : 100;
-				gens.add(new WeightedWorldGenerator(gen, weight));
+			for (ConfigValue genElement : list) {
+				if (genElement.valueType() == ConfigValueType.OBJECT) {
+					Config elementConfig = ((ConfigObject) genElement).toConfig();
+					WorldGen gen = parseGeneratorData(elementConfig);
+					int weight = elementConfig.hasPath("weight") ? elementConfig.getInt("weight") : 100;
+					gens.add(new WeightedWorldGenerator(gen, weight));
+				} else {
+					log.error("Invalid data type for field 'generator'. > It must be an object.");
+					throw new IGeneratorParser.InvalidGeneratorException("Invalid data type", genElement.origin());
+				}
 			}
 			return new WorldGenMulti(gens);
 		} else if (genData.valueType() == ConfigValueType.OBJECT) {
-			return parseGeneratorData(def, genObject.getConfig("generator"));
+			return parseGeneratorData(((ConfigObject) genData).toConfig());
 		} else {
 			log.error("Invalid data type for field 'generator'. > It must be an object or list.");
 			throw new IGeneratorParser.InvalidGeneratorException("Invalid data type", genData.origin());
 		}
 	}
 
-	public static WorldGen parseGeneratorData(String def, Config genObject) throws IGeneratorParser.InvalidGeneratorException {
+	public static WorldGen parseGeneratorData(Config genObject) throws IGeneratorParser.InvalidGeneratorException {
 
-		String name = def;
+		String name;
 		if (genObject.hasPath("type")) {
 			ConfigValue typeVal = genObject.getValue("type");
 			if (typeVal.valueType() == ConfigValueType.STRING) {
@@ -54,47 +77,41 @@ public class GeneratorData {
 			} else {
 				throw new IGeneratorParser.InvalidGeneratorException("Generator `type` entry not valid", genObject.origin());
 			}
-			if (null == FeatureParser.getGenerator(name)) {
-				log.warn("Unknown generator '{}'! using '{}'", name, def);
-				name = def;
-			}
+		} else {
+			throw new IGeneratorParser.InvalidGeneratorException("Generator `type` entry is not specified!", genObject.origin());
 		}
 
-		IGeneratorParser parser = FeatureParser.getGenerator(name);
-		if (parser == null) {
+		GeneratorFields genData = FeatureParser.getGenerator(name);
+		if (genData == null) {
 			throw new IGeneratorParser.InvalidGeneratorException("Generator '" + name + "' is not registered!", genObject.origin());
-		} else if (parser.isMeta() && name == def) { // name == def is not a bug, we are checking to see if `type` was absent
-			throw new IllegalStateException("Default generator for a distribution is a meta generator!");
 		}
 
 		boolean missedFields = false;
-		for (String field : parser.getRequiredFields()) {
-			if (!genObject.hasPath(field)) {
-				log.error("Missing required setting `{}` for generator type '{}' on line {}.", field, name, genObject.origin().lineNumber());
-				missedFields = true;
+		l: for (Field<?, ?> field : genData.requiredFields) {
+			for (String key : field.keys) {
+				if (genObject.hasPath(key)) {
+					continue l;
+				}
 			}
+			log.error("Missing required setting `{}` for generator type '{}' on line {}.", field.name, name, genObject.origin().lineNumber());
+			missedFields = true;
 		}
 		if (missedFields) {
 			throw new IGeneratorParser.InvalidGeneratorException("Missing fields", genObject.origin());
 		}
 
-		List<WeightedBlock> resList = new ArrayList<>();
-		if (!parser.isMeta() && !genObject.hasPath("block")) {
-			log.error("Generators cannot generate blocks unless `block` is specified.");
-			throw new IGeneratorParser.InvalidGeneratorException("`block` not specified", genObject.origin());
-		} else if (!BlockData.parseBlockList(genObject.root().get("block"), resList) && !parser.isMeta()) {
-			throw new IGeneratorParser.InvalidGeneratorException("`block` not valid", genObject.getValue("block").origin());
+		IBuilder<? extends WorldGen> builder = genData.builder.get();
+
+		for (Field<? super IBuilder<? extends WorldGen>, ? super Object> field : genData.fields) {
+			for (String key : field.keys) {
+				if (genObject.hasPath(key)) {
+					field.parser.accept(builder, field.type.processType.apply(genObject.getValue(key)));
+					break;
+				}
+			}
 		}
 
-		List<Material> matList = new ArrayList<>();
-		if (!parser.isMeta() && !genObject.hasPath("material")) {
-			log.error("Generators cannot generate blocks unless `material` is specified.");
-			throw new IGeneratorParser.InvalidGeneratorException("`material` not specified", genObject.origin());
-		} else if (!BlockData.parseMaterialList(genObject.root().get("material"), matList) && !parser.isMeta()) {
-			throw new IGeneratorParser.InvalidGeneratorException("`material` not valid", genObject.getValue("material").origin());
-		}
-
-		WorldGen r = parser.parseGenerator(parser.isMeta() ? def : name, genObject, log, resList, matList);
+		WorldGen r = builder.build();
 
 		if (genObject.hasPath("offset.x")) {
 			r.setOffsetX(NumberData.parseNumberValue(genObject.getValue("offset.x"), -128, 128));
