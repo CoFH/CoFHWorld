@@ -15,7 +15,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.AbstractChunkProvider;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus.Type;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.gen.GenerationSettings;
@@ -47,8 +46,6 @@ public class WorldHandler {
 	}
 
 	public static void register() {
-
-		//GameRegistry.registerWorldGenerator((random, chunkX, chunkZ, world, chunkGenerator, chunkProvider) -> populatingChunks.remove(new ChunkReference(world.provider.getDimension(), chunkX, chunkZ)), Integer.MAX_VALUE);
 
 		MinecraftForge.EVENT_BUS.register(INSTANCE);
 	}
@@ -140,21 +137,6 @@ public class WorldHandler {
 	}
 
 	/* EVENT HANDLING */
-//	@SubscribeEvent
-//	public void handlePopulateChunkEvent(PopulateChunkEvent.Pre event) {
-//
-//		populatingChunks.add(new ChunkReference(event.getWorld().provider.getDimension(), event.getChunkX(), event.getChunkZ()));
-//	}
-//
-//	@SubscribeEvent
-//	public void populateChunkEvent(PopulateChunkEvent.Post event) {
-//
-//		ChunkReference pos = populatingChunks.get(new ChunkReference(event.getWorld().provider.getDimension(), event.getChunkX(), event.getChunkZ()));
-//
-//		if (pos != null) {
-//			pos.hasVillage = event.isHasVillageGenerated();
-//		}
-//	}
 
 	@SubscribeEvent
 	public void handleChunkLoadEvent(ChunkDataEvent.Load event) {
@@ -350,42 +332,6 @@ public class WorldHandler {
 				}
 			}
 		}
-	}
-
-	/* CHUNK REFERENCE CLASS */
-	private static class ChunkReference {
-
-		public final Dimension dimension;
-		public final int xPos;
-		public final int zPos;
-
-		public ChunkReference(Dimension dim, int x, int z) {
-
-			dimension = dim;
-			xPos = x;
-			zPos = z;
-		}
-
-		@Override
-		public int hashCode() {
-
-			return xPos * 43 + zPos * 3 + dimension.getType().getId();
-		}
-
-		@Override
-		public boolean equals(Object o) {
-
-			if (o == null || o.getClass() != getClass()) {
-				if (o instanceof Chunk) {
-					Chunk other = (Chunk) o;
-					return xPos == other.getPos().x && zPos == other.getPos().z && dimension == other.getWorld().getDimension();
-				}
-				return false;
-			}
-			ChunkReference other = (ChunkReference) o;
-			return other.dimension == dimension && other.xPos == xPos && other.zPos == zPos;
-		}
-
 	}
 
 }
