@@ -3,6 +3,7 @@ package cofh.cofhworld.world.generator;
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ICondition;
+import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.shape.Shape2D;
 import cofh.cofhworld.data.shape.Shape2D.ShapeSettings2D;
@@ -33,32 +34,32 @@ public class WorldGenPlate extends WorldGen {
 		this.shape = shape;
 		this.height = height;
 		this.slim = slim;
+		setOffsetY(new ConstantProvider(1));
 	}
 
 	@Override
 	public boolean generate(IWorld world, Random rand, final DataHolder data) {
 
-		int x = data.getPosition().getX();
-		int y = data.getPosition().getY();
-		int z = data.getPosition().getZ();
+		final int x = data.getPosition().getX();
+		final int y = data.getPosition().getY();
+		final int z = data.getPosition().getZ();
 
 		final Shape2D shape = this.shape;
 		final ShapeSettings2D settings = shape.getSettings(rand);
 
-		++y;
-		int size = radius.intValue(world, rand, data);
-		int height = this.height.intValue(world, rand, data.setValue("radius", radius));
-		data.setValue("height", height);
+		final int size = radius.intValue(world, rand, data);
+		data.setValue("radius", size);
 
 		boolean r = false;
 		for (int posX = x - size; posX <= x + size; ++posX) {
-			int areaX = posX - x;
+			final int areaX = posX - x;
 			for (int posZ = z - size; posZ <= z + size; ++posZ) {
-				int areaZ = posZ - z;
+				final int areaZ = posZ - z;
 
 				if (shape.inArea(areaX, areaZ, size, settings)) {
 					data.setValue("layer-x", areaX).setValue("layer-z", areaZ).setPosition(new BlockPos(posX, y, posZ));
-					final boolean slim = this.slim.checkCondition(world, rand, data);
+					final int height = this.height.intValue(world, rand, data);
+					final boolean slim = this.slim.checkCondition(world, rand, data.setValue("height", height));
 					for (int posY = y - height; slim ? posY < y + height : posY <= y + height; ++posY) {
 						r |= generateBlock(world, rand, posX, posY, posZ, material, resource);
 					}
