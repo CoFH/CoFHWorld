@@ -78,6 +78,7 @@ public class WorldHandler {
 			// Reset all features so that config will reload properly
 			features.clear();
 			featureNames.clear();
+			genHash = 0;
 		}
 
 		// Parse all the generation files into features
