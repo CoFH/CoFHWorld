@@ -2,6 +2,7 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.util.random.WeightedEnum;
 import cofh.cofhworld.util.random.WeightedNBTTag;
@@ -77,7 +78,9 @@ public class WorldGenStructure extends WorldGen {
 
 		this.rotations = rotations;
 		this.mirrors = mirrors;
-		if (integrity != null) {
+		if (integrity instanceof ConstantProvider) {
+			placementSettings.addProcessor(new IntegrityProcessor(integrity.floatValue(null, null, null)));
+		} else if (integrity != null) {
 			placementSettings.addProcessor(new IntegrityProcessor(0) {
 
 				public BlockInfo process(IWorldReader world, BlockPos offset, BlockInfo original, BlockInfo current, PlacementSettings settings) {
