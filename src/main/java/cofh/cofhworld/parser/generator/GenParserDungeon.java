@@ -1,16 +1,16 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.IGeneratorFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserMaterial;
 import cofh.cofhworld.parser.generator.builders.BuilderDungeon;
 
-public class GenParserDungeon extends AbstractGenParserMaterial {
+public class GenParserDungeon implements AbstractGenParserMaterial<BuilderDungeon> {
 
 	@Override
-	public FieldBuilder getFields(FieldBuilder fields) {
+	public void getFields(IGeneratorFieldRegistry<BuilderDungeon> fields) {
 
-		fields = super.getFields(fields);
+		AbstractGenParserMaterial.super.getFields(fields);
 		fields.setBuilder(BuilderDungeon::new);
 
 		fields.addRequiredField("wall", Type.BLOCK_LIST, BuilderDungeon::setResource, "block");
@@ -29,8 +29,6 @@ public class GenParserDungeon extends AbstractGenParserMaterial {
 		fields.addOptionalField("height", Type.NUMBER, BuilderDungeon::setHeight);
 		fields.addOptionalField("radius-x", Type.NUMBER, BuilderDungeon::setRadiusX);
 		fields.addOptionalField("radius-z", Type.NUMBER, BuilderDungeon::setRadiusZ);
-
-		return fields;
 	}
 
 }

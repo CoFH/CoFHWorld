@@ -1,16 +1,16 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.IGeneratorFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserMaterial;
 import cofh.cofhworld.parser.generator.builders.BuilderSmallTree;
 
-public class GenParserSmallTree extends AbstractGenParserMaterial {
+public class GenParserSmallTree implements AbstractGenParserMaterial<BuilderSmallTree> {
 
 	@Override
-	public FieldBuilder getFields(FieldBuilder fields) {
+	public void getFields(IGeneratorFieldRegistry<BuilderSmallTree> fields) {
 
-		fields = super.getFields(fields);
+		AbstractGenParserMaterial.super.getFields(fields);
 		fields.setBuilder(BuilderSmallTree::new);
 
 		fields.addRequiredField("trunk", Type.BLOCK_LIST, BuilderSmallTree::setResource, "resource", "block");
@@ -25,8 +25,6 @@ public class GenParserSmallTree extends AbstractGenParserMaterial {
 		fields.addOptionalField("tree-checks", Type.CONDITION, BuilderSmallTree::setTreeChecks);
 		fields.addOptionalField("relaxed-growth", Type.CONDITION, BuilderSmallTree::setTreeChecks);
 		fields.addOptionalField("water-loving", Type.CONDITION, BuilderSmallTree::setWaterLoving);
-
-		return fields;
 	}
 
 }

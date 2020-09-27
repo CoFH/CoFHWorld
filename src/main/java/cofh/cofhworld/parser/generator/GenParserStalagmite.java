@@ -1,12 +1,12 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.IGeneratorFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderStalagmite;
 import net.minecraft.util.Direction;
 
-public class GenParserStalagmite extends AbstractGenParserResource {
+public class GenParserStalagmite implements AbstractGenParserResource<BuilderStalagmite> {
 
 	private final boolean stalactite;
 
@@ -16,9 +16,9 @@ public class GenParserStalagmite extends AbstractGenParserResource {
 	}
 
 	@Override
-	public FieldBuilder getFields(FieldBuilder fields) {
+	public void getFields(IGeneratorFieldRegistry<BuilderStalagmite> fields) {
 
-		fields = super.getFields(fields);
+		AbstractGenParserResource.super.getFields(fields);
 		fields.setBuilder(() -> {
 			BuilderStalagmite builder = new BuilderStalagmite();
 			builder.setDirection(stalactite ? Direction.UP : Direction.DOWN);
@@ -32,8 +32,6 @@ public class GenParserStalagmite extends AbstractGenParserResource {
 		fields.addOptionalField("smooth", Type.CONDITION, BuilderStalagmite::setSmooth);
 		fields.addOptionalField("fat", Type.CONDITION, BuilderStalagmite::setFat);
 		fields.addOptionalField("alt-sinc", Type.CONDITION, BuilderStalagmite::setAltSinc);
-
-		return fields;
 	}
 
 }

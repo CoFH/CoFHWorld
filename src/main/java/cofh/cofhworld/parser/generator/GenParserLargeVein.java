@@ -1,24 +1,22 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.IGeneratorFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderLargeVein;
 
-public class GenParserLargeVein extends AbstractGenParserResource {
+public class GenParserLargeVein implements AbstractGenParserResource<BuilderLargeVein> {
 
 	@Override
-	public FieldBuilder getFields(FieldBuilder fields) {
+	public void getFields(IGeneratorFieldRegistry<BuilderLargeVein> fields) {
 
-		fields = super.getFields(fields);
+		AbstractGenParserResource.super.getFields(fields);
 		fields.setBuilder(BuilderLargeVein::new);
 
 		fields.addRequiredField("vein-size", Type.NUMBER, BuilderLargeVein::setSize, "cluster-size");
 
 		fields.addOptionalField("sparse", Type.CONDITION, BuilderLargeVein::setSparse);
 		fields.addOptionalField("spindly", Type.CONDITION, BuilderLargeVein::setSpindly);
-
-		return fields;
 	}
 
 }

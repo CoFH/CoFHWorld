@@ -9,24 +9,25 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-public class FieldBuilder implements IBuilder<GeneratorFields> {
+public class FieldBuilder<T extends IBuilder<? extends WorldGen>> implements IBuilder<GeneratorFields>, IGeneratorFieldRegistry<T> {
 
-	private Supplier<IBuilder<? extends WorldGen>> builderSupplier;
+	private Supplier<T> builderSupplier;
 
 	private final ArrayList<Field<?, ?>> requiredFields = new ArrayList<>(), optionalFields = new ArrayList<>();
 
-	public void setBuilder(Supplier<IBuilder<? extends WorldGen>> builderSupplier) {
+	public IGeneratorFieldRegistry<T> setBuilder(Supplier<T> builderSupplier) {
 
 		this.builderSupplier = builderSupplier;
+		return this;
 	}
 
-	public <T extends IBuilder<? extends WorldGen>, V> FieldBuilder addRequiredField(String name, Type<V> type, BiConsumer<T, V> parser, String... keys) {
+	public <V> IGeneratorFieldRegistry<T> addRequiredField(String name, Type<V> type, BiConsumer<T, V> parser, String... keys) {
 
 		requiredFields.add(new Field<T, V>(name, null, null, keys));
 		return addOptionalField(name, type, parser, keys);
 	}
 
-	public <T extends IBuilder<? extends WorldGen>, V> FieldBuilder addOptionalField(String name, Type<V> type, BiConsumer<T, V> parser, String... keys) {
+	public <V> IGeneratorFieldRegistry<T> addOptionalField(String name, Type<V> type, BiConsumer<T, V> parser, String... keys) {
 
 		optionalFields.add(new Field<>(name, type, parser, keys));
 		return this;

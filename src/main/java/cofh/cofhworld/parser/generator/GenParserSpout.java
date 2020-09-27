@@ -1,16 +1,16 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.IGeneratorFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderSpout;
 
-public class GenParserSpout extends AbstractGenParserResource {
+public class GenParserSpout implements AbstractGenParserResource<BuilderSpout> {
 
 	@Override
-	public FieldBuilder getFields(FieldBuilder fields) {
+	public void getFields(IGeneratorFieldRegistry<BuilderSpout> fields) {
 
-		fields = super.getFields(fields);
+		AbstractGenParserResource.super.getFields(fields);
 		fields.setBuilder(BuilderSpout::new);
 
 		fields.addRequiredField("radius", Type.NUMBER, BuilderSpout::setRadius);
@@ -18,8 +18,6 @@ public class GenParserSpout extends AbstractGenParserResource {
 		fields.addOptionalField("height", Type.NUMBER, BuilderSpout::setHeight);
 
 		fields.addOptionalField("shape", Type.SHAPE_2D, BuilderSpout::setShape);
-
-		return fields;
 	}
 
 }

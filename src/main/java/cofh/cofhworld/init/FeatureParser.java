@@ -2,6 +2,7 @@ package cofh.cofhworld.init;
 
 import cofh.cofhworld.parser.*;
 import cofh.cofhworld.world.IFeatureGenerator;
+import cofh.cofhworld.world.generator.WorldGen;
 import com.typesafe.config.*;
 import com.typesafe.config.impl.CoFHOrderedParsableFile;
 import net.minecraft.util.ActionResultType;
@@ -55,7 +56,7 @@ public class FeatureParser {
 	public static boolean registerTemplate(String template, IDistributionParser handler) {
 
 		// TODO: provide this function through IFeatureHandler?
-		if (!distributionHandlers.containsKey(template)) {
+		if (handler != null && !distributionHandlers.containsKey(template)) {
 			distributionHandlers.put(template, handler);
 			return true;
 		}
@@ -63,11 +64,13 @@ public class FeatureParser {
 		return false;
 	}
 
-	public static boolean registerGenerator(String generator, IGeneratorParser handler) {
+	public static <T extends IBuilder<? extends WorldGen>> boolean registerGenerator(String generator, IGeneratorParser<T> handler) {
 
 		// TODO: provide this function through IFeatureHandler?
-		if (!generatorHandlers.containsKey(generator)) {
-			generatorHandlers.put(generator, handler.getFields(new FieldBuilder()).build());
+		if (handler != null && !generatorHandlers.containsKey(generator)) {
+			FieldBuilder<T> builder = new FieldBuilder<>();
+			handler.getFields(builder);
+			generatorHandlers.put(generator, builder.build());
 			return true;
 		}
 		log.error("Attempted to register duplicate generator '{}'!", generator);

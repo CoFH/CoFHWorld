@@ -6,7 +6,6 @@ import cofh.cofhworld.util.random.WeightedString;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.world.IFeatureGenerator;
-import com.google.gson.JsonObject;
 import com.typesafe.config.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -114,7 +113,7 @@ public interface IDistributionParser {
 	String[] getRequiredFields();
 
 	/**
-	 * Parse a {@link JsonObject} for registration}.
+	 * Parse a {@link Config} for registration}.
 	 *
 	 * @param featureName The name of the feature to register.
 	 * @param genObject   The JsonObject to parse.

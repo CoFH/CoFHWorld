@@ -1,27 +1,11 @@
 package cofh.cofhworld.parser;
 
-import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.world.generator.WorldGen;
-import com.typesafe.config.Config;
 import com.typesafe.config.ConfigOrigin;
-import org.apache.logging.log4j.Logger;
 
-public interface IGeneratorParser {
+public interface IGeneratorParser<T extends IBuilder<? extends WorldGen>> {
 
-	/**
-	 * Parse a {@link Config} for usage with an {@link IFeatureGenerator}.
-	 *
-	 * @param name      The name of the generator entry.
-	 * @param genObject The JsonObject to parse.
-	 * @param log       The {@link Logger} to log debug/error/etc. messages to.
-	 * @param resList   The processed list of resources to generate
-	 * @param matList   The processed list of materials to generate in
-	 * @return The {@link WorldGen} to be registered with an IFeatureGenerator
-	 */
-//	@Nonnull
-//	WorldGen parseGenerator(String name, Config genObject, Logger log, List<WeightedBlock> resList, List<Material> matList) throws InvalidGeneratorException;
-
-	FieldBuilder getFields(FieldBuilder fields);
+	void getFields(IGeneratorFieldRegistry<T> fields);
 
 	class InvalidGeneratorException extends Exception {
 

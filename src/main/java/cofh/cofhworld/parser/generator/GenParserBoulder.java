@@ -1,16 +1,16 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.IGeneratorFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderBoulder;
 
-public class GenParserBoulder extends AbstractGenParserResource {
+public class GenParserBoulder implements AbstractGenParserResource<BuilderBoulder> {
 
 	@Override
-	public FieldBuilder getFields(FieldBuilder fields) {
+	public void getFields(IGeneratorFieldRegistry<BuilderBoulder> fields) {
 
-		fields = super.getFields(fields);
+		AbstractGenParserResource.super.getFields(fields);
 		fields.setBuilder(BuilderBoulder::new);
 
 		fields.addRequiredField("diameter", Type.NUMBER, BuilderBoulder::setSize);
@@ -24,8 +24,6 @@ public class GenParserBoulder extends AbstractGenParserResource {
 		fields.addOptionalField("variance.x", Type.NUMBER, BuilderBoulder::setxVar);
 		fields.addOptionalField("variance.y", Type.NUMBER, BuilderBoulder::setyVar);
 		fields.addOptionalField("variance.z", Type.NUMBER, BuilderBoulder::setzVar);
-
-		return fields;
 	}
 
 }

@@ -1,11 +1,11 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.IGeneratorFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderCluster;
 
-public class GenParserCluster extends AbstractGenParserResource {
+public class GenParserCluster implements AbstractGenParserResource<BuilderCluster> {
 
 	private final boolean sparse;
 
@@ -15,9 +15,9 @@ public class GenParserCluster extends AbstractGenParserResource {
 	}
 
 	@Override
-	public FieldBuilder getFields(FieldBuilder fields) {
+	public void getFields(IGeneratorFieldRegistry<BuilderCluster> fields) {
 
-		fields = super.getFields(fields);
+		AbstractGenParserResource.super.getFields(fields);
 		fields.setBuilder(() -> {
 			BuilderCluster builder = new BuilderCluster();
 			builder.setType(sparse ? BuilderCluster.Type.SPARSE : BuilderCluster.Type.TINY); // TODO: via config?
@@ -25,8 +25,6 @@ public class GenParserCluster extends AbstractGenParserResource {
 		});
 
 		fields.addRequiredField("cluster-size", Type.NUMBER, BuilderCluster::setSize);
-
-		return fields;
 	}
 
 }

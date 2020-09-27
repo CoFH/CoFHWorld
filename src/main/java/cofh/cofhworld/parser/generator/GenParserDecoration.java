@@ -1,18 +1,16 @@
 package cofh.cofhworld.parser.generator;
 
 import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.FieldBuilder;
+import cofh.cofhworld.parser.IGeneratorFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderDecoration;
 
-public class GenParserDecoration extends AbstractGenParserResource {
-
-	private static String[] FIELDS = new String[] { "block", "material", "quantity" };
+public class GenParserDecoration implements AbstractGenParserResource<BuilderDecoration> {
 
 	@Override
-	public FieldBuilder getFields(FieldBuilder fields) {
+	public void getFields(IGeneratorFieldRegistry<BuilderDecoration> fields) {
 
-		fields = super.getFields(fields);
+		AbstractGenParserResource.super.getFields(fields);
 		fields.setBuilder(BuilderDecoration::new);
 
 		fields.addRequiredField("quantity", Type.NUMBER, BuilderDecoration::setSize);
@@ -24,8 +22,6 @@ public class GenParserDecoration extends AbstractGenParserResource {
 		fields.addOptionalField("see-sky", Type.CONDITION, BuilderDecoration::setSeeSky);
 
 		fields.addOptionalField("check-stay", Type.CONDITION, BuilderDecoration::setCheckStay);
-
-		return fields;
 	}
 
 }
