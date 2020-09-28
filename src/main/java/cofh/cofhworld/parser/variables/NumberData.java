@@ -28,15 +28,17 @@ public class NumberData {
 	public static INumberProvider parseNumberValue(ConfigValue numberEntry) {
 
 		switch (numberEntry.valueType()) {
-			case NUMBER:
+			case NUMBER: {
 				return new ConstantProvider(((Number) numberEntry.unwrapped()));
-			case OBJECT:
+			}
+			case OBJECT: {
 				ConfigObject numberProps = (ConfigObject) numberEntry;
 				Config numberObject = ((ConfigObject) numberEntry).toConfig();
 				switch (numberProps.size()) {
-					case 1:
+					case 1: {
 						if (numberProps.containsKey("value")) {
-							return new ConstantProvider(numberObject.getNumber("value"));
+							// technically this allows "nesting" but really i just want to parse the value in one place. don't tell anyone.
+							return parseNumberValue(numberObject.getValue("value"));
 						} else if (numberProps.containsKey("variance")) {
 							return new SkellamRandomProvider(parseNumberValue(numberObject.getValue("variance")));
 						} else if (numberProps.containsKey("world-data")) {
@@ -45,7 +47,8 @@ public class NumberData {
 							return new DataProvider(numberObject.getString("generator-data"));
 						}
 						break;
-					case 2:
+					}
+					case 2: {
 						if (numberProps.containsKey("min") && numberProps.containsKey("max")) {
 							return new UniformRandomProvider(parseNumberValue(numberObject.getValue("min")), parseNumberValue(numberObject.getValue("max")));
 						} else if (numberProps.containsKey("generator-data") && numberProps.containsKey("default-value")) {
@@ -56,7 +59,8 @@ public class NumberData {
 							return new CacheProvider(numberObject.getString("key"), parseNumberValue(numberObject.getValue("cache")));
 						}
 						break;
-					case 3:
+					}
+					case 3: {
 						INumberProvider a, b;
 						if (numberProps.containsKey("operation") && numberProps.containsKey("value-a") && numberProps.containsKey("value-b")) {
 							a = parseNumberValue(numberObject.getValue("value-a"));
@@ -88,7 +92,8 @@ public class NumberData {
 							return new TableProvider(table, parseNumberValue(numberObject.getValue("lookup")), def);
 						}
 						break;
-					case 4:
+					}
+					case 4: {
 						if (numberProps.containsKey("table") && numberProps.containsKey("lookup") &&
 								numberProps.containsKey("less-than-value") && numberProps.containsKey("greater-than-value")) {
 							ConfigList list = numberObject.getList("table");
@@ -100,12 +105,16 @@ public class NumberData {
 									parseNumberValue(numberObject.getValue("less-than-value")), parseNumberValue(numberObject.getValue("greater-than-value")));
 						}
 						break;
-					default:
+					}
+					default: {
 						throw new Error(String.format("Too many properties on object at line %s", numberEntry.origin().lineNumber()));
-					case 0:
+					}
+					case 0: {
 						break;
+					}
 				}
 				throw new Error(String.format("Unknown properties on object at line %s", numberEntry.origin().lineNumber()));
+			}
 			default:
 				throw new Error(String.format("Unsupported data type at line %s", numberEntry.origin().lineNumber()));
 		}
