@@ -13,6 +13,11 @@ public class TableProvider implements INumberProvider {
 	private final INumberProvider lesserValue;
 	private final INumberProvider greaterValue;
 
+	public TableProvider(INumberProvider[] table, INumberProvider lookupValue, INumberProvider defaultValue) {
+
+		this(table, lookupValue, defaultValue, defaultValue);
+	}
+
 	public TableProvider(INumberProvider[] table, INumberProvider lookupValue, INumberProvider lesserValue, INumberProvider greaterValue) {
 
 		this.table = table;
@@ -33,4 +38,17 @@ public class TableProvider implements INumberProvider {
 		}
 		return table[lookup].longValue(world, rand, data);
 	}
+
+	@Override
+	public double doubleValue(IWorldReader world, Random rand, DataHolder data) {
+
+		int lookup = lookupValue.intValue(world, rand, data);
+		if (lookup < 0) {
+			return lesserValue.doubleValue(world, rand, data);
+		} else if (lookup >= table.length) {
+			return greaterValue.doubleValue(world, rand, data);
+		}
+		return table[lookup].doubleValue(world, rand, data);
+	}
+
 }

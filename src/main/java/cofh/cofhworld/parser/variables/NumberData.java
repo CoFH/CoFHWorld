@@ -5,6 +5,7 @@ import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.data.CacheProvider;
 import cofh.cofhworld.data.numbers.data.DataProvider;
 import cofh.cofhworld.data.numbers.data.DefaultedDataProvider;
+import cofh.cofhworld.data.numbers.data.TableProvider;
 import cofh.cofhworld.data.numbers.operation.BoundedProvider;
 import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
@@ -15,6 +16,7 @@ import cofh.cofhworld.data.numbers.world.DirectionalScanner;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedEnum;
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigList;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
 import net.minecraft.util.Direction;
@@ -76,6 +78,26 @@ public class NumberData {
 								throw new Error(String.format("Invalid direction provided at line %s", numberObject.getValue("direction").origin().lineNumber()));
 							}
 							return new DirectionalScanner(parseConditionValue(numberObject.getValue("condition")), dir.value, a);
+						} else if (numberProps.containsKey("table") && numberProps.containsKey("lookup") && numberProps.containsKey("default")) {
+							ConfigList list = numberObject.getList("table");
+							INumberProvider[] table = new INumberProvider[list.size()];
+							for (int i = 0, e = table.length; i < e; ++i) {
+								table[i] = parseNumberValue(list.get(i));
+							}
+							INumberProvider def = parseNumberValue(numberObject.getValue("default"));
+							return new TableProvider(table, parseNumberValue(numberObject.getValue("lookup")), def);
+						}
+						break;
+					case 4:
+						if (numberProps.containsKey("table") && numberProps.containsKey("lookup") &&
+								numberProps.containsKey("less-than-value") && numberProps.containsKey("greater-than-value")) {
+							ConfigList list = numberObject.getList("table");
+							INumberProvider[] table = new INumberProvider[list.size()];
+							for (int i = 0, e = table.length; i < e; ++i) {
+								table[i] = parseNumberValue(list.get(i));
+							}
+							return new TableProvider(table, parseNumberValue(numberObject.getValue("lookup")),
+									parseNumberValue(numberObject.getValue("less-than-value")), parseNumberValue(numberObject.getValue("greater-than-value")));
 						}
 						break;
 					default:
