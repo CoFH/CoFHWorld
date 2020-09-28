@@ -82,7 +82,7 @@ public class WorldGenAdvLakes extends WorldGen {
 			double ySize = rand.nextDouble() * 4.0D + 2.0D;
 			// 4 + 2 = 6; 4 * 2 = 8; + 2 = 10; 6 * 2 = 12
 			double zSize = rand.nextDouble() * 6.0D + 3.0D;
-			// (WIDTH + WIDTH_OFFSET * 2) / 3 + (WIDTH + WIDTH_OFFSET * 2) / 6?
+			// (WIDTH + WIDTH_OFFSET * 2) / (2 + WIDTH_MOD) + (WIDTH + WIDTH_OFFSET * 2) / (4 + WIDTH_MOD * 2)?
 			double xCenter = rand.nextDouble() * (width - xSize - 2.0D) + 1.0D + xSize / 2.0D;
 			// (16 - 9 - 2) + 1 + 4.5 = 10.5; (16 - 3 - 2) + 1 + 1.5 = 13.5;
 			// ( 0 - 0 - 0) + 1 + 4.5 =  5.5; ( 0 - 0 - 0) + 1 + 1.5 =  2.5;
