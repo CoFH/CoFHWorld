@@ -3,6 +3,7 @@ package cofh.cofhworld.parser.variables;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ConstantCondition;
 import cofh.cofhworld.data.condition.ICondition;
+import cofh.cofhworld.data.condition.data.CacheCondition;
 import cofh.cofhworld.data.condition.data.DataCondition;
 import cofh.cofhworld.data.condition.data.DefaultedDataCondition;
 import cofh.cofhworld.data.condition.operation.BinaryCondition;
@@ -64,6 +65,8 @@ public class ConditionData {
 							} else if (condProps.containsKey("default-value")) {
 								return new DefaultedDataCondition(condObject.getString("generator-data"), parseConditionValue(condObject.getValue("default-value")));
 							}
+						} else if (condProps.containsKey("cache") && condProps.containsKey("key")) {
+							return new CacheCondition(condObject.getString("key"), parseConditionValue(condObject.getValue("cache")));
 						}
 						break;
 					case 3:

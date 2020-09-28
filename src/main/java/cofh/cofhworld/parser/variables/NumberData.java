@@ -2,6 +2,7 @@ package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.data.CacheProvider;
 import cofh.cofhworld.data.numbers.data.DataProvider;
 import cofh.cofhworld.data.numbers.data.DefaultedDataProvider;
 import cofh.cofhworld.data.numbers.operation.BoundedProvider;
@@ -49,6 +50,8 @@ public class NumberData {
 							return new DefaultedDataProvider(numberObject.getString("generator-data"), parseNumberValue(numberObject.getValue("default-value")));
 						} else if (numberProps.containsKey("operation") && numberProps.containsKey("value")) {
 							return new UnaryMathProvider(parseNumberValue(numberObject.getValue("value")), numberObject.getString("operation"));
+						} else if (numberProps.containsKey("cache") && numberProps.containsKey("key")) {
+							return new CacheProvider(numberObject.getString("key"), parseNumberValue(numberObject.getValue("cache")));
 						}
 						break;
 					case 3:

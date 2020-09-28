@@ -8,8 +8,8 @@ import java.util.Random;
 
 public class DefaultedDataCondition implements ICondition {
 
-	final private String key;
-	final private ICondition def;
+	final protected String key;
+	final protected ICondition def;
 
 	public DefaultedDataCondition(String key, ICondition def) {
 
