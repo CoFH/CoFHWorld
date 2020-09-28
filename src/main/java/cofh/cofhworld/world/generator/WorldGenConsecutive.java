@@ -9,7 +9,7 @@ import java.util.Random;
 public class WorldGenConsecutive extends WorldGen {
 
 	private final WorldGen[] generators;
-	private int generatorIndex;
+	private final ThreadLocal<GeneratorIndex> generatorIndex = ThreadLocal.withInitial(GeneratorIndex::new);
 
 	public WorldGenConsecutive(List<WorldGen> values) {
 
@@ -19,7 +19,7 @@ public class WorldGenConsecutive extends WorldGen {
 	@Override
 	public void setDecorationDefaults() {
 
-		generatorIndex = 0;
+		generatorIndex.get().reset();
 		for (WorldGen gen : generators) {
 			gen.setDecorationDefaults();
 		}
@@ -28,9 +28,18 @@ public class WorldGenConsecutive extends WorldGen {
 	@Override
 	public boolean generate(IWorld world, Random rand, DataHolder data) {
 
-		generatorIndex = (generatorIndex + 1) % generators.length;
+		return generators[generatorIndex.get().incrementAndGet(generators.length)].generate(world, rand, data.getPosition());
+	}
 
-		return generators[generatorIndex].generate(world, rand, data.getPosition());
+	private final static class GeneratorIndex {
+		private int index = -1;
+		public int incrementAndGet(int modulo) {
+
+			return index = (index + 1) % modulo;
+		}
+		public void reset() {
+			index = -1;
+		}
 	}
 
 }
