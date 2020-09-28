@@ -17,6 +17,7 @@ public class GenParserPlate implements AbstractGenParserResource<BuilderPlate> {
 
 		fields.addOptionalField("height", Type.NUMBER, BuilderPlate::setHeight);
 		fields.addOptionalField("slim", Type.CONDITION, BuilderPlate::setSlim);
+		fields.addOptionalField("mirror-below", Type.CONDITION, BuilderPlate::setMirror);
 
 		fields.addOptionalField("shape", Type.SHAPE_2D, BuilderPlate::setShape);
 	}

@@ -15,7 +15,7 @@ public class BuilderPlate extends BuilderShape<WorldGenPlate> {
 	private INumberProvider radius;
 	private INumberProvider height = ONE;
 
-	private ICondition slim = ConstantCondition.FALSE;
+	private ICondition slim = ConstantCondition.FALSE, mirror = ConstantCondition.TRUE;
 
 	public void setRadius(INumberProvider radius) {
 
@@ -32,9 +32,14 @@ public class BuilderPlate extends BuilderShape<WorldGenPlate> {
 		this.slim = slim;
 	}
 
+	public void setMirror(ICondition mirror) {
+
+		this.mirror = mirror;
+	}
+
 	@Override
 	public WorldGenPlate build() {
 
-		return new WorldGenPlate(resource, material, shape, radius, height, slim);
+		return new WorldGenPlate(resource, material, shape, radius, height, slim, mirror);
 	}
 }

@@ -24,9 +24,10 @@ public class WorldGenPlate extends WorldGen {
 	private final INumberProvider radius;
 	private final INumberProvider height;
 
-	private final ICondition slim;
+	private final ICondition slim, mirror;
 
-	public WorldGenPlate(List<WeightedBlock> resource, List<Material> materials, Shape2D shape, INumberProvider radius, INumberProvider height, ICondition slim) {
+	public WorldGenPlate(List<WeightedBlock> resource, List<Material> materials, Shape2D shape, INumberProvider radius, INumberProvider height,
+			ICondition slim, ICondition mirror) {
 
 		this.resource = resource;
 		material = materials.toArray(new Material[0]);
@@ -34,6 +35,7 @@ public class WorldGenPlate extends WorldGen {
 		this.shape = shape;
 		this.height = height;
 		this.slim = slim;
+		this.mirror = mirror;
 		setOffsetY(new ConstantProvider(1));
 	}
 
@@ -59,8 +61,10 @@ public class WorldGenPlate extends WorldGen {
 				if (shape.inArea(areaX, areaZ, size, settings)) {
 					data.setValue("layer-x", areaX).setValue("layer-z", areaZ).setPosition(new BlockPos(posX, y, posZ));
 					final int height = this.height.intValue(world, rand, data);
-					final boolean slim = this.slim.checkCondition(world, rand, data.setValue("height", height));
-					for (int posY = y - height; slim ? posY < y + height : posY <= y + height; ++posY) {
+					final int slim = this.slim.checkCondition(world, rand, data.setValue("height", height)) ? 1 : 0;
+					final boolean mirror = this.mirror.checkCondition(world, rand, data.setValue("slim", slim == 1));
+
+					for (int posY = mirror ? y - height : y, end = y + height - slim; posY <= end ; ++posY) {
 						r |= generateBlock(world, rand, posX, posY, posZ, material, resource);
 					}
 				}
