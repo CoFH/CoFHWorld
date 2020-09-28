@@ -29,11 +29,11 @@ public class WorldProps {
 
 	public static void preInit() {
 
+		initFeatures();
 		config();
 		FMLJavaModLoadingContext.get().getModEventBus().register(WorldProps.class);
 		ModLoadingContext.get().registerConfig(Type.SERVER, config); // TODO: change to `COMMON` or just ignore forge entirely, since common doesn't do anything
 
-		initFeatures();
 	}
 
 	private static ForgeConfigSpec config;
@@ -76,11 +76,11 @@ public class WorldProps {
 			{
 				config.push("Control");
 
-				// TODO: convert to `minecraft` directory
+				// TODO: fragment files?
 				replaceStandardGenerationValue = config
 						.comment("If TRUE, standard Minecraft ore generation will be REPLACED." +
-								" Configure in the '" + STANDARD_GEN_FILE_INTERNAL + "' file; standard Minecraft defaults have been provided." +
-								" If you rename the '" + STANDARD_GEN_FILE_INTERNAL + "' file, this option WILL NOT WORK.")
+								" Configure in the '" + STANDARD_GEN_DIR_INTERNAL + STANDARD_GEN_FILE_INTERNAL + "' file; standard Minecraft defaults have been provided." +
+								" If you rename the '" + STANDARD_GEN_DIR_INTERNAL + STANDARD_GEN_FILE_INTERNAL + "' file, this option WILL NOT WORK.")
 						.worldRestart()
 						.define("ReplaceStandardGeneration", replaceStandardGeneration);
 

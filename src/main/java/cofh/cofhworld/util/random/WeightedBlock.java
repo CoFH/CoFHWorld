@@ -21,7 +21,6 @@ public final class WeightedBlock extends WeightedRandom.Item {
 	public static final WeightedBlock AIR_CAVE = new WeightedBlock(Blocks.CAVE_AIR);
 	public static final WeightedBlock AIR_VOID = new WeightedBlock(Blocks.VOID_AIR);
 
-	// TODO: wildcard?
 	public final Block block;
 	public final BlockState state;
 	private final List<WeightedNBTTag> data;
