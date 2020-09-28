@@ -2,6 +2,7 @@ package cofh.cofhworld.world.generator;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.shape.Shape2D;
 import cofh.cofhworld.data.shape.Shape2D.ShapeSettings2D;
@@ -17,18 +18,22 @@ public class WorldGenSpout extends WorldGen {
 	private final List<WeightedBlock> resource;
 	private final Material[] material;
 
+	private final Shape2D shape;
+
 	private final INumberProvider radius;
 	private final INumberProvider height;
 
-	private final Shape2D shape;
 
-	public WorldGenSpout(List<WeightedBlock> resource, List<Material> materials, INumberProvider radius, INumberProvider height, Shape2D shape) {
+	private final ICondition mirror;
+
+	public WorldGenSpout(List<WeightedBlock> resource, List<Material> materials, Shape2D shape, INumberProvider radius, INumberProvider height, ICondition mirror) {
 
 		this.resource = resource;
-		this.radius = radius;
-		this.height = height;
 		material = materials.toArray(new Material[0]);
 		this.shape = shape;
+		this.radius = radius;
+		this.height = height;
+		this.mirror = mirror;
 	}
 
 	@Override
@@ -36,17 +41,17 @@ public class WorldGenSpout extends WorldGen {
 
 		BlockPos pos = data.getPosition();
 
-		int xCenter = pos.getX();
-		int yCenter = pos.getY();
-		int zCenter = pos.getZ();
+		final int xCenter = pos.getX();
+		final int yCenter = pos.getY();
+		final int zCenter = pos.getZ();
 
 		final Shape2D shape = this.shape;
 		final ShapeSettings2D settings = shape.getSettings(rand);
 
-		int height = this.height.intValue(world, rand, data);
-		data.setValue("height", height);
+		final int height = this.height.intValue(world, rand, data);
+		final boolean mirror = this.mirror.checkCondition(world, rand, data.setValue("height", height));
 		boolean r = false;
-		for (int y = 0; y < height; ++y) {
+		for (int y = mirror ? -height : 0; y < height; ++y) {
 			int radius = this.radius.intValue(world, rand, data.setValue("layer", y).setPosition(pos.add(0, y, 0)));
 			for (int x = -radius; x <= radius; ++x) {
 				for (int z = -radius; z <= radius; ++z) {

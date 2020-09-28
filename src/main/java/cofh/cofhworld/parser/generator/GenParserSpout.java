@@ -16,6 +16,7 @@ public class GenParserSpout implements AbstractGenParserResource<BuilderSpout> {
 		fields.addRequiredField("radius", Type.NUMBER, BuilderSpout::setRadius);
 
 		fields.addOptionalField("height", Type.NUMBER, BuilderSpout::setHeight);
+		fields.addOptionalField("mirror-below", Type.CONDITION, BuilderSpout::setMirror);
 
 		fields.addOptionalField("shape", Type.SHAPE_2D, BuilderSpout::setShape);
 	}
