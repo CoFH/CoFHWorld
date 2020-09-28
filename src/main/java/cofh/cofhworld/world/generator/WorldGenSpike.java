@@ -23,15 +23,15 @@ public class WorldGenSpike extends WorldGen {
 
 	private final INumberProvider height;
 
-	private final  INumberProvider size;
+	private final INumberProvider size;
 
-	private final  INumberProvider yVariance;
+	private final INumberProvider yVariance;
 
-	private final  ICondition largeSpikes;
+	private final ICondition largeSpikes;
 
-	private final  INumberProvider largeSpikeHeightGain;
+	private final INumberProvider largeSpikeHeightGain;
 
-	private final  INumberProvider layerSize;
+	private final INumberProvider layerSize;
 
 	public WorldGenSpike(List<WeightedBlock> resource, List<Material> materials, INumberProvider height, INumberProvider size,
 			INumberProvider yVariance, ICondition largeSpikes, INumberProvider largeSpikeHeightGain, INumberProvider layerSize) {

@@ -23,7 +23,6 @@ public class WorldGenSpout extends WorldGen {
 	private final INumberProvider radius;
 	private final INumberProvider height;
 
-
 	private final ICondition mirror;
 
 	public WorldGenSpout(List<WeightedBlock> resource, List<Material> materials, Shape2D shape, INumberProvider radius, INumberProvider height, ICondition mirror) {
