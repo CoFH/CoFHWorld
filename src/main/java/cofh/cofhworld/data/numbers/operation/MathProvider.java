@@ -42,6 +42,7 @@ public class MathProvider implements INumberProvider {
 		MULTIPLY((a, b) -> a * b, (a, b) -> a * b),
 		DIVIDE((a, b) -> a / b, (a, b) -> a / b),
 		MODULO((a, b) -> a % b, (a, b) -> a % b),
+		INVERSE_MODULO((a, b) -> a - (a % b), (a, b) -> a - (a % b)),
 		POWER((a, b) -> (long)Math.pow(a, b), Math::pow),
 		MINIMUM(Math::min, Math::min),
 		MAXIMUM(Math::max, Math::max);
