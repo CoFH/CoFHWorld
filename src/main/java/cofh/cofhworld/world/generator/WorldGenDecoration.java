@@ -3,7 +3,6 @@ package cofh.cofhworld.world.generator;
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ICondition;
-import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
@@ -63,8 +62,9 @@ public class WorldGenDecoration extends WorldGen {
 						canGenerateInBlock(world, x, y - 1, z, surface) && canGenerateInBlock(world, x, y, z, material)) {
 
 					int stack = stackHeight.intValue(world, rand, data);
+					data.setValue("stack-height", stack);
 					do {
-						if (checkStay.checkCondition(world, rand, data)) {
+						if (checkStay.checkCondition(world, rand, data.setValue("layer", stack))) {
 							r |= setBlock(world, rand, pos, block);
 						} else {
 							break;
