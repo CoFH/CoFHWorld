@@ -5,7 +5,7 @@ function initializeCoreMod() {
     var InsnNode = Java.type("org.objectweb.asm.tree.InsnNode");
     var MethodInsnNode = Java.type("org.objectweb.asm.tree.MethodInsnNode");
     var ChunkProvider$generate = ASMAPI.mapMethod("func_230351_a_");
-    var Biome$addFeature = ASMAPI.mapMethod("func_203611_a");
+    var Biome$addFeature = ASMAPI.mapMethod("func_242513_a");
 
     function wrapVanillaGenerator(method, stageName, typeName, wrapper) {
 
@@ -87,8 +87,8 @@ function initializeCoreMod() {
             'target': {
                 'type': 'METHOD',
                 'class': 'net.minecraft.world.biome.DefaultBiomeFeatures',
-                'methodName': 'func_222322_k', // addInfestedStone
-                'methodDesc': '(Lnet/minecraft/world/biome/Biome;)V'
+                'methodName': 'func_243753_m', // addInfestedStone
+                'methodDesc': '(Lnet/minecraft/world/biome/BiomeGenerationSettings$Builder;)V'
             },
             'transformer': function(method) {
 
@@ -96,18 +96,31 @@ function initializeCoreMod() {
                 return method;
             }
         },
-        'standard_gen_hook_nether_ore': {
+        'standard_gen_hook_nether_debris_ore': {
             'target': {
                 'type': 'METHOD',
-                'class': 'net/minecraft/world/biome/NetherBiome',
-                'methodName': '<init>',
-                'methodDesc': '()V'
+                'class': 'net.minecraft.world.biome.DefaultBiomeFeatures',
+                'methodName': 'func_243732_ap', // withDebrisOre
+                'methodDesc': '(Lnet/minecraft/world/biome/BiomeGenerationSettings$Builder;)V'
             },
             'transformer': function(method) {
 
-                wrapVanillaGenerator(method, ASMAPI.mapField("field_202290_aj"), "net/minecraft/world/gen/feature/Feature");
+                wrapVanillaGenerator(method, "UNDERGROUND_DECORATION");
                 return method;
             }
-        }
+        },
+        'standard_gen_hook_nether_common_blocks': {
+             'target': {
+                 'type': 'METHOD',
+                 'class': 'net.minecraft.world.biome.DefaultBiomeFeatures',
+                 'methodName': 'func_243731_ao', // withCommonNetherBlocks
+                 'methodDesc': '(Lnet/minecraft/world/biome/BiomeGenerationSettings$Builder;)V'
+             },
+             'transformer': function(method) {
+
+                 wrapVanillaGenerator(method, "UNDERGROUND_DECORATION"); // we capture gravel and blackstone in addition to gold ore and quartz ore because mojang can't types
+                 return method;
+             }
+         }
     }
 }
