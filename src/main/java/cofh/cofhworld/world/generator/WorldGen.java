@@ -36,7 +36,7 @@ public abstract class WorldGen {
 		int x = xOff.intValue(world, rand, data.setPosition(start));
 		int z = zOff.intValue(world, rand, data.setPosition(start.add(x, 0, 0)));
 		int y = yOff.intValue(world, rand, data.setPosition(start.add(x, 0, z)));
-		return new BlockPos(start.getX() + x, MathHelper.clamp(start.getY() + y, 0, world.getMaxHeight()), start.getZ() + z);
+		return new BlockPos(start.getX() + x, MathHelper.clamp(start.getY() + y, 0, world.getHeight()), start.getZ() + z);
 	}
 
 	final public boolean generate(IWorld world, Random rand, BlockPos position) {

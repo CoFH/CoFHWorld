@@ -2,9 +2,8 @@ package cofh.cofhworld.wrapper;
 
 import cofh.cofhworld.init.WorldProps;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
@@ -43,10 +42,11 @@ public class VanillaFeatureWrapper<Config extends IFeatureConfig, FeatureC exten
 		return new VanillaFeatureWrapper<>(super.withPlacement(placement), test);
 	}
 
-	public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos) {
+	@Override
+	public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos) {
 
 		if (test.getAsBoolean())
 			return false;
-		return super.place(world, generator, rand, pos);
+		return super.generate(world, generator, rand, pos);
 	}
 }

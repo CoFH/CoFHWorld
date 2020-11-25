@@ -1,8 +1,8 @@
 package cofh.cofhworld.data.biome;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.TempCategory;
 import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.Collection;
@@ -46,20 +46,20 @@ public class BiomeInfo {
 				case CategoryList:
 					r = ((Collection<String>) data).contains(biome.getCategory().getName());
 					break;
-				case TemperatureCategory:
-					r = biome.getTempCategory() == data;
-					break;
-				case TemperatureCategoryList:
-					r = ((Collection<TempCategory>) data).contains(biome.getTempCategory());
-					break;
+//				case TemperatureCategory:
+//					r = biome.getTempCategory() == data;
+//					break;
+//				case TemperatureCategoryList:
+//					r = ((Collection<TempCategory>) data).contains(biome.getTempCategory());
+//					break;
 				case DictionaryType:
-					r = BiomeDictionary.hasType(biome, (BiomeDictionary.Type) data);
+					r = BiomeDictionary.hasType(WorldGenRegistries.BIOME.getOptionalKey(biome).get(), (BiomeDictionary.Type) data);
 					break;
 				case DictionaryTypeList:
 					BiomeDictionary.Type[] d = (BiomeDictionary.Type[]) data;
 					int c = 0, e = d.length;
 					for (int i = 0; i < e; ++i) {
-						if (BiomeDictionary.hasType(biome, d[i])) {
+						if (BiomeDictionary.hasType(WorldGenRegistries.BIOME.getOptionalKey(biome).get(), d[i])) {
 							++c;
 						}
 					}

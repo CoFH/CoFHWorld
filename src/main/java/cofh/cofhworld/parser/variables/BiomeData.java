@@ -6,12 +6,10 @@ import cofh.cofhworld.data.biome.BiomeInfoRarity;
 import cofh.cofhworld.data.biome.BiomeInfoSet;
 import com.typesafe.config.*;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 import static cofh.cofhworld.CoFHWorld.log;
@@ -94,18 +92,18 @@ public class BiomeData {
 							data = new ResourceLocation(entry);
 							t = Type.RegistryName;
 						}
-					} else if ("temperature".equalsIgnoreCase(type)) {
-						if (array != null) {
-							ArrayList<Biome.TempCategory> temps = new ArrayList<>(array.size());
-							for (int k = 0, j = array.size(); k < j; k++) {
-								temps.add(Biome.TempCategory.valueOf(array.get(k)));
-							}
-							data = EnumSet.copyOf(temps);
-							t = Type.TemperatureCategoryList;
-						} else {
-							data = Biome.TempCategory.valueOf(entry);
-							t = Type.TemperatureCategory;
-						}
+//					} else if ("temperature".equalsIgnoreCase(type)) {
+//						if (array != null) {
+//							ArrayList<Biome.TempCategory> temps = new ArrayList<>(array.size());
+//							for (int k = 0, j = array.size(); k < j; k++) {
+//								temps.add(Biome.TempCategory.valueOf(array.get(k)));
+//							}
+//							data = EnumSet.copyOf(temps);
+//							t = Type.TemperatureCategoryList;
+//						} else {
+//							data = Biome.TempCategory.valueOf(entry);
+//							t = Type.TemperatureCategory;
+//						}
 					} else {
 						log.warn("Biome entry of unknown type");
 						break l;

@@ -10,6 +10,7 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.gen.feature.template.BlockIgnoreStructureProcessor;
@@ -53,7 +54,7 @@ public class WorldGenStructure extends WorldGen {
 
 				@Nullable
 				@Override
-				public BlockInfo process(IWorldReader world, BlockPos offset, BlockInfo original, BlockInfo current, PlacementSettings settings) {
+				public BlockInfo func_230386_a_(IWorldReader world, BlockPos offset, BlockPos offset__2, BlockInfo original, BlockInfo current, PlacementSettings settings) {
 
 					for (Material ignoredBlock : ignoringBlocks) {
 						if (ignoredBlock.test(current.state))
@@ -68,7 +69,7 @@ public class WorldGenStructure extends WorldGen {
 
 				@Nullable
 				@Override
-				public BlockInfo process(IWorldReader world, BlockPos offset, BlockInfo original, BlockInfo current, PlacementSettings settings) {
+				public BlockInfo func_230386_a_(IWorldReader world, BlockPos offset, BlockPos offset__2, BlockInfo original, BlockInfo current, PlacementSettings settings) {
 
 					return ignoredBlock.test(current.state) ? null : current;
 				}
@@ -83,7 +84,9 @@ public class WorldGenStructure extends WorldGen {
 		} else if (integrity != null) {
 			placementSettings.addProcessor(new IntegrityProcessor(0) {
 
-				public BlockInfo process(IWorldReader world, BlockPos offset, BlockInfo original, BlockInfo current, PlacementSettings settings) {
+				@Nullable
+				@Override
+				public BlockInfo func_230386_a_(IWorldReader world, BlockPos offset, BlockPos offset__2, BlockInfo original, BlockInfo current, PlacementSettings settings) {
 
 					Random rand = settings.getRandom(current.pos);
 					return integrity.doubleValue(world, rand, new DataHolder(current.pos)) <= rand.nextFloat() ? null : current;
@@ -115,7 +118,7 @@ public class WorldGenStructure extends WorldGen {
 
 		BlockPos start = template.getZeroPositionWithTransform(data.getPosition(), settings.getMirror(), settings.getRotation());
 
-		return template.addBlocksToWorld(world, start, settings, 20);
+		return template.func_237146_a_((IServerWorld) world, start, start, settings, random, 20); // TODO: PROBABLY BAD
 	}
 
 }

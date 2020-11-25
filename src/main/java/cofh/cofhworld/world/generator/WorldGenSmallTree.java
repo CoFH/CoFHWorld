@@ -69,7 +69,7 @@ public class WorldGenSmallTree extends WorldGen {
 		final boolean waterLoving = this.waterLoving.checkCondition(world, rand, data.setValue("relaxed-growth", checkValue));
 
 		final int treeHeight = height.intValue(world, rand, data.setValue("water-loving", waterLoving));
-		final int worldHeight = world.getMaxHeight();
+		final int worldHeight = world.getHeight();
 		data.setValue("height", treeHeight);
 
 		BlockState state;

@@ -7,7 +7,7 @@ import cofh.cofhworld.util.Utils;
 import cofh.cofhworld.world.generator.WorldGen;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.ISeedReader;
 
 import java.util.List;
 import java.util.Random;
@@ -29,7 +29,7 @@ public class DistributionUnderMaterial extends Distribution {
 	}
 
 	@Override
-	public boolean generateFeature(Random random, int blockX, int blockZ, IWorld world) {
+	public boolean generateFeature(Random random, int blockX, int blockZ, ISeedReader world) {
 
 		BlockPos.Mutable pos = new BlockPos.Mutable(blockX, 64, blockZ);
 
@@ -52,7 +52,8 @@ public class DistributionUnderMaterial extends Distribution {
 				state = world.getBlockState(pos.setPos(x, y, z));
 				if (fluidList != null) {
 					for (Material mat : fluidList)
-						if (!stateAbove.isReplaceableOreGen(world, pos, mat))
+						if (!mat.test(stateAbove))// TODO: if forge re-adds this v
+							//if (!stateAbove.isReplaceableOreGen(world, pos, mat))
 							continue l;
 				} else {
 					if (stateAbove.getMaterial() != net.minecraft.block.material.Material.WATER) {
@@ -60,7 +61,8 @@ public class DistributionUnderMaterial extends Distribution {
 					}
 				}
 				for (Material mat : matList)
-					if (state.isReplaceableOreGen(world, pos, mat))
+					if (mat.test(state))// TODO: if forge re-adds this v
+						//if (state.isReplaceableOreGen(world, pos, mat))
 						break l;
 			} while (y-- > 0);
 

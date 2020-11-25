@@ -29,7 +29,6 @@ public class MaterialPropertyMaterial extends Material {
 	public static enum Property {
 		BLOCKS_MOVEMENT(net.minecraft.block.material.Material::blocksMovement),
 		FLAMMABLE(net.minecraft.block.material.Material::isFlammable),
-		REQUIRES_NO_TOOL(net.minecraft.block.material.Material::isToolNotRequired),
 		LIQUID(net.minecraft.block.material.Material::isLiquid),
 		OPAQUE(net.minecraft.block.material.Material::isOpaque),
 		REPLACEABLE(net.minecraft.block.material.Material::isReplaceable),

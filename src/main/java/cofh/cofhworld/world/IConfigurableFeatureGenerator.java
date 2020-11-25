@@ -1,7 +1,7 @@
 package cofh.cofhworld.world;
 
 import cofh.cofhworld.data.biome.BiomeInfoSet;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.ISeedReader;
 
 import java.util.Random;
 
@@ -22,7 +22,7 @@ public interface IConfigurableFeatureGenerator extends IFeatureGenerator {
 		}
 	}
 
-	boolean generateFeature(Random random, int blockX, int blockZ, IWorld world);
+	boolean generateFeature(Random random, int blockX, int blockZ, ISeedReader world);
 
 	IConfigurableFeatureGenerator setRarity(int rarity);
 

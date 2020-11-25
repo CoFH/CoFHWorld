@@ -2,7 +2,7 @@ package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.data.biome.BiomeInfoSet;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.ISeedReader;
 
 import java.util.List;
 import java.util.Random;
@@ -63,7 +63,7 @@ public class DistributionSequential extends Distribution {
 	}
 
 	@Override
-	public boolean generateFeature(Random random, int blockX, int blockZ, IWorld world) {
+	public boolean generateFeature(Random random, int blockX, int blockZ, ISeedReader world) {
 
 		boolean r = false;
 

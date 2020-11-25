@@ -156,7 +156,7 @@ public class WorldGenAdvLakes extends WorldGen {
 							getBlockState(world, xStart + x, yStart + y - 1, zStart + z).getBlock().equals(Blocks.DIRT) &&
 							world.getLightFor(LightType.SKY, new BlockPos(xStart + x, yStart + y, zStart + z)) > 0) {
 						Biome bgb = world.getBiome(new BlockPos(xStart + x, 0, zStart + z));
-						setBlockState(world, new BlockPos(xStart + x, yStart + y - 1, zStart + z), bgb.getSurfaceBuilderConfig().getTop());
+						setBlockState(world, new BlockPos(xStart + x, yStart + y - 1, zStart + z), bgb.getGenerationSettings().getSurfaceBuilderConfig().getTop());
 					}
 				}
 			}

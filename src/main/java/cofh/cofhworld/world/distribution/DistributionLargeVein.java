@@ -4,6 +4,7 @@ import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.world.generator.WorldGen;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
 
 import java.util.Random;
@@ -45,7 +46,7 @@ public class DistributionLargeVein extends Distribution {
 	}
 
 	@Override
-	public boolean generateFeature(Random random, int blockX, int blockZ, IWorld world) {
+	public boolean generateFeature(Random random, int blockX, int blockZ, ISeedReader world) {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 

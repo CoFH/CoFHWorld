@@ -6,7 +6,9 @@ import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IFeatureGenerator;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.longs.LongSets;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
 
@@ -94,17 +96,19 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 	}
 
 	@Override
-	public boolean generateFeature(Random random, int chunkX, int chunkZ, IWorld world, boolean newGen) {
+	public boolean generateFeature(Random random, int chunkX, int chunkZ, ISeedReader world, boolean newGen) {
 
 		if (!newGen && !regen) {
 			return false;
 		}
 		if (structureRestriction != GenRestriction.NONE) {
 			for (String structure : structures)
-				if (structureRestriction == GenRestriction.WHITELIST == world.getChunk(chunkX, chunkZ).getStructureReferences(structure).isEmpty())
+				if (structureRestriction == GenRestriction.WHITELIST == world.getChunk(chunkX, chunkZ).getStructureReferences().getOrDefault(structure,
+						// TODO BAD
+						LongSets.EMPTY_SET).isEmpty())
 					return false;
 		}
-		if (dimensionRestriction != GenRestriction.NONE && dimensionRestriction == GenRestriction.BLACKLIST == dimensions.contains(world.getDimension().getType().getId())) {
+		if (dimensionRestriction != GenRestriction.NONE && dimensionRestriction == GenRestriction.BLACKLIST == dimensions.contains(world.getDimensionType())) {
 			return false;
 		}
 		if (rarity > 1 && random.nextInt(rarity) != 0) {
@@ -113,6 +117,6 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		return generateFeature(random, chunkX * 16 + 8, chunkZ * 16 + 8, world);
 	}
 
-	public abstract boolean generateFeature(Random random, int blockX, int blockZ, IWorld world);
+	public abstract boolean generateFeature(Random random, int blockX, int blockZ, ISeedReader world);
 
 }

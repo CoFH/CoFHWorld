@@ -3,7 +3,7 @@ package cofh.cofhworld.data;
 import cofh.cofhworld.util.random.WeightedBlock;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 
 import javax.annotation.Nullable;
 
@@ -14,7 +14,7 @@ public class DataHolder {
 	public DataHolder(BlockPos start) {
 
 		setValue("start", start).setPosition(start);
-		setValue("chunk", new Vec3i(start.getX() >> 4, 0, start.getZ() >> 4));
+		setValue("chunk", new Vector3i(start.getX() >> 4, 0, start.getZ() >> 4));
 	}
 
 	public boolean getBool(String key) {

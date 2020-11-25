@@ -11,10 +11,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.fml.ModList;
 
 import java.util.List;
@@ -104,12 +101,12 @@ public class CommandCoFHWorld {
 			int maxPages = (generators.size() - 1) / PAGE_SIZE;
 
 			TextComponent component = new TranslationTextComponent("cofhworld.list", page + 1, maxPages + 1);
-			component.getStyle().setColor(TextFormatting.GOLD);
+			component.getStyle().setColor(Color.fromTextFormatting(TextFormatting.GOLD));
 			context.getSource().sendFeedback(component, true);
 
 			if (generators.size() == 0) {
 				component = new StringTextComponent("! EMPTY");
-				component.getStyle().setColor(TextFormatting.DARK_RED);
+				component.getStyle().setColor(Color.fromTextFormatting(TextFormatting.DARK_RED)); // TODO: PROBABLY BROKEN
 				context.getSource().sendFeedback(component, true);
 				return 1;
 			}
@@ -122,7 +119,7 @@ public class CommandCoFHWorld {
 			b.deleteCharAt(b.length() - 1);
 
 			component = new StringTextComponent(b.toString());
-			component.getStyle().setColor(TextFormatting.DARK_BLUE);
+			component.getStyle().setColor(Color.fromTextFormatting(TextFormatting.DARK_BLUE));
 			context.getSource().sendFeedback(component, true);
 			return 1;
 		}

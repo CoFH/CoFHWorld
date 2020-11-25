@@ -3,7 +3,7 @@ package cofh.cofhworld.data.block;
 import cofh.cofhworld.util.Tuple;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.state.StateContainer;
 
 import javax.annotation.Nullable;
@@ -49,7 +49,7 @@ public abstract class PropertyMaterial extends Material {
 			StateContainer<Block, BlockState> container = blockState.getBlock().getStateContainer();
 
 			String value = property.getB();
-			IProperty<?> prop = container.getProperty(property.getA());
+			Property<?> prop = container.getProperty(property.getA());
 			if (prop == null) {
 				return value == null & inclusive;
 			} else if (value != null) {
@@ -76,7 +76,7 @@ public abstract class PropertyMaterial extends Material {
 
 			Predicate<Tuple<String, String>> test = v -> {
 				String value = v.getB();
-				IProperty<?> prop = container.getProperty(v.getA());
+				Property<?> prop = container.getProperty(v.getA());
 				if (prop == null) {
 					return value == null;
 				} else if (value != null) {
@@ -90,7 +90,7 @@ public abstract class PropertyMaterial extends Material {
 	}
 
 	@Nullable
-	public static Material of(Block block, List<Tuple<IProperty<?>, ?>> props, boolean inclusive) {
+	public static Material of(Block block, List<Tuple<Property<?>, ?>> props, boolean inclusive) {
 
 		switch (props.size()) {
 			case 0:
@@ -104,9 +104,9 @@ public abstract class PropertyMaterial extends Material {
 
 	final private static class BlockPropertyMaterial extends BlockMaterial {
 
-		final private Tuple<IProperty<?>, ?> property;
+		final private Tuple<Property<?>, ?> property;
 
-		public BlockPropertyMaterial(Block block, Tuple<IProperty<?>, ?> property, boolean inclusive) {
+		public BlockPropertyMaterial(Block block, Tuple<Property<?>, ?> property, boolean inclusive) {
 
 			super(block, inclusive);
 			this.property = property;
@@ -124,9 +124,9 @@ public abstract class PropertyMaterial extends Material {
 
 	final private static class BlockPropertiesMaterial extends BlockMaterial {
 
-		final private Stream<Tuple<IProperty<?>, ?>> properties;
+		final private Stream<Tuple<Property<?>, ?>> properties;
 
-		public BlockPropertiesMaterial(Block block, List<Tuple<IProperty<?>, ?>> properties, boolean inclusive) {
+		public BlockPropertiesMaterial(Block block, List<Tuple<Property<?>, ?>> properties, boolean inclusive) {
 
 			super(block, inclusive);
 			this.properties = properties.stream();
@@ -138,7 +138,7 @@ public abstract class PropertyMaterial extends Material {
 			if (!super.test(blockState))
 				return false;
 
-			Predicate<Tuple<IProperty<?>, ?>> test = v -> blockState.get(v.getA()) == v.getB();
+			Predicate<Tuple<Property<?>, ?>> test = v -> blockState.get(v.getA()) == v.getB();
 
 			return inclusive ? properties.anyMatch(test) : properties.noneMatch(test);
 		}

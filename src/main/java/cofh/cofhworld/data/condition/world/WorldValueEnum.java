@@ -3,7 +3,6 @@ package cofh.cofhworld.data.condition.world;
 import cofh.cofhworld.data.DataHolder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.biome.Biome;
 
@@ -30,7 +29,7 @@ public enum WorldValueEnum {
 		@Override
 		public boolean getValue(IWorldReader world, Random rand, DataHolder data) {
 
-			return world.getDimension().canRespawnHere();
+			return world.getDimensionType().doesBedWork();
 		}
 	},
 	CAN_SEE_SKY {
@@ -53,14 +52,14 @@ public enum WorldValueEnum {
 		@Override
 		public boolean getValue(IWorldReader world, Random rand, DataHolder data) {
 
-			return world.getDimension().doesWaterVaporize();
+			return world.getDimensionType().isUltrawarm();
 		}
 	},
 	HAS_SKY_LIGHT {
 		@Override
 		public boolean getValue(IWorldReader world, Random rand, DataHolder data) {
 
-			return world.getDimension().hasSkyLight();
+			return world.getDimensionType().hasSkyLight();
 		}
 	},
 	IS_AIR {
@@ -78,14 +77,14 @@ public enum WorldValueEnum {
 			return world.getBlockState(pos).getBlock().isFertile(world.getBlockState(pos), world, pos);
 		}
 	},
-	IS_BLOCK_FOLIAGE {
-		@Override
-		public boolean getValue(IWorldReader world, Random rand, DataHolder data) {
-
-			BlockPos pos = new BlockPos(data.getPosition());
-			return world.getBlockState(pos).getBlock().isFoliage(world.getBlockState(pos), world, pos);
-		}
-	},
+//	IS_BLOCK_FOLIAGE {
+//		@Override
+//		public boolean getValue(IWorldReader world, Random rand, DataHolder data) {
+//
+//			BlockPos pos = new BlockPos(data.getPosition());
+//			return world.getBlockState(pos).getBlock().isFoliage(world.getBlockState(pos), world, pos);
+//		}
+//	},
 	IS_BLOCK_LEAVES {
 		@Override
 		public boolean getValue(IWorldReader world, Random rand, DataHolder data) {
@@ -146,28 +145,21 @@ public enum WorldValueEnum {
 //			return world.isBlockinHighHumidity(new BlockPos(data.getPosition()));
 //		}
 //	},
-	IS_NETHER {
-		@Override
-		public boolean getValue(IWorldReader world, Random rand, DataHolder data) {
-
-			return world.getDimension().isNether();
-		}
-	},
-	IS_SPAWN_CHUNK {
-		@Override
-		public boolean getValue(IWorldReader world, Random rand, DataHolder data) {
-
-			Vec3i pos = data.getPosition();
-			Vec3i spawnPos = world.getDimension().getSpawnPoint();
-			spawnPos = new Vec3i(spawnPos.getX() >> 4, 0, spawnPos.getZ() >> 4);
-			return spawnPos.equals(new Vec3i(pos.getX() >> 4, 0, pos.getZ() >> 4));
-		}
-	},
+//	IS_SPAWN_CHUNK {
+//		@Override
+//		public boolean getValue(IWorldReader world, Random rand, DataHolder data) {
+//
+//			Vec3i pos = data.getPosition();
+//			Vec3i spawnPos = world.getDimension().getSpawnPoint();
+//			spawnPos = new Vec3i(spawnPos.getX() >> 4, 0, spawnPos.getZ() >> 4);
+//			return spawnPos.equals(new Vec3i(pos.getX() >> 4, 0, pos.getZ() >> 4));
+//		}
+//	},
 	IS_SURFACE_WORLD {
 		@Override
 		public boolean getValue(IWorldReader world, Random rand, DataHolder data) {
 
-			return world.getDimension().isSurfaceWorld();
+			return world.getDimensionType().isNatural();
 		}
 	};
 

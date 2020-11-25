@@ -9,7 +9,7 @@ import cofh.cofhworld.util.random.WeightedString;
 import com.typesafe.config.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.state.IProperty;
+import net.minecraft.state.Property;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -94,7 +94,7 @@ public class BlockData {
 					BlockState state = block.getDefaultState();
 					for (Map.Entry<String, ConfigValue> propEntry : blockObject.getObject("properties").entrySet()) {
 
-						IProperty<?> prop = blockstatecontainer.getProperty(propEntry.getKey());
+						Property<?> prop = blockstatecontainer.getProperty(propEntry.getKey());
 						if (prop == null) {
 							log.warn("Block '{}' does not have property '{}'.", blockName, propEntry.getKey());
 						}
@@ -238,10 +238,10 @@ public class BlockData {
 						propertyMaterial = PropertyMaterial.of(properties, inclusive);
 					} else {
 						StateContainer<Block, BlockState> blockstatecontainer = block.getStateContainer();
-						List<Tuple<IProperty<?>, ?>> properties = new LinkedHashList<>();
+						List<Tuple<Property<?>, ?>> properties = new LinkedHashList<>();
 						for (Map.Entry<String, ConfigValue> propEntry : matObject.getObject("properties").entrySet()) {
 
-							IProperty<?> prop = blockstatecontainer.getProperty(propEntry.getKey());
+							Property<?> prop = blockstatecontainer.getProperty(propEntry.getKey());
 							if (prop == null) {
 								log.warn("Block '{}' does not have property '{}'.", block.getRegistryName(), propEntry.getKey());
 								properties = null;
@@ -306,12 +306,12 @@ public class BlockData {
 
 		ResourceLocation loc = new ResourceLocation(blockName);
 		if (Registry.BLOCK.containsKey(loc)) {
-			return Registry.BLOCK.getValue(loc).get();
+			return Registry.BLOCK.getOrDefault(loc);
 		}
 		return null;
 	}
 
-	private static <T extends Comparable<T>> Optional<T> parseValue(final IProperty<T> prop, String val) {
+	private static <T extends Comparable<T>> Optional<T> parseValue(final Property<T> prop, String val) {
 
 		Optional<T> value = prop.parseValue(val);
 		if (!value.isPresent()) {
@@ -323,7 +323,7 @@ public class BlockData {
 	}
 
 	@Nullable
-	private static <T extends Comparable<T>> BlockState setValue(BlockState state, final IProperty<T> prop, String val) {
+	private static <T extends Comparable<T>> BlockState setValue(BlockState state, final Property<T> prop, String val) {
 
 		return parseValue(prop, val).map(t -> state == null ? state : state.with(prop, t)).orElse(null);
 	}

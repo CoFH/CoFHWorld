@@ -40,7 +40,7 @@ public class Utils {
 		while (block.isAir(state, world, pos) ||
 				state.getMaterial().isReplaceable() ||
 				block.isIn(BlockTags.LOGS) ||
-				block.isFoliage(state, world, pos) ||
+				//block.isFoliage(state, world, pos) ||
 				block.isIn(BlockTags.LEAVES)||
 				block.canBeReplacedByLeaves(state, world, pos));
 		// @formatter:on
