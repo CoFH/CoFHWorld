@@ -56,7 +56,7 @@ function initializeCoreMod() {
                             "net/minecraft/world/gen/ChunkGenerator".equals(isn.owner) &&
                             "(Lnet/minecraft/world/gen/WorldGenRegion;Lnet/minecraft/world/gen/feature/structure/StructureManager;)V".equals(isn.desc) &&
                             ChunkProvider$generate.equals(isn.name)) {
-                            method.instructions.insertBefore(isn, new InsnNode(opcodes.DUP2));
+                            method.instructions.insertBefore(isn, new InsnNode(opcodes.DUP2_X1));
                             method.instructions.insert(isn, new MethodInsnNode(opcodes.INVOKESTATIC,
                                 "cofh/cofhworld/init/WorldHandler", "generate",
                                  "(Lnet/minecraft/world/gen/WorldGenRegion;Lnet/minecraft/world/gen/feature/structure/StructureManager;)V", false));
