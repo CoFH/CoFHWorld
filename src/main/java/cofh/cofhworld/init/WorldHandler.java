@@ -10,18 +10,15 @@ import net.minecraft.block.pattern.BlockMatcher;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.AbstractChunkProvider;
 import net.minecraft.world.chunk.ChunkStatus.Type;
-import net.minecraft.world.dimension.Dimension;
-import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.WorldGenRegion;
-import net.minecraft.world.server.ServerChunkProvider;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.world.ChunkDataEvent;
@@ -143,7 +140,7 @@ public class WorldHandler {
 	@SubscribeEvent
 	public void handleChunkLoadEvent(ChunkDataEvent.Load event) {
 
-		if (event.getStatus() != Type.LEVELCHUNK) {
+		if (event.getStatus() != Type.LEVELCHUNK || !(event.getWorld() instanceof ISeedReader)) {
 			return;
 		}
 		if (event.getWorld() == null) {
@@ -152,7 +149,7 @@ public class WorldHandler {
 					(event.getChunk() == null ? "NULL" /* ??? ??? ??? */ : event.getChunk().getPos().toString()));
 			return;
 		}
-		Dimension dim = event.getWorld().getDimension();
+		RegistryKey<World> dim = ((ISeedReader)event.getWorld()).getWorld().getDimensionKey();
 		CompoundNBT tag = (CompoundNBT) event.getData().get(CoFHWorld.MOD_ID);
 
 		ListNBT list = null;
@@ -223,7 +220,7 @@ public class WorldHandler {
 		}
 	}
 
-	public static void generate(WorldGenRegion region) {
+	public static void generate(WorldGenRegion region, StructureManager ignored) {
 
 		INSTANCE.generateWorld(region.getMainChunkX(), region.getMainChunkZ(), region, true);
 	}
@@ -245,7 +242,7 @@ public class WorldHandler {
 		//FallingBlock.fallInstantly = false;
 	}
 
-	public void generateWorld(RetroChunkCoord chunk, ServerWorld world, boolean newGen) {
+	public void generateWorld(RetroChunkCoord chunk, ISeedReader world, boolean newGen) {
 
 		int chunkX = chunk.coord.chunkX, chunkZ = chunk.coord.chunkZ;
 		if ((newGen | WorldProps.enableRetroactiveGeneration) & WorldProps.forceFullRegeneration) {
@@ -270,7 +267,7 @@ public class WorldHandler {
 		}
 		//FallingBlock.fallInstantly = false;
 		if (!newGen) {
-			world.getChunk(chunkX, chunkZ).markDirty();
+			world.getChunk(chunkX, chunkZ).setModified(true);
 		}
 	}
 

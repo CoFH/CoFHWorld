@@ -4,7 +4,7 @@ function initializeCoreMod() {
     var opcodes = Java.type('org.objectweb.asm.Opcodes')
     var InsnNode = Java.type("org.objectweb.asm.tree.InsnNode");
     var MethodInsnNode = Java.type("org.objectweb.asm.tree.MethodInsnNode");
-    var ChunkProvider$generate = ASMAPI.mapMethod("func_202092_b");
+    var ChunkProvider$generate = ASMAPI.mapMethod("func_230351_a_");
     var Biome$addFeature = ASMAPI.mapMethod("func_203611_a");
 
     function wrapVanillaGenerator(method, stageName, typeName, wrapper) {
@@ -24,7 +24,7 @@ function initializeCoreMod() {
             }
             if (foundOre &&
                 isn.getOpcode() == opcodes.INVOKEVIRTUAL &&
-                "net/minecraft/world/biome/Biome".equals(isn.owner) &&
+                "net/minecraft/world/biome/BiomeGenerationSettings$Builder".equals(isn.owner) &&
                 "(Lnet/minecraft/world/gen/GenerationStage$Decoration;Lnet/minecraft/world/gen/feature/ConfiguredFeature;)V".equals(isn.desc) &&
                 Biome$addFeature.equals(isn.name)) {
                 method.instructions.insertBefore(isn, new MethodInsnNode(opcodes.INVOKESTATIC,
@@ -54,11 +54,12 @@ function initializeCoreMod() {
                         isn = isn.getNext()) {
                         if (isn.getOpcode() == opcodes.INVOKEVIRTUAL &&
                             "net/minecraft/world/gen/ChunkGenerator".equals(isn.owner) &&
-                            "(Lnet/minecraft/world/gen/WorldGenRegion;)V".equals(isn.desc) &&
+                            "(Lnet/minecraft/world/gen/WorldGenRegion;Lnet/minecraft/world/gen/feature/structure/StructureManager;)V".equals(isn.desc) &&
                             ChunkProvider$generate.equals(isn.name)) {
-                            method.instructions.insertBefore(isn, new InsnNode(opcodes.DUP_X1));
+                            method.instructions.insertBefore(isn, new InsnNode(opcodes.DUP2));
                             method.instructions.insert(isn, new MethodInsnNode(opcodes.INVOKESTATIC,
-                                "cofh/cofhworld/init/WorldHandler", "generate", "(Lnet/minecraft/world/gen/WorldGenRegion;)V", false));
+                                "cofh/cofhworld/init/WorldHandler", "generate",
+                                 "(Lnet/minecraft/world/gen/WorldGenRegion;Lnet/minecraft/world/gen/feature/structure/StructureManager;)V", false));
                             break; // we're done
                         }
                     }

@@ -2,7 +2,7 @@ package cofh.cofhworld.data.numbers.operation;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IWorld;
 
 import java.util.Locale;
 import java.util.Random;
@@ -23,12 +23,12 @@ public class UnaryMathProvider implements INumberProvider {
 		doubleValue = operation.doubleValue;
 	}
 
-	public long longValue(IWorldReader world, Random rand, DataHolder data) {
+	public long longValue(IWorld world, Random rand, DataHolder data) {
 
 		return longValue.applyAsLong(value.longValue(world, rand, data));
 	}
 
-	public double doubleValue(IWorldReader world, Random rand, DataHolder data) {
+	public double doubleValue(IWorld world, Random rand, DataHolder data) {
 
 		return doubleValue.applyAsDouble(value.doubleValue(world, rand, data));
 	}

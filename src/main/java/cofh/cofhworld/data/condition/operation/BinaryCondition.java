@@ -3,7 +3,7 @@ package cofh.cofhworld.data.condition.operation;
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.condition.ICondition;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IWorld;
 
 import java.util.Locale;
 import java.util.Random;
@@ -22,7 +22,7 @@ public class BinaryCondition implements ICondition {
 	}
 
 	@Override
-	public boolean checkCondition(IWorldReader world, Random rand, DataHolder data) {
+	public boolean checkCondition(IWorld world, Random rand, DataHolder data) {
 
 		return operation.perform(valueA.checkCondition(world, rand, data), valueB.checkCondition(world, rand, data));
 	}

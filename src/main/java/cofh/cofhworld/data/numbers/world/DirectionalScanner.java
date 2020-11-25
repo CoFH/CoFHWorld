@@ -6,7 +6,7 @@ import cofh.cofhworld.data.numbers.INumberProvider;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.AxisDirection;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IWorld;
 
 import java.util.Random;
 
@@ -25,7 +25,7 @@ public class DirectionalScanner implements INumberProvider {
 	}
 
 	@Override
-	public long longValue(IWorldReader world, Random rand, DataHolder data) {
+	public long longValue(IWorld world, Random rand, DataHolder data) {
 
 		final BlockPos start = data.getPosition();
 		final ICondition condition = this.condition;

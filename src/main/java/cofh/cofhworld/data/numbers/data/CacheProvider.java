@@ -2,7 +2,7 @@ package cofh.cofhworld.data.numbers.data;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IWorld;
 
 import java.util.Random;
 
@@ -14,7 +14,7 @@ public class CacheProvider extends DefaultedDataProvider {
 	}
 
 	@Override
-	public long longValue(IWorldReader world, Random rand, DataHolder data) {
+	public long longValue(IWorld world, Random rand, DataHolder data) {
 
 		if (data.hasValue(key, Number.class)) return data.getLong(key);
 		long value = def.longValue(world, rand, data);
@@ -23,7 +23,7 @@ public class CacheProvider extends DefaultedDataProvider {
 	}
 
 	@Override
-	public double doubleValue(IWorldReader world, Random rand, DataHolder data) {
+	public double doubleValue(IWorld world, Random rand, DataHolder data) {
 
 		if (data.hasValue(key, Number.class)) return data.getDouble(key);
 		double value = def.doubleValue(world, rand, data);

@@ -2,8 +2,7 @@ package cofh.cofhworld.data.numbers.world;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 import java.util.Locale;
 import java.util.Random;
@@ -17,7 +16,7 @@ public class WorldValueProvider implements INumberProvider {
 		this.data = WorldValueEnum.valueOf(type.toUpperCase(Locale.US));
 	}
 
-	public long longValue(IWorldReader world, Random rand, DataHolder data) {
+	public long longValue(IWorld world, Random rand, DataHolder data) {
 
 		return this.data.getValue(world, rand, data);
 	}

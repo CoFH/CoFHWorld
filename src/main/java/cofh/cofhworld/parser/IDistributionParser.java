@@ -7,9 +7,13 @@ import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator.GenRestriction;
 import cofh.cofhworld.world.IFeatureGenerator;
 import com.typesafe.config.*;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.Dimension;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.LogicalSidedProvider;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -97,13 +101,14 @@ public interface IDistributionParser {
 						break;
 				}
 				if (restrictionList != null) {
-					for (int i = 0; i < restrictionList.size(); i++) {
+					Registry<Dimension> reg = LogicalSidedProvider.INSTANCE.<MinecraftServer>get(LogicalSide.SERVER).func_244267_aX().getRegistry(Registry.DIMENSION_KEY);
+					for (int i = 0; i < restrictionList.size(); i++) { // TODO: allow dimension type? multiple dimensions can have the same type
 						ConfigValue val = restrictionList.get(i);
 						log.trace("'{}' has dimension restriction for value {}", feature.getFeatureName(), val.unwrapped());
 						if (val.valueType() == ConfigValueType.STRING) {
 							ResourceLocation dimName = new ResourceLocation(String.valueOf(val.unwrapped()));
-							if (Registry.DIMENSION_TYPE.containsKey(dimName)) {
-								feature.addDimension(Registry.DIMENSION_TYPE.getValue(dimName).get().getId());
+							if (reg.keySet().contains(dimName)) {
+								feature.addDimension(reg.getId(reg.getOrDefault(dimName)));
 							} else {
 								log.error("Invalid dimension entry `{}` on line {}. No dimension with that identifier is registered.", dimName, val.origin().lineNumber());
 							}

@@ -3,13 +3,18 @@ package cofh.cofhworld.init;
 import cofh.cofhworld.CoFHWorld;
 import cofh.cofhworld.util.ChunkCoord;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.registry.DynamicRegistries;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.LogicalSidedProvider;
 
 import java.util.*;
 
@@ -17,10 +22,10 @@ public class ChunkGenerationHandler {
 
 	private static final ChunkGenerationHandler INSTANCE = new ChunkGenerationHandler();
 
-	final private static HashMap<Dimension, ArrayDeque<RetroChunkCoord>> chunksToGen = new HashMap<>();
-	final private static HashMap<Dimension, ArrayDeque<ChunkCoord>> chunksToPreGen = new HashMap<>();
+	final private static HashMap<RegistryKey<World>, ArrayDeque<RetroChunkCoord>> chunksToGen = new HashMap<>();
+	final private static HashMap<RegistryKey<World>, ArrayDeque<ChunkCoord>> chunksToPreGen = new HashMap<>();
 
-	public static void addRetrogenChunk(Dimension dimension, RetroChunkCoord chunk) {
+	public static void addRetrogenChunk(RegistryKey<World> dimension, RetroChunkCoord chunk) {
 
 		synchronized (chunksToGen) {
 			if (chunksToGen.isEmpty() && chunksToPreGen.isEmpty()) {
@@ -38,7 +43,7 @@ public class ChunkGenerationHandler {
 		}
 	}
 
-	public static void addPregenChunk(Dimension dimension, ChunkCoord chunk) {
+	public static void addPregenChunk(RegistryKey<World> dimension, ChunkCoord chunk) {
 
 		synchronized (chunksToPreGen) {
 			if (chunksToGen.isEmpty() && chunksToPreGen.isEmpty()) {
@@ -69,11 +74,13 @@ public class ChunkGenerationHandler {
 			return;
 		}
 
+		DynamicRegistries reg = LogicalSidedProvider.INSTANCE.<MinecraftServer>get(LogicalSide.SERVER).func_244267_aX();
+
 		if (event.phase == Phase.START) {
-			final HashSet<Dimension> toRemove = new HashSet<>();
+			final HashSet<RegistryKey<World>> toRemove = new HashSet<>();
 			synchronized (chunksToGen) {
-				chunksToGen.forEach((Dimension dim, ArrayDeque<RetroChunkCoord> chunks) -> {
-					World world = dim.getWorld();
+				chunksToGen.forEach((RegistryKey<World> dim, ArrayDeque<RetroChunkCoord> chunks) -> {
+					ISeedReader world = (ISeedReader) reg.getRegistry(Registry.WORLD_KEY).getValueForKey(dim);
 
 					if (chunks != null && chunks.size() > 0) {
 						RetroChunkCoord r = chunks.pollFirst();
@@ -89,14 +96,14 @@ public class ChunkGenerationHandler {
 						toRemove.add(dim);
 					}
 				});
-				for (Dimension dim : toRemove)
+				for (RegistryKey<World> dim : toRemove)
 					chunksToGen.remove(dim);
 			}
 		} else {
-			final HashSet<Dimension> toRemove = new HashSet<>();
+			final HashSet<RegistryKey<World>> toRemove = new HashSet<>();
 			synchronized (chunksToPreGen) {
-				chunksToPreGen.forEach((Dimension dim, ArrayDeque<ChunkCoord> chunks) -> {
-					World world = dim.getWorld();
+				chunksToPreGen.forEach((RegistryKey<World> dim, ArrayDeque<ChunkCoord> chunks) -> {
+					ISeedReader world = (ISeedReader) reg.getRegistry(Registry.WORLD_KEY).getValueForKey(dim);
 
 					if (chunks != null && chunks.size() > 0) {
 						ChunkCoord c = chunks.pollFirst();
@@ -111,7 +118,7 @@ public class ChunkGenerationHandler {
 						toRemove.add(dim);
 					}
 				});
-				for (Dimension dim : toRemove)
+				for (RegistryKey<World> dim : toRemove)
 					chunksToPreGen.remove(dim);
 			}
 		}

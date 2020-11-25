@@ -89,7 +89,7 @@ public class WorldGenStructure extends WorldGen {
 				public BlockInfo func_230386_a_(IWorldReader world, BlockPos offset, BlockPos offset__2, BlockInfo original, BlockInfo current, PlacementSettings settings) {
 
 					Random rand = settings.getRandom(current.pos);
-					return integrity.doubleValue(world, rand, new DataHolder(current.pos)) <= rand.nextFloat() ? null : current;
+					return integrity.doubleValue((IWorld) world, rand, new DataHolder(current.pos)) <= rand.nextFloat() ? null : current; // TODO: ALSO BAD
 				}
 			});
 		}

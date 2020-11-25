@@ -3,7 +3,7 @@ package cofh.cofhworld.data.numbers.operation;
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IWorld;
 
 import java.util.Objects;
 import java.util.Random;
@@ -26,13 +26,13 @@ public class BoundedProvider implements INumberProvider {
 	}
 
 	@Override
-	public long longValue(IWorldReader world, Random rand, DataHolder data) {
+	public long longValue(IWorld world, Random rand, DataHolder data) {
 
 		return Math.min(Math.max(value.longValue(world, rand, data), min.longValue(world, rand, data)), max.longValue(world, rand, data));
 	}
 
 	@Override
-	public double doubleValue(IWorldReader world, Random rand, DataHolder data) {
+	public double doubleValue(IWorld world, Random rand, DataHolder data) {
 
 		return Math.min(Math.max(value.doubleValue(world, rand, data), min.doubleValue(world, rand, data)), max.doubleValue(world, rand, data));
 	}

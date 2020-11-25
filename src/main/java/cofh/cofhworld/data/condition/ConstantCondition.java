@@ -1,7 +1,7 @@
 package cofh.cofhworld.data.condition;
 
 import cofh.cofhworld.data.DataHolder;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IWorld;
 
 import java.util.Random;
 
@@ -17,7 +17,7 @@ public class ConstantCondition implements ICondition {
 	}
 
 	@Override
-	public boolean checkCondition(IWorldReader world, Random rand, DataHolder data) {
+	public boolean checkCondition(IWorld world, Random rand, DataHolder data) {
 
 		return value;
 	}

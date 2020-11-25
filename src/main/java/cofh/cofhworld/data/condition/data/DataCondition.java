@@ -2,7 +2,7 @@ package cofh.cofhworld.data.condition.data;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.condition.ICondition;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IWorld;
 
 import java.util.Random;
 
@@ -24,7 +24,7 @@ public class DataCondition implements ICondition {
 	}
 
 	@Override
-	public boolean checkCondition(IWorldReader world, Random rand, DataHolder data) {
+	public boolean checkCondition(IWorld world, Random rand, DataHolder data) {
 
 		return check ? data.hasValue(key, Boolean.class) : data.getBool(key);
 	}
