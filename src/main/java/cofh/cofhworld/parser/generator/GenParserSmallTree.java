@@ -23,7 +23,7 @@ public class GenParserSmallTree implements AbstractGenParserMaterial<BuilderSmal
 		fields.addOptionalField("height", Type.NUMBER, BuilderSmallTree::setSize);
 
 		fields.addOptionalField("tree-checks", Type.CONDITION, BuilderSmallTree::setTreeChecks);
-		fields.addOptionalField("relaxed-growth", Type.CONDITION, BuilderSmallTree::setTreeChecks);
+		fields.addOptionalField("relaxed-growth", Type.CONDITION, BuilderSmallTree::setRelaxedGrowth);
 		fields.addOptionalField("water-loving", Type.CONDITION, BuilderSmallTree::setWaterLoving);
 	}
 
