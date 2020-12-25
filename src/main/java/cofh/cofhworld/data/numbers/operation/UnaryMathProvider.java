@@ -33,7 +33,7 @@ public class UnaryMathProvider implements INumberProvider {
 		return doubleValue.applyAsDouble(value.doubleValue(world, rand, data));
 	}
 
-	private static enum Operation { // TODO: more operations before parsing
+	private static enum Operation {
 
 		ABSOLUTE(Math::abs, Math::abs),
 		NEGATE(a -> -a, a -> -a),

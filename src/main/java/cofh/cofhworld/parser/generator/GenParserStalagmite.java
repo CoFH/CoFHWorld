@@ -25,7 +25,7 @@ public class GenParserStalagmite implements AbstractGenParserResource<BuilderSta
 			return builder;
 		});
 
-		fields.addOptionalField("surface", Type.MATERIAL_LIST, BuilderStalagmite::setSurface); // TODO: require?
+		fields.addOptionalField("surface", Type.MATERIAL_LIST, BuilderStalagmite::setSurface);
 
 		fields.addOptionalField("height", Type.NUMBER, BuilderStalagmite::setHeight);
 		fields.addOptionalField("size", Type.NUMBER, BuilderStalagmite::setSize);

@@ -37,8 +37,6 @@ public class CoFHWorld {
 	/* INIT */
 	public void preInit(FMLCommonSetupEvent event) {
 
-		//WorldProps.configDir = event.getModConfigurationDirectory();
-
 		WorldProps.preInit();
 
 		WorldHandler.initialize();

@@ -13,7 +13,7 @@ public class GenParserGeode implements AbstractGenParserResource<BuilderGeode> {
 		AbstractGenParserResource.super.getFields(fields);
 		fields.setBuilder(BuilderGeode::new);
 
-		fields.addOptionalField("crust", Type.BLOCK_LIST, BuilderGeode::setOutline, "outline"); // TODO: require?
+		fields.addRequiredField("crust", Type.BLOCK_LIST, BuilderGeode::setOutline, "outline");
 
 		fields.addOptionalField("hollow", Type.CONDITION, BuilderGeode::setHollow);
 		fields.addOptionalField("filler", Type.BLOCK_LIST, BuilderGeode::setFiller, "fill-block");

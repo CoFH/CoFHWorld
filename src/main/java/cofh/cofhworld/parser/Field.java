@@ -41,7 +41,7 @@ public final class Field<T extends IBuilder<? extends WorldGen>, V> {
 	}
 
 	public static class Type<V> {
-		public static final Type<List<WeightedBlock>> BLOCK_LIST = new Type<>(BlockData::parseBlockList);
+		public static final Type<List<WeightedBlock>> BLOCK_LIST = new Type<>(BlockData::parseBlockList); // TODO: variations that force non-empty?
 		public static final Type<List<Material>> MATERIAL_LIST = new Type<>(BlockData::parseMaterialList);
 		public static final Type<ICondition> CONDITION = new Type<>(ConditionData::parseConditionValue);
 		public static final Type<INumberProvider> NUMBER = new Type<>(NumberData::parseNumberValue);

@@ -52,8 +52,7 @@ public class DistributionUnderMaterial extends Distribution {
 				state = world.getBlockState(pos.setPos(x, y, z));
 				if (fluidList != null) {
 					for (Material mat : fluidList)
-						if (!mat.test(stateAbove))// TODO: if forge re-adds this v
-							//if (!stateAbove.isReplaceableOreGen(world, pos, mat))
+						if (!mat.test(stateAbove))
 							continue l;
 				} else {
 					if (stateAbove.getMaterial() != net.minecraft.block.material.Material.WATER) {
@@ -61,8 +60,7 @@ public class DistributionUnderMaterial extends Distribution {
 					}
 				}
 				for (Material mat : matList)
-					if (mat.test(state))// TODO: if forge re-adds this v
-						//if (state.isReplaceableOreGen(world, pos, mat))
+					if (mat.test(state))
 						break l;
 			} while (y-- > 0);
 
