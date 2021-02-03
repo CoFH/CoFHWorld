@@ -7,10 +7,15 @@ import cofh.cofhworld.world.IFeatureGenerator;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.longs.LongSets;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.LogicalSidedProvider;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -108,8 +113,11 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 						LongSets.EMPTY_SET).isEmpty())
 					return false;
 		}
-		if (dimensionRestriction != GenRestriction.NONE && dimensionRestriction == GenRestriction.BLACKLIST == dimensions.contains(world.getDimensionType())) {
-			return false;
+
+		if (dimensionRestriction != GenRestriction.NONE) { // TODO: completely broken
+			Registry<World> reg = LogicalSidedProvider.INSTANCE.<MinecraftServer>get(LogicalSide.SERVER).func_244267_aX().getRegistry(Registry.WORLD_KEY);
+			if (dimensionRestriction == GenRestriction.BLACKLIST == dimensions.contains(reg.getId(world.getWorld())))
+				return false;
 		}
 		if (rarity > 1 && random.nextInt(rarity) != 0) {
 			return false;
