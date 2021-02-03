@@ -21,11 +21,13 @@ function initializeCoreMod() {
             if (isn.getOpcode() == opcodes.GETSTATIC &&
                 typeName.equals(isn.owner)) {
                 foundOre = stageName.equals(isn.name); // ah, enums. so nice.
+            } else if(foundOre && isn.getOpcode() == opcodes.GETSTATIC) {
+                print("Wrapping: " + isn.name);
             }
             if (foundOre &&
                 isn.getOpcode() == opcodes.INVOKEVIRTUAL &&
                 "net/minecraft/world/biome/BiomeGenerationSettings$Builder".equals(isn.owner) &&
-                "(Lnet/minecraft/world/gen/GenerationStage$Decoration;Lnet/minecraft/world/gen/feature/ConfiguredFeature;)V".equals(isn.desc) &&
+                "(Lnet/minecraft/world/gen/GenerationStage$Decoration;Lnet/minecraft/world/gen/feature/ConfiguredFeature;)Lnet/minecraft/world/biome/BiomeGenerationSettings$Builder;".equals(isn.desc) &&
                 Biome$addFeature.equals(isn.name)) {
                 method.instructions.insertBefore(isn, new MethodInsnNode(opcodes.INVOKESTATIC,
                     "cofh/cofhworld/wrapper/VanillaFeatureWrapper",
