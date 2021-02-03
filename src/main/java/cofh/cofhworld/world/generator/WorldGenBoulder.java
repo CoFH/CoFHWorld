@@ -68,7 +68,7 @@ public class WorldGenBoulder extends WorldGen {
 			int zWidth = size.intValue(world, rand, data.setValue("radius-x", xWidth));
 			int yWidth = size.intValue(world, rand, data.setValue("radius-z", zWidth));
 			data.setValue("radius-y", yWidth);
-			float maxDist = (xWidth + yWidth + zWidth) * 0.333F + 0.5F;
+			float maxDist = (xWidth + yWidth + zWidth) * 0.333F + 0.5F; // TODO: 0.333 should be configurable, and hollow-amount needs modified to apply differently
 			maxDist *= maxDist;
 			float minDist = hollow.checkCondition(world, rand, data) ? (xWidth + yWidth + zWidth) * hollowAmt.floatValue(world, rand, data) : 0;
 			minDist *= minDist;

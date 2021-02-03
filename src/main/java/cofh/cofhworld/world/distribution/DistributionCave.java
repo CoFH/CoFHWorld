@@ -76,7 +76,7 @@ public class DistributionCave extends Distribution {
 			BlockState state;
 			do {
 				state = world.getBlockState(new BlockPos(x, y, z));
-			} while (!state.getBlock().isAir(state, world, new BlockPos(x, y, z)) && ++y < seaLevel);
+			} while (!state.getBlock().isAir(state, world, new BlockPos(x, y, z)) && ++y < seaLevel); // TODO: make isAir an ICondition
 
 			if (y == seaLevel & stopY > minY) {
 				y = minY;
