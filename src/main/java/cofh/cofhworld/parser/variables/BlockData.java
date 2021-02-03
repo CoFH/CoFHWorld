@@ -196,13 +196,15 @@ public class BlockData {
 					if (StringData.parseStringList(matObject.getValue("tag"), tags)) {
 						material = TagMaterial.of(tags.stream().map(str -> new ResourceLocation(str.value)).collect(Collectors.toList()), inclusive);
 					} else {
+						log.error("Invalid block tag on line {}!", matObject.getValue("tag").origin().lineNumber());
 						return null;
 					}
 				} else if (matObject.hasPath("fluid")) { // exclusive with name
 					List<WeightedString> tags = new LinkedList<>();
-					if (StringData.parseStringList(matObject.getValue("tag"), tags)) {
+					if (StringData.parseStringList(matObject.getValue("fluid"), tags)) {
 						material = new FluidMaterial(inclusive, tags.stream().map(str -> str.value).distinct().toArray(String[]::new));
 					} else {
+						log.error("Invalid fluid on line {}!", matObject.getValue("fluid").origin().lineNumber());
 						return null;
 					}
 				}
@@ -212,6 +214,7 @@ public class BlockData {
 						Material t = new MaterialPropertyMaterial(inclusive, tags.stream().map(v -> v.value).toArray(String[]::new));
 						material = material != null ? inclusive ? material.and(t) : material.or(t) : t;
 					} else {
+						log.error("Invalid material type on line {}!", matObject.getValue("material-type").origin().lineNumber());
 						return null;
 					}
 				}
