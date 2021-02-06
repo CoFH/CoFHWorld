@@ -3,15 +3,21 @@ package cofh.cofhworld.command;
 import cofh.cofhworld.CoFHWorld;
 import cofh.cofhworld.init.WorldHandler;
 import cofh.cofhworld.world.IFeatureGenerator;
+import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.ModList;
 
 import java.util.List;
@@ -25,6 +31,7 @@ public class CommandCoFHWorld {
 						.then(SubCommandVersion.register())
 						.then(SubCommandList.register())
 						.then(SubCommandReload.register())
+						.then(SubCommandCountBlocks.register())
 		);
 	}
 
@@ -64,6 +71,100 @@ public class CommandCoFHWorld {
 				rtn = 1;
 			} else {
 				key = "cofhworld.reload.failed";
+			}
+
+			context.getSource().sendFeedback(new TranslationTextComponent(key), true);
+			return rtn;
+		}
+	}
+
+	private static class SubCommandCountBlocks {
+
+		public static int permissionLevel = 3;
+
+		public static ArgumentBuilder<CommandSource, ?> register() {
+			return Commands.literal("countblocks")
+					.requires(source -> source.hasPermissionLevel(permissionLevel))
+					// All default parameters.
+					.executes(context -> executeWithPlayer(context, context.getSource().asPlayer(), 32, 32, 32, "*"))
+					// Player centred, with radius applied to all directions.
+					.then(Commands.argument("p", EntityArgument.player())
+						.executes(context -> executeWithPlayer(context, EntityArgument.getPlayer(context, "p"), 32, 32, 32, "*")))
+					// Player centred, with radius applied to all directions.
+					.then(Commands.argument("r1", IntegerArgumentType.integer())
+						.executes(context -> executeWithPlayer(context, EntityArgument.getPlayer(context, "p"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), "*")))
+					// Player centred, with radius r1 applied to x and z, r2 applied to y.
+					.then(Commands.argument("r2", IntegerArgumentType.integer())
+						.executes(context -> executeWithPlayer(context, EntityArgument.getPlayer(context, "p"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r1"), "*")))
+					// Player centred, with radius r1 applied to x, r2 applied to y and r3 applied to z.
+					.then(Commands.argument("r3", IntegerArgumentType.integer())
+						.executes(context -> executeWithPlayer(context, EntityArgument.getPlayer(context, "p"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), "*")))
+					// Player centred with full radius and with type filter.
+					.then(Commands.argument("filter", StringArgumentType.string())
+						.executes(context -> executeWithPlayer(context, EntityArgument.getPlayer(context, "p"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"))));
+
+		}
+
+		public static int executeWithPlayer(CommandContext<CommandSource> context, ServerPlayerEntity player, int xRadius, int yRadius, int zRadius, String filter) {
+			BlockPos p = player.getPosition();
+
+			int sX = p.getX() - xRadius;
+			int sY = p.getY() - yRadius;
+			int sZ = p.getZ() - zRadius;
+			int eX = p.getX() + xRadius;
+			int eY = p.getY() + yRadius;
+			int eZ = p.getZ() + zRadius;
+
+			return execute(context, sX, sY, sZ, eX, eY, eZ, filter);
+		}
+
+		public static int execute(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filter) throws CommandException {
+
+			World world = context.getSource().getEntity().getEntityWorld();
+			if (world.isRemote) {
+				return 0;
+			}
+
+			int maxY = world.getHeight();
+
+			// Clamp y values to the world world height limits.
+			if (sY < 0) {
+				sY = 0;
+			} else if (sY > maxY) {
+				sY = maxY;
+			}
+
+			if (eY < 0) {
+				eY = 0;
+			} else if (sY > maxY) {
+				eY = maxY;
+			}
+
+			StringBuilder s = new StringBuilder()
+				.append("start: (")
+				.append(sX)
+				.append(",")
+				.append(sY)
+				.append(",")
+				.append(sZ)
+				.append(") ")
+				.append("end: (")
+				.append(eX)
+				.append(",")
+				.append(eY)
+				.append(",")
+				.append(eZ)
+				.append(")");
+
+			context.getSource().sendFeedback(new TranslationTextComponent(s.toString()), true);
+
+			String key;
+			int rtn = 0;
+			if (true) {
+				key = "cofhworld.countblocks.successful";
+				rtn = 1;
+			} else {
+				key = "cofhworld.countblocks.failed";
 			}
 
 			context.getSource().sendFeedback(new TranslationTextComponent(key), true);
