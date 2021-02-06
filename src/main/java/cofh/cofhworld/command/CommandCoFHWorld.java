@@ -13,6 +13,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
@@ -148,7 +149,12 @@ public class CommandCoFHWorld {
 
 		public static int execute(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filter) throws CommandException {
 
-			World world = context.getSource().getEntity().getEntityWorld();
+			Entity entity = context.getSource().getEntity();
+			if (entity == null) {
+				return 0;
+			}
+
+			World world = entity.getEntityWorld();
 			if (world.isRemote) {
 				return 0;
 			}
