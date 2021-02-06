@@ -3,7 +3,6 @@ package cofh.cofhworld.command;
 import cofh.cofhworld.CoFHWorld;
 import cofh.cofhworld.init.WorldHandler;
 import cofh.cofhworld.world.IFeatureGenerator;
-import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -21,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.ModList;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class CommandCoFHWorld {
 
@@ -82,7 +82,7 @@ public class CommandCoFHWorld {
 
 		public static int permissionLevel = 3;
 
-		public static ArgumentBuilder<CommandSource, ?> register() {
+		/*public static ArgumentBuilder<CommandSource, ?> register() {
 			return Commands.literal("countblocks")
 					.requires(source -> source.hasPermissionLevel(permissionLevel))
 					// All default parameters.
@@ -102,6 +102,34 @@ public class CommandCoFHWorld {
 					// Player centred with full radius and with type filter.
 					.then(Commands.argument("filter", StringArgumentType.string())
 						.executes(context -> executeWithPlayer(context, EntityArgument.getPlayer(context, "p"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"))));
+
+		}*/
+
+		public static ArgumentBuilder<CommandSource, ?> register() {
+			return Commands.literal("countblocks")
+				.requires(source -> source.hasPermissionLevel(permissionLevel))
+				// All default parameters.
+				.then(gatherArguments(context -> context.getSource().asPlayer())
+					// Player centred, with radius applied to all directions.
+					.then(Commands.argument("p", EntityArgument.player()))
+					.then(gatherArguments(context -> EntityArgument.getPlayer(context, "p")))
+				);
+		}
+
+		public static ArgumentBuilder<CommandSource, ?> gatherArguments(Function<CommandContext<CommandSource>, ServerPlayerEntity> playerFunc) {
+			return
+					// Player centred, with radius applied to all directions.
+					Commands.argument("r1", IntegerArgumentType.integer())
+							.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), "*"))
+							// Player centred, with radius r1 applied to x and z, r2 applied to y.
+							.then(Commands.argument("r2", IntegerArgumentType.integer())
+									.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r1"), "*"))
+									// Player centred, with radius r1 applied to x, r2 applied to y and r3 applied to z.
+									.then(Commands.argument("r3", IntegerArgumentType.integer())
+											.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), "*"))
+											// Player centred with full radius and with type filter.
+											.then(Commands.argument("filter", StringArgumentType.string())
+													.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"))))));
 
 		}
 
