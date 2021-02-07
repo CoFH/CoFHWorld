@@ -17,15 +17,21 @@ import net.minecraft.block.pattern.BlockMatcher;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.BlockStateArgument;
+import net.minecraft.command.arguments.BlockStateInput;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.*;
 
@@ -39,6 +45,7 @@ public class CommandCoFHWorld {
 						.then(SubCommandList.register())
 						.then(SubCommandReload.register())
 						.then(SubCommandCountBlocks.register())
+						.then(SubCommandReplaceBlocks.register())
 		);
 	}
 
@@ -228,28 +235,29 @@ public class CommandCoFHWorld {
 
 		public static ArgumentBuilder<CommandSource, ?> register() {
 			return Commands.literal("countblocks")
-					.requires(source -> source.hasPermissionLevel(permissionLevel))
-					// All default parameters.
-					.then(gatherArguments(context -> context.getSource().asPlayer()))
-					// Player centred, with radius applied to all directions.
-					.then(Commands.argument("p", EntityArgument.player())
-							.then(gatherArguments(context -> EntityArgument.getPlayer(context, "p"))));
+				.requires(source -> source.hasPermissionLevel(permissionLevel))
+				// All default parameters.
+				.then(gatherArguments(context -> context.getSource().asPlayer()))
+				// Player centred, with radius applied to all directions.
+				.then(Commands.argument("p", EntityArgument.player())
+					.then(gatherArguments(context -> EntityArgument.getPlayer(context, "p"))));
 		}
 
 		public static ArgumentBuilder<CommandSource, ?> gatherArguments(PlayerFunction playerFunc) {
 			return
-					// Radius to be applied to x, y and z.
-					Commands.argument("r1", IntegerArgumentType.integer())
-							.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), "*"))
-							// r1 applied to x and z, r2 applied to y.
-							.then(Commands.argument("r2", IntegerArgumentType.integer())
-									.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r1"), "*"))
-									// r1 applied to x, r2 applied to y and r3 applied to z.
-									.then(Commands.argument("r3", IntegerArgumentType.integer())
-											.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), "*"))
-											// Radius defined for all sized, plus with type filter.
-											.then(Commands.argument("filter", StringArgumentType.string())
-													.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"))))));
+				// Radius to be applied to x, y and z.
+				Commands.argument("r1", IntegerArgumentType.integer())
+					.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), "*"))
+					// r1 applied to x and z, r2 applied to y.
+					.then(Commands.argument("r2", IntegerArgumentType.integer())
+						.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r1"), "*"))
+						// r1 applied to x, r2 applied to y and r3 applied to z.
+						.then(Commands.argument("r3", IntegerArgumentType.integer())
+							.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), "*"))
+							// Radius defined for all sized, plus with type filter.
+							.then(Commands.argument("filter", StringArgumentType.string())
+								.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter")))
+							)));
 
 		}
 
@@ -266,8 +274,21 @@ public class CommandCoFHWorld {
 			return execute(context, sX, sY, sZ, eX, eY, eZ, filter);
 		}
 
-		public static int execute(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters) throws CommandException {
+		public static int execute(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters) {
 
+			String key;
+			int rtn = countBlocks(context, sX, sY, sZ, eX, eY, eZ, filters);
+			if (rtn == 1) {
+				key = "cofhworld.countblocks.successful";
+			} else {
+				key = "cofhworld.countblocks.failed";
+			}
+
+			context.getSource().sendFeedback(new TranslationTextComponent(key), true);
+			return rtn;
+		}
+
+		private static int countBlocks(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters) {
 			Entity entity = context.getSource().getEntity();
 			if (entity == null) {
 				return 0;
@@ -295,8 +316,8 @@ public class CommandCoFHWorld {
 			}
 
 			String dbg = ""
-				+ "start: (" + sX  + "," + sY + "," + sZ + ") "
-				+ "end: (" + eX + "," + eY + "," + eZ + ")";
+					+ "start: (" + sX + "," + sY + "," + sZ + ") "
+					+ "end: (" + eX + "," + eY + "," + eZ + ")";
 			CoFHWorld.log.debug(dbg);
 
 			BlockFilters blockFilters = new BlockFilters(filters);
@@ -312,8 +333,8 @@ public class CommandCoFHWorld {
 
 						// Skip any air blocks that might be present.
 						if (bState == Blocks.AIR.getDefaultState() ||
-						    bState == Blocks.CAVE_AIR.getDefaultState() ||
-						    bState == Blocks.VOID_AIR.getDefaultState()) {
+								bState == Blocks.CAVE_AIR.getDefaultState() ||
+								bState == Blocks.VOID_AIR.getDefaultState()) {
 							continue;
 						}
 
@@ -345,17 +366,156 @@ public class CommandCoFHWorld {
 			CoFHWorld.log.debug("Total blocks scanned: " + totalBlocks);
 			CoFHWorld.log.debug("Total blocks matched: " + totalMatchingBlocks);
 
+			return 1;
+		}
+	}
+
+	private static class SubCommandReplaceBlocks {
+
+		public static int permissionLevel = 3;
+
+		private interface PlayerFunction {
+
+			ServerPlayerEntity apply(CommandContext<CommandSource> t) throws CommandSyntaxException;
+		}
+
+		public static ArgumentBuilder<CommandSource, ?> register() {
+			return Commands.literal("replaceblocks")
+					.requires(source -> source.hasPermissionLevel(permissionLevel))
+					// All default parameters.
+					.then(gatherArguments(context -> context.getSource().asPlayer()))
+					// Player centred, with radius applied to all directions.
+					.then(Commands.argument("p", EntityArgument.player())
+							.then(gatherArguments(context -> EntityArgument.getPlayer(context, "p"))));
+		}
+
+		public static ArgumentBuilder<CommandSource, ?> gatherArguments(PlayerFunction playerFunc) {
+			BlockStateInput air = new BlockStateInput(Blocks.AIR.getDefaultState(), Collections.emptySet(), null);
+			return
+				// r1 to be applied to x, y and z.
+				Commands.argument("r1", IntegerArgumentType.integer())
+					.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), "*", air))
+					// r1 applied to x and z, r2 applied to y.
+					.then(Commands.argument("r2", IntegerArgumentType.integer())
+						.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r1"), "*", air))
+						// r1 applied to x, r2 applied to y and r3 applied to z.
+						.then(Commands.argument("r3", IntegerArgumentType.integer())
+							.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), "*", air))
+							// Radius defined for all sized, plus with type filter.
+							.then(Commands.argument("filter", StringArgumentType.string())
+								.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), air))
+								// Radius defined for all sized, plus type filter, plus replacement block ID.
+								.then(Commands.argument("block", BlockStateArgument.blockState())
+									.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), BlockStateArgument.getBlockState(context, "block"))
+								)))));
+
+		}
+
+		public static int executeWithPlayer(CommandContext<CommandSource> context, ServerPlayerEntity player, int xRadius, int yRadius, int zRadius, String filter, BlockStateInput replacement) {
+			BlockPos p = player.getPosition();
+
+			int sX = p.getX() - xRadius;
+			int sY = p.getY() - yRadius;
+			int sZ = p.getZ() - zRadius;
+			int eX = p.getX() + xRadius;
+			int eY = p.getY() + yRadius;
+			int eZ = p.getZ() + zRadius;
+
+			return execute(context, sX, sY, sZ, eX, eY, eZ, filter, replacement);
+		}
+
+		public static int execute(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters, BlockStateInput replacement) {
+
 			String key;
-			int rtn = 0;
-			if (true) {
-				key = "cofhworld.countblocks.successful";
-				rtn = 1;
+			int rtn = replaceBlocks(context, sX, sY, sZ, eX, eY, eZ, filters, replacement.getState());
+			if (rtn == 1) {
+				key = "cofhworld.replaceblocks.successful";
 			} else {
-				key = "cofhworld.countblocks.failed";
+				key = "cofhworld.replaceblocks.failed";
 			}
 
 			context.getSource().sendFeedback(new TranslationTextComponent(key), true);
 			return rtn;
+		}
+
+		private static int replaceBlocks(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters, BlockState replacement) {
+			Entity entity = context.getSource().getEntity();
+			if (entity == null) {
+				return 0;
+			}
+
+			World world = entity.getEntityWorld();
+			if (world.isRemote) {
+				return 0;
+			}
+
+			int maxY = world.getHeight();
+
+			// Clamp y values to the world world height limits.
+			// Do not use 256 here as it is variable in 1.17+
+			if (sY < 0) {
+				sY = 0;
+			} else if (sY > maxY) {
+				sY = maxY;
+			}
+
+			if (eY < 0) {
+				eY = 0;
+			} else if (sY > maxY) {
+				eY = maxY;
+			}
+
+			String dbg = ""
+					+ "start: (" + sX  + "," + sY + "," + sZ + ") "
+					+ "end: (" + eX + "," + eY + "," + eZ + ")";
+			CoFHWorld.log.debug(dbg);
+
+			BlockFilters blockFilters = new BlockFilters(filters);
+			HashSet<ChunkPos> updatedChunks = new HashSet<>();
+
+			long totalBlocks = 0;
+			long totalBlocksReplaced = 0;
+
+			for (int x = sX; x <= eX; x++) {
+				for (int z = sZ; z <= eZ; z++) {
+					Chunk chunk = world.getChunkAt(new BlockPos(x, 0, z));
+					for (int y = sY; y <= eY; y++) {
+						BlockPos pos = new BlockPos(x, y, z);
+						BlockState bState = world.getBlockState(pos);
+
+						// Skip any air blocks that might be present.
+						if (bState == Blocks.AIR.getDefaultState() ||
+								bState == Blocks.CAVE_AIR.getDefaultState() ||
+								bState == Blocks.VOID_AIR.getDefaultState()) {
+							continue;
+						}
+
+						BlockState defaultState = bState.getBlock().getDefaultState();
+						if (blockFilters.isFilterMatch(defaultState)) {
+							if (chunk.setBlockState(pos, replacement, false) != null) {
+								// We will need to notify the client(s) that the chunks have been updated later.
+								ChunkPos cp = chunk.getPos();
+								updatedChunks.add(cp);
+
+								++totalBlocksReplaced;
+							}
+						}
+
+						++totalBlocks;
+					}
+				}
+			}
+
+			// TODO: no idea how to do this in 1.16.
+			// Notify the client(s) that the chunks have been updated.
+			if (world instanceof ServerWorld) {
+			}
+
+
+			CoFHWorld.log.debug("Total blocks scanned: " + totalBlocks);
+			CoFHWorld.log.debug("Total blocks replaced: " + totalBlocksReplaced);
+
+			return 1;
 		}
 	}
 
