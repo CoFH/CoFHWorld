@@ -35,7 +35,6 @@ import net.minecraft.world.server.ChunkManager;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.*;
 
@@ -246,6 +245,7 @@ public class CommandCoFHWorld {
 		}
 
 		public static ArgumentBuilder<CommandSource, ?> register() {
+
 			return Commands.literal("countblocks")
 				.requires(source -> source.hasPermissionLevel(permissionLevel))
 				// All default parameters.
@@ -256,8 +256,9 @@ public class CommandCoFHWorld {
 		}
 
 		public static ArgumentBuilder<CommandSource, ?> gatherArguments(PlayerFunction playerFunc) {
+
 			return
-				// Radius to be applied to x, y and z.
+				// r1 to be applied to x, y and z.
 				Commands.argument("r1", IntegerArgumentType.integer())
 					.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), "*"))
 					// r1 applied to x and z, r2 applied to y.
@@ -266,7 +267,7 @@ public class CommandCoFHWorld {
 						// r1 applied to x, r2 applied to y and r3 applied to z.
 						.then(Commands.argument("r3", IntegerArgumentType.integer())
 							.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), "*"))
-							// Radius defined for all sized, plus with type filter.
+							// Radius defined for all directions, plus type filter
 							.then(Commands.argument("filter", StringArgumentType.string())
 								.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter")))
 							)));
@@ -274,6 +275,7 @@ public class CommandCoFHWorld {
 		}
 
 		public static int executeWithPlayer(CommandContext<CommandSource> context, ServerPlayerEntity player, int xRadius, int yRadius, int zRadius, String filter) {
+
 			BlockPos p = player.getPosition();
 
 			int sX = p.getX() - xRadius;
@@ -301,6 +303,7 @@ public class CommandCoFHWorld {
 		}
 
 		private static int countBlocks(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters) {
+
 			Entity entity = context.getSource().getEntity();
 			if (entity == null) {
 				return 0;
@@ -392,6 +395,7 @@ public class CommandCoFHWorld {
 		}
 
 		public static ArgumentBuilder<CommandSource, ?> register() {
+
 			return Commands.literal("replaceblocks")
 					.requires(source -> source.hasPermissionLevel(permissionLevel))
 					// All default parameters.
@@ -402,6 +406,7 @@ public class CommandCoFHWorld {
 		}
 
 		public static ArgumentBuilder<CommandSource, ?> gatherArguments(PlayerFunction playerFunc) {
+
 			BlockStateInput air = new BlockStateInput(Blocks.AIR.getDefaultState(), Collections.emptySet(), null);
 			return
 				// r1 to be applied to x, y and z.
@@ -416,14 +421,14 @@ public class CommandCoFHWorld {
 							// Radius defined for all sized, plus with type filter.
 							.then(Commands.argument("filter", StringArgumentType.string())
 								.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), air))
-								// Radius defined for all sized, plus type filter, plus replacement block ID.
-								.then(Commands.argument("block", BlockStateArgument.blockState())
-									.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), BlockStateArgument.getBlockState(context, "block"))
+								// Radius defined for all directions, plus type filter, plus replacement block ID.
+								.then(Commands.argument("replacement", BlockStateArgument.blockState())
+									.executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), BlockStateArgument.getBlockState(context, "replacement"))
 								)))));
-
 		}
 
 		public static int executeWithPlayer(CommandContext<CommandSource> context, ServerPlayerEntity player, int xRadius, int yRadius, int zRadius, String filter, BlockStateInput replacement) {
+
 			BlockPos p = player.getPosition();
 
 			int sX = p.getX() - xRadius;
@@ -451,6 +456,7 @@ public class CommandCoFHWorld {
 		}
 
 		private static int replaceBlocks(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters, BlockState replacement) {
+
 			Entity entity = context.getSource().getEntity();
 			if (entity == null) {
 				return 0;
@@ -493,9 +499,7 @@ public class CommandCoFHWorld {
 					Chunk chunk = world.getChunkAt(new BlockPos(x, 0, z));
 					for (int y = sY; y <= eY; y++) {
 						BlockPos pos = new BlockPos(x, y, z);
-						BlockState bState = world.getBlockState(pos);
-
-						BlockState defaultState = bState.getBlock().getDefaultState();
+						BlockState defaultState = world.getBlockState(pos).getBlock().getDefaultState();
 						if (blockFilters.isFilterMatch(defaultState)) {
 							if (chunk.setBlockState(pos, replacement, false) != null) {
 								// We will need to notify the client(s) that the chunks have been updated later.
@@ -511,13 +515,16 @@ public class CommandCoFHWorld {
 				}
 			}
 
-			// TODO: no idea how to do this in 1.16.
 			// Notify the client(s) that the chunks have been updated.
 			if (world instanceof ServerWorld) {
 				ServerWorld sw = (ServerWorld)world;
 				ChunkManager cm = sw.getChunkProvider().chunkManager;
+
 				for (ChunkPos cp : updatedChunks) {
 					Chunk c = sw.getChunk(cp.x, cp.z);
+
+					// TODO: chunk lighting updates need to take place here.
+
 					cm.getTrackingPlayers(cp, false).forEach((player) -> sendChunkData(sw, player, c));
 				}
 			}
@@ -529,6 +536,7 @@ public class CommandCoFHWorld {
 		}
 
 		private static void sendChunkData(ServerWorld world, ServerPlayerEntity player, Chunk chunkIn) {
+
 			IPacket<?>[] ipacket = new IPacket[2];
 			ipacket[0] = new SChunkDataPacket(chunkIn, 65535);
 			ipacket[1] = new SUpdateLightPacket(chunkIn.getPos(), world.getLightManager(), true);
