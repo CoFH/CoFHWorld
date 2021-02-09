@@ -22,12 +22,16 @@ import net.minecraft.command.arguments.BlockStateInput;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.play.server.SChunkDataPacket;
+import net.minecraft.network.play.server.SUpdateLightPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ChunkManager;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -174,10 +178,14 @@ public class CommandCoFHWorld {
 						}
 						break;
 					case BLOCK_ID:
-						Block filterBlock = Blocks.AIR;
+						Block filterBlock = null;
 						ResourceLocation rl = ResourceLocation.tryCreate(f.Filter);
 						if (rl != null && ForgeRegistries.BLOCKS.containsKey(rl)) {
 							filterBlock = ForgeRegistries.BLOCKS.getValue(rl);
+						}
+
+						if (filterBlock == null) {
+							break;
 						}
 
 						BlockMatcher bm = BlockMatcher.forBlock(filterBlock);
@@ -208,10 +216,14 @@ public class CommandCoFHWorld {
 						}
 						break;
 					case BLOCK_ID:
-						Block filterBlock = Blocks.AIR;
+						Block filterBlock = null;
 						ResourceLocation rl = ResourceLocation.tryCreate(f.Filter);
 						if (rl != null && ForgeRegistries.BLOCKS.containsKey(rl)) {
 							filterBlock = ForgeRegistries.BLOCKS.getValue(rl);
+						}
+
+						if (filterBlock == null) {
+							break;
 						}
 
 						BlockMatcher bm = BlockMatcher.forBlock(filterBlock);
@@ -483,13 +495,6 @@ public class CommandCoFHWorld {
 						BlockPos pos = new BlockPos(x, y, z);
 						BlockState bState = world.getBlockState(pos);
 
-						// Skip any air blocks that might be present.
-						if (bState == Blocks.AIR.getDefaultState() ||
-								bState == Blocks.CAVE_AIR.getDefaultState() ||
-								bState == Blocks.VOID_AIR.getDefaultState()) {
-							continue;
-						}
-
 						BlockState defaultState = bState.getBlock().getDefaultState();
 						if (blockFilters.isFilterMatch(defaultState)) {
 							if (chunk.setBlockState(pos, replacement, false) != null) {
@@ -509,13 +514,26 @@ public class CommandCoFHWorld {
 			// TODO: no idea how to do this in 1.16.
 			// Notify the client(s) that the chunks have been updated.
 			if (world instanceof ServerWorld) {
+				ServerWorld sw = (ServerWorld)world;
+				ChunkManager cm = sw.getChunkProvider().chunkManager;
+				for (ChunkPos cp : updatedChunks) {
+					Chunk c = sw.getChunk(cp.x, cp.z);
+					cm.getTrackingPlayers(cp, false).forEach((player) -> sendChunkData(sw, player, c));
+				}
 			}
-
 
 			CoFHWorld.log.debug("Total blocks scanned: " + totalBlocks);
 			CoFHWorld.log.debug("Total blocks replaced: " + totalBlocksReplaced);
 
 			return 1;
+		}
+
+		private static void sendChunkData(ServerWorld world, ServerPlayerEntity player, Chunk chunkIn) {
+			IPacket<?>[] ipacket = new IPacket[2];
+			ipacket[0] = new SChunkDataPacket(chunkIn, 65535);
+			ipacket[1] = new SUpdateLightPacket(chunkIn.getPos(), world.getLightManager(), true);
+
+			player.sendChunkLoad(chunkIn.getPos(), ipacket[0], ipacket[1]);
 		}
 	}
 
