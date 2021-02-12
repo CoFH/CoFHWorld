@@ -2,6 +2,17 @@
     "cofhworld.reload.usage": "Reloads CoFHWorld configuration",
     "cofhworld.reload.successful": "Configuration reloaded.",
     "cofhworld.reload.failed": "Failed to reload config; check your logs.",
+
+    "cofhworld.countblocks.usage": "Count blocks of a type(s) within a given area.",
+    "cofhworld.countblocks.successful": "A total of %d blocks were scanned, of which %d matched the provided filter(s).",
+    "cofhworld.countblocks.successful_row": "%s - %d blocks total, %f of scanned blocks.",
+    "cofhworld.countblocks.failed": "Count blocks was unsuccessful with the specified command parameters.",
+
+    "cofhworld.replaceblocks.usage": "Replace blocks of a type(s) within a given area.",
+    "cofhworld.replaceblocks.lag_warning": "Replacing blocks in process. You may experience some lag while the process is under way.",
+    "cofhworld.replaceblocks.successful": "Replacement of blocks was successful. %d blocks were scanned and %d blocks were replaced.",
+    "cofhworld.replaceblocks.failed": "Replacement of blocks was unsuccessful with the specified command parameters.",
+
     "cofhworld.list.usage": "Lists all CoFHWorld features",
     "cofhworld.list": "--- Loaded CoFHWorld features page %d of %d ---"
 }
