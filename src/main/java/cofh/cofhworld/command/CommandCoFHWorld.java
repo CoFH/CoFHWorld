@@ -25,8 +25,10 @@ public class CommandCoFHWorld {
 						.then(SubCommandVersion.register())
 						.then(SubCommandList.register())
 						.then(SubCommandReload.register())
-						.then(SubCommandCountBlocks.register())
-						.then(SubCommandReplaceBlocks.register())
+						.then(SubCommandCountBlocks.registerPlayer())
+						.then(SubCommandCountBlocks.registerDirect())
+						.then(SubCommandReplaceBlocks.registerPlayer())
+						.then(SubCommandReplaceBlocks.registerDirect())
 		);
 	}
 

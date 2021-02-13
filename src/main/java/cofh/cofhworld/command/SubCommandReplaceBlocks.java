@@ -18,52 +18,72 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IClearable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraft.world.server.*;
 
+import java.text.NumberFormat;
 import java.util.*;
 
 public class SubCommandReplaceBlocks {
 
     public static int permissionLevel = 3;
+    private static long totalBlocks = 0;
+    private static long totalReplacedBlocks = 0;
 
     private interface PlayerFunction {
 
         ServerPlayerEntity apply(CommandContext<CommandSource> t) throws CommandSyntaxException;
     }
 
-    public static ArgumentBuilder<CommandSource, ?> register() {
+    public static ArgumentBuilder<CommandSource, ?> registerPlayer() {
+
+        return Commands.literal("replaceblocks")
+            .requires(source -> source.hasPermissionLevel(permissionLevel))
+            // All default parameters.
+            .then(gatherArguments(context -> context.getSource().asPlayer()))
+            // Player centred, with radius applied to all directions.
+            .then(Commands.argument("p", EntityArgument.player())
+                .then(gatherArguments(context -> EntityArgument.getPlayer(context, "p"))));
+    }
+
+    public static ArgumentBuilder<CommandSource, ?> registerDirect() {
 
         return Commands.literal("replaceblocks")
                 .requires(source -> source.hasPermissionLevel(permissionLevel))
-                // All default parameters.
-                .then(gatherArguments(context -> context.getSource().asPlayer()))
-                // Player centred, with radius applied to all directions.
-                .then(Commands.argument("p", EntityArgument.player())
-                        .then(gatherArguments(context -> EntityArgument.getPlayer(context, "p"))));
+                .then(Commands.argument("x1", IntegerArgumentType.integer())
+                    .then(Commands.argument("y1", IntegerArgumentType.integer())
+                        .then(Commands.argument("z1", IntegerArgumentType.integer())
+                            .then(Commands.argument("x2", IntegerArgumentType.integer())
+                                .then(Commands.argument("y2", IntegerArgumentType.integer())
+                                    .then(Commands.argument("z2", IntegerArgumentType.integer())
+                                        .then(Commands.argument("filter", StringArgumentType.string())
+                                            .then(Commands.argument("replacement", BlockStateArgument.blockState())
+                                                .executes(context -> execute(context, IntegerArgumentType.getInteger(context, "x1"), IntegerArgumentType.getInteger(context, "y1"), IntegerArgumentType.getInteger(context, "z1"), IntegerArgumentType.getInteger(context, "x2"), IntegerArgumentType.getInteger(context, "y2"), IntegerArgumentType.getInteger(context, "z2"), StringArgumentType.getString(context, "filter"), BlockStateArgument.getBlockState(context, "replacement")))
+                                            ))))))));
     }
 
     public static ArgumentBuilder<CommandSource, ?> gatherArguments(PlayerFunction playerFunc) {
 
         BlockStateInput air = new BlockStateInput(Blocks.AIR.getDefaultState(), Collections.emptySet(), null);
         return
-                // r1 to be applied to x, y and z.
-                Commands.argument("r1", IntegerArgumentType.integer())
-                        .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), "*", air))
-                        // r1 applied to x and z, r2 applied to y.
-                        .then(Commands.argument("r2", IntegerArgumentType.integer())
-                                .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r1"), "*", air))
-                                // r1 applied to x, r2 applied to y and r3 applied to z.
-                                .then(Commands.argument("r3", IntegerArgumentType.integer())
-                                        .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), "*", air))
-                                        // Radius defined for all sized, plus with type filter.
-                                        .then(Commands.argument("filter", StringArgumentType.string())
-                                                .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), air))
-                                                // Radius defined for all directions, plus type filter, plus replacement block ID.
-                                                .then(Commands.argument("replacement", BlockStateArgument.blockState())
-                                                        .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), BlockStateArgument.getBlockState(context, "replacement"))
-                                                        )))));
+            // r1 to be applied to x, y and z.
+            Commands.argument("r1", IntegerArgumentType.integer())
+                .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), "*", air))
+                    // r1 applied to x and z, r2 applied to y.
+                    .then(Commands.argument("r2", IntegerArgumentType.integer())
+                        .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r1"), "*", air))
+                            // r1 applied to x, r2 applied to y and r3 applied to z.
+                            .then(Commands.argument("r3", IntegerArgumentType.integer())
+                                .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), "*", air))
+                                    // Radius defined for all sized, plus with type filter.
+                                    .then(Commands.argument("filter", StringArgumentType.string())
+                                        .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), air))
+                                            // Radius defined for all directions, plus type filter, plus replacement block ID.
+                                            .then(Commands.argument("replacement", BlockStateArgument.blockState())
+                                                .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), BlockStateArgument.getBlockState(context, "replacement"))
+                                            )))));
     }
 
     private static int executeWithPlayer(CommandContext<CommandSource> context, ServerPlayerEntity player, int xRadius, int yRadius, int zRadius, String filter, BlockStateInput replacement) {
@@ -84,14 +104,13 @@ public class SubCommandReplaceBlocks {
 
         int rtn = replaceBlocks(context, sX, sY, sZ, eX, eY, eZ, filters, replacement.getState());
 
-        TextComponent component;
+        NumberFormat fmt = NumberFormat.getInstance();
 
+        TextComponent component;
         if (rtn == -1) {
             component = new TranslationTextComponent("cofhworld.replaceblocks.failed");
-            component.getStyle().setColor(Color.fromTextFormatting(TextFormatting.RED));
         } else {
-            component = new TranslationTextComponent("cofhworld.replaceblocks.successful");
-            component.getStyle().setColor(Color.fromTextFormatting(TextFormatting.GOLD));
+            component = new TranslationTextComponent("cofhworld.replaceblocks.successful", fmt.format(totalBlocks), fmt.format(totalReplacedBlocks));
         }
 
         context.getSource().sendFeedback(component, true);
@@ -129,46 +148,31 @@ public class SubCommandReplaceBlocks {
             eY = maxY;
         }
 
-        //String dbg = ""
-        //        + "start: (" + sX + "," + sY + "," + sZ + ") "
-        //        + "end: (" + eX + "," + eY + "," + eZ + ")";
-        //CoFHWorld.log.debug(dbg);
-
         context.getSource().sendFeedback(new TranslationTextComponent("cofhworld.replaceblocks.lag_warning"), true);
 
         ServerWorld sw = (ServerWorld) world;
         BlockFilters blockFilters = new BlockFilters(filters);
 
-        long totalBlocks = 0;
-        long totalBlocksReplaced = 0;
+        MutableBoundingBox area = MutableBoundingBox.createProper(sX, sY, sZ, eX, eY, eZ);
+        for (BlockPos pos : BlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ)) {
+            CoFHWorld.log.debug(pos.toString());
+            BlockState targetState = world.getBlockState(pos).getBlock().getDefaultState();
+            if (targetState != replacement && blockFilters.isFilterMatch(targetState)) {
+                TileEntity te = sw.getTileEntity(pos);
+                if (te != null) {
+                    IClearable.clearObj(te);
+                }
 
-        for (int x = sX; x <= eX; x++) {
-            for (int z = sZ; z <= eZ; z++) {
-                for (int y = sY; y <= eY; y++) {
-                    BlockPos pos = new BlockPos(x, y, z);
-                    BlockState targetState = world.getBlockState(pos).getBlock().getDefaultState();
-                    if (targetState != replacement && blockFilters.isFilterMatch(targetState)) {
-                        TileEntity te = sw.getTileEntity(pos);
-                        if (te != null) {
-                            IClearable.clearObj(te);
-                        }
-
-                        // https://discord.com/channels/313125603924639766/796838585797050428/805209604002676797
-                        // A value of 2 here will send this block change to all clients.
-                        // A value of 16 will prevent neighbour reactions.
-                        if (sw.setBlockState(pos, replacement, (2 | 16))) {
-                            ++totalBlocksReplaced;
-                        }
-                    }
-
-                    ++totalBlocks;
+                // A value of 2 here will send this block change to all clients.
+                // A value of 16 will prevent neighbour reactions.
+                if (sw.setBlockState(pos, replacement, (2 | 16))) {
+                    ++totalReplacedBlocks;
                 }
             }
+
+            ++totalBlocks;
         }
 
-        CoFHWorld.log.debug("Total blocks scanned: " + totalBlocks);
-        CoFHWorld.log.debug("Total blocks replaced: " + totalBlocksReplaced);
-
-        return (totalBlocksReplaced > 0) ? 1 : 0;
+        return 1;
     }
 }
