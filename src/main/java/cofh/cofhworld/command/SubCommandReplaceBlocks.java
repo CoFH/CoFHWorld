@@ -1,20 +1,17 @@
 package cofh.cofhworld.command;
 
-import cofh.cofhworld.CoFHWorld;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.command.arguments.BlockStateArgument;
 import net.minecraft.command.arguments.BlockStateInput;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IClearable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -28,67 +25,65 @@ import java.util.*;
 
 public class SubCommandReplaceBlocks {
 
-    public static int permissionLevel = 3;
+    private static final int permissionLevel = 3;
     private static long totalBlocks = 0;
     private static long totalReplacedBlocks = 0;
 
-    private interface PlayerFunction {
+    public static ArgumentBuilder<CommandSource, ?> register() {
 
-        ServerPlayerEntity apply(CommandContext<CommandSource> t) throws CommandSyntaxException;
-    }
-
-    public static ArgumentBuilder<CommandSource, ?> registerPlayer() {
-
-        return Commands.literal("replaceblocks")
-            .requires(source -> source.hasPermissionLevel(permissionLevel))
-            // All default parameters.
-            .then(gatherArguments(context -> context.getSource().asPlayer()))
-            // Player centred, with radius applied to all directions.
-            .then(Commands.argument("p", EntityArgument.player())
-                .then(gatherArguments(context -> EntityArgument.getPlayer(context, "p"))));
-    }
-
-    public static ArgumentBuilder<CommandSource, ?> registerDirect() {
+        BlockStateInput air = new BlockStateInput(Blocks.AIR.getDefaultState(), Collections.emptySet(), null);
 
         return Commands.literal("replaceblocks")
                 .requires(source -> source.hasPermissionLevel(permissionLevel))
-                .then(Commands.argument("x1", IntegerArgumentType.integer())
-                    .then(Commands.argument("y1", IntegerArgumentType.integer())
-                        .then(Commands.argument("z1", IntegerArgumentType.integer())
-                            .then(Commands.argument("x2", IntegerArgumentType.integer())
-                                .then(Commands.argument("y2", IntegerArgumentType.integer())
-                                    .then(Commands.argument("z2", IntegerArgumentType.integer())
-                                        .then(Commands.argument("filter", StringArgumentType.string())
-                                            .then(Commands.argument("replacement", BlockStateArgument.blockState())
-                                                .executes(context -> execute(context, IntegerArgumentType.getInteger(context, "x1"), IntegerArgumentType.getInteger(context, "y1"), IntegerArgumentType.getInteger(context, "z1"), IntegerArgumentType.getInteger(context, "x2"), IntegerArgumentType.getInteger(context, "y2"), IntegerArgumentType.getInteger(context, "z2"), StringArgumentType.getString(context, "filter"), BlockStateArgument.getBlockState(context, "replacement")))
-                                            ))))))));
+                .then(Commands.argument("e", EntityArgument.entity())
+                        .then(Commands.argument("r1", IntegerArgumentType.integer())
+                                .then(Commands.argument("r2", IntegerArgumentType.integer())
+                                        .then(Commands.argument("r3", IntegerArgumentType.integer())
+                                                .then(Commands.argument("filter", StringArgumentType.string())
+                                                        .then(Commands.argument("replacement", BlockStateArgument.blockState())
+                                                            // r1 applied to x, r2 applied to y and r3 applied to z. Filter has been specified, as has the replacement block state.
+                                                            .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBlockState(ctx, "replacement")))
+                                                        )
+                                                        // r1 applied to x, r2 applied to y and r3 applied to z. Filter has been specified. No replacement block state specified, air will be used.
+                                                        .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter"), air))
+                                                )
+                                                // r1 applied to x, r2 applied to y and r3 applied to z. No filter specified, a match-all filter is used. No replacement block state specified, air will be used.
+                                                .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), "*", air))
+                                        )
+                                        // r1 applied to x and z, r2 applied to y. No filter specified, a match-all filter is used. No replacement block state specified, air will be used.
+                                        .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r1"), "*", air))
+                                )
+                                // r1 applied to x, y and z. No filter specified, a match-all filter is used. No replacement block state specified, air will be used.
+                                .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r1"), "*", air))
+                        )
+                )
+                .then(Commands.argument("x1", BlockPosArgument.blockPos())
+                        .then(Commands.argument("y1", BlockPosArgument.blockPos())
+                                .then(Commands.argument("z1", BlockPosArgument.blockPos())
+                                        .then(Commands.argument("x2", BlockPosArgument.blockPos())
+                                                .then(Commands.argument("y2", BlockPosArgument.blockPos())
+                                                        .then(Commands.argument("z1", BlockPosArgument.blockPos())
+                                                                .then(Commands.argument("filter", StringArgumentType.string())
+                                                                        .then(Commands.argument("replacement", StringArgumentType.string())
+                                                                            // Full coordinates, filter and replacement block state specified.
+                                                                            .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBlockState(ctx, "replacement")))
+                                                                        )
+                                                                        // Full coordinates and filter specified. No replacement block state specified, air will be used.
+                                                                        .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), ArgHelpers.getString(ctx, "filter"), air))
+                                                                )
+                                                                // Full coordinates specified. No filter specified, match-all filter applied as a default. No replacement block state specified, air will be used.
+                                                                .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), "*", air))
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                );
     }
 
-    public static ArgumentBuilder<CommandSource, ?> gatherArguments(PlayerFunction playerFunc) {
+    private static int executeAtEntity(CommandSource source, Entity entity, int xRadius, int yRadius, int zRadius, String filter, BlockStateInput replacement) {
 
-        BlockStateInput air = new BlockStateInput(Blocks.AIR.getDefaultState(), Collections.emptySet(), null);
-        return
-            // r1 to be applied to x, y and z.
-            Commands.argument("r1", IntegerArgumentType.integer())
-                .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), "*", air))
-                    // r1 applied to x and z, r2 applied to y.
-                    .then(Commands.argument("r2", IntegerArgumentType.integer())
-                        .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r1"), "*", air))
-                            // r1 applied to x, r2 applied to y and r3 applied to z.
-                            .then(Commands.argument("r3", IntegerArgumentType.integer())
-                                .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), "*", air))
-                                    // Radius defined for all sized, plus with type filter.
-                                    .then(Commands.argument("filter", StringArgumentType.string())
-                                        .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), air))
-                                            // Radius defined for all directions, plus type filter, plus replacement block ID.
-                                            .then(Commands.argument("replacement", BlockStateArgument.blockState())
-                                                .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter"), BlockStateArgument.getBlockState(context, "replacement"))
-                                            )))));
-    }
-
-    private static int executeWithPlayer(CommandContext<CommandSource> context, ServerPlayerEntity player, int xRadius, int yRadius, int zRadius, String filter, BlockStateInput replacement) {
-
-        BlockPos p = player.getPosition();
+        BlockPos p = entity.getPosition();
 
         int sX = p.getX() - xRadius;
         int sY = p.getY() - yRadius;
@@ -97,15 +92,19 @@ public class SubCommandReplaceBlocks {
         int eY = p.getY() + yRadius;
         int eZ = p.getZ() + zRadius;
 
-        return execute(context, sX, sY, sZ, eX, eY, eZ, filter, replacement);
+        return execute(source, sX, sY, sZ, eX, eY, eZ, filter, replacement);
     }
 
-    private static int execute(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters, BlockStateInput replacement) {
+    private static int execute(CommandSource source, BlockPos sX, BlockPos sY, BlockPos sZ, BlockPos eX, BlockPos eY, BlockPos eZ, String filters, BlockStateInput replacement) {
 
-        int rtn = replaceBlocks(context, sX, sY, sZ, eX, eY, eZ, filters, replacement.getState());
+        return execute(source, sX.getX(), sY.getY(), sZ.getZ(), eX.getX(), eY.getY(), eZ.getZ(), filters, replacement);
+    }
+
+    private static int execute(CommandSource source, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters, BlockStateInput replacement) {
+
+        int rtn = replaceBlocks(source, sX, sY, sZ, eX, eY, eZ, filters, replacement.getState());
 
         NumberFormat fmt = NumberFormat.getInstance();
-
         TextComponent component;
         if (rtn == -1) {
             component = new TranslationTextComponent("cofhworld.replaceblocks.failed");
@@ -113,14 +112,14 @@ public class SubCommandReplaceBlocks {
             component = new TranslationTextComponent("cofhworld.replaceblocks.successful", fmt.format(totalBlocks), fmt.format(totalReplacedBlocks));
         }
 
-        context.getSource().sendFeedback(component, true);
+        source.sendFeedback(component, true);
 
         return rtn;
     }
 
-    private static int replaceBlocks(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters, BlockState replacement) {
+    private static int replaceBlocks(CommandSource source, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters, BlockState replacement) {
 
-        Entity entity = context.getSource().getEntity();
+        Entity entity = source.getEntity();
         if (entity == null) {
             return 0;
         }
@@ -148,14 +147,16 @@ public class SubCommandReplaceBlocks {
             eY = maxY;
         }
 
-        context.getSource().sendFeedback(new TranslationTextComponent("cofhworld.replaceblocks.lag_warning"), true);
+        source.sendFeedback(new TranslationTextComponent("cofhworld.replaceblocks.lag_warning"), true);
+
+        totalBlocks = 0;
+        totalReplacedBlocks = 0;
 
         ServerWorld sw = (ServerWorld) world;
         BlockFilters blockFilters = new BlockFilters(filters);
 
         MutableBoundingBox area = MutableBoundingBox.createProper(sX, sY, sZ, eX, eY, eZ);
         for (BlockPos pos : BlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ)) {
-            CoFHWorld.log.debug(pos.toString());
             BlockState targetState = world.getBlockState(pos).getBlock().getDefaultState();
             if (targetState != replacement && blockFilters.isFilterMatch(targetState)) {
                 TileEntity te = sw.getTileEntity(pos);

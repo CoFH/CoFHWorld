@@ -3,82 +3,124 @@ package cofh.cofhworld.command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.text.NumberFormat;
 import java.util.*;
 
 public class SubCommandCountBlocks {
 
-    public static int permissionLevel = 3;
+    private static final int permissionLevel = 3;
+    private static final int pageSize = 8;
 
-    private static HashMap<BlockState, Integer> blockCounts = new HashMap<>();
+    private static final HashMap<BlockState, Long> blockCounts = new HashMap<>();
+    private static ArrayList<Pair<Long, BlockState>> sortedBlockCounts = new ArrayList<>();
     private static long totalBlocks = 0;
     private static long totalMatchedBlocks = 0;
 
-    private interface PlayerFunction {
-
-        ServerPlayerEntity apply(CommandContext<CommandSource> t) throws CommandSyntaxException;
-    }
-
-    public static ArgumentBuilder<CommandSource, ?> registerPlayer() {
+    public static ArgumentBuilder<CommandSource, ?> register() {
 
         return Commands.literal("countblocks")
-            .requires(source -> source.hasPermissionLevel(permissionLevel))
-            // All default parameters.
-            .then(gatherArguments(context -> context.getSource().asPlayer()))
-            // Player centred, with radius applied to all directions.
-            .then(Commands.argument("p", EntityArgument.player())
-                .then(gatherArguments(context -> EntityArgument.getPlayer(context, "p"))));
+                .requires(source -> source.hasPermissionLevel(permissionLevel))
+                .then(Commands.argument("e", EntityArgument.entity())
+                        .then(Commands.argument("r1", IntegerArgumentType.integer())
+                                .then(Commands.argument("r2", IntegerArgumentType.integer())
+                                        .then(Commands.argument("r3", IntegerArgumentType.integer())
+                                                .then(Commands.argument("filter", StringArgumentType.string())
+                                                    // r1 applied to x, r2 applied to y and r3 applied to z. Filter applied.
+                                                    .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter")))
+                                                )
+                                                // r1 applied to x, r2 applied to y and r3 applied to z. No filter specified, a match-all filter is used.
+                                                .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), "*"))
+                                        )
+                                        // r1 applied to x and z, r2 applied to y. No filter specified, a match-all filter is used.
+                                        .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r1"), "*"))
+                                )
+                                // r1 applied to x, y and z. No filter specified, a match-all filter is used.
+                                .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r1"), "*"))
+                        )
+                )
+                .then(Commands.argument("x1", BlockPosArgument.blockPos())
+                        .then(Commands.argument("y1", BlockPosArgument.blockPos())
+                                .then(Commands.argument("z1", BlockPosArgument.blockPos())
+                                        .then(Commands.argument("x2", BlockPosArgument.blockPos())
+                                                .then(Commands.argument("y2", BlockPosArgument.blockPos())
+                                                        .then(Commands.argument("z1", BlockPosArgument.blockPos())
+                                                                .then(Commands.argument("filter", StringArgumentType.string())
+                                                                        // Full coordinates with filter specified.
+                                                                        .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), ArgHelpers.getString(ctx, "filter")))
+                                                                )
+                                                                // Full coordinates specified. No filter specified, match-all filter applied as a default.
+                                                                .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), "*"))
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                );
     }
 
-    public static ArgumentBuilder<CommandSource, ?> registerDirect() {
+    public static ArgumentBuilder<CommandSource, ?> registerPageList() {
 
-        return Commands.literal("countblocks")
-            .requires(source -> source.hasPermissionLevel(permissionLevel))
-            .then(Commands.argument("x1", IntegerArgumentType.integer())
-                .then(Commands.argument("y1", IntegerArgumentType.integer())
-                    .then(Commands.argument("z1", IntegerArgumentType.integer())
-                        .then(Commands.argument("x2", IntegerArgumentType.integer())
-                            .then(Commands.argument("y2", IntegerArgumentType.integer())
-                                .then(Commands.argument("z2", IntegerArgumentType.integer())
-                                    .then(Commands.argument("filter", StringArgumentType.string())
-                                        .executes(context -> execute(context, IntegerArgumentType.getInteger(context, "x1"), IntegerArgumentType.getInteger(context, "y1"), IntegerArgumentType.getInteger(context, "z1"), IntegerArgumentType.getInteger(context, "x2"), IntegerArgumentType.getInteger(context, "y2"), IntegerArgumentType.getInteger(context, "z2"), StringArgumentType.getString(context, "filter")))
-                                    )))))));
+        return Commands.literal("countblockslist")
+                .requires(source -> source.hasPermissionLevel(permissionLevel))
+                .then(Commands.argument("page", IntegerArgumentType.integer())
+                        .executes(ctx -> displayDetailedPage(ctx.getSource(), ArgHelpers.getInt(ctx, "page")))
+                );
     }
 
-    public static ArgumentBuilder<CommandSource, ?> gatherArguments(PlayerFunction playerFunc) {
+    private static int displayDetailedPage(CommandSource source, int page) {
 
-        return
-            Commands.argument("r1", IntegerArgumentType.integer())
-                // r1 to be applied to x, y and z.
-                .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r1"), "*"))
-                    // r1 applied to x and z, r2 applied to y.
-                    .then(Commands.argument("r2", IntegerArgumentType.integer())
-                        .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r1"), "*"))
-                            // r1 applied to x, r2 applied to y and r3 applied to z.
-                            .then(Commands.argument("r3", IntegerArgumentType.integer())
-                                .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), "*"))
-                                    // Radius defined for all directions, plus type filter
-                                    .then(Commands.argument("filter", StringArgumentType.string())
-                                        .executes(context -> executeWithPlayer(context, playerFunc.apply(context), IntegerArgumentType.getInteger(context, "r1"), IntegerArgumentType.getInteger(context, "r2"), IntegerArgumentType.getInteger(context, "r3"), StringArgumentType.getString(context, "filter")))
-                                    )));
+        // The count blocks command has not been (successfully) executed.
+        if (blockCounts.size() == 0) {
+            source.sendFeedback(new TranslationTextComponent("cofhworld.countblockslist.failed"), true);
+            return 0;
+        }
+
+        if (sortedBlockCounts.size() == 0) {
+            buildSortedList();
+        }
+
+        int totalPages = ((blockCounts.size() - 1) / pageSize) + 1;
+        if  (page > totalPages) {
+            page = totalPages;
+        } else if (page <= 0) {
+            page = 1;
+        }
+
+        source.sendFeedback(new TranslationTextComponent("cofhworld.countblockslist.pages", page, totalPages), true);
+
+        NumberFormat fmt = NumberFormat.getInstance();
+
+        int offset = (page - 1) * pageSize;
+        for (int i = 0; i < pageSize; i++) {
+            int index = i + offset;
+            if (index >= sortedBlockCounts.size()) {
+                break;
+            }
+
+            Pair<Long, BlockState> pair = sortedBlockCounts.get(index);
+            String blockCount = fmt.format(pair.getLeft());
+            IFormattableTextComponent block = pair.getRight().getBlock().getTranslatedName();
+            source.sendFeedback(new TranslationTextComponent("cofhworld.countblockslist.entry", block, blockCount), true);
+        }
+
+        return 1;
     }
 
-    private static int executeWithPlayer(CommandContext<CommandSource> context, ServerPlayerEntity player, int xRadius, int yRadius, int zRadius, String filter) {
+    private static int executeAtEntity(CommandSource source, Entity entity, int xRadius, int yRadius, int zRadius, String filters) {
 
-        BlockPos p = player.getPosition();
+        BlockPos p = entity.getPosition();
 
         int sX = p.getX() - xRadius;
         int sY = p.getY() - yRadius;
@@ -87,38 +129,34 @@ public class SubCommandCountBlocks {
         int eY = p.getY() + yRadius;
         int eZ = p.getZ() + zRadius;
 
-        return execute(context, sX, sY, sZ, eX, eY, eZ, filter);
+        return execute(source, sX, sY, sZ, eX, eY, eZ, filters);
     }
 
-    private static int execute(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters) {
+    private static int execute(CommandSource source, BlockPos sX, BlockPos sY, BlockPos sZ, BlockPos eX, BlockPos eY, BlockPos eZ, String filters) {
 
-        int rtn = countBlocks(context, sX, sY, sZ, eX, eY, eZ, filters);
+        return execute(source, sX.getX(), sY.getY(), sZ.getZ(), eX.getX(), eY.getY(), eZ.getZ(), filters);
+    }
 
-        NumberFormat fmt = NumberFormat.getInstance();
+    private static int execute(CommandSource source, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters) {
+
+        int rtn = countBlocks(source, sX, sY, sZ, eX, eY, eZ, filters);
 
         TextComponent component;
         if (rtn == -1) {
             component = new TranslationTextComponent("cofhworld.countblocks.failed");
-            context.getSource().sendFeedback(component, true);
         } else {
+            NumberFormat fmt = NumberFormat.getInstance();
             component = new TranslationTextComponent("cofhworld.countblocks.successful", fmt.format(totalBlocks), fmt.format(totalMatchedBlocks));
-            context.getSource().sendFeedback(component, true);
-
-            for (Map.Entry<BlockState, Integer> entry : blockCounts.entrySet()) {
-                IFormattableTextComponent block = entry.getKey().getBlock().getTranslatedName();
-                String count = fmt.format(entry.getValue());
-
-                component = new TranslationTextComponent("cofhworld.countblocks.successful_row", block, count);
-                context.getSource().sendFeedback(component, true);
-            }
         }
+
+        source.sendFeedback(component, true);
 
         return rtn;
     }
 
-    private static int countBlocks(CommandContext<CommandSource> context, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters) {
+    private static int countBlocks(CommandSource source, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters) {
 
-        Entity entity = context.getSource().getEntity();
+        Entity entity = source.getEntity();
         if (entity == null) {
             return 0;
         }
@@ -148,7 +186,8 @@ public class SubCommandCountBlocks {
 
         BlockFilters blockFilters = new BlockFilters(filters);
 
-        blockCounts = new HashMap<>();
+        blockCounts.clear();
+        sortedBlockCounts.clear();
         totalBlocks = 0;
         totalMatchedBlocks = 0;
 
@@ -156,7 +195,7 @@ public class SubCommandCountBlocks {
         for (BlockPos pos : BlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ)) {
             BlockState defaultState = world.getBlockState(pos).getBlock().getDefaultState();
             if (blockFilters.isFilterMatch(defaultState)) {
-                int ofTypeCount = 1;
+                long ofTypeCount = 1;
                 if (blockCounts.containsKey(defaultState)) {
                     ofTypeCount = blockCounts.get(defaultState) + 1;
                 }
@@ -169,5 +208,21 @@ public class SubCommandCountBlocks {
         }
 
         return 1;
+    }
+
+    private static void buildSortedList() {
+
+        ArrayList<Pair<Long, BlockState>> temp = new ArrayList<>();
+
+        blockCounts.forEach((state, count) -> {
+            temp.add(Pair.of(count, state));
+        });
+
+        // TODO: this will explode if there are a large number of entries present.
+        // There might be a cleaner and more efficient way of doing this that will not explode.
+        //Collections.sort(temp);
+        //Collections.reverse(temp);
+
+        sortedBlockCounts = temp;
     }
 }
