@@ -1,5 +1,7 @@
 package cofh.cofhworld.command;
 
+import cofh.cofhworld.command.helpers.*;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -41,20 +43,24 @@ public class SubCommandReplaceBlocks {
                                         .then(Commands.argument("r3", IntegerArgumentType.integer())
                                                 .then(Commands.argument("filter", StringArgumentType.string())
                                                         .then(Commands.argument("replacement", BlockStateArgument.blockState())
-                                                            // r1 applied to x, r2 applied to y and r3 applied to z. Filter has been specified, as has the replacement block state.
-                                                            .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBlockState(ctx, "replacement")))
+                                                                .then(Commands.argument("whole_chunk_mode", BoolArgumentType.bool())
+                                                                        // r1 applied to x, r2 applied to y and r3 applied to z. Filter has been specified, as has the replacement block state. Chunk mode specifier also specified.
+                                                                        .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBlockState(ctx, "replacement"), ArgHelpers.getBool(ctx, "whole_chunk_mode")))
+                                                                )
+                                                                // r1 applied to x, r2 applied to y and r3 applied to z. Filter has been specified, as has the replacement block state.
+                                                                .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBlockState(ctx, "replacement"), false))
                                                         )
-                                                        // r1 applied to x, r2 applied to y and r3 applied to z. Filter has been specified. No replacement block state specified, air will be used.
-                                                        .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter"), air))
+                                                        // r1 applied to x, r2 applied to y and r3 applied to z. Filter has been specified.
+                                                        .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter"), air, false))
                                                 )
-                                                // r1 applied to x, r2 applied to y and r3 applied to z. No filter specified, a match-all filter is used. No replacement block state specified, air will be used.
-                                                .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), "*", air))
+                                                // r1 applied to x, r2 applied to y and r3 applied to z.
+                                                .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), "*", air, false))
                                         )
-                                        // r1 applied to x and z, r2 applied to y. No filter specified, a match-all filter is used. No replacement block state specified, air will be used.
-                                        .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r1"), "*", air))
+                                        // r1 applied to x and z, r2 applied to y.
+                                        .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r1"), "*", air, false))
                                 )
-                                // r1 applied to x, y and z. No filter specified, a match-all filter is used. No replacement block state specified, air will be used.
-                                .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r1"), "*", air))
+                                // r1 applied to x, y and z.
+                                .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r1"), "*", air, false))
                         )
                 )
                 .then(Commands.argument("x1", BlockPosArgument.blockPos())
@@ -65,14 +71,18 @@ public class SubCommandReplaceBlocks {
                                                         .then(Commands.argument("z1", BlockPosArgument.blockPos())
                                                                 .then(Commands.argument("filter", StringArgumentType.string())
                                                                         .then(Commands.argument("replacement", StringArgumentType.string())
-                                                                            // Full coordinates, filter and replacement block state specified.
-                                                                            .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBlockState(ctx, "replacement")))
+                                                                                .then(Commands.argument("whole_chunk_mode", BoolArgumentType.bool())
+                                                                                        // Full coordinates, filter, replacement block state and chunk mode specified.
+                                                                                        .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBlockState(ctx, "replacement"), ArgHelpers.getBool(ctx, "whole_chunk_mode")))
+                                                                                )
+                                                                                // Full coordinates, filter and replacement block state specified.
+                                                                                .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBlockState(ctx, "replacement"), false))
                                                                         )
-                                                                        // Full coordinates and filter specified. No replacement block state specified, air will be used.
-                                                                        .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), ArgHelpers.getString(ctx, "filter"), air))
+                                                                        // Full coordinates and filter specified.
+                                                                        .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), ArgHelpers.getString(ctx, "filter"), air, false))
                                                                 )
-                                                                // Full coordinates specified. No filter specified, match-all filter applied as a default. No replacement block state specified, air will be used.
-                                                                .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), "*", air))
+                                                                // Full coordinates specified.
+                                                                .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), "*", air, false))
                                                         )
                                                 )
                                         )
@@ -81,28 +91,28 @@ public class SubCommandReplaceBlocks {
                 );
     }
 
-    private static int executeAtEntity(CommandSource source, Entity entity, int xRadius, int yRadius, int zRadius, String filter, BlockStateInput replacement) {
+    private static int executeAtEntity(CommandSource source, Entity entity, int xRadius, int yRadius, int zRadius, String filter, BlockStateInput replacement, Boolean wholeChunks) {
 
-        BlockPos p = entity.getPosition();
+        BlockPos e = entity.getPosition();
 
-        int sX = p.getX() - xRadius;
-        int sY = p.getY() - yRadius;
-        int sZ = p.getZ() - zRadius;
-        int eX = p.getX() + xRadius;
-        int eY = p.getY() + yRadius;
-        int eZ = p.getZ() + zRadius;
+        int x1 = e.getX() - xRadius;
+        int y1 = e.getY() - yRadius;
+        int z1 = e.getZ() - zRadius;
+        int x2 = e.getX() + xRadius;
+        int y2 = e.getY() + yRadius;
+        int z2 = e.getZ() + zRadius;
 
-        return execute(source, sX, sY, sZ, eX, eY, eZ, filter, replacement);
+        return execute(source, x1, y1, z1, x2, y2, z2, filter, replacement, wholeChunks);
     }
 
-    private static int execute(CommandSource source, BlockPos sX, BlockPos sY, BlockPos sZ, BlockPos eX, BlockPos eY, BlockPos eZ, String filters, BlockStateInput replacement) {
+    private static int execute(CommandSource source, BlockPos x1, BlockPos y1, BlockPos z1, BlockPos x2, BlockPos y2, BlockPos z2, String filters, BlockStateInput replacement, Boolean wholeChunks) {
 
-        return execute(source, sX.getX(), sY.getY(), sZ.getZ(), eX.getX(), eY.getY(), eZ.getZ(), filters, replacement);
+        return execute(source, x1.getX(), y1.getY(), z1.getZ(), x2.getX(), y2.getY(), z2.getZ(), filters, replacement, wholeChunks);
     }
 
-    private static int execute(CommandSource source, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters, BlockStateInput replacement) {
+    private static int execute(CommandSource source, int x1, int y1, int z1, int x2, int y2, int z2, String filters, BlockStateInput replacement, Boolean wholeChunks) {
 
-        int rtn = replaceBlocks(source, sX, sY, sZ, eX, eY, eZ, filters, replacement.getState());
+        int rtn = replaceBlocks(source, x1, y1, z1, x2, y2, z2, filters, replacement.getState(), wholeChunks);
 
         NumberFormat fmt = NumberFormat.getInstance();
         TextComponent component;
@@ -117,7 +127,7 @@ public class SubCommandReplaceBlocks {
         return rtn;
     }
 
-    private static int replaceBlocks(CommandSource source, int sX, int sY, int sZ, int eX, int eY, int eZ, String filters, BlockState replacement) {
+    private static int replaceBlocks(CommandSource source, int x1, int y1, int z1, int x2, int y2, int z2, String filters, BlockState replacement, boolean wholeChunks) {
 
         Entity entity = source.getEntity();
         if (entity == null) {
@@ -129,24 +139,6 @@ public class SubCommandReplaceBlocks {
             return 0;
         }
 
-        // TODO - in 1.17 this should be modified to use the getBottomY and getTopY methods of the HeightLimitView interface.
-        // The assumption that y == 0 is the lower bound of the world is not valid in 1.17.
-        int maxY = world.getHeight();
-
-        // Clamp y values to the world world height limits.
-        // Do not use 256 here as it is variable in 1.17+
-        if (sY < 0) {
-            sY = 0;
-        } else if (sY > maxY) {
-            sY = maxY;
-        }
-
-        if (eY < 0) {
-            eY = 0;
-        } else if (sY > maxY) {
-            eY = maxY;
-        }
-
         source.sendFeedback(new TranslationTextComponent("cofhworld.replaceblocks.lag_warning"), true);
 
         totalBlocks = 0;
@@ -154,8 +146,8 @@ public class SubCommandReplaceBlocks {
 
         ServerWorld sw = (ServerWorld) world;
         BlockFilters blockFilters = new BlockFilters(filters);
+        MutableBoundingBox area = CoordinateHelpers.CoordinatesToBox(world, x1, y1, z1, x2, y2, z2, wholeChunks);
 
-        MutableBoundingBox area = MutableBoundingBox.createProper(sX, sY, sZ, eX, eY, eZ);
         for (BlockPos pos : BlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ)) {
             BlockState targetState = world.getBlockState(pos).getBlock().getDefaultState();
             if (targetState != replacement && blockFilters.isFilterMatch(targetState)) {

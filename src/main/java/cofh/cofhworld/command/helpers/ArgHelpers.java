@@ -1,5 +1,6 @@
-package cofh.cofhworld.command;
+package cofh.cofhworld.command.helpers;
 
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -37,5 +38,10 @@ public class ArgHelpers {
     public static BlockStateInput getBlockState(CommandContext<CommandSource> context, String name) {
 
         return BlockStateArgument.getBlockState(context, name);
+    }
+
+    public static Boolean getBool(CommandContext<CommandSource> context, String name) {
+
+        return BoolArgumentType.getBool(context, name);
     }
 }
