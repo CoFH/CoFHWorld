@@ -1,6 +1,6 @@
 package cofh.cofhworld.command;
 
-import cofh.cofhworld.command.helpers.*;
+import cofh.cofhworld.command.Helpers.*;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -119,6 +119,7 @@ public class SubCommandReplaceBlocks {
         if (rtn == -1) {
             component = new TranslationTextComponent("cofhworld.replaceblocks.failed");
         } else {
+
             component = new TranslationTextComponent("cofhworld.replaceblocks.successful", fmt.format(totalBlocks), fmt.format(totalReplacedBlocks));
         }
 

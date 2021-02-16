@@ -1,6 +1,6 @@
 package cofh.cofhworld.command;
 
-import cofh.cofhworld.command.helpers.*;
+import cofh.cofhworld.command.Helpers.*;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -119,8 +119,9 @@ public class SubCommandCountBlocks {
             }
 
             Map.Entry<BlockState, Long> pair = sortedBlockCounts.get(index);
-            IFormattableTextComponent block = pair.getKey().getBlock().getTranslatedName();
+            String block = pair.getKey().getBlock().getTranslatedName().getString();
             String blockCount = fmt.format(pair.getValue());
+
             source.sendFeedback(new TranslationTextComponent("cofhworld.countblockslist.entry", block, blockCount), true);
         }
 
@@ -182,7 +183,6 @@ public class SubCommandCountBlocks {
 
         BlockFilters blockFilters = new BlockFilters(filters);
         MutableBoundingBox area = CoordinateHelpers.CoordinatesToBox(world, x1, y1, z1, x2, y2, z2, wholeChunks);
-
         for (BlockPos pos : BlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ)) {
             BlockState defaultState = world.getBlockState(pos).getBlock().getDefaultState();
             if (blockFilters.isFilterMatch(defaultState)) {
