@@ -15,7 +15,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.text.NumberFormat;
 import java.util.*;
@@ -26,7 +25,7 @@ public class SubCommandCountBlocks {
     private static final int pageSize = 8;
 
     private static final HashMap<BlockState, Long> blockCounts = new HashMap<>();
-    private static ArrayList<Pair<Long, BlockState>> sortedBlockCounts = new ArrayList<>();
+    private static List<Map.Entry<BlockState, Long>> sortedBlockCounts = new ArrayList<>();
     private static long totalBlocks = 0;
     private static long totalMatchedBlocks = 0;
 
@@ -119,9 +118,9 @@ public class SubCommandCountBlocks {
                 break;
             }
 
-            Pair<Long, BlockState> pair = sortedBlockCounts.get(index);
-            String blockCount = fmt.format(pair.getLeft());
-            IFormattableTextComponent block = pair.getRight().getBlock().getTranslatedName();
+            Map.Entry<BlockState, Long> pair = sortedBlockCounts.get(index);
+            IFormattableTextComponent block = pair.getKey().getBlock().getTranslatedName();
+            String blockCount = fmt.format(pair.getValue());
             source.sendFeedback(new TranslationTextComponent("cofhworld.countblockslist.entry", block, blockCount), true);
         }
 
@@ -204,15 +203,11 @@ public class SubCommandCountBlocks {
 
     private static void buildSortedList() {
 
-        ArrayList<Pair<Long, BlockState>> temp = new ArrayList<>();
-
-        blockCounts.forEach((state, count) -> temp.add(Pair.of(count, state)));
-
-        // TODO: this will explode if there are a large number of entries present.
-        // There might be a cleaner and more efficient way of doing this that will not explode.
-        //Collections.sort(temp);
-        //Collections.reverse(temp);
-
-        sortedBlockCounts = temp;
+        sortedBlockCounts = new ArrayList<>(blockCounts.entrySet());
+        sortedBlockCounts.sort(blockCountComparator);
     }
+
+    private static final Comparator<Map.Entry<BlockState, Long>> blockCountComparator = (p1, p2) ->
+            (p1.getValue() > p2.getValue() ? -1 : (p1.getValue().equals(p2.getValue()) ? 0 : 1));
+
 }
