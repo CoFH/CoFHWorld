@@ -119,8 +119,7 @@ public class SubCommandReplaceBlocks {
         if (rtn == -1) {
             component = new TranslationTextComponent("cofhworld.replaceblocks.failed");
         } else {
-
-            component = new TranslationTextComponent("cofhworld.replaceblocks.successful", fmt.format(totalBlocks), fmt.format(totalReplacedBlocks));
+            component = FormatHelpers.getTranslationWithFormatting("cofhworld.replaceblocks.successful", fmt.format(totalBlocks), TextFormatting.GOLD, fmt.format(totalReplacedBlocks), TextFormatting.GOLD);
         }
 
         source.sendFeedback(component, true);
@@ -147,7 +146,7 @@ public class SubCommandReplaceBlocks {
 
         ServerWorld sw = (ServerWorld) world;
         BlockFilters blockFilters = new BlockFilters(filters);
-        MutableBoundingBox area = CoordinateHelpers.CoordinatesToBox(world, x1, y1, z1, x2, y2, z2, wholeChunks);
+        MutableBoundingBox area = CoordinateHelpers.coordinatesToBox(world, x1, y1, z1, x2, y2, z2, wholeChunks);
 
         for (BlockPos pos : BlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ)) {
             BlockState targetState = world.getBlockState(pos).getBlock().getDefaultState();

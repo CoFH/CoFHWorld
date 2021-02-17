@@ -14,6 +14,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 public class Helpers {
@@ -54,7 +58,7 @@ public class Helpers {
 
     public static class CoordinateHelpers {
 
-        public static MutableBoundingBox CoordinatesToBox(World world, int x1, int y1, int z1, int x2, int y2, int z2, boolean wholeChunks) {
+        public static MutableBoundingBox coordinatesToBox(World world, int x1, int y1, int z1, int x2, int y2, int z2, boolean wholeChunks) {
 
             // TODO - in 1.17 this should be modified to use the getBottomY and getTopY methods of the HeightLimitView interface.
             // The assumption that y == 0 is the lower bound of the world is not valid in 1.17.
@@ -88,6 +92,27 @@ public class Helpers {
             }
 
             return MutableBoundingBox.createProper(x1, y1, z1, x2, y2, z2);
+        }
+
+    }
+
+    public static class FormatHelpers {
+
+        public static TranslationTextComponent getTranslationWithFormatting(String key, String arg, TextFormatting color) {
+
+            IFormattableTextComponent stringComp = new StringTextComponent(arg).mergeStyle(color);
+            TranslationTextComponent component = new TranslationTextComponent(key, stringComp);
+
+            return component;
+        }
+
+        public static TranslationTextComponent getTranslationWithFormatting(String key, String arg1, TextFormatting color1, String arg2, TextFormatting color2) {
+
+            IFormattableTextComponent stringComp1 = new StringTextComponent(arg1).mergeStyle(color1);
+            IFormattableTextComponent stringComp2 = new StringTextComponent(arg2).mergeStyle(color2);
+            TranslationTextComponent component = new TranslationTextComponent(key, stringComp1, stringComp2);
+
+            return component;
         }
 
     }

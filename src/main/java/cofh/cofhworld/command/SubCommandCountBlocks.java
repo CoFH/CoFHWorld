@@ -84,11 +84,11 @@ public class SubCommandCountBlocks {
         return Commands.literal("countblockslist")
                 .requires(source -> source.hasPermissionLevel(permissionLevel))
                 .then(Commands.argument("page", IntegerArgumentType.integer())
-                        .executes(ctx -> displayDetailedPage(ctx.getSource(), ArgHelpers.getInt(ctx, "page")))
+                        .executes(ctx -> displayBreakdownPage(ctx.getSource(), ArgHelpers.getInt(ctx, "page")))
                 );
     }
 
-    private static int displayDetailedPage(CommandSource source, int page) {
+    private static int displayBreakdownPage(CommandSource source, int page) {
 
         // The count blocks command has not been (successfully) executed.
         if (blockCounts.size() == 0) {
@@ -107,10 +107,10 @@ public class SubCommandCountBlocks {
             page = 1;
         }
 
-        source.sendFeedback(new TranslationTextComponent("cofhworld.countblockslist.pages", page, totalPages), true);
+        TranslationTextComponent pagesComponent = FormatHelpers.getTranslationWithFormatting("cofhworld.countblockslist.pages", String.valueOf(page), TextFormatting.GOLD, String.valueOf(totalPages), TextFormatting.GOLD);
+        source.sendFeedback(pagesComponent, true);
 
         NumberFormat fmt = NumberFormat.getInstance();
-
         int offset = (page - 1) * pageSize;
         for (int i = 0; i < pageSize; i++) {
             int index = i + offset;
@@ -122,7 +122,8 @@ public class SubCommandCountBlocks {
             String block = pair.getKey().getBlock().getTranslatedName().getString();
             String blockCount = fmt.format(pair.getValue());
 
-            source.sendFeedback(new TranslationTextComponent("cofhworld.countblockslist.entry", block, blockCount), true);
+            TranslationTextComponent entryComponent = FormatHelpers.getTranslationWithFormatting("cofhworld.countblockslist.entry", block, TextFormatting.BLUE, blockCount, TextFormatting.GOLD);
+            source.sendFeedback(entryComponent, true);
         }
 
         return 1;
@@ -156,7 +157,7 @@ public class SubCommandCountBlocks {
             component = new TranslationTextComponent("cofhworld.countblocks.failed");
         } else {
             NumberFormat fmt = NumberFormat.getInstance();
-            component = new TranslationTextComponent("cofhworld.countblocks.successful", fmt.format(totalBlocks), fmt.format(totalMatchedBlocks));
+            component = FormatHelpers.getTranslationWithFormatting("cofhworld.countblocks.successful", fmt.format(totalBlocks), TextFormatting.GOLD, fmt.format(totalMatchedBlocks), TextFormatting.GOLD);
         }
 
         source.sendFeedback(component, true);
@@ -182,7 +183,7 @@ public class SubCommandCountBlocks {
         totalMatchedBlocks = 0;
 
         BlockFilters blockFilters = new BlockFilters(filters);
-        MutableBoundingBox area = CoordinateHelpers.CoordinatesToBox(world, x1, y1, z1, x2, y2, z2, wholeChunks);
+        MutableBoundingBox area = CoordinateHelpers.coordinatesToBox(world, x1, y1, z1, x2, y2, z2, wholeChunks);
         for (BlockPos pos : BlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ)) {
             BlockState defaultState = world.getBlockState(pos).getBlock().getDefaultState();
             if (blockFilters.isFilterMatch(defaultState)) {
