@@ -19,6 +19,9 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
 
 public class Helpers {
 
@@ -58,7 +61,14 @@ public class Helpers {
 
     public static class CoordinateHelpers {
 
-        public static MutableBoundingBox coordinatesToBox(World world, int x1, int y1, int z1, int x2, int y2, int z2, boolean wholeChunks) {
+        public static MutableBoundingBox coordinatesToBox(World world, BlockPos start, BlockPos end, boolean wholeChunks) {
+
+            int x1 = start.getX();
+            int y1 = start.getY();
+            int z1 = start.getZ();
+            int x2 = end.getX();
+            int y2 = end.getY();
+            int z2 = end.getZ();
 
             // TODO - in 1.17 this should be modified to use the getBottomY and getTopY methods of the HeightLimitView interface.
             // The assumption that y == 0 is the lower bound of the world is not valid in 1.17.
@@ -98,21 +108,15 @@ public class Helpers {
 
     public static class FormatHelpers {
 
-        public static TranslationTextComponent getTranslationWithFormatting(String key, String arg, TextFormatting color) {
+        public static TranslationTextComponent getTranslationWithFormatting(String key, Iterable<Pair<String, TextFormatting>> args) {
 
-            IFormattableTextComponent stringComp = new StringTextComponent(arg).mergeStyle(color);
-            TranslationTextComponent component = new TranslationTextComponent(key, stringComp);
+            ArrayList<IFormattableTextComponent> components = new ArrayList<>();
 
-            return component;
-        }
+            for (Pair<String, TextFormatting> arg : args) {
+                components.add((new StringTextComponent(arg.getLeft())).mergeStyle(arg.getRight()));
+            }
 
-        public static TranslationTextComponent getTranslationWithFormatting(String key, String arg1, TextFormatting color1, String arg2, TextFormatting color2) {
-
-            IFormattableTextComponent stringComp1 = new StringTextComponent(arg1).mergeStyle(color1);
-            IFormattableTextComponent stringComp2 = new StringTextComponent(arg2).mergeStyle(color2);
-            TranslationTextComponent component = new TranslationTextComponent(key, stringComp1, stringComp2);
-
-            return component;
+            return new TranslationTextComponent(key, components.toArray());
         }
 
     }

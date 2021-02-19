@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.text.NumberFormat;
 import java.util.*;
@@ -42,8 +43,8 @@ public class SubCommandCountBlocks {
                                                                 // r1 applied to x, r2 applied to y and r3 applied to z. Filter has been specified. Chunk mode specifier also specified.
                                                                 .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBool(ctx, "whole_chunk_mode")))
                                                         )
-                                                    // r1 applied to x, r2 applied to y and r3 applied to z. Filter has been specified.
-                                                    .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter"), false))
+                                                        // r1 applied to x, r2 applied to y and r3 applied to z. Filter has been specified.
+                                                        .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), ArgHelpers.getString(ctx, "filter"), false))
                                                 )
                                                 // r1 applied to x, r2 applied to y and r3 applied to z.
                                                 .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r2"), ArgHelpers.getInt(ctx, "r3"), "*", false))
@@ -55,26 +56,18 @@ public class SubCommandCountBlocks {
                                 .executes(ctx -> executeAtEntity(ctx.getSource(), ArgHelpers.getEntity(ctx, "e"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r1"), ArgHelpers.getInt(ctx, "r1"), "*", false))
                         )
                 )
-                .then(Commands.argument("x1", BlockPosArgument.blockPos())
-                        .then(Commands.argument("y1", BlockPosArgument.blockPos())
-                                .then(Commands.argument("z1", BlockPosArgument.blockPos())
-                                        .then(Commands.argument("x2", BlockPosArgument.blockPos())
-                                                .then(Commands.argument("y2", BlockPosArgument.blockPos())
-                                                        .then(Commands.argument("z2", BlockPosArgument.blockPos())
-                                                                .then(Commands.argument("filter", StringArgumentType.string())
-                                                                        .then(Commands.argument("whole_chunk_mode", BoolArgumentType.bool())
-                                                                                // Full coordinates, filter and chunk mode selector specified.
-                                                                                .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBool(ctx, "whole_chunk_mode")))
-                                                                        )
-                                                                        // Full coordinates with filter specified.
-                                                                        .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), ArgHelpers.getString(ctx, "filter"), false))
-                                                                )
-                                                                // Full coordinates specified.
-                                                                .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "x1"), ArgHelpers.getBlockPos(ctx, "y1"), ArgHelpers.getBlockPos(ctx, "z1"), ArgHelpers.getBlockPos(ctx, "x2"), ArgHelpers.getBlockPos(ctx, "y2"), ArgHelpers.getBlockPos(ctx, "z2"), "*", false))
-                                                        )
-                                                )
+                .then(Commands.argument("start", BlockPosArgument.blockPos())
+                        .then(Commands.argument("end", BlockPosArgument.blockPos())
+                                .then(Commands.argument("filter", StringArgumentType.string())
+                                        .then(Commands.argument("whole_chunk_mode", BoolArgumentType.bool())
+                                                // Full coordinates, filter and chunk mode selector specified.
+                                                .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "start"), ArgHelpers.getBlockPos(ctx, "end"), ArgHelpers.getString(ctx, "filter"), ArgHelpers.getBool(ctx, "whole_chunk_mode")))
                                         )
+                                        // Full coordinates with filter specified.
+                                        .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "start"), ArgHelpers.getBlockPos(ctx, "end"), ArgHelpers.getString(ctx, "filter"), false))
                                 )
+                                // Full coordinates specified.
+                                .executes(ctx -> execute(ctx.getSource(), ArgHelpers.getBlockPos(ctx, "start"), ArgHelpers.getBlockPos(ctx, "end"), "*", false))
                         )
                 );
     }
@@ -101,13 +94,17 @@ public class SubCommandCountBlocks {
         }
 
         int totalPages = ((blockCounts.size() - 1) / pageSize) + 1;
-        if  (page > totalPages) {
+        if (page > totalPages) {
             page = totalPages;
         } else if (page <= 0) {
             page = 1;
         }
 
-        TranslationTextComponent pagesComponent = FormatHelpers.getTranslationWithFormatting("cofhworld.countblockslist.pages", String.valueOf(page), TextFormatting.GOLD, String.valueOf(totalPages), TextFormatting.GOLD);
+        ArrayList<Pair<String, TextFormatting>> pageArgs = new ArrayList<>();
+        pageArgs.add(Pair.of(String.valueOf(page), TextFormatting.GOLD));
+        pageArgs.add(Pair.of(String.valueOf(totalPages), TextFormatting.GOLD));
+
+        TranslationTextComponent pagesComponent = FormatHelpers.getTranslationWithFormatting("cofhworld.countblockslist.pages", pageArgs);
         source.sendFeedback(pagesComponent, true);
 
         NumberFormat fmt = NumberFormat.getInstance();
@@ -122,7 +119,11 @@ public class SubCommandCountBlocks {
             String block = pair.getKey().getBlock().getTranslatedName().getString();
             String blockCount = fmt.format(pair.getValue());
 
-            TranslationTextComponent entryComponent = FormatHelpers.getTranslationWithFormatting("cofhworld.countblockslist.entry", block, TextFormatting.BLUE, blockCount, TextFormatting.GOLD);
+            ArrayList<Pair<String, TextFormatting>> entryArgs = new ArrayList<>();
+            entryArgs.add(Pair.of(block, TextFormatting.BLUE));
+            entryArgs.add(Pair.of(blockCount, TextFormatting.GOLD));
+
+            TranslationTextComponent entryComponent = FormatHelpers.getTranslationWithFormatting("cofhworld.countblockslist.entry", entryArgs);
             source.sendFeedback(entryComponent, true);
         }
 
@@ -140,24 +141,24 @@ public class SubCommandCountBlocks {
         int y2 = p.getY() + yRadius;
         int z2 = p.getZ() + zRadius;
 
-        return execute(source, x1, y1, z1, x2, y2, z2, filters, wholeChunks);
+        return execute(source, new BlockPos(x1, y1, z1), new BlockPos(x2, y2, z2), filters, wholeChunks);
     }
 
-    private static int execute(CommandSource source, BlockPos x1, BlockPos y1, BlockPos z1, BlockPos x2, BlockPos y2, BlockPos z2, String filters, boolean wholeChunks) {
+    private static int execute(CommandSource source, BlockPos start, BlockPos end, String filters, boolean wholeChunks) {
 
-        return execute(source, x1.getX(), y1.getY(), z1.getZ(), x2.getX(), y2.getY(), z2.getZ(), filters, wholeChunks);
-    }
-
-    private static int execute(CommandSource source, int x1, int y1, int z1, int x2, int y2, int z2, String filters, boolean wholeChunks) {
-
-        int rtn = countBlocks(source, x1, y1, z1, x2, y2, z2, filters, wholeChunks);
+        int rtn = countBlocks(source, start, end, filters, wholeChunks);
 
         TextComponent component;
         if (rtn == -1) {
             component = new TranslationTextComponent("cofhworld.countblocks.failed");
         } else {
             NumberFormat fmt = NumberFormat.getInstance();
-            component = FormatHelpers.getTranslationWithFormatting("cofhworld.countblocks.successful", fmt.format(totalBlocks), TextFormatting.GOLD, fmt.format(totalMatchedBlocks), TextFormatting.GOLD);
+
+            ArrayList<Pair<String, TextFormatting>> args = new ArrayList<>();
+            args.add(Pair.of(fmt.format(totalBlocks), TextFormatting.GOLD));
+            args.add(Pair.of(fmt.format(totalMatchedBlocks), TextFormatting.GOLD));
+
+            component = FormatHelpers.getTranslationWithFormatting("cofhworld.countblocks.successful", args);
         }
 
         source.sendFeedback(component, true);
@@ -165,7 +166,7 @@ public class SubCommandCountBlocks {
         return rtn;
     }
 
-    private static int countBlocks(CommandSource source, int x1, int y1, int z1, int x2, int y2, int z2, String filters, boolean wholeChunks) {
+    private static int countBlocks(CommandSource source, BlockPos start, BlockPos end, String filters, boolean wholeChunks) {
 
         Entity entity = source.getEntity();
         if (entity == null) {
@@ -183,7 +184,7 @@ public class SubCommandCountBlocks {
         totalMatchedBlocks = 0;
 
         BlockFilters blockFilters = new BlockFilters(filters);
-        MutableBoundingBox area = CoordinateHelpers.coordinatesToBox(world, x1, y1, z1, x2, y2, z2, wholeChunks);
+        MutableBoundingBox area = CoordinateHelpers.coordinatesToBox(world, start, end, wholeChunks);
         for (BlockPos pos : BlockPos.getAllInBoxMutable(area.minX, area.minY, area.minZ, area.maxX, area.maxY, area.maxZ)) {
             BlockState defaultState = world.getBlockState(pos).getBlock().getDefaultState();
             if (blockFilters.isFilterMatch(defaultState)) {
