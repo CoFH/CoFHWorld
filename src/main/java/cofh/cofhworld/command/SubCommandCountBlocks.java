@@ -60,7 +60,7 @@ public class SubCommandCountBlocks {
                                 .then(Commands.argument("z1", BlockPosArgument.blockPos())
                                         .then(Commands.argument("x2", BlockPosArgument.blockPos())
                                                 .then(Commands.argument("y2", BlockPosArgument.blockPos())
-                                                        .then(Commands.argument("z1", BlockPosArgument.blockPos())
+                                                        .then(Commands.argument("z2", BlockPosArgument.blockPos())
                                                                 .then(Commands.argument("filter", StringArgumentType.string())
                                                                         .then(Commands.argument("whole_chunk_mode", BoolArgumentType.bool())
                                                                                 // Full coordinates, filter and chunk mode selector specified.

@@ -68,7 +68,7 @@ public class SubCommandReplaceBlocks {
                                 .then(Commands.argument("z1", BlockPosArgument.blockPos())
                                         .then(Commands.argument("x2", BlockPosArgument.blockPos())
                                                 .then(Commands.argument("y2", BlockPosArgument.blockPos())
-                                                        .then(Commands.argument("z1", BlockPosArgument.blockPos())
+                                                        .then(Commands.argument("z2", BlockPosArgument.blockPos())
                                                                 .then(Commands.argument("filter", StringArgumentType.string())
                                                                         .then(Commands.argument("replacement", StringArgumentType.string())
                                                                                 .then(Commands.argument("whole_chunk_mode", BoolArgumentType.bool())
