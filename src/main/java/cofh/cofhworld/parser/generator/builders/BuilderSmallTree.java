@@ -22,8 +22,8 @@ public class BuilderSmallTree extends BuilderSize<WorldGenSmallTree> {
 	private static final INumberProvider HEIGHT =  new UniformRandomProvider(5, 5 + 3);
 	private static final ICondition LEAF_VARIANCE = new BinaryCondition(
 			new BinaryCondition(
-			new ComparisonCondition(new UnaryMathProvider(new DataProvider("layer-x"),"abs"), new DataProvider("radius"),"NOT_EQUAL"),
-			new ComparisonCondition(new UnaryMathProvider(new DataProvider("layer-z"),"abs"), new DataProvider("radius"),"NOT_EQUAL"),
+			new ComparisonCondition(new UnaryMathProvider(new DataProvider("layer-x"),"absolute"), new DataProvider("radius"),"NOT_EQUAL"),
+			new ComparisonCondition(new UnaryMathProvider(new DataProvider("layer-z"),"absolute"), new DataProvider("radius"),"NOT_EQUAL"),
 			"OR"),
 			new BinaryCondition(
 					new RandomCondition(),
