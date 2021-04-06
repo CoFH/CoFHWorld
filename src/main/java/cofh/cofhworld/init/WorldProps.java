@@ -186,7 +186,7 @@ public class WorldProps {
 		FeatureParser.registerGenerator("structure", new GenParserStructure());
 		// meta-generators
 		FeatureParser.registerGenerator("sequential", new GenParserSequential());
-		FeatureParser.registerGenerator("consecutive", new GenParserConsecutive());
+		FeatureParser.registerGenerator("cyclic", new GenParserCyclic());
 
 		log.info("Verifying or creating base world generation directory...");
 

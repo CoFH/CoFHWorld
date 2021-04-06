@@ -6,12 +6,12 @@ import net.minecraft.world.IWorld;
 import java.util.List;
 import java.util.Random;
 
-public class WorldGenConsecutive extends WorldGen {
+public class WorldGenCyclic extends WorldGen {
 
 	private final WorldGen[] generators;
 	private final ThreadLocal<GeneratorIndex> generatorIndex = ThreadLocal.withInitial(GeneratorIndex::new);
 
-	public WorldGenConsecutive(List<WorldGen> values) {
+	public WorldGenCyclic(List<WorldGen> values) {
 
 		generators = values.toArray(new WorldGen[0]);
 	}
