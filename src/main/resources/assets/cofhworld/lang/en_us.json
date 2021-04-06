@@ -1,0 +1,17 @@
+{
+    "cofhworld.reload.successful": "Configuration reloaded.",
+    "cofhworld.reload.failed": "Failed to reload config; check your logs.",
+
+    "cofhworld.countblocks.successful": "A total of %s blocks were scanned, of which %s matched the provided filter(s). Please use countblockslist to see the detailed breakdown.",
+    "cofhworld.countblocks.failed": "The command failed to execute.",
+
+    "cofhworld.countblockslist.pages": "Displaying page %d of %d.",
+    "cofhworld.countblockslist.entry": "%s - %s blocks total.",
+    "cofhworld.countblockslist.failed": "The command failed to execute.",
+
+    "cofhworld.replaceblocks.lag_warning": "Replacing blocks in process. You may experience some lag while the process is under way.",
+    "cofhworld.replaceblocks.successful": "Replacement of blocks was successful. %s blocks were scanned and %s blocks were replaced.",
+    "cofhworld.replaceblocks.failed": "The command failed to execute.",
+
+    "cofhworld.list": "--- Loaded CoFHWorld features page %d of %d ---"
+}
