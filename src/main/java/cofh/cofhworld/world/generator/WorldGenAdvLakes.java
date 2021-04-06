@@ -122,7 +122,7 @@ public class WorldGenAdvLakes extends WorldGen {
 					if (flag) {
 						if (y >= heightOff) {
 							net.minecraft.block.material.Material material = getBlockState(world, xStart + x, yStart + y, zStart + z).getMaterial();
-							if (material.isLiquid()) {
+							if (material.isLiquid()) { // TODO: add/make ICondition?
 								return false;
 							}
 						} else {

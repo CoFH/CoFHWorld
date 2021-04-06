@@ -44,7 +44,7 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 
 	public Distribution setRarity(int rarity) {
 
-		this.rarity = rarity;
+		this.rarity = rarity; // TODO: deterministic chunk placement via ICondition and NumberProvider
 		return this;
 	}
 

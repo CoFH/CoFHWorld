@@ -59,7 +59,7 @@ public class DistributionUnderMaterial extends Distribution {
 						continue;
 					}
 				}
-				for (Material mat : matList)
+				for (Material mat : matList) // TODO: this fails on [] and should not
 					if (mat.test(state))
 						break l;
 			} while (y-- > 0);

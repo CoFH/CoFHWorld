@@ -182,6 +182,7 @@ public class BlockData {
 				Material material = null;
 
 				boolean inclusive = !matObject.hasPath("inclusive") || matObject.getBoolean("inclusive");
+				// TODO: list type exclusive with all other properties
 
 				Block block = null;
 				if (matObject.hasPath("name")) {

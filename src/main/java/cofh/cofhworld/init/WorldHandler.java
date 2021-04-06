@@ -16,9 +16,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.AbstractChunkProvider;
 import net.minecraft.world.chunk.ChunkStatus.Type;
 import net.minecraft.world.gen.WorldGenRegion;
 import net.minecraft.world.gen.feature.structure.StructureManager;
+import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.world.ChunkDataEvent;
@@ -235,7 +237,7 @@ public class WorldHandler {
 		}
 		SharedSeedRandom random = new SharedSeedRandom();
 		long decorationSeed = random.setDecorationSeed(world.getSeed(), chunkX * 16, chunkZ * 16);
-		for (IFeatureGenerator feature : features) {
+		for (IFeatureGenerator feature : features) { // TODO: this has a comod error if a world happens to load very fast
 			//FallingBlock.fallInstantly = true;
 			feature.generateFeature(random, chunkX, chunkZ, world, newGen);
 		}
@@ -287,16 +289,16 @@ public class WorldHandler {
 			/**
 			 see: {@link net.minecraft.world.gen.NoiseChunkGenerator.makeBedrock}
 			 */
-//			AbstractChunkProvider chunkProvider = world.getChunkProvider();
-//			if (chunkProvider instanceof ServerChunkProvider) {
-//				ServerChunkProvider serverChunkProvider = (ServerChunkProvider) chunkProvider;
+			AbstractChunkProvider chunkProvider = world.getChunkProvider();
+			if (chunkProvider instanceof ServerChunkProvider) {
+				ServerChunkProvider serverChunkProvider = (ServerChunkProvider) chunkProvider;
 //				GenerationSettings settings = serverChunkProvider.getChunkGenerator().getSettings();
 //				// interestingly, WorldGenRegion actually stores the ChunkProvider settings, but there is no getter.
 //				// looks to me like a method is being erased by the obfuscator because it's not called, making this entire code block required.
 //				filler = settings.getDefaultBlock();
 //				floor = settings.getBedrockFloorHeight();
 //				roof = settings.getBedrockRoofHeight();
-//			}
+			}
 		}
 		final BlockMatcher bedrockMatcher = BlockMatcher.forBlock(Blocks.BEDROCK);
 		final BlockState bedrock = Blocks.BEDROCK.getDefaultState();
