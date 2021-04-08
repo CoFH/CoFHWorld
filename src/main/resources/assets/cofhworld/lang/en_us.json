@@ -2,9 +2,11 @@
     "cofhworld.reload.successful": "Configuration reloaded.",
     "cofhworld.reload.failed": "Failed to reload config; check your logs.",
 
-    "cofhworld.countblocks.successful": "A total of %s blocks were scanned, of which %s matched the provided filter(s). Please use countblockslist to see the detailed breakdown.",
+    "cofhworld.countblocks.successful": "A total of %s blocks were scanned, of which %s matched the provided filter(s). Please use countblocks $list to see the detailed breakdown.",
+    "cofhworld.countblocks.failed": "A total of %s blocks were scanned, of which %s matched the provided filter(s). Unable to save a detailed breakdown for viewing.",
+    "cofhworld.countblocks.lag_warning": "Scanning %s blocks in progress. You may experience lag or disconnections while the process is under way.",
 
-    "cofhworld.countblocks.list.pages": "Displaying page %d of %d.",
+    "cofhworld.countblocks.list.pages": "--- Displaying page %d of %d for \"%s\" ---",
     "cofhworld.countblocks.list.entry": "%s - %s blocks total.",
     "cofhworld.countblocks.list.failed": "The command failed to execute.",
 
@@ -12,7 +14,7 @@
     "cofhworld.command.filter.id.absent": "No ID specified.",
     "cofhworld.command.filter.special.invalid": "Unknown filter type `%s` specified.",
 
-    "cofhworld.replaceblocks.lag_warning": "Scanning %s blocks for replacements in process. You may experience lag or disconnections while the process is under way.",
+    "cofhworld.replaceblocks.lag_warning": "Scanning %s blocks for replacements in progress. You may experience lag or disconnections while the process is under way.",
     "cofhworld.replaceblocks.successful": "Replacement of blocks was successful. %s blocks were scanned and %s blocks were replaced.",
 
     "cofhworld.list": "--- Loaded CoFHWorld features page %d of %d ---"
