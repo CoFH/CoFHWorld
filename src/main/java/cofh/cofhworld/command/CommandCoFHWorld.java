@@ -26,7 +26,6 @@ public class CommandCoFHWorld {
 						.then(SubCommandList.register())
 						.then(SubCommandReload.register())
 						.then(SubCommandCountBlocks.register())
-						.then(SubCommandCountBlocks.registerPageList())
 						.then(SubCommandReplaceBlocks.register())
 		);
 	}
