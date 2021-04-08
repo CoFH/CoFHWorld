@@ -11,7 +11,9 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
@@ -46,7 +48,8 @@ public class BlockPredicateListArgument implements com.mojang.brigadier.argument
 			TAG_ID + "stone", INVERT_ID + "" + TAG_ID + "stone[foo=prop]{baz=nbt}",
 			WILDCARD_ID + "", WILDCARD_ID + "[foo=prop]", INVERT_ID + "" + WILDCARD_ID + "[foo=prop]{baz=nbt}",
 			MOD_ID + "minecraft", INVERT_ID + "" + MOD_ID + "minecraft",
-			SPECIAL_ID + "stone", INVERT_ID + "" + SPECIAL_ID + "stone"
+			SPECIAL_ID + "stone", INVERT_ID + "" + SPECIAL_ID + "stone",
+			"!%air !%fluid !%ground !%plants !stone"
 	);
 
 	private static final SimpleCommandExceptionType MULTIPLE_INVERSION = new SimpleCommandExceptionType(
@@ -154,7 +157,7 @@ public class BlockPredicateListArgument implements com.mojang.brigadier.argument
 				if (!reader.canRead() || Character.isWhitespace(reader.peek()))
 					throw NO_ID.createWithContext(reader);
 				next = reader.peek();
-				if (next == '!')
+				if (next == INVERT_ID)
 					throw MULTIPLE_INVERSION.createWithContext(reader);
 			}
 
@@ -218,7 +221,7 @@ public class BlockPredicateListArgument implements com.mojang.brigadier.argument
 		if (reader.canRead() && reader.peek() == SPECIAL_ID) {
 			reader.skip();
 			return ISuggestionProvider.suggest(Sets.newHashSet(
-					"fire", "replaceable", "plants-nether", "plants-ocean", "plants", "tree", "fluid", "rock", "sand", "ground", "air"
+					"fire", "replaceable", "plants-nether", "plants-ocean", "plants", "tree", "fluid", "rock", "sand", "ground", "air", "util"
 			).stream(), builder.createOffset(reader.getCursor()));
 		} else if (reader.canRead() && reader.peek() == MOD_ID) {
 			reader.skip();
@@ -248,6 +251,9 @@ public class BlockPredicateListArgument implements com.mojang.brigadier.argument
 			Material.OCEAN_PLANT, Material.SEA_GRASS, Material.CORAL, Material.SPONGE
 	), NETHER_PLANTS = Sets.newHashSet(
 			Material.NETHER_PLANTS, Material.NETHER_WOOD
+	);
+	private final static Collection<Block> STONES = Sets.newHashSet(
+			Blocks.STONE, Blocks.NETHERRACK, Blocks.END_STONE
 	);
 
 	private static Predicate<CachedBlockInfo> getSpecialCase(StringReader reader) throws CommandSyntaxException {
@@ -287,6 +293,13 @@ public class BlockPredicateListArgument implements com.mojang.brigadier.argument
 				return b -> b.getBlockState().getMaterial() == Material.FIRE ||
 						b.getBlockState().getMaterial() == Material.LAVA ||
 						b.getBlockState().isBurning(b.getWorld(), b.getPos());
+			case "util":
+				return b -> b.getBlockState().getFluidState().isEmpty() &&
+						!b.getBlockState().isAir(b.getWorld(), b.getPos()) &&
+						!STONES.contains(b.getBlockState().getBlock()) &&
+						!GROUND_MATERIAL.contains(b.getBlockState().getMaterial()) &&
+						!PLANTS.contains(b.getBlockState().getMaterial())
+						;
 			default:
 				reader.setCursor(cursor);
 				throw BAD_CASE.createWithContext(reader, key);
