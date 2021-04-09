@@ -92,6 +92,10 @@ public class GeneratorData {
 		try {
 			r = genData.parse(genObject, field -> {
 				log.error("Missing required setting `{}` for generator type '{}' on line {}.", field, name, genObject.origin().lineNumber());
+			}, field -> {
+				if (field.length() > 0 & (field.charAt(0) == '_' || "type".equals(field))) return false;
+				log.warn("Unknown setting `{}` for generator type '{}' on line {}", field, name, genObject.origin().lineNumber());
+				return false;
 			});
 		} catch (InvalidConfigurationException e) {
 			throw new InvalidGeneratorException(e.getMessage(), e.origin());

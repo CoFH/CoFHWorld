@@ -11,18 +11,19 @@ import cofh.cofhworld.util.random.WeightedEnum;
 import cofh.cofhworld.util.random.WeightedNBTTag;
 import cofh.cofhworld.util.random.WeightedString;
 import cofh.cofhworld.world.generator.WorldGen;
+import com.google.common.collect.Sets;
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigUtil;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -73,7 +74,7 @@ public interface IBuilder<T> {
 		 */
 		final public V parse(Config genObject) throws InvalidConfigurationException {
 
-			return parse(genObject, null);
+			return parse(genObject, null, null);
 		}
 
 		/**
@@ -84,6 +85,30 @@ public interface IBuilder<T> {
 		 * @throws InvalidConfigurationException
 		 */
 		public V parse(Config genObject, Consumer<String> onMissingField) throws InvalidConfigurationException {
+
+			return parse(genObject, onMissingField, null);
+		}
+
+		/**
+		 *
+		 * @param genObject
+		 * @param onUnknownField
+		 * @return
+		 * @throws InvalidConfigurationException
+		 */
+		public V parse(Config genObject, Predicate<String> onUnknownField) throws InvalidConfigurationException {
+
+			return parse(genObject, null, onUnknownField);
+		}
+
+		/**
+		 *
+		 * @param genObject
+		 * @param onMissingField
+		 * @return
+		 * @throws InvalidConfigurationException
+		 */
+		public V parse(Config genObject, Consumer<String> onMissingField, Predicate<String> onUnknownField) throws InvalidConfigurationException {
 
 			boolean missedFields = false;
 			l: for (BuilderField<?, ?> field : requiredFields) {
@@ -101,14 +126,26 @@ public interface IBuilder<T> {
 
 			IBuilder<V> builder = this.builder.get();
 
+			HashSet<String> usedKeys = onUnknownField == null ? null : new HashSet<>();
 			for (BuilderField<? super IBuilder<V>, ? super Object> field : fields) {
 				for (String key : field.keys) {
 					if (genObject.hasPath(key)) {
+						if (onUnknownField != null) usedKeys.add(ConfigUtil.splitPath(key).get(0));
 						assert field.set != null;
 						assert field.type != null;
 						field.set.accept(builder, field.type.processValue.apply(genObject.getValue(key)));
 						break;
 					}
+				}
+			}
+
+			if (onUnknownField != null) {
+				boolean exception = false;
+				for (String e : Sets.difference(genObject.root().keySet(), usedKeys)) {
+					exception = onUnknownField.test(e) | exception;
+				}
+				if (exception) {
+					throw new InvalidConfigurationException("Unknown fields", genObject.origin());
 				}
 			}
 
