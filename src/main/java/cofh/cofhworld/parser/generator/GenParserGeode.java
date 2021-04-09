@@ -1,17 +1,18 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.IGeneratorFieldRegistry;
+import cofh.cofhworld.parser.IBuilder.BuilderField.Type;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderGeode;
+import cofh.cofhworld.world.generator.WorldGenGeode;
 
-public class GenParserGeode implements AbstractGenParserResource<BuilderGeode> {
+public class GenParserGeode implements AbstractGenParserResource<WorldGenGeode, BuilderGeode> {
 
 	@Override
-	public void getFields(IGeneratorFieldRegistry<BuilderGeode> fields) {
+	public void getFields(IBuilderFieldRegistry<WorldGenGeode, BuilderGeode> fields) {
 
 		AbstractGenParserResource.super.getFields(fields);
-		fields.setBuilder(BuilderGeode::new);
+		fields.setConstructor(BuilderGeode::new);
 
 		fields.addRequiredField("crust", Type.BLOCK_LIST, BuilderGeode::setOutline, "outline");
 

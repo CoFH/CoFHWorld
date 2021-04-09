@@ -1,12 +1,13 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.IGeneratorFieldRegistry;
+import cofh.cofhworld.parser.IBuilder.BuilderField.Type;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderStalagmite;
+import cofh.cofhworld.world.generator.WorldGenStalagmite;
 import net.minecraft.util.Direction;
 
-public class GenParserStalagmite implements AbstractGenParserResource<BuilderStalagmite> {
+public class GenParserStalagmite implements AbstractGenParserResource<WorldGenStalagmite, BuilderStalagmite> {
 
 	private final boolean stalactite;
 
@@ -16,10 +17,10 @@ public class GenParserStalagmite implements AbstractGenParserResource<BuilderSta
 	}
 
 	@Override
-	public void getFields(IGeneratorFieldRegistry<BuilderStalagmite> fields) {
+	public void getFields(IBuilderFieldRegistry<WorldGenStalagmite, BuilderStalagmite> fields) {
 
 		AbstractGenParserResource.super.getFields(fields);
-		fields.setBuilder(() -> {
+		fields.setConstructor(() -> {
 			BuilderStalagmite builder = new BuilderStalagmite();
 			builder.setDirection(stalactite ? Direction.UP : Direction.DOWN);
 			return builder;

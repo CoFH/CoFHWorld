@@ -1,17 +1,18 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.IGeneratorFieldRegistry;
+import cofh.cofhworld.parser.IBuilder.BuilderField.Type;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderSpike;
+import cofh.cofhworld.world.generator.WorldGenSpike;
 
-public class GenParserSpike implements AbstractGenParserResource<BuilderSpike> {
+public class GenParserSpike implements AbstractGenParserResource<WorldGenSpike, BuilderSpike> {
 
 	@Override
-	public void getFields(IGeneratorFieldRegistry<BuilderSpike> fields) {
+	public void getFields(IBuilderFieldRegistry<WorldGenSpike, BuilderSpike> fields) {
 
 		AbstractGenParserResource.super.getFields(fields);
-		fields.setBuilder(BuilderSpike::new);
+		fields.setConstructor(BuilderSpike::new);
 
 		fields.addOptionalField("height", Type.NUMBER, BuilderSpike::setHeight);
 		fields.addOptionalField("size", Type.NUMBER, BuilderSpike::setSize);

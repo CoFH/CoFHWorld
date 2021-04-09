@@ -1,16 +1,17 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.IGeneratorFieldRegistry;
+import cofh.cofhworld.parser.IBuilder.BuilderField.Type;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import cofh.cofhworld.parser.IGeneratorParser;
 import cofh.cofhworld.parser.generator.builders.BuilderCyclic;
+import cofh.cofhworld.world.generator.WorldGenCyclic;
 
-public class GenParserCyclic implements IGeneratorParser<BuilderCyclic> {
+public class GenParserCyclic implements IGeneratorParser<WorldGenCyclic, BuilderCyclic> {
 
 	@Override
-	public void getFields(IGeneratorFieldRegistry<BuilderCyclic> fields) {
+	public void getFields(IBuilderFieldRegistry<WorldGenCyclic, BuilderCyclic> fields) {
 
-		fields.setBuilder(BuilderCyclic::new);
+		fields.setConstructor(BuilderCyclic::new);
 
 		fields.addRequiredField("generators", Type.GENERATOR_LIST, BuilderCyclic::setGenerators);
 	}

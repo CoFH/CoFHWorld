@@ -1,6 +1,8 @@
 package cofh.cofhworld.parser;
 
 import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.parser.IBuilder.BuilderFields;
+import cofh.cofhworld.parser.IGeneratorParser.InvalidGeneratorException;
 import cofh.cofhworld.parser.variables.NumberData;
 import cofh.cofhworld.util.random.WeightedWorldGenerator;
 import cofh.cofhworld.world.generator.WorldGen;
@@ -81,37 +83,19 @@ public class GeneratorData {
 			throw new IGeneratorParser.InvalidGeneratorException("Generator `type` entry is not specified!", genObject.origin());
 		}
 
-		GeneratorFields genData = FeatureParser.getGenerator(name);
+		BuilderFields<? extends WorldGen> genData = FeatureParser.getGenerator(name);
 		if (genData == null) {
 			throw new IGeneratorParser.InvalidGeneratorException("Generator '" + name + "' is not registered!", genObject.origin());
 		}
 
-		boolean missedFields = false;
-		l: for (Field<?, ?> field : genData.requiredFields) {
-			for (String key : field.keys) {
-				if (genObject.hasPath(key)) {
-					continue l;
-				}
-			}
-			log.error("Missing required setting `{}` for generator type '{}' on line {}.", field.name, name, genObject.origin().lineNumber());
-			missedFields = true;
+		WorldGen r;
+		try {
+			r = genData.parse(genObject, field -> {
+				log.error("Missing required setting `{}` for generator type '{}' on line {}.", field, name, genObject.origin().lineNumber());
+			});
+		} catch (InvalidConfigurationException e) {
+			throw new InvalidGeneratorException(e.getMessage(), e.origin());
 		}
-		if (missedFields) {
-			throw new IGeneratorParser.InvalidGeneratorException("Missing fields", genObject.origin());
-		}
-
-		IBuilder<? extends WorldGen> builder = genData.builder.get();
-
-		for (Field<? super IBuilder<? extends WorldGen>, ? super Object> field : genData.fields) {
-			for (String key : field.keys) {
-				if (genObject.hasPath(key)) {
-					field.parser.accept(builder, field.type.processType.apply(genObject.getValue(key)));
-					break;
-				}
-			}
-		}
-
-		WorldGen r = builder.build();
 
 		if (genObject.hasPath("offset.x")) {
 			r.setOffsetX(NumberData.parseNumberValue(genObject.getValue("offset.x"), -128, 128));

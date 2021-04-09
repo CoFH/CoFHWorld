@@ -36,7 +36,7 @@ import static cofh.cofhworld.CoFHWorld.log;
 public class FeatureParser {
 
 	private static HashMap<String, IDistributionParser> distributionHandlers = new HashMap<>();
-	private static HashMap<String, GeneratorFields> generatorHandlers = new HashMap<>();
+	private static HashMap<String, IBuilder.BuilderFields<? extends WorldGen>> generatorHandlers = new HashMap<>();
 	public static ArrayList<IFeatureGenerator> parsedFeatures = new ArrayList<>();
 
 	private FeatureParser() {
@@ -48,7 +48,7 @@ public class FeatureParser {
 		return distributionHandlers.get(distribution);
 	}
 
-	public static GeneratorFields getGenerator(String generator) {
+	public static IBuilder.BuilderFields<? extends WorldGen> getGenerator(String generator) {
 
 		return generatorHandlers.get(generator);
 	}
@@ -64,11 +64,11 @@ public class FeatureParser {
 		return false;
 	}
 
-	public static <T extends IBuilder<? extends WorldGen>> boolean registerGenerator(String generator, IGeneratorParser<T> handler) {
+	public static <V extends WorldGen, T extends IBuilder<V>> boolean registerGenerator(String generator, IGeneratorParser<V, T> handler) {
 
 		// TODO: provide this function through IFeatureHandler?
 		if (handler != null && !generatorHandlers.containsKey(generator)) {
-			FieldBuilder<T> builder = new FieldBuilder<>();
+			IBuilder.FieldBuilder<V, T> builder = new IBuilder.FieldBuilder<>();
 			handler.getFields(builder);
 			generatorHandlers.put(generator, builder.build());
 			return true;

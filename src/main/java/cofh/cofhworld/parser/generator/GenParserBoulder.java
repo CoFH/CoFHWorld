@@ -1,17 +1,18 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.IGeneratorFieldRegistry;
+import cofh.cofhworld.parser.IBuilder.BuilderField.Type;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserResource;
 import cofh.cofhworld.parser.generator.builders.BuilderBoulder;
+import cofh.cofhworld.world.generator.WorldGenBoulder;
 
-public class GenParserBoulder implements AbstractGenParserResource<BuilderBoulder> {
+public class GenParserBoulder implements AbstractGenParserResource<WorldGenBoulder, BuilderBoulder> {
 
 	@Override
-	public void getFields(IGeneratorFieldRegistry<BuilderBoulder> fields) {
+	public void getFields(IBuilderFieldRegistry<WorldGenBoulder, BuilderBoulder> fields) {
 
 		AbstractGenParserResource.super.getFields(fields);
-		fields.setBuilder(BuilderBoulder::new);
+		fields.setConstructor(BuilderBoulder::new);
 
 		fields.addRequiredField("diameter", Type.NUMBER, BuilderBoulder::setSize);
 

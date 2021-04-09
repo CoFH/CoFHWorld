@@ -1,17 +1,18 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.IGeneratorFieldRegistry;
+import cofh.cofhworld.parser.IBuilder.BuilderField.Type;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserMaterial;
 import cofh.cofhworld.parser.generator.builders.BuilderSmallTree;
+import cofh.cofhworld.world.generator.WorldGenSmallTree;
 
-public class GenParserSmallTree implements AbstractGenParserMaterial<BuilderSmallTree> {
+public class GenParserSmallTree implements AbstractGenParserMaterial<WorldGenSmallTree, BuilderSmallTree> {
 
 	@Override
-	public void getFields(IGeneratorFieldRegistry<BuilderSmallTree> fields) {
+	public void getFields(IBuilderFieldRegistry<WorldGenSmallTree, BuilderSmallTree> fields) {
 
 		AbstractGenParserMaterial.super.getFields(fields);
-		fields.setBuilder(BuilderSmallTree::new);
+		fields.setConstructor(BuilderSmallTree::new);
 
 		fields.addRequiredField("trunk", Type.BLOCK_LIST, BuilderSmallTree::setResource, "resource", "block");
 

@@ -1,16 +1,15 @@
 package cofh.cofhworld.parser.generator.builders;
 
 import cofh.cofhworld.parser.generator.builders.base.BuilderGenerator;
-import cofh.cofhworld.world.generator.WorldGen;
 import cofh.cofhworld.world.generator.WorldGenSequential;
 
 import javax.annotation.Nonnull;
 
-public class BuilderSequential extends BuilderGenerator {
+public class BuilderSequential extends BuilderGenerator<WorldGenSequential> {
 
 	@Nonnull
 	@Override
-	public WorldGen build() {
+	public WorldGenSequential build() {
 
 		return new WorldGenSequential(generators);
 	}

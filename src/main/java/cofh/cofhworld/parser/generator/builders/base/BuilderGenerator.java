@@ -5,7 +5,7 @@ import cofh.cofhworld.world.generator.WorldGen;
 
 import java.util.List;
 
-public abstract class BuilderGenerator implements IBuilder<WorldGen> {
+public abstract class BuilderGenerator<T> implements IBuilder<T> {
 
 	protected List<WorldGen> generators;
 

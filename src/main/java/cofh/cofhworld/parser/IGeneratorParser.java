@@ -1,25 +1,17 @@
 package cofh.cofhworld.parser;
 
-import cofh.cofhworld.world.generator.WorldGen;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import com.typesafe.config.ConfigOrigin;
 
-public interface IGeneratorParser<T extends IBuilder<? extends WorldGen>> {
+public interface IGeneratorParser<T, B extends IBuilder<T>> {
 
-	void getFields(IGeneratorFieldRegistry<T> fields);
+	void getFields(IBuilderFieldRegistry<T, B> fields);
 
-	class InvalidGeneratorException extends Exception {
-
-		private final ConfigOrigin origin;
+	class InvalidGeneratorException extends InvalidConfigurationException {
 
 		public InvalidGeneratorException(String cause, ConfigOrigin origin) {
 
-			super(cause);
-			this.origin = origin;
-		}
-
-		public ConfigOrigin origin() {
-
-			return this.origin;
+			super(cause, origin);
 		}
 
 		public InvalidGeneratorException causedBy(Throwable cause) {

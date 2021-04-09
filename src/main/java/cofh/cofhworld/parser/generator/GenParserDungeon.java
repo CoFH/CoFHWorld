@@ -1,17 +1,18 @@
 package cofh.cofhworld.parser.generator;
 
-import cofh.cofhworld.parser.Field.Type;
-import cofh.cofhworld.parser.IGeneratorFieldRegistry;
+import cofh.cofhworld.parser.IBuilder.BuilderField.Type;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import cofh.cofhworld.parser.generator.base.AbstractGenParserMaterial;
 import cofh.cofhworld.parser.generator.builders.BuilderDungeon;
+import cofh.cofhworld.world.generator.WorldGenDungeon;
 
-public class GenParserDungeon implements AbstractGenParserMaterial<BuilderDungeon> {
+public class GenParserDungeon implements AbstractGenParserMaterial<WorldGenDungeon, BuilderDungeon> {
 
 	@Override
-	public void getFields(IGeneratorFieldRegistry<BuilderDungeon> fields) {
+	public void getFields(IBuilderFieldRegistry<WorldGenDungeon, BuilderDungeon> fields) {
 
 		AbstractGenParserMaterial.super.getFields(fields);
-		fields.setBuilder(BuilderDungeon::new);
+		fields.setConstructor(BuilderDungeon::new);
 
 		fields.addRequiredField("wall", Type.BLOCK_LIST, BuilderDungeon::setResource, "block");
 
