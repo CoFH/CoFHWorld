@@ -20,7 +20,6 @@ import com.typesafe.config.ConfigValueType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -131,9 +130,9 @@ public interface IBuilder<T> {
 				for (String key : field.keys) {
 					if (genObject.hasPath(key)) {
 						if (onUnknownField != null) usedKeys.add(ConfigUtil.splitPath(key).get(0));
-						assert field.set != null;
+						assert field.setter != null;
 						assert field.type != null;
-						field.set.accept(builder, field.type.processValue.apply(genObject.getValue(key)));
+						field.setter.accept(builder, field.type.processValue.apply(genObject.getValue(key)));
 						break;
 					}
 				}
@@ -275,7 +274,7 @@ public interface IBuilder<T> {
 		 * <b>May</b> be {@code null} if this field object is merely informational.
 		 */
 		@Nullable
-		final public BiConsumer<T, V> set;
+		final public BiConsumer<T, V> setter;
 		/**
 		 * A list of keys that can represent this field in data. Will <b>always</b> contain at least 1 item, {@code name}.
 		 */
@@ -295,7 +294,7 @@ public interface IBuilder<T> {
 			this.name = name;
 			this.type = type;
 
-			this.set = parser;
+			this.setter = parser;
 			if (extraNames == null || extraNames.length == 0) {
 				keys = new String[] { name };
 			} else {
