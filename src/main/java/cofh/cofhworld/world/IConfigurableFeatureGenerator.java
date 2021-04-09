@@ -1,6 +1,7 @@
 package cofh.cofhworld.world;
 
 import cofh.cofhworld.data.biome.BiomeInfoSet;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.ISeedReader;
 
 import java.util.Random;
@@ -36,6 +37,6 @@ public interface IConfigurableFeatureGenerator extends IFeatureGenerator {
 
 	IConfigurableFeatureGenerator setDimensionRestriction(GenRestriction restriction);
 
-	IConfigurableFeatureGenerator addDimension(int dimID);
+	IConfigurableFeatureGenerator addDimension(ResourceLocation dimID);
 
 }

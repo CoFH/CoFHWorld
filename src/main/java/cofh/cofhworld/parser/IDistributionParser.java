@@ -82,7 +82,8 @@ public interface IDistributionParser {
 						dimRes = GenRestriction.get(genObject.getString("dimension"));
 						log.trace("'{}' has explicit dimension restriction type {}", feature.getFeatureName(), dimRes.name());
 						if (dimRes != GenRestriction.NONE) {
-							log.error("Invalid dimension restriction `{}` on '{}'. Must be an object to meaningfully function", dimRes.name().toLowerCase(Locale.US), feature.getFeatureName());
+							log.error("Invalid dimension restriction `{}` on '{}'. Must be an object to meaningfully function", dimRes.name().toLowerCase(Locale.US),
+									feature.getFeatureName());
 							throw new InvalidDistributionException("Invalid value for string", data.origin());
 						}
 						break;
@@ -90,35 +91,37 @@ public interface IDistributionParser {
 						dimRes = GenRestriction.get(genObject.getString(field + ".restriction"));
 						log.trace("'{}' has explicit dimension restriction type {}", feature.getFeatureName(), dimRes.name());
 						field += ".value";
-						// continue
-					case LIST:
 						restrictionList = genObject.getList(field);
 						break;
-					case NUMBER:
+					case LIST:
 						dimRes = GenRestriction.WHITELIST;
-						log.trace("'{}' has implicit dimension restriction type {} for value {}", feature.getFeatureName(), dimRes.name(), data.unwrapped());
-						feature.addDimension(genObject.getNumber(field).intValue());
+						log.trace("'{}' has implicit dimension restriction type {}", feature.getFeatureName(), dimRes.name());
+						restrictionList = genObject.getList(field);
+						break;
+					case NULL:
+						break;
+					default:
+						log.error("Feature '{}' has unknown dimension restriction of type `{}` on line {}", feature.getFeatureName(), data.valueType().toString(),
+								data.origin().lineNumber());
 						break;
 				}
 				if (restrictionList != null) {
-					Registry<Dimension> reg = LogicalSidedProvider.INSTANCE.<MinecraftServer>get(LogicalSide.SERVER).func_244267_aX().getRegistry(Registry.DIMENSION_KEY);
+					Registry<Dimension> reg = LogicalSidedProvider.INSTANCE.<MinecraftServer>get(LogicalSide.SERVER).getServerConfiguration().
+							getDimensionGeneratorSettings().func_236224_e_();
 					for (int i = 0; i < restrictionList.size(); i++) { // TODO: allow dimension type? multiple dimensions can have the same type
 						ConfigValue val = restrictionList.get(i);
 						log.trace("'{}' has dimension restriction for value {}", feature.getFeatureName(), val.unwrapped());
 						if (val.valueType() == ConfigValueType.STRING) {
 							ResourceLocation dimName = new ResourceLocation(String.valueOf(val.unwrapped()));
 							if (reg.keySet().contains(dimName)) {
-								feature.addDimension(reg.getId(reg.getOrDefault(dimName)));
+								feature.addDimension(dimName);
 							} else {
 								log.error("Invalid dimension entry `{}` on line {}. No dimension with that identifier is registered.", dimName, val.origin().lineNumber());
 							}
-						} else if (val.valueType() == ConfigValueType.NUMBER) {
-							feature.addDimension(((Number) val.unwrapped()).intValue());
-							// don't bother validating registration; dimensions can be created while a world is running
 						} else if (val.valueType() != ConfigValueType.NULL) {
 							// skip over accidental (and intentional, i guess? we can't tell.) nulls from multiple sequential commas
-							log.error("Invalid dimension entry type `{}` on line {}. Number required.", val.valueType().name(), data.origin().lineNumber());
-							throw new InvalidDistributionException("Invalid value for dimension id, expected number got " + val.valueType().name(), data.origin());
+							log.error("Invalid dimension entry type `{}` on line {}. String required.", val.valueType().name(), data.origin().lineNumber());
+							throw new InvalidDistributionException("Invalid value for dimension id, expected string got " + val.valueType().name(), data.origin());
 						}
 					}
 				}
@@ -165,19 +168,11 @@ public interface IDistributionParser {
 	@Nonnull
 	IConfigurableFeatureGenerator getFeature(String featureName, Config genObject, boolean retrogen, Logger log) throws InvalidDistributionException;
 
-	class InvalidDistributionException extends Exception {
-
-		private final ConfigOrigin origin;
+	class InvalidDistributionException extends InvalidConfigurationException {
 
 		public InvalidDistributionException(String cause, ConfigOrigin origin) {
 
-			super(cause);
-			this.origin = origin;
-		}
-
-		public ConfigOrigin origin() {
-
-			return this.origin;
+			super(cause, origin);
 		}
 
 		public InvalidDistributionException causedBy(Throwable cause) {

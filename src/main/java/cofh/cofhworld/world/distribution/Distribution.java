@@ -4,20 +4,15 @@ import cofh.cofhworld.data.biome.BiomeInfoSet;
 import cofh.cofhworld.util.LinkedHashList;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IFeatureGenerator;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.longs.LongSets;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.LogicalSidedProvider;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
 
 public abstract class Distribution implements IFeatureGenerator, IConfigurableFeatureGenerator {
@@ -33,7 +28,7 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 	protected int rarity;
 
 	protected final BiomeInfoSet biomes = new BiomeInfoSet(1);
-	protected final IntSet dimensions = new IntOpenHashSet();
+	protected final HashSet<ResourceLocation> dimensions = new HashSet<>();
 	protected final LinkedHashList<String> structures = new LinkedHashList<>(1);
 
 	public Distribution(String name, boolean regen) {
@@ -72,7 +67,7 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		return this;
 	}
 
-	public Distribution addDimension(int dimID) {
+	public Distribution addDimension(ResourceLocation dimID) {
 
 		dimensions.add(dimID);
 		return this;
@@ -114,9 +109,8 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 					return false;
 		}
 
-		if (dimensionRestriction != GenRestriction.NONE) { // TODO: completely broken
-			Registry<World> reg = LogicalSidedProvider.INSTANCE.<MinecraftServer>get(LogicalSide.SERVER).func_244267_aX().getRegistry(Registry.WORLD_KEY);
-			if (dimensionRestriction == GenRestriction.BLACKLIST == dimensions.contains(reg.getId(world.getWorld())))
+		if (dimensionRestriction != GenRestriction.NONE) {
+			if (dimensionRestriction == GenRestriction.BLACKLIST == dimensions.contains(world.getWorld().getDimensionKey().getLocation()))
 				return false;
 		}
 		if (rarity > 1 && random.nextInt(rarity) != 0) {
