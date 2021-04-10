@@ -1,6 +1,7 @@
 package cofh.cofhworld.command;
 
 import cofh.cofhworld.CoFHWorld;
+import cofh.cofhworld.command.Helpers.FormatHelpers;
 import cofh.cofhworld.init.WorldHandler;
 import cofh.cofhworld.world.IFeatureGenerator;
 import com.mojang.brigadier.CommandDispatcher;
@@ -11,10 +12,11 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.text.*;
 import net.minecraftforge.fml.ModList;
 
-import java.util.*;
+import java.util.List;
 
 public class CommandCoFHWorld {
 
@@ -83,7 +85,7 @@ public class CommandCoFHWorld {
 			return Commands.literal("list")
 					.requires(source -> source.hasPermissionLevel(1))
 					.executes(SubCommandList::execute)
-					.then(Commands.argument("page", IntegerArgumentType.integer(1, Math.max(1, (WorldHandler.getFeatures().size() - 1) / PAGE_SIZE) + 1))
+					.then(Commands.argument("page", IntegerArgumentType.integer(1))
 							.executes(SubCommandList::executeWithPage));
 		}
 
@@ -94,7 +96,7 @@ public class CommandCoFHWorld {
 
 		public static int executeWithPage(CommandContext<CommandSource> context) throws CommandException {
 
-			return execute(context, IntegerArgumentType.getInteger(context, "page"));
+			return execute(context, Math.min(IntegerArgumentType.getInteger(context, "page") - 1, (WorldHandler.getFeatures().size() - 1) / PAGE_SIZE));
 		}
 
 		public static int execute(CommandContext<CommandSource> context, int page) throws CommandException {
@@ -102,13 +104,13 @@ public class CommandCoFHWorld {
 			List<IFeatureGenerator> generators = WorldHandler.getFeatures();
 			int maxPages = (generators.size() - 1) / PAGE_SIZE;
 
-			TextComponent component = new TranslationTextComponent("cofhworld.list", page + 1, maxPages + 1);
-			component.getStyle().setColor(Color.fromTextFormatting(TextFormatting.GOLD));
+			ITextComponent component = FormatHelpers.getTranslationWithFormatting("cofhworld.list",
+					FormatHelpers.getStringWithFormatting(String.valueOf(page + 1), INBT.SYNTAX_HIGHLIGHTING_NUMBER),
+					FormatHelpers.getStringWithFormatting(String.valueOf(maxPages + 1), INBT.SYNTAX_HIGHLIGHTING_NUMBER));
 			context.getSource().sendFeedback(component, true);
 
 			if (generators.size() == 0) {
-				component = new StringTextComponent("! EMPTY");
-				component.getStyle().setColor(Color.fromTextFormatting(TextFormatting.DARK_RED)); // TODO: PROBABLY BROKEN
+				component = FormatHelpers.getStringWithFormatting("! EMPTY", TextFormatting.DARK_RED);
 				context.getSource().sendFeedback(component, true);
 				return 1;
 			}
@@ -120,8 +122,7 @@ public class CommandCoFHWorld {
 			}
 			b.deleteCharAt(b.length() - 1);
 
-			component = new StringTextComponent(b.toString());
-			component.getStyle().setColor(Color.fromTextFormatting(TextFormatting.DARK_BLUE));
+			component = FormatHelpers.getStringWithFormatting(b.toString(), INBT.SYNTAX_HIGHLIGHTING_STRING);
 			context.getSource().sendFeedback(component, true);
 			return 1;
 		}
