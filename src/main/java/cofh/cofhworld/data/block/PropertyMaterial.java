@@ -7,9 +7,9 @@ import net.minecraft.state.Property;
 import net.minecraft.state.StateContainer;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public abstract class PropertyMaterial extends Material {
 
@@ -61,12 +61,13 @@ public abstract class PropertyMaterial extends Material {
 
 	final private static class RawPropertiesMaterial extends PropertyMaterial {
 
-		final private Stream<Tuple<String, String>> properties;
+		final private Tuple<String, String>[] properties;
 
+		@SuppressWarnings("unchecked")
 		public RawPropertiesMaterial(List<Tuple<String, String>> properties, boolean inclusive) {
 
 			super(inclusive);
-			this.properties = properties.stream();
+			this.properties = properties.stream().distinct().toArray(Tuple[]::new);
 		}
 
 		@Override
@@ -85,7 +86,7 @@ public abstract class PropertyMaterial extends Material {
 					return false;
 			};
 
-			return inclusive ? properties.allMatch(test) : properties.noneMatch(test);
+			return inclusive ? Arrays.stream(properties).allMatch(test) : Arrays.stream(properties).noneMatch(test);
 		}
 	}
 
@@ -124,12 +125,13 @@ public abstract class PropertyMaterial extends Material {
 
 	final private static class BlockPropertiesMaterial extends BlockMaterial {
 
-		final private Stream<Tuple<Property<?>, ?>> properties;
+		final private Tuple<Property<?>, ?>[] properties;
 
+		@SuppressWarnings("unchecked")
 		public BlockPropertiesMaterial(Block block, List<Tuple<Property<?>, ?>> properties, boolean inclusive) {
 
 			super(block, inclusive);
-			this.properties = properties.stream();
+			this.properties = properties.stream().distinct().toArray(Tuple[]::new);
 		}
 
 		@Override
@@ -140,7 +142,7 @@ public abstract class PropertyMaterial extends Material {
 
 			Predicate<Tuple<Property<?>, ?>> test = v -> blockState.get(v.getA()) == v.getB();
 
-			return inclusive ? properties.anyMatch(test) : properties.noneMatch(test);
+			return inclusive ? Arrays.stream(properties).anyMatch(test) : Arrays.stream(properties).noneMatch(test);
 		}
 	}
 }

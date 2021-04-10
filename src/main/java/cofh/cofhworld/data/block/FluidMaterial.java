@@ -4,16 +4,17 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FluidMaterial extends Material {
 
-	private final Stream<ResourceLocation> fluids;
+	private final List<ResourceLocation> fluids;
 	private final boolean inclusive;
 
 	public FluidMaterial(boolean inclusive, String... fluids) {
 
-		this.fluids = Arrays.stream(fluids).map(ResourceLocation::new);
+		this.fluids = Arrays.stream(fluids).map(ResourceLocation::new).distinct().collect(Collectors.toList());
 
 		this.inclusive = inclusive;
 	}
@@ -26,6 +27,6 @@ public class FluidMaterial extends Material {
 			return false;
 		}
 
-		return inclusive ? fluids.anyMatch(name::equals) : fluids.noneMatch(name::equals);
+		return inclusive == fluids.contains(name);
 	}
 }
