@@ -49,7 +49,9 @@ public interface IDistributionParser {
 						ArrayList<WeightedString> structures = new ArrayList<>();
 						if (StringData.parseStringList(genObject.getValue(FIELD + ".value"), structures)) {
 							log.trace("'{}' has structure restriction for values {}", feature.getFeatureName(), structures);
-							feature.addStructures(structures.stream().map(str -> str.value).distinct().toArray(String[]::new));
+							//Structure<?> structure = Registry.STRUCTURE_FEATURE.getOrDefault(new ResourceLocation(s.toLowerCase(Locale.ROOT)));
+							feature.addStructures(structures.stream().map(str -> str.value).distinct().
+									map(str -> new ResourceLocation(str.toLowerCase(Locale.ROOT))).toArray(ResourceLocation[]::new));
 						} else {
 							log.error("Invalid structure list on '{}'. No values added!", feature.getFeatureName());
 						}

@@ -29,7 +29,7 @@ public interface IConfigurableFeatureGenerator extends IFeatureGenerator {
 
 	IConfigurableFeatureGenerator setStructureRestriction(GenRestriction restriction);
 
-	IConfigurableFeatureGenerator addStructures(String[] structures);
+	IConfigurableFeatureGenerator addStructures(ResourceLocation[] structures);
 
 	IConfigurableFeatureGenerator setBiomeRestriction(GenRestriction restriction);
 

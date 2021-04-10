@@ -2,6 +2,7 @@ package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.data.biome.BiomeInfoSet;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.ISeedReader;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class DistributionSequential extends Distribution {
 		return this;
 	}
 
-	public Distribution addStructures(String[] structures) {
+	public Distribution addStructures(ResourceLocation[] structures) {
 
 		super.addStructures(structures);
 		for (IConfigurableFeatureGenerator feature : features) {

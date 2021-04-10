@@ -4,7 +4,6 @@ import cofh.cofhworld.data.biome.BiomeInfoSet;
 import cofh.cofhworld.util.LinkedHashList;
 import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IFeatureGenerator;
-import it.unimi.dsi.fastutil.longs.LongSets;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ISeedReader;
@@ -29,7 +28,7 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 
 	protected final BiomeInfoSet biomes = new BiomeInfoSet(1);
 	protected final HashSet<ResourceLocation> dimensions = new HashSet<>();
-	protected final LinkedHashList<String> structures = new LinkedHashList<>(1);
+	protected final LinkedHashList<ResourceLocation> structures = new LinkedHashList<>(1);
 
 	public Distribution(String name, boolean regen) {
 
@@ -43,7 +42,7 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 		return this;
 	}
 
-	public Distribution addStructures(String[] structures) {
+	public Distribution addStructures(ResourceLocation[] structures) {
 
 		this.structures.addAll(Arrays.asList(structures));
 		return this;
@@ -102,11 +101,12 @@ public abstract class Distribution implements IFeatureGenerator, IConfigurableFe
 			return false;
 		}
 		if (structureRestriction != GenRestriction.NONE) {
-			for (String structure : structures)
-				if (structureRestriction == GenRestriction.WHITELIST == world.getChunk(chunkX, chunkZ).getStructureReferences().getOrDefault(structure,
-						// TODO BAD
-						LongSets.EMPTY_SET).isEmpty())
-					return false;
+			//Structure<?> structure = Registry.STRUCTURE_FEATURE.getOrDefault(new ResourceLocation(s.toLowerCase(Locale.ROOT)));
+			if (structureRestriction == GenRestriction.BLACKLIST == (!structures.isEmpty() && world.getChunk(chunkX, chunkZ).
+					getStructureReferences().entrySet().stream().
+					filter(k -> !k.getValue().isEmpty()).
+					anyMatch(k -> structures.contains(k.getKey().getRegistryName()))))
+				return false;
 		}
 
 		if (dimensionRestriction != GenRestriction.NONE) {
