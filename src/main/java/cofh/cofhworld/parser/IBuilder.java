@@ -12,18 +12,12 @@ import cofh.cofhworld.util.random.WeightedNBTTag;
 import cofh.cofhworld.util.random.WeightedString;
 import cofh.cofhworld.world.generator.WorldGen;
 import com.google.common.collect.Sets;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigUtil;
-import com.typesafe.config.ConfigValue;
-import com.typesafe.config.ConfigValueType;
+import com.typesafe.config.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 /**
  *
@@ -95,7 +89,7 @@ public interface IBuilder<T> {
 		 * @return
 		 * @throws InvalidConfigurationException
 		 */
-		public V parse(Config genObject, Predicate<String> onUnknownField) throws InvalidConfigurationException {
+		public V parse(Config genObject, BiPredicate<String, ConfigOrigin> onUnknownField) throws InvalidConfigurationException {
 
 			return parse(genObject, null, onUnknownField);
 		}
@@ -107,7 +101,7 @@ public interface IBuilder<T> {
 		 * @return
 		 * @throws InvalidConfigurationException
 		 */
-		public V parse(Config genObject, Consumer<String> onMissingField, Predicate<String> onUnknownField) throws InvalidConfigurationException {
+		public V parse(Config genObject, Consumer<String> onMissingField, BiPredicate<String, ConfigOrigin> onUnknownField) throws InvalidConfigurationException {
 
 			boolean missedFields = false;
 			l: for (BuilderField<?, ?> field : requiredFields) {
@@ -141,7 +135,7 @@ public interface IBuilder<T> {
 			if (onUnknownField != null) {
 				boolean exception = false;
 				for (String e : Sets.difference(genObject.root().keySet(), usedKeys)) {
-					exception = onUnknownField.test(e) | exception;
+					exception = onUnknownField.test(e, genObject.root().get(e).origin()) | exception;
 				}
 				if (exception) {
 					throw new InvalidConfigurationException("Unknown fields", genObject.origin());
