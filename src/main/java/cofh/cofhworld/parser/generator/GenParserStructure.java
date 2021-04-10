@@ -24,6 +24,7 @@ public class GenParserStructure implements IGeneratorParser<WorldGenStructure, B
 
 		fields.addOptionalField("rotation", Type.Enum.ofList(Rotation.class), BuilderStructure::setRotations);
 		fields.addOptionalField("mirror", Type.Enum.ofList(Mirror.class), BuilderStructure::setMirrors);
+		// TODO: allow processing of Jigsaw Blocks
 	}
 
 }
