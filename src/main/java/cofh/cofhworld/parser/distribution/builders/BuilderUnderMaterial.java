@@ -5,11 +5,12 @@ import cofh.cofhworld.parser.distribution.builders.base.BuilderGenerator;
 import cofh.cofhworld.world.distribution.DistributionUnderMaterial;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 
 public class BuilderUnderMaterial extends BuilderGenerator<DistributionUnderMaterial> {
 
-	protected List<Material> surface, material;
+	protected List<Material> surface = null, material = Collections.emptyList();
 
 	public void setSurface(List<Material> surface) {
 

@@ -1,6 +1,7 @@
 package cofh.cofhworld.init;
 
 import cofh.cofhworld.parser.*;
+import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.world.generator.WorldGen;
 import com.typesafe.config.*;
@@ -35,7 +36,7 @@ import static cofh.cofhworld.CoFHWorld.log;
 
 public class FeatureParser {
 
-	private static HashMap<String, IDistributionParser> distributionHandlers = new HashMap<>();
+	private static HashMap<String, IBuilder.BuilderFields<? extends IConfigurableFeatureGenerator>> distributionHandlers = new HashMap<>();
 	private static HashMap<String, IBuilder.BuilderFields<? extends WorldGen>> generatorHandlers = new HashMap<>();
 	public static ArrayList<IFeatureGenerator> parsedFeatures = new ArrayList<>();
 
@@ -43,7 +44,7 @@ public class FeatureParser {
 
 	}
 
-	public static IDistributionParser getDistribution(String distribution) {
+	public static IBuilder.BuilderFields<? extends IConfigurableFeatureGenerator> getDistribution(String distribution) {
 
 		return distributionHandlers.get(distribution);
 	}
@@ -53,11 +54,13 @@ public class FeatureParser {
 		return generatorHandlers.get(generator);
 	}
 
-	public static boolean registerTemplate(String template, IDistributionParser handler) {
+	public static <V extends IConfigurableFeatureGenerator, T extends IBuilder<V>> boolean registerTemplate(String template, IDistributionParser<V, T> handler) {
 
 		// TODO: provide this function through IFeatureHandler?
 		if (handler != null && !distributionHandlers.containsKey(template)) {
-			distributionHandlers.put(template, handler);
+			IBuilder.FieldBuilder<V, T> builder = new IBuilder.FieldBuilder<>();
+			handler.getFields(builder);
+			distributionHandlers.put(template, builder.build());
 			return true;
 		}
 		log.error("Attempted to register duplicate template '{}'!", template);

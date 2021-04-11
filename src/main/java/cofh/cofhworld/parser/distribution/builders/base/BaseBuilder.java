@@ -20,9 +20,10 @@ public abstract class BaseBuilder<T extends IConfigurableFeatureGenerator> imple
 		this.retrogen = retrogen == Boolean.TRUE;
 	}
 
-	public static class FeatureNameData implements Consumer<BaseBuilder<?>> {
+	public static class FeatureNameData<T extends IConfigurableFeatureGenerator> implements Consumer<BaseBuilder<T>> {
 
-		public static Consumer<BaseBuilder<?>> of(String featureName) {
+		@SuppressWarnings({"unchecked", "rawtypes"})
+		public static <T extends IConfigurableFeatureGenerator> Consumer<IBuilder<T>> of(String featureName) {
 
 			return new FeatureNameData(featureName);
 		}
@@ -35,7 +36,7 @@ public abstract class BaseBuilder<T extends IConfigurableFeatureGenerator> imple
 		}
 
 		@Override
-		public void accept(BaseBuilder<?> baseBuilder) {
+		public void accept(BaseBuilder<T> baseBuilder) {
 
 			baseBuilder.setFeatureName(featureName);
 		}

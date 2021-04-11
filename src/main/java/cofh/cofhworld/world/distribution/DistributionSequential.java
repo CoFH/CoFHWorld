@@ -1,8 +1,6 @@
 package cofh.cofhworld.world.distribution;
 
-import cofh.cofhworld.data.biome.BiomeInfoSet;
-import cofh.cofhworld.world.IConfigurableFeatureGenerator;
-import net.minecraft.util.ResourceLocation;
+import cofh.cofhworld.world.IFeatureGenerator;
 import net.minecraft.world.ISeedReader;
 
 import java.util.List;
@@ -10,68 +8,30 @@ import java.util.Random;
 
 public class DistributionSequential extends Distribution {
 
-	private final IConfigurableFeatureGenerator[] features;
+	private final IFeatureGenerator[] features;
 
-	public DistributionSequential(String name, List<IConfigurableFeatureGenerator> features, boolean regen) {
+	public DistributionSequential(String name, List<IFeatureGenerator> features, boolean regen) {
 
 		super(name, regen);
-		this.features = features.toArray(new IConfigurableFeatureGenerator[0]);
+		this.features = features.toArray(new IFeatureGenerator[0]);
 	}
 
-	public Distribution setBiomeRestriction(GenRestriction restriction) {
+	@Override
+	public boolean generateFeature(Random random, int chunkX, int chunkZ, ISeedReader world, boolean newGen) {
 
-		super.setBiomeRestriction(restriction);
-		for (IConfigurableFeatureGenerator feature : features) {
-			feature.setBiomeRestriction(restriction);
+		boolean r = false;
+		if (super.generateFeature(random, chunkX, chunkZ, world, newGen)) {
+			for (IFeatureGenerator feature : features) {
+				r |= feature.generateFeature(random, chunkX, chunkZ, world, newGen);
+			}
 		}
-		return this;
-	}
-
-	public Distribution setDimensionRestriction(GenRestriction restriction) {
-
-		super.setDimensionRestriction(restriction);
-		for (IConfigurableFeatureGenerator feature : features) {
-			feature.setDimensionRestriction(restriction);
-		}
-		return this;
-	}
-
-	public Distribution setStructureRestriction(GenRestriction restriction) {
-
-		super.setStructureRestriction(restriction);
-		for (IConfigurableFeatureGenerator feature : features) {
-			feature.setStructureRestriction(restriction);
-		}
-		return this;
-	}
-
-	public Distribution addStructures(ResourceLocation[] structures) {
-
-		super.addStructures(structures);
-		for (IConfigurableFeatureGenerator feature : features) {
-			feature.addStructures(structures);
-		}
-		return this;
-	}
-
-	public Distribution addBiomes(BiomeInfoSet biomes) {
-
-		super.addBiomes(biomes);
-		for (IConfigurableFeatureGenerator feature : features) {
-			feature.addBiomes(biomes);
-		}
-		return this;
+		return r;
 	}
 
 	@Override
 	public boolean generateFeature(Random random, int blockX, int blockZ, ISeedReader world) {
 
-		boolean r = false;
-
-		for (IConfigurableFeatureGenerator feature : features) {
-			r |= feature.generateFeature(random, blockX, blockZ, world);
-		}
-		return r;
+		return true;
 	}
 
 }

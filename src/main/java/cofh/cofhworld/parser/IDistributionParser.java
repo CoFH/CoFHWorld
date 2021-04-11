@@ -1,5 +1,9 @@
 package cofh.cofhworld.parser;
 
+import cofh.cofhworld.init.FeatureParser;
+import cofh.cofhworld.parser.IBuilder.BuilderFields;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
+import cofh.cofhworld.parser.distribution.builders.base.BaseBuilder.FeatureNameData;
 import cofh.cofhworld.parser.variables.BiomeData;
 import cofh.cofhworld.parser.variables.StringData;
 import cofh.cofhworld.util.random.WeightedString;
@@ -16,11 +20,16 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
-public interface IDistributionParser {
+import static cofh.cofhworld.CoFHWorld.log;
+
+public interface IDistributionParser<T extends IConfigurableFeatureGenerator, B extends IBuilder<T>> {
+
+	void getFields(IBuilderFieldRegistry<T, B> fields);
 
 	static void addFeatureRestrictions(IConfigurableFeatureGenerator feature, Config genObject, Logger log) throws InvalidDistributionException {
 
@@ -151,8 +160,6 @@ public interface IDistributionParser {
 
 	}
 
-	String[] getRequiredFields();
-
 	/**
 	 * Parse a {@link Config} for registration}.
 	 *
@@ -160,22 +167,47 @@ public interface IDistributionParser {
 	 * 		The name of the feature to register.
 	 * @param genObject
 	 * 		The JsonObject to parse.
-	 * @param log
-	 * 		The {@link Logger} to log debug/error/etc. messages to.
 	 *
 	 * @return The {@link IFeatureGenerator} to be registered with an IFeatureHandler
 	 */
-	@Nonnull
-	default IFeatureGenerator parseFeature(String featureName, Config genObject, Logger log) throws InvalidDistributionException {
+	static IFeatureGenerator parseFeature(String featureName, Config genObject) throws InvalidDistributionException {
 
-		boolean retrogen = false;
-		if (genObject.hasPath("retrogen")) {
-			retrogen = genObject.getBoolean("retrogen");
-			log.trace("'{}' has retrogen setting {}", featureName, retrogen);
-		} else
-			log.trace("'{}' will not retrogen", featureName);
+		String name;
+		{
+			final String FIELD = "distribution";
 
-		IConfigurableFeatureGenerator feature = getFeature(featureName, genObject, retrogen, log);
+			if (genObject.hasPath(FIELD)) {
+				ConfigValue typeVal = genObject.getValue(FIELD);
+				if (typeVal.valueType() == ConfigValueType.STRING) {
+					name = String.valueOf(typeVal.unwrapped());
+				} else if (typeVal.valueType() == ConfigValueType.OBJECT && genObject.hasPath(FIELD + ".name")) {
+					name = genObject.getString(FIELD + ".name");
+				} else {
+					throw new InvalidDistributionException("Feature `distribution` entry not valid", genObject.origin());
+				}
+			} else {
+				throw new InvalidDistributionException("Feature `distribution` entry is not specified!", genObject.origin());
+			}
+		}
+
+		BuilderFields<? extends IConfigurableFeatureGenerator> genData = FeatureParser.getDistribution(name);
+		if (genData == null) {
+			throw new InvalidDistributionException("Distribution '" + name + "' is not registered!", genObject.origin());
+		}
+
+		IConfigurableFeatureGenerator feature;
+		try {
+			feature = genData.parse(genObject, field -> {
+				log.error("Missing required setting `{}` for generator type '{}' on line {}.", field, name, genObject.origin().lineNumber());
+			}, (field, origin) -> {
+				if (field.length() > 0 & (field.charAt(0) == '_' || InvalidDistributionException.EXTERNAL_FIELDS.contains(field))) return false;
+				log.warn("Unknown setting `{}` for generator type '{}' on line {}", field, name, origin.lineNumber());
+				return false;
+			}, FeatureNameData.of(featureName)
+			);
+		} catch (InvalidConfigurationException e) {
+			throw new InvalidDistributionException(e.getMessage(), e.origin());
+		}
 
 		{
 			if (genObject.hasPath("chunk-chance")) {
@@ -188,12 +220,9 @@ public interface IDistributionParser {
 		return feature;
 	}
 
-	;
-
-	@Nonnull
-	IConfigurableFeatureGenerator getFeature(String featureName, Config genObject, boolean retrogen, Logger log) throws InvalidDistributionException;
-
 	class InvalidDistributionException extends InvalidConfigurationException {
+
+		private static List<String> EXTERNAL_FIELDS = Arrays.asList("distribution", "enabled", "biome", "dimension", "structures", "chunk-chance");
 
 		public InvalidDistributionException(String cause, ConfigOrigin origin) {
 

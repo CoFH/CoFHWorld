@@ -1,38 +1,22 @@
 package cofh.cofhworld.parser.distribution;
 
-import cofh.cofhworld.parser.DistributionData;
+import cofh.cofhworld.parser.IBuilder.BuilderField.Type;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import cofh.cofhworld.parser.IDistributionParser;
-import cofh.cofhworld.world.IConfigurableFeatureGenerator;
-import cofh.cofhworld.world.distribution.Distribution;
+import cofh.cofhworld.parser.distribution.builders.BuilderSequential;
+import cofh.cofhworld.parser.distribution.builders.base.BaseBuilder;
 import cofh.cofhworld.world.distribution.DistributionSequential;
-import com.typesafe.config.Config;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-
-public class DistParserSequential implements IDistributionParser {
-
-	private final String[] FIELDS = new String[] { "features" };
+public class DistParserSequential implements IDistributionParser<DistributionSequential, BuilderSequential> {
 
 	@Override
-	public String[] getRequiredFields() {
+	public void getFields(IBuilderFieldRegistry<DistributionSequential, BuilderSequential> fields) {
 
-		return FIELDS;
-	}
+		fields.setConstructor(BuilderSequential::new);
 
-	@Override
-	@Nonnull
-	public Distribution getFeature(String featureName, Config genObject, boolean retrogen, Logger log) throws InvalidDistributionException {
+		fields.addOptionalField("retrogen", Type.RAW_BOOLEAN, BaseBuilder::setRetrogen);
 
-		ArrayList<IConfigurableFeatureGenerator> features = new ArrayList<>();
-
-		int i = 0;
-		for (Config featureConf : genObject.getConfigList("features")) {
-			features.add(DistributionData.getFeature(featureName + '$' + ++i, featureConf, retrogen, log));
-		}
-
-		return new DistributionSequential(featureName, features, retrogen);
+		fields.addRequiredField("features", Type.FEATURE_LIST, BuilderSequential::setFeatures);
 	}
 
 }

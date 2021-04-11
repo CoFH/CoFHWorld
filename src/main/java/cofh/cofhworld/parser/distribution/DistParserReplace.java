@@ -1,41 +1,22 @@
 package cofh.cofhworld.parser.distribution;
 
-import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.parser.IBuilder.BuilderField.Type;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import cofh.cofhworld.parser.IDistributionParser;
-import cofh.cofhworld.parser.variables.BlockData;
-import cofh.cofhworld.util.random.WeightedBlock;
-import cofh.cofhworld.world.IConfigurableFeatureGenerator;
+import cofh.cofhworld.parser.distribution.builders.BuilderReplace;
+import cofh.cofhworld.parser.distribution.builders.base.BaseBuilder;
 import cofh.cofhworld.world.distribution.DistributionReplace;
-import com.typesafe.config.Config;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-
-public class DistParserReplace implements IDistributionParser {
-
-    private final String[] FIELDS = new String[] { "block", "replacement" };
+public class DistParserReplace implements IDistributionParser<DistributionReplace, BuilderReplace> {
 
     @Override
-    public String[] getRequiredFields() {
-        return FIELDS;
-    }
+    public void getFields(IBuilderFieldRegistry<DistributionReplace, BuilderReplace> fields) {
 
-    @Nonnull
-    @Override
-    public IConfigurableFeatureGenerator getFeature(String featureName, Config genObject, boolean retrogen, Logger log) throws InvalidDistributionException {
+        fields.setConstructor(BuilderReplace::new);
 
-        List<WeightedBlock> blockstates = new ArrayList<>();
-        if (!BlockData.parseBlockList(genObject.getValue("block"), blockstates)) {
-            throw new InvalidDistributionException("`block` not valid", genObject.origin());
-        }
+        fields.addOptionalField("retrogen", Type.RAW_BOOLEAN, BaseBuilder::setRetrogen);
 
-        List<Material> replacement = new ArrayList<>();
-        if (!BlockData.parseMaterialList(genObject.getValue("material"), replacement)) {
-            throw new InvalidDistributionException("`material` not valid", genObject.origin());
-        }
-
-        return new DistributionReplace(featureName, retrogen, replacement, blockstates);
+        fields.addRequiredField("resource", Type.BLOCK_LIST, BuilderReplace::setResource, "block");
+        fields.addRequiredField("material", Type.MATERIAL_LIST, BuilderReplace::setMaterial);
     }
 }

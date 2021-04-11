@@ -1,83 +1,41 @@
 package cofh.cofhworld.parser;
 
-import cofh.cofhworld.init.FeatureParser;
 import cofh.cofhworld.parser.IDistributionParser.InvalidDistributionException;
-import cofh.cofhworld.world.IConfigurableFeatureGenerator;
 import cofh.cofhworld.world.IFeatureGenerator;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigValue;
-import com.typesafe.config.ConfigValueType;
-import org.apache.logging.log4j.Logger;
+import com.typesafe.config.*;
 
-import static cofh.cofhworld.CoFHWorld.log;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class DistributionData {
 
 	public static IFeatureGenerator parseFeature(String featureName, Config distObject) throws InvalidDistributionException {
 
-		String featureType = parseFeatureType(distObject);
-		IDistributionParser parser = FeatureParser.getDistribution(featureType);
-		if (parser == null) {
-			log.warn("Unknown distribution '{}' on line {}.", featureType, distObject.origin().lineNumber());
-			throw new InvalidDistributionException("Unknown distribution type", distObject.origin());
-		}
-
-		boolean missedFields = false;
-		for (String field : parser.getRequiredFields()) {
-			log.trace("Checking for field {}", field);
-			if (!distObject.hasPath(field)) {
-				log.error("Missing required setting `{}` for distribution type '{}' on feature '{}' at line {}.", field, featureType, featureName,
-						distObject.origin().lineNumber());
-				missedFields = true;
-			}
-		}
-		if (missedFields) {
-			throw new InvalidDistributionException("Missing required fields", distObject.origin());
-		}
-		return parser.parseFeature(featureName, distObject, log);
+		return IDistributionParser.parseFeature(featureName, distObject);
 	}
 
-	public static IConfigurableFeatureGenerator getFeature(String featureName, Config distObject, boolean retrogen, Logger log) throws InvalidDistributionException {
+	public static List<IFeatureGenerator> parseFeatures(ConfigValue distObject) throws InvalidDistributionException {
 
-		String featureType = parseFeatureType(distObject);
-		IDistributionParser parser = FeatureParser.getDistribution(featureType);
-		if (parser == null) {
-			log.warn("Unknown distribution '{}' on line {}.", featureType, distObject.origin().lineNumber());
-			throw new InvalidDistributionException("Unknown distribution type", distObject.origin());
+		switch (distObject.valueType()) {
+			case OBJECT:
+				return Collections.singletonList(parseFeature("<INVALID>", ((ConfigObject)distObject).toConfig()));
+			case LIST:
+				ArrayList<IFeatureGenerator> features = new ArrayList<>();
+				for (ConfigValue val : ((ConfigList)distObject)) {
+					if (val.valueType() != ConfigValueType.NULL) features.add(getFeature(val));
+				}
+				return features;
+			default:
+				throw new InvalidDistributionException("Feature must be an Object or Array to be parsed.", distObject.origin());
 		}
-
-		boolean missedFields = false;
-		for (String field : parser.getRequiredFields()) {
-			log.trace("Checking for field {}", field);
-			if (!distObject.hasPath(field)) {
-				log.error("Missing required setting `{}` for distribution type '{}' on feature '{}' at line {}.", field, featureType, featureName,
-						distObject.origin().lineNumber());
-				missedFields = true;
-			}
-		}
-		if (missedFields) {
-			throw new InvalidDistributionException("Missing required fields", distObject.origin());
-		}
-		return parser.getFeature(featureName, distObject, retrogen, log);
 	}
 
-	public static String parseFeatureType(Config genObject) throws InvalidDistributionException {
+	public static IFeatureGenerator getFeature(ConfigValue distObject) throws InvalidDistributionException {
 
-		final String FIELD = "distribution";
-
-		String name;
-		if (genObject.hasPath(FIELD)) {
-			ConfigValue typeVal = genObject.getValue(FIELD);
-			if (typeVal.valueType() == ConfigValueType.STRING) {
-				name = String.valueOf(typeVal.unwrapped());
-			} else if (typeVal.valueType() == ConfigValueType.OBJECT && genObject.hasPath(FIELD + ".name")) {
-				name = genObject.getString(FIELD + ".name");
-			} else {
-				throw new InvalidDistributionException("Feature `distribution` entry not valid", genObject.origin());
-			}
-		} else {
-			throw new InvalidDistributionException("Feature `distribution` entry is not specified!", genObject.origin());
+		if (distObject.valueType() == ConfigValueType.OBJECT) {
+			return IDistributionParser.parseFeature("<INVALID>", ((ConfigObject)distObject).toConfig());
 		}
-		return name;
+		throw new InvalidDistributionException("Feature must be an Object to be parsed.", distObject.origin());
 	}
 }

@@ -1,34 +1,20 @@
 package cofh.cofhworld.parser.distribution;
 
-import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.parser.IBuilder.BuilderField.Type;
+import cofh.cofhworld.parser.IBuilder.IBuilderFieldRegistry;
 import cofh.cofhworld.parser.distribution.base.AbstractDistParser;
-import cofh.cofhworld.parser.variables.NumberData;
-import cofh.cofhworld.world.distribution.Distribution;
+import cofh.cofhworld.parser.distribution.builders.BuilderUniform;
 import cofh.cofhworld.world.distribution.DistributionUniform;
-import cofh.cofhworld.world.generator.WorldGen;
-import com.typesafe.config.Config;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-
-public class DistParserUniform extends AbstractDistParser {
-
-	private final String[] FIELDS = new String[] { "generator", "cluster-count", "min-height", "max-height" };
+public class DistParserUniform extends AbstractDistParser<DistributionUniform, BuilderUniform> {
 
 	@Override
-	public String[] getRequiredFields() {
+	public void getFields(IBuilderFieldRegistry<DistributionUniform, BuilderUniform> fields) {
 
-		return FIELDS;
+		super.getFields(fields);
+		fields.setConstructor(BuilderUniform::new);
+
+		fields.addRequiredField("min-height", Type.NUMBER, BuilderUniform::setMinHeight);
+		fields.addRequiredField("max-height", Type.NUMBER, BuilderUniform::setMaxHeight);
 	}
-
-	@Override
-	@Nonnull
-	protected Distribution getFeature(String featureName, Config genObject, WorldGen gen, INumberProvider numClusters, boolean retrogen, Logger log) {
-
-		INumberProvider minHeight = NumberData.parseNumberValue(genObject.getValue("min-height"));
-		INumberProvider maxHeight = NumberData.parseNumberValue(genObject.getValue("max-height"));
-
-		return new DistributionUniform(featureName, gen, numClusters, minHeight, maxHeight, retrogen);
-	}
-
 }

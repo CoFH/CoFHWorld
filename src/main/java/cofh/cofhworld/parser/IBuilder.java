@@ -10,6 +10,7 @@ import cofh.cofhworld.util.random.WeightedBlock;
 import cofh.cofhworld.util.random.WeightedEnum;
 import cofh.cofhworld.util.random.WeightedNBTTag;
 import cofh.cofhworld.util.random.WeightedString;
+import cofh.cofhworld.world.IFeatureGenerator;
 import cofh.cofhworld.world.generator.WorldGen;
 import com.google.common.collect.Sets;
 import com.typesafe.config.*;
@@ -369,7 +370,14 @@ public interface IBuilder<T> {
 			/**
 			 *
 			 */
+			public static final Type<WorldGen> GENERATOR = new Type<>(GeneratorData::parseGenerator);
+
+			/**
+			 *
+			 */
 			public static final Type<List<WorldGen>> GENERATOR_LIST = new Type<>(GeneratorData::parseGenerators);
+
+			public static final Type<List<IFeatureGenerator>> FEATURE_LIST = new Type<>(DistributionData::parseFeatures);
 
 			/**
 			 *
