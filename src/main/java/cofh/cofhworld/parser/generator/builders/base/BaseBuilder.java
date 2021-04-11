@@ -21,14 +21,4 @@ public abstract class BaseBuilder<T extends WorldGen> implements IBuilder<T> {
 
 		this.material = material;
 	}
-
-	public static void SET_RESOURCE(IBuilder<?> builder, List<WeightedBlock> resource) {
-
-		((BaseBuilder<?>)builder).setResource(resource); // because you cannot reference instance methods of abstract classes for lambdas
-	}
-
-	public static void SET_MATERIAL(IBuilder<?> builder, List<Material> material) {
-
-		((BaseBuilder<?>)builder).setMaterial(material); // because you cannot reference instance methods of abstract classes for lambdas
-	}
 }
