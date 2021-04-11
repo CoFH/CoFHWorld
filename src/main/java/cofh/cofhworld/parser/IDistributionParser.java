@@ -198,10 +198,10 @@ public interface IDistributionParser<T extends IConfigurableFeatureGenerator, B 
 		IConfigurableFeatureGenerator feature;
 		try {
 			feature = genData.parse(genObject, field -> {
-				log.error("Missing required setting `{}` for generator type '{}' on line {}.", field, name, genObject.origin().lineNumber());
+				log.error("Missing required setting `{}` for distribution type '{}' on line {}.", field, name, genObject.origin().lineNumber());
 			}, (field, origin) -> {
 				if (field.length() > 0 & (field.charAt(0) == '_' || InvalidDistributionException.EXTERNAL_FIELDS.contains(field))) return false;
-				log.warn("Unknown setting `{}` for generator type '{}' on line {}", field, name, origin.lineNumber());
+				log.warn("Unknown setting `{}` for distribution type '{}' on line {}", field, name, origin.lineNumber());
 				return false;
 			}, FeatureNameData.of(featureName)
 			);
