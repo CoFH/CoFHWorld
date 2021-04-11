@@ -98,10 +98,29 @@ public interface IBuilder<T> {
 		 *
 		 * @param genObject
 		 * @param onMissingField
+		 * @param onUnknownField
 		 * @return
 		 * @throws InvalidConfigurationException
 		 */
 		public V parse(Config genObject, Consumer<String> onMissingField, BiPredicate<String, ConfigOrigin> onUnknownField) throws InvalidConfigurationException {
+
+			return parse(genObject, onMissingField, onUnknownField, null);
+		}
+
+		/**
+		 *
+		 * @param genObject
+		 * @param onMissingField
+		 * @param onUnknownField
+		 * @param withExternalData
+		 * @return
+		 * @throws InvalidConfigurationException
+		 */
+		public V parse(Config genObject,
+				Consumer<String> onMissingField,
+				BiPredicate<String, ConfigOrigin> onUnknownField,
+				Consumer<? super IBuilder<V>> withExternalData
+		) throws InvalidConfigurationException {
 
 			boolean missedFields = false;
 			l: for (BuilderField<?, ?> field : requiredFields) {
@@ -118,6 +137,7 @@ public interface IBuilder<T> {
 			}
 
 			IBuilder<V> builder = this.builder.get();
+			if (withExternalData != null) withExternalData.accept(builder);
 
 			HashSet<String> usedKeys = onUnknownField == null ? null : new HashSet<>();
 			for (BuilderField<? super IBuilder<V>, ? super Object> field : fields) {
