@@ -15,9 +15,9 @@ import static cofh.cofhworld.world.generator.WorldGen.canGenerateInBlock;
 
 public class DistributionSurface extends Distribution {
 
-	private final WorldGen worldGen;
-	private final INumberProvider count;
-	private final Material[] matList;
+	protected final WorldGen worldGen;
+	protected final INumberProvider count;
+	protected final Material[] matList;
 
 	public DistributionSurface(String name, WorldGen worldGen, List<Material> matList, INumberProvider count, boolean regen) {
 

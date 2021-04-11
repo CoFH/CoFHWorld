@@ -14,18 +14,11 @@ import java.util.Random;
 
 import static cofh.cofhworld.world.generator.WorldGen.canGenerateInBlock;
 
-public class DistributionTopBlock extends Distribution {
-
-	private final WorldGen worldGen;
-	private final INumberProvider count;
-	private final Material[] matList;
+public class DistributionTopBlock extends DistributionSurface {
 
 	public DistributionTopBlock(String name, WorldGen worldGen, List<Material> matList, INumberProvider count, boolean regen) {
 
-		super(name, regen);
-		this.worldGen = worldGen;
-		this.count = count;
-		this.matList = matList.toArray(new Material[0]);
+		super(name, worldGen, matList, count, regen);
 	}
 
 	@Override

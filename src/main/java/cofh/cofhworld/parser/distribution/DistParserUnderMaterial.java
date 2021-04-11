@@ -38,7 +38,7 @@ public class DistParserUnderMaterial extends AbstractDistParser {
 			}
 		}
 
-		// does this logic actually need a material?
+		// FIXME: does this logic actually need a material?
 		List<Material> materials = new ArrayList<>();
 		if (genObject.hasPath("material")) {
 			if (!BlockData.parseMaterialList(genObject.getValue("material"), materials)) {
