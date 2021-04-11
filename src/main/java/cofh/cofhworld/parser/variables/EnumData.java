@@ -30,6 +30,7 @@ public class EnumData {
 			ConfigList configList = (ConfigList) enumEntry;
 
 			for (int i = 0, e = configList.size(); i < e; i++) {
+				if (configList.get(i).valueType() == ConfigValueType.NULL) continue;
 				WeightedEnum<T> entry = parseEnumEntry(configList.get(i), values);
 				if (entry == null) {
 					return false;
