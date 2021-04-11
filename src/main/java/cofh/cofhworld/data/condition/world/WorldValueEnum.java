@@ -4,6 +4,7 @@ import cofh.cofhworld.data.DataHolder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 
 import java.util.Random;
@@ -60,6 +61,13 @@ public enum WorldValueEnum {
 		public boolean getValue(IWorld world, Random rand, DataHolder data) {
 
 			return world.getDimensionType().hasSkyLight();
+		}
+	},
+	IS_BLOCK_LIT_FROM_SKY {
+		@Override
+		public boolean getValue(IWorld world, Random rand, DataHolder data) {
+
+			return world.getLightFor(LightType.SKY, new BlockPos(data.getPosition()).up()) > 0;
 		}
 	},
 	IS_AIR {
