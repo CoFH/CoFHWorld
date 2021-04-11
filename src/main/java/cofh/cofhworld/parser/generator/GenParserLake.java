@@ -14,10 +14,13 @@ public class GenParserLake implements AbstractGenParserResource<WorldGenAdvLakes
 		AbstractGenParserResource.super.getFields(fields);
 		fields.setConstructor(BuilderAdvLake::new);
 
+		fields.addOptionalField("filler-condition", Type.CONDITION, BuilderAdvLake::setGapCondition, "gap-condition");
+		fields.addOptionalField("filler", Type.BLOCK_LIST, BuilderAdvLake::setFiller, "gap-block");
+
+		fields.addOptionalField("resurface-condition", Type.CONDITION, BuilderAdvLake::setResurfaceCondition);
+
 		fields.addOptionalField("outline", Type.BLOCK_LIST, BuilderAdvLake::setOutline, "outline-block");
 		fields.addOptionalField("outline-condition", Type.CONDITION, BuilderAdvLake::setOutlineCondition);
-
-		fields.addOptionalField("filler", Type.BLOCK_LIST, BuilderAdvLake::setFiller, "gap-block");
 	}
 
 }

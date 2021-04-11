@@ -9,11 +9,9 @@ import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.world.DirectionalScanner;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.util.random.WeightedBlock;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 
 import java.util.List;
@@ -24,7 +22,10 @@ public class WorldGenAdvLakes extends WorldGen {
 	private final Material[] material;
 	private final List<WeightedBlock> resource;
 
+	private final ICondition gapCondition;
 	private final List<WeightedBlock> filler;
+
+	private final ICondition resurfaceCondition;
 
 	private final List<WeightedBlock> outline;
 	private final ICondition outlineCondition;
@@ -32,10 +33,15 @@ public class WorldGenAdvLakes extends WorldGen {
 	private INumberProvider width;
 	private INumberProvider height;
 
-	public WorldGenAdvLakes(List<WeightedBlock> resource, List<Material> materials, List<WeightedBlock> filler, List<WeightedBlock> outline, ICondition outlineCondition) {
+	public WorldGenAdvLakes(List<WeightedBlock> resource, List<Material> materials,
+			ICondition gapCondition, List<WeightedBlock> filler,
+			ICondition resurfaceCondition,
+			List<WeightedBlock> outline, ICondition outlineCondition) {
 
 		this.resource = resource;
+		this.gapCondition = gapCondition;
 		this.filler = filler;
+		this.resurfaceCondition = resurfaceCondition;
 		this.outline = outline;
 		this.outlineCondition = outlineCondition;
 		if (materials == null) {
@@ -117,12 +123,14 @@ public class WorldGenAdvLakes extends WorldGen {
 		for (x = 0; x < width; ++x) {
 			for (z = 0; z < width; ++z) {
 				for (y = 0; y < height; ++y) {
-					boolean flag = spawnBlock[(x * width + z) * height + y] || ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
+					boolean flag = spawnBlock[(x * width + z) * height + y] ||
+							((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) ||
+									(z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) ||
+									(y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
 					if (flag) {
 						if (y >= heightOff) {
-							net.minecraft.block.material.Material material = getBlockState(world, xStart + x, yStart + y, zStart + z).getMaterial();
-							if (material.isLiquid()) { // TODO: add/make ICondition?
+							if (!gapCondition.checkCondition(world, rand, data.setPosition(new BlockPos(xStart + x, yStart + y, zStart + z)))) {
 								return false;
 							}
 						} else {
@@ -153,8 +161,8 @@ public class WorldGenAdvLakes extends WorldGen {
 			for (z = 0; z < width; ++z) {
 				for (y = 0; y < height; ++y) {
 					if (spawnBlock[(x * width + z) * height + y] &&
-							getBlockState(world, xStart + x, yStart + y - 1, zStart + z).getBlock().equals(Blocks.DIRT) && // TODO: ICondition
-							world.getLightFor(LightType.SKY, new BlockPos(xStart + x, yStart + y, zStart + z)) > 0) {
+							resurfaceCondition.checkCondition(world, rand, data.setPosition(new BlockPos(xStart + x, yStart + y - 1, zStart + z)))
+					) {
 						Biome bgb = world.getBiome(new BlockPos(xStart + x, 0, zStart + z));
 						setBlockState(world, new BlockPos(xStart + x, yStart + y - 1, zStart + z), bgb.getGenerationSettings().getSurfaceBuilderConfig().getTop());
 					}
@@ -167,7 +175,10 @@ public class WorldGenAdvLakes extends WorldGen {
 			for (x = 0; x < width; ++x) {
 				for (z = 0; z < width; ++z) {
 					for (y = 0; y < height; ++y) {
-						boolean flag = !spawnBlock[(x * width + z) * height + y] && ((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) || (z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) || (y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
+						boolean flag = !spawnBlock[(x * width + z) * height + y] &&
+								((x < W && spawnBlock[((x + 1) * width + z) * height + y]) || (x > 0 && spawnBlock[((x - 1) * width + z) * height + y]) ||
+										(z < W && spawnBlock[(x * width + (z + 1)) * height + y]) || (z > 0 && spawnBlock[(x * width + (z - 1)) * height + y]) ||
+										(y < H && spawnBlock[(x * width + z) * height + (y + 1)]) || (y > 0 && spawnBlock[(x * width + z) * height + (y - 1)]));
 
 						if (flag) {
 							data.setValue("layer", y).setPosition(new BlockPos(xStart + x, yStart + y, zStart + z));
