@@ -52,7 +52,7 @@ public class WorldGenAdvLakes extends WorldGen {
 		setWidth(16);
 		setHeight(8);
 
-		setOffsetY(new DirectionalScanner(WorldValueCondition.IS_BLOCK_AIR, Direction.DOWN, new WorldValueProvider("CURRENT_Y")));
+		setOffsetY(new DirectionalScanner(WorldValueCondition.IS_BLOCK_AIR, Direction.DOWN, WorldValueProvider.CURRENT_Y));
 	}
 
 	@Override

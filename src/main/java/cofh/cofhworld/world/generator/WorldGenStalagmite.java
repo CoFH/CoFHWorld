@@ -47,9 +47,9 @@ public class WorldGenStalagmite extends WorldGen {
 				direction,
 				direction == Direction.UP ? new MathProvider(
 						new ConstantProvider(256),
-						new WorldValueProvider("CURRENT_Y"),
+						WorldValueProvider.CURRENT_Y,
 						"SUBTRACT"
-				) : new WorldValueProvider("CURRENT_Y")));
+				) : WorldValueProvider.CURRENT_Y));
 	}
 
 	protected int getHeight(int x, int z, int size, Random rand, int height, boolean fat, boolean smooth, boolean altSinc) {

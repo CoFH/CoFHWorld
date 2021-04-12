@@ -44,7 +44,7 @@ public class WorldGenSpike extends WorldGen {
 		this.largeSpikes = largeSpikes;
 		this.largeSpikeHeightGain = largeSpikeHeightGain;
 		this.layerSize = layerSize;
-		setOffsetY(new DirectionalScanner(WorldValueCondition.IS_BLOCK_AIR, Direction.DOWN, new WorldValueProvider("CURRENT_Y")));
+		setOffsetY(new DirectionalScanner(WorldValueCondition.IS_BLOCK_AIR, Direction.DOWN, WorldValueProvider.CURRENT_Y));
 	}
 
 	@Override

@@ -24,12 +24,12 @@ public class DistributionCave extends Distribution {
 
 	private final static INumberProvider MAX_LEVEL = new ConditionalProvider(
 			new ComparisonCondition(
-					new StoreProvider("ground_level", new WorldValueProvider("GROUND_LEVEL")),
+					new StoreProvider("ground_level", WorldValueProvider.GROUND_LEVEL),
 					new ConstantProvider(20),
 					">="
 			),
-			new DefaultedDataProvider("store:ground_level", new WorldValueProvider("GROUND_LEVEL")),
-			new WorldValueProvider("WORLD_HEIGHT")
+			new DefaultedDataProvider("store:ground_level", WorldValueProvider.GROUND_LEVEL),
+			WorldValueProvider.WORLD_HEIGHT
 	);
 	private final static INumberProvider MIN_LEVEL = ConstantProvider.ZERO;
 	private final static INumberProvider INTERMEDIATE_LEVEL = new UniformRandomProvider(

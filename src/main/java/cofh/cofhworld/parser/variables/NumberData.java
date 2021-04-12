@@ -39,7 +39,7 @@ public class NumberData {
 						} else if (numberProps.containsKey("variance")) {
 							return new SkellamRandomProvider(parseNumberValue(numberObject.getValue("variance")));
 						} else if (numberProps.containsKey("world-data")) {
-							return new WorldValueProvider(numberObject.getString("world-data"));
+							return WorldValueProvider.getProvider(numberObject.getString("world-data"));
 						} else if (numberProps.containsKey("generator-data")) {
 							return new DataProvider(numberObject.getString("generator-data"));
 						}
