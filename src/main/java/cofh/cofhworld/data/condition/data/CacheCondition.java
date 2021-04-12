@@ -16,7 +16,7 @@ public class CacheCondition extends DefaultedDataCondition {
 	@Override
 	public boolean checkCondition(IWorld world, Random rand, DataHolder data) {
 
-		if (data.hasValue(key, Number.class)) return data.getBool(key);
+		if (data.hasValue(key, Boolean.class)) return data.getBool(key);
 		boolean value = def.checkCondition(world, rand, data);
 		data.setValue(key, value);
 		return value;
