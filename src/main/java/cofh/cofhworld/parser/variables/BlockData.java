@@ -201,7 +201,7 @@ public class BlockData {
 						return null;
 					}
 				} else if (matObject.hasPath("fluid")) { // exclusive with name
-					List<WeightedString> tags = new LinkedList<>();
+					List<WeightedString> tags = new LinkedList<>(); // TODO: special-case "*" for any non-empty fluidstate?
 					if (StringData.parseStringList(matObject.getValue("fluid"), tags)) {
 						material = new FluidMaterial(inclusive, tags.stream().map(str -> str.value).distinct().toArray(String[]::new));
 					} else {
