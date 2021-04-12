@@ -24,37 +24,37 @@ public class BinaryCondition implements ICondition {
 	@Override
 	public boolean checkCondition(IWorld world, Random rand, DataHolder data) {
 
-		return operation.perform(valueA.checkCondition(world, rand, data), valueB.checkCondition(world, rand, data));
+		return operation.perform(valueA, valueB, world, rand, data);
 	}
 
 	public static enum Operation {
 
 		EQUAL_TO("==", "===", "equals", "equal") {
 			@Override
-			public boolean perform(boolean a, boolean b) {
+			public boolean perform(ICondition a, ICondition b, IWorld world, Random rand, DataHolder data) {
 
-				return a == b;
+				return a.checkCondition(world, rand, data) == b.checkCondition(world, rand, data);
 			}
 		},
 		NOT_EQUAL_TO("!=", "<>", "~=", "inequal", "unequal", "not_equal", "xor", "^") {
 			@Override
-			public boolean perform(boolean a, boolean b) {
+			public boolean perform(ICondition a, ICondition b, IWorld world, Random rand, DataHolder data) {
 
-				return a != b;
+				return a.checkCondition(world, rand, data) != b.checkCondition(world, rand, data);
 			}
 		},
 		AND("&", "&&") {
 			@Override
-			public boolean perform(boolean a, boolean b) {
+			public boolean perform(ICondition a, ICondition b, IWorld world, Random rand, DataHolder data) {
 
-				return a & b;
+				return a.checkCondition(world, rand, data) && b.checkCondition(world, rand, data);
 			}
 		},
 		OR("|", "||") {
 			@Override
-			public boolean perform(boolean a, boolean b) {
+			public boolean perform(ICondition a, ICondition b, IWorld world, Random rand, DataHolder data) {
 
-				return a | b;
+				return a.checkCondition(world, rand, data) || b.checkCondition(world, rand, data);
 			}
 		},
 		;
@@ -65,7 +65,7 @@ public class BinaryCondition implements ICondition {
 				putEntry(name, this);
 		}
 
-		public abstract boolean perform(boolean a, boolean b);
+		public abstract boolean perform(ICondition a, ICondition b, IWorld world, Random rand, DataHolder data);
 
 		private static Object2ObjectArrayMap<String, Operation> mappings;
 
