@@ -101,18 +101,11 @@ public enum WorldValueEnum {
 			return BlockTags.LEAVES.contains(world.getBlockState(pos).getBlock());
 		}
 	},
-	IS_BLOCK_LIQUID {
+	IS_BLOCK_FLUID {
 		@Override
 		public boolean getValue(IWorld world, Random rand, DataHolder data) {
 
-			return world.getBlockState(new BlockPos(data.getPosition())).getMaterial().isLiquid();
-		}
-	},
-	IS_BLOCK_OPAQUE {
-		@Override
-		public boolean getValue(IWorld world, Random rand, DataHolder data) {
-
-			return world.getBlockState(new BlockPos(data.getPosition())).getMaterial().isOpaque();
+			return !world.getBlockState(new BlockPos(data.getPosition())).getFluidState().isEmpty();
 		}
 	},
 //	IS_BLOCK_PASSABLE {
