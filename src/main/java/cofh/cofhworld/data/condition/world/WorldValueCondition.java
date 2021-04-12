@@ -2,7 +2,6 @@ package cofh.cofhworld.data.condition.world;
 
 import cofh.cofhworld.data.DataHolder;
 import cofh.cofhworld.data.condition.ICondition;
-import cofh.cofhworld.data.condition.operation.BinaryCondition.Operation;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
@@ -176,7 +175,7 @@ public enum WorldValueCondition implements ICondition {
 
 		type = type.trim().toUpperCase(Locale.ROOT);
 		if (!mappings.containsKey(type))
-			throw new IllegalArgumentException("No enum constant " + Operation.class.getCanonicalName() + "." + type);
+			throw new IllegalArgumentException("No enum constant " + WorldValueCondition.class.getCanonicalName() + "." + type);
 		return mappings.get(type);
 	}
 }
