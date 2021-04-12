@@ -27,7 +27,7 @@ public enum WorldValueEnum {
 		public long getValue(IWorld world, Random rand, DataHolder data) {
 
 			Vector3i pos = data.getPosition();
-			return world.getHeight(Type.WORLD_SURFACE_WG, pos.getX(), pos.getZ());
+			return world.getHeight(Type.WORLD_SURFACE, pos.getX(), pos.getZ());
 		}
 	}, RAIN_HEIGHT {
 		@Override
