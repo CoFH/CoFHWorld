@@ -55,6 +55,8 @@ public class NumberData {
 								return new UnaryMathProvider(parseNumberValue(numberObject.getValue("value")), numberObject.getString("operation"));
 							} else if (numberProps.containsKey("cache")) {
 								return new CacheProvider(numberObject.getString("cache"), parseNumberValue(numberObject.getValue("value")));
+							} else if (numberProps.containsKey("store")) {
+								return new StoreProvider(numberObject.getString("store"), parseNumberValue(numberObject.getValue("value")));
 							}
 						}
 						break;
