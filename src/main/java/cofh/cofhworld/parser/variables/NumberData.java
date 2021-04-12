@@ -2,10 +2,7 @@ package cofh.cofhworld.parser.variables;
 
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.data.CacheProvider;
-import cofh.cofhworld.data.numbers.data.DataProvider;
-import cofh.cofhworld.data.numbers.data.DefaultedDataProvider;
-import cofh.cofhworld.data.numbers.data.TableProvider;
+import cofh.cofhworld.data.numbers.data.*;
 import cofh.cofhworld.data.numbers.operation.BoundedProvider;
 import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
 import cofh.cofhworld.data.numbers.operation.MathProvider;
@@ -53,10 +50,12 @@ public class NumberData {
 							return new UniformRandomProvider(parseNumberValue(numberObject.getValue("min")), parseNumberValue(numberObject.getValue("max")));
 						} else if (numberProps.containsKey("generator-data") && numberProps.containsKey("default-value")) {
 							return new DefaultedDataProvider(numberObject.getString("generator-data"), parseNumberValue(numberObject.getValue("default-value")));
-						} else if (numberProps.containsKey("operation") && numberProps.containsKey("value")) {
-							return new UnaryMathProvider(parseNumberValue(numberObject.getValue("value")), numberObject.getString("operation"));
-						} else if (numberProps.containsKey("cache") && numberProps.containsKey("key")) {
-							return new CacheProvider(numberObject.getString("key"), parseNumberValue(numberObject.getValue("cache")));
+						} else if (numberProps.containsKey("value")) {
+							if (numberProps.containsKey("operation")) {
+								return new UnaryMathProvider(parseNumberValue(numberObject.getValue("value")), numberObject.getString("operation"));
+							} else if (numberProps.containsKey("cache")) {
+								return new CacheProvider(numberObject.getString("cache"), parseNumberValue(numberObject.getValue("value")));
+							}
 						}
 						break;
 					}
