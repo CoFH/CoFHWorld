@@ -1,7 +1,7 @@
 package cofh.cofhworld.parser.distribution.builders;
 
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.operation.BoundedProvider;
+import cofh.cofhworld.data.numbers.operation.WorldHeightBoundProvider;
 import cofh.cofhworld.parser.distribution.builders.base.BuilderGenerator;
 import cofh.cofhworld.world.distribution.DistributionCustom;
 
@@ -18,7 +18,7 @@ public class BuilderCustom extends BuilderGenerator<DistributionCustom> {
 
 	public void setyOffset(INumberProvider yOffset) {
 
-		this.yOffset = new BoundedProvider(yOffset, 0, 255);
+		this.yOffset = new WorldHeightBoundProvider(yOffset);
 	}
 
 	public void setzOffset(INumberProvider zOffset) {

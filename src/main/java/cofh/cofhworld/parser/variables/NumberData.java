@@ -77,10 +77,14 @@ public class NumberData {
 							b = parseNumberValue(numberObject.getValue("if-false"));
 							return new ConditionalProvider(parseConditionValue(numberObject.getValue("condition")), a, b);
 						} else if (numberProps.containsKey("condition") && numberProps.containsKey("limit") && numberProps.containsKey("direction")) {
-							a = parseNumberValue(numberObject.getValue("limit"), 0, 256);
 							WeightedEnum<Direction> dir = EnumData.parseEnumEntry(numberObject.getValue("direction"), Direction.class);
 							if (dir == null) {
 								throw new Error(String.format("Invalid direction provided at line %s", numberObject.getValue("direction").origin().lineNumber()));
+							}
+							if (dir.value.getAxis() == Direction.Axis.Y) {
+								a = parseNumberValue(numberObject.getValue("limit"), true);
+							} else {
+								a = parseNumberValue(numberObject.getValue("limit"), 0, 128);
 							}
 							return new DirectionalScanner(parseConditionValue(numberObject.getValue("condition")), dir.value, a);
 						} else if (numberProps.containsKey("table") && numberProps.containsKey("lookup") && numberProps.containsKey("default")) {
@@ -124,6 +128,11 @@ public class NumberData {
 	public static INumberProvider parseNumberValue(ConfigValue numberEntry, Number min, Number max) {
 
 		return new BoundedProvider(parseNumberValue(numberEntry), new ConstantProvider(min), new ConstantProvider(max));
+	}
+
+	public static INumberProvider parseNumberValue(ConfigValue numberEntry, boolean world_height_dummy) {
+
+		return new WorldHeightBoundProvider(parseNumberValue(numberEntry));
 	}
 
 }

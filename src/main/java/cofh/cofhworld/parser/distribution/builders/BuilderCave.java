@@ -2,7 +2,7 @@ package cofh.cofhworld.parser.distribution.builders;
 
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.operation.BoundedProvider;
+import cofh.cofhworld.data.numbers.operation.WorldHeightBoundProvider;
 import cofh.cofhworld.parser.distribution.builders.base.BuilderGenerator;
 import cofh.cofhworld.world.distribution.DistributionCave;
 
@@ -45,13 +45,13 @@ public class BuilderCave extends BuilderGenerator<DistributionCave> {
 
 		DistributionCave cave = new DistributionCave(featureName, generator, ceiling, clusterCount, retrogen);
 		if (maxHeight != null) {
-			cave.setMaxLevel(new BoundedProvider(maxHeight, 0, 255));
+			cave.setMaxLevel(new WorldHeightBoundProvider(maxHeight));
 		}
 		if (avgHeight != null) {
-			cave.setIntermediateLevel(new BoundedProvider(avgHeight, 0, 255));
+			cave.setIntermediateLevel(new WorldHeightBoundProvider(avgHeight));
 		}
 		if (minHeight != null) {
-			cave.setMinLevel(new BoundedProvider(minHeight, 0, 255));
+			cave.setMinLevel(new WorldHeightBoundProvider(minHeight));
 		}
 		if (caveCondition != null) {
 			cave.setCaveCondition(caveCondition);
