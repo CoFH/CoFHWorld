@@ -43,7 +43,7 @@ public class WorldGenStalagmite extends WorldGen {
 		this.smooth = smooth;
 		this.altSinc = altSinc;
 		setOffsetY(new DirectionalScanner(
-				new WorldValueCondition("IS_AIR"),
+				WorldValueCondition.IS_BLOCK_AIR,
 				direction,
 				direction == Direction.UP ? new MathProvider(
 						new ConstantProvider(256),

@@ -37,8 +37,8 @@ public class DistributionCave extends Distribution {
 			new UnaryMathProvider(new DataProvider("max-height"), "INCREMENT")
 	);
 	private final static ICondition IS_AIR_OR_FLUID = new BinaryCondition(
-			new WorldValueCondition("IS_AIR"),
-			new WorldValueCondition("IS_BLOCK_FLUID"),
+			WorldValueCondition.IS_BLOCK_AIR,
+			WorldValueCondition.IS_BLOCK_FLUID,
 			"OR"
 	);
 

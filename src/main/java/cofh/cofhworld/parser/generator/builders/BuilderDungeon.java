@@ -25,7 +25,7 @@ public class BuilderDungeon extends BaseBuilder<WorldGenDungeon> {
 
 	final private static INumberProvider TWO = new ConstantProvider(2), THREE = new ConstantProvider(3);
 	final private static INumberProvider TWO_OR_THREE = new UniformRandomProvider(TWO, new UnaryMathProvider(THREE, "INCREMENT"));
-	final private static ICondition IS_AIR = new WorldValueCondition("IS_AIR");
+	final private static ICondition IS_AIR = WorldValueCondition.IS_BLOCK_AIR;
 	final private static ICondition ONE_TO_FIVE = new BinaryCondition(
 			new ComparisonCondition(new DataProvider("holes"), new ConstantProvider(1), "GREATER_THAN_OR_EQUAL"),
 			new ComparisonCondition(new DataProvider("holes"), new ConstantProvider(5), "LESS_THAN_OR_EQUAL"),

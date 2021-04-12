@@ -46,7 +46,7 @@ public class WorldGenBoulder extends WorldGen {
 		this.xVar = xVar;
 		this.yVar = yVar;
 		this.zVar = zVar;
-		setOffsetY(new DirectionalScanner(new WorldValueCondition("IS_AIR"), Direction.DOWN, new WorldValueProvider("CURRENT_Y")));
+		setOffsetY(new DirectionalScanner(WorldValueCondition.IS_BLOCK_AIR, Direction.DOWN, new WorldValueProvider("CURRENT_Y")));
 	}
 
 	@Override

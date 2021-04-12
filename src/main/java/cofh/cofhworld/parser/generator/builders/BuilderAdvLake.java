@@ -33,7 +33,7 @@ public class BuilderAdvLake extends BaseBuilder<WorldGenAdvLakes> {
 			"AND");
 	private static final ICondition RESURFACE_CONDITION = new BinaryCondition(
 			new MaterialCondition(Collections.singletonList(TagMaterial.of(Collections.singleton(Tags.Blocks.DIRT.getName()), true))),
-			new WorldValueCondition("IS_BLOCK_LIT_FROM_SKY"),
+			WorldValueCondition.IS_BLOCK_LIT_FROM_SKY,
 			"AND");
 	private static final ICondition GAP_CONDITION = new MaterialCondition(Collections.singletonList(new MaterialPropertyMaterial(false, "LIQUID")));
 

@@ -12,7 +12,7 @@ import java.util.List;
 
 public class BuilderDecoration extends BuilderSize<WorldGenDecoration> {
 
-	private static final ICondition SEE_SKY = new WorldValueCondition("CAN_SEE_SKY"), CHECK_STAY = new WorldValueCondition("BLOCK_CAN_PLACE");
+	private static final ICondition SEE_SKY = WorldValueCondition.CAN_SEE_SKY, CHECK_STAY = WorldValueCondition.BLOCK_CAN_PLACE;
 	private static final INumberProvider ONE = new ConstantProvider(1);
 
 	private List<Material> surface = null;

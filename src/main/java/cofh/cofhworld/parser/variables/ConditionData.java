@@ -47,7 +47,7 @@ public class ConditionData {
 							// for technical completeness
 							return new RandomCondition();
 						} else if (condProps.containsKey("world-data")) {
-							return new WorldValueCondition(condObject.getString("world-data"));
+							return WorldValueCondition.getCondition(condObject.getString("world-data"));
 						} else if (condProps.containsKey("not")) {
 							return new NotCondition(parseConditionValue(condObject.getValue("not")));
 						} else if (condProps.containsKey("material")) {
