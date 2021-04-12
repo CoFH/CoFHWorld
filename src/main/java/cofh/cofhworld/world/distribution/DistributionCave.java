@@ -7,8 +7,9 @@ import cofh.cofhworld.data.condition.operation.ComparisonCondition;
 import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
-import cofh.cofhworld.data.numbers.data.CacheProvider;
 import cofh.cofhworld.data.numbers.data.DataProvider;
+import cofh.cofhworld.data.numbers.data.DefaultedDataProvider;
+import cofh.cofhworld.data.numbers.data.StoreProvider;
 import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
 import cofh.cofhworld.data.numbers.operation.UnaryMathProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
@@ -23,11 +24,11 @@ public class DistributionCave extends Distribution {
 
 	private final static INumberProvider MAX_LEVEL = new ConditionalProvider(
 			new ComparisonCondition(
-					new CacheProvider("ground_level", new WorldValueProvider("GROUND_LEVEL")),
+					new StoreProvider("ground_level", new WorldValueProvider("GROUND_LEVEL")),
 					new ConstantProvider(20),
 					">="
 			),
-			new CacheProvider("ground_level", new WorldValueProvider("GROUND_LEVEL")),
+			new DefaultedDataProvider("store:ground_level", new WorldValueProvider("GROUND_LEVEL")),
 			new WorldValueProvider("WORLD_HEIGHT")
 	);
 	private final static INumberProvider MIN_LEVEL = ConstantProvider.ZERO;
@@ -98,7 +99,7 @@ public class DistributionCave extends Distribution {
 			final int maxHeight = this.maxHeight.intValue(world, random, data.setPosition(new BlockPos(x, 64, z))),
 					minHeight = this.minHeight.intValue(world, random, data.setValue("max-height", maxHeight)),
 					avgHeight = this.avgHeight.intValue(world, random, data.setValue("min-height", minHeight));
-			data.setValue("avg-height", avgHeight);
+			data.setValue("average-height", avgHeight);
 
 			int y = avgHeight;
 			while (!caveCondition.checkCondition(world, random, data.setPosition(new BlockPos(x, y, z)))) if (++y < maxHeight) break;
