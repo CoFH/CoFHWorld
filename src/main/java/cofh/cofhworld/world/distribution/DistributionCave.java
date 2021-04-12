@@ -21,16 +21,14 @@ import java.util.Random;
 
 public class DistributionCave extends Distribution {
 
-	private final static INumberProvider MAX_LEVEL = new CacheProvider("max-height",
-			new ConditionalProvider(
-					new ComparisonCondition(
-							new WorldValueProvider("GROUND_LEVEL"),
-							new ConstantProvider(20),
-							">="
-					),
-					new WorldValueProvider("GROUND_LEVEL"),
-					new WorldValueProvider("WORLD_HEIGHT")
-			)
+	private final static INumberProvider MAX_LEVEL = new ConditionalProvider(
+			new ComparisonCondition(
+					new CacheProvider("ground_level", new WorldValueProvider("GROUND_LEVEL")),
+					new ConstantProvider(20),
+					">="
+			),
+			new CacheProvider("ground_level", new WorldValueProvider("GROUND_LEVEL")),
+			new WorldValueProvider("WORLD_HEIGHT")
 	);
 	private final static INumberProvider MIN_LEVEL = ConstantProvider.ZERO;
 	private final static INumberProvider INTERMEDIATE_LEVEL = new UniformRandomProvider(
@@ -115,7 +113,7 @@ public class DistributionCave extends Distribution {
 
 			if (ceiling) {
 				final int stopHeight = y < avgHeight ? avgHeight + 1 : maxHeight;
-				while (caveCondition.checkCondition(world, random, data.setPosition(new BlockPos(x, y, z))) && ++y < maxHeight) if (++y < stopHeight) break;
+				while (caveCondition.checkCondition(world, random, data.setPosition(new BlockPos(x, y, z)))) if (++y < stopHeight) break;
 				if (y >= stopHeight) {
 					continue;
 				}
