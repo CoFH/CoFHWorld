@@ -1,11 +1,9 @@
 package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.data.DataHolder;
-import cofh.cofhworld.data.block.Material;
 import cofh.cofhworld.data.condition.ICondition;
 import cofh.cofhworld.data.condition.operation.BinaryCondition;
 import cofh.cofhworld.data.condition.operation.ComparisonCondition;
-import cofh.cofhworld.data.condition.world.MaterialCondition;
 import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
@@ -16,11 +14,9 @@ import cofh.cofhworld.data.numbers.operation.UnaryMathProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.world.generator.WorldGen;
-import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ISeedReader;
 
-import java.util.Collections;
 import java.util.Random;
 
 public class DistributionCave extends Distribution {
@@ -41,22 +37,15 @@ public class DistributionCave extends Distribution {
 			new DataProvider("min-height"),
 			new UnaryMathProvider(new DataProvider("max-height"), "INCREMENT")
 	);
-	private final static ICondition IS_AIR = new BinaryCondition(
+	private final static ICondition IS_AIR_OR_FLUID = new BinaryCondition(
 			new WorldValueCondition("IS_AIR"),
-			new MaterialCondition(Collections.singletonList(new Material() {
-
-				@Override
-				public boolean test(BlockState blockState) {
-
-					return !blockState.getFluidState().isEmpty(); // TODO: expose this logic in normal material parser
-				}
-			})),
+			new WorldValueCondition("IS_BLOCK_FLUID"),
 			"OR"
 	);
 
 	private final WorldGen worldGen;
 	private final INumberProvider count;
-	private ICondition caveCondition = IS_AIR;
+	private ICondition caveCondition = IS_AIR_OR_FLUID;
 	private INumberProvider maxHeight = MAX_LEVEL, avgHeight = INTERMEDIATE_LEVEL, minHeight = MIN_LEVEL;
 	private final boolean ceiling;
 
