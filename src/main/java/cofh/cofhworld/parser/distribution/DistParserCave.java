@@ -15,7 +15,10 @@ public class DistParserCave extends AbstractDistParser<DistributionCave, Builder
 		fields.setConstructor(BuilderCave::new);
 
 		fields.addOptionalField("ceiling", Type.RAW_BOOLEAN, BuilderCave::setCeiling);
-		fields.addOptionalField("ground-level", Type.NUMBER, BuilderCave::setGroundLevel);
+		fields.addOptionalField("max-height", Type.NUMBER, BuilderCave::setMaxLevel, "ground-level");
+		fields.addOptionalField("min-height", Type.NUMBER, BuilderCave::setMinLevel);
+		fields.addOptionalField("average-height", Type.NUMBER, BuilderCave::setAvgLevel);
+		fields.addOptionalField("cave-condition", Type.CONDITION, BuilderCave::setCaveCondition);
 	}
 
 }

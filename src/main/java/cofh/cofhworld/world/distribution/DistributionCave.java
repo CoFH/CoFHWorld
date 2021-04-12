@@ -1,10 +1,18 @@
 package cofh.cofhworld.world.distribution;
 
 import cofh.cofhworld.data.DataHolder;
+import cofh.cofhworld.data.block.Material;
+import cofh.cofhworld.data.condition.ICondition;
+import cofh.cofhworld.data.condition.operation.BinaryCondition;
+import cofh.cofhworld.data.condition.operation.ComparisonCondition;
+import cofh.cofhworld.data.condition.world.MaterialCondition;
+import cofh.cofhworld.data.condition.world.WorldValueCondition;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
+import cofh.cofhworld.data.numbers.data.CacheProvider;
 import cofh.cofhworld.data.numbers.data.DataProvider;
-import cofh.cofhworld.data.numbers.operation.MathProvider;
+import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
+import cofh.cofhworld.data.numbers.operation.UnaryMathProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.data.numbers.world.WorldValueProvider;
 import cofh.cofhworld.world.generator.WorldGen;
@@ -12,19 +20,44 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ISeedReader;
 
+import java.util.Collections;
 import java.util.Random;
 
 public class DistributionCave extends Distribution {
 
-	private final static INumberProvider GROUND_LEVEL = new WorldValueProvider("GROUND_LEVEL");
+	private final static INumberProvider MAX_LEVEL = new CacheProvider("max-height",
+			new ConditionalProvider(
+					new ComparisonCondition(
+							new WorldValueProvider("GROUND_LEVEL"),
+							new ConstantProvider(20),
+							">="
+					),
+					new WorldValueProvider("GROUND_LEVEL"),
+					new WorldValueProvider("WORLD_HEIGHT")
+			)
+	);
+	private final static INumberProvider MIN_LEVEL = ConstantProvider.ZERO;
 	private final static INumberProvider INTERMEDIATE_LEVEL = new UniformRandomProvider(
-			ConstantProvider.ZERO,
-			new MathProvider(ConstantProvider.ONE, new DataProvider("ground-level"), "ADD")
+			new DataProvider("min-height"),
+			new UnaryMathProvider(new DataProvider("max-height"), "INCREMENT")
+	);
+	private final static ICondition IS_AIR = new BinaryCondition(
+			new WorldValueCondition("IS_AIR"),
+			new MaterialCondition(Collections.singletonList(new Material() {
+
+				@Override
+				public boolean test(BlockState blockState) {
+
+					return !blockState.getFluidState().isEmpty(); // TODO: expose this logic in normal material parser
+				}
+			})),
+			"OR"
 	);
 
 	private final WorldGen worldGen;
 	private final INumberProvider count;
-	private INumberProvider groundLevel = GROUND_LEVEL, intermediateLevel = INTERMEDIATE_LEVEL, floorLevel = ConstantProvider.ZERO; // TODO: names
+	private ICondition caveCondition = IS_AIR;
+	private INumberProvider maxHeight = MAX_LEVEL, avgHeight = INTERMEDIATE_LEVEL, minHeight = MIN_LEVEL;
 	private final boolean ceiling;
 
 	public DistributionCave(String name, WorldGen worldGen, boolean ceiling, INumberProvider count, boolean regen) {
@@ -35,18 +68,28 @@ public class DistributionCave extends Distribution {
 		this.ceiling = ceiling;
 	}
 
-	public void setGroundLevel(INumberProvider level) {
+	public void setMaxLevel(INumberProvider level) {
 
-		this.groundLevel = level;
+		this.maxHeight = level;
 	}
 
 	public void setIntermediateLevel(INumberProvider level) {
 
-		this.intermediateLevel = level;
+		this.avgHeight = level;
+	}
+
+	public void setMinLevel(INumberProvider level) {
+
+		this.minHeight = level;
+	}
+
+	public void setCaveCondition(ICondition condition) {
+
+		this.caveCondition = condition;
 	}
 
 	@Override
-	public boolean generateFeature(Random random, int blockX, int blockZ, ISeedReader world) { // TODO: this logic needs looked at
+	public boolean generateFeature(Random random, int blockX, int blockZ, ISeedReader world) {
 
 		BlockPos pos = new BlockPos(blockX, 64, blockZ);
 
@@ -65,47 +108,32 @@ public class DistributionCave extends Distribution {
 			if (!canGenerateInBiome(world, x, z, random)) {
 				continue;
 			}
-			int seaLevel = groundLevel.intValue(world, random, data.setPosition(new BlockPos(x, 64, z)));
-			if (seaLevel < 20 && groundLevel == GROUND_LEVEL) {
-				seaLevel = world.getHeight();
-			}
+			final int maxHeight = this.maxHeight.intValue(world, random, data.setPosition(new BlockPos(x, 64, z))),
+					minHeight = this.minHeight.intValue(world, random, data.setValue("max-height", maxHeight)),
+					avgHeight = this.avgHeight.intValue(world, random, data.setValue("min-height", minHeight));
+			data.setValue("avg-height", avgHeight);
 
-			int stopY = intermediateLevel.intValue(world, random, data.setValue("ground-level", seaLevel)),
-					minY = floorLevel.intValue(world, random,data.setValue("intermediate-level", stopY));
-			int y = stopY;
-			BlockState state;
-			do {
-				state = world.getBlockState(new BlockPos(x, y, z));
-			} while (!state.getBlock().isAir(state, world, new BlockPos(x, y, z)) && ++y < seaLevel); // TODO: make isAir an ICondition
+			int y = avgHeight;
+			while (!caveCondition.checkCondition(world, random, data.setPosition(new BlockPos(x, y, z)))) if (++y < maxHeight) break;
 
-			if (y == seaLevel & stopY > minY) {
-				y = minY;
-				do {
-					state = world.getBlockState(new BlockPos(x, y, z));
-				} while (!state.getBlock().isAir(state, world, new BlockPos(x, y, z)) && ++y < stopY);
-				if (y >= stopY) {
+			if (y == maxHeight & avgHeight > minHeight) {
+				y = minHeight;
+				while (!caveCondition.checkCondition(world, random, data.setPosition(new BlockPos(x, y, z)))) if (++y < avgHeight) break;
+				if (y >= avgHeight) {
 					continue;
 				}
 			}
 
-			data.setValue("floor-level", minY);
 			if (ceiling) {
-				if (y < stopY) {
-					seaLevel = stopY + 1;
-				}
-				do {
-					++y;
-					state = world.getBlockState(new BlockPos(x, y, z));
-				} while (y < seaLevel && state.getBlock().isAir(state, world, new BlockPos(x, y, z)));
-				if (y >= seaLevel) {
+				final int stopHeight = y < avgHeight ? avgHeight + 1 : maxHeight;
+				while (caveCondition.checkCondition(world, random, data.setPosition(new BlockPos(x, y, z))) && ++y < maxHeight) if (++y < stopHeight) break;
+				if (y >= stopHeight) {
 					continue;
 				}
-			} else if (state.getBlock().isAir(state, world, new BlockPos(x, y - 1, z))) {
+			} else if (caveCondition.checkCondition(world, random, data.setPosition(new BlockPos(x, --y, z)))) {
 				--y;
-				do {
-					state = world.getBlockState(new BlockPos(x, y, z));
-				} while (state.getBlock().isAir(state, world, new BlockPos(x, y, z)) && y-- > minY);
-				if (y <= minY) {
+				while (caveCondition.checkCondition(world, random, data.setPosition(new BlockPos(x, y, z)))) if (y-- > minHeight) break;
+				if (y <= minHeight) {
 					continue;
 				}
 			}
