@@ -123,21 +123,6 @@ public enum WorldValueEnum {
 //			return world.getBlockState(pos).getBlock().isPassable(world, pos);
 //		}
 //	},
-	IS_BLOCK_REPLACEABLE {
-		@Override
-		public boolean getValue(IWorld world, Random rand, DataHolder data) {
-
-			BlockPos pos = new BlockPos(data.getPosition());
-			return world.getBlockState(pos).getMaterial().isReplaceable();
-		}
-	},
-	IS_BLOCK_SOLID {
-		@Override
-		public boolean getValue(IWorld world, Random rand, DataHolder data) {
-
-			return world.getBlockState(new BlockPos(data.getPosition())).getMaterial().isSolid();
-		}
-	},
 	IS_BLOCK_LOG {
 		@Override
 		public boolean getValue(IWorld world, Random rand, DataHolder data) {
