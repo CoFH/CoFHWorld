@@ -3,10 +3,7 @@ package cofh.cofhworld.parser.variables;
 import cofh.cofhworld.data.numbers.ConstantProvider;
 import cofh.cofhworld.data.numbers.INumberProvider;
 import cofh.cofhworld.data.numbers.data.*;
-import cofh.cofhworld.data.numbers.operation.BoundedProvider;
-import cofh.cofhworld.data.numbers.operation.ConditionalProvider;
-import cofh.cofhworld.data.numbers.operation.MathProvider;
-import cofh.cofhworld.data.numbers.operation.UnaryMathProvider;
+import cofh.cofhworld.data.numbers.operation.*;
 import cofh.cofhworld.data.numbers.random.SkellamRandomProvider;
 import cofh.cofhworld.data.numbers.random.UniformRandomProvider;
 import cofh.cofhworld.data.numbers.world.DirectionalScanner;
@@ -57,6 +54,9 @@ public class NumberData {
 								return new CacheProvider(numberObject.getString("cache"), parseNumberValue(numberObject.getValue("value")));
 							} else if (numberProps.containsKey("store")) {
 								return new StoreProvider(numberObject.getString("store"), parseNumberValue(numberObject.getValue("value")));
+							} else if (numberProps.containsKey("world-height")) {
+								if (!numberObject.getBoolean("world-height")) return parseNumberValue(numberObject.getValue("value")); // sure, whatever
+								return new WorldHeightBoundProvider(parseNumberValue(numberObject.getValue("value")));
 							}
 						}
 						break;
