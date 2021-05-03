@@ -18,6 +18,9 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.AbstractChunkProvider;
 import net.minecraft.world.chunk.ChunkStatus.Type;
+import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.DimensionSettings;
+import net.minecraft.world.gen.NoiseChunkGenerator;
 import net.minecraft.world.gen.WorldGenRegion;
 import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.server.ServerChunkProvider;
@@ -287,17 +290,18 @@ public class WorldHandler {
 
 		{
 			/**
-			 see: {@link net.minecraft.world.gen.NoiseChunkGenerator.makeBedrock}
+			 see: {@link net.minecraft.world.gen.NoiseChunkGenerator#makeBedrock}
 			 */
 			AbstractChunkProvider chunkProvider = world.getChunkProvider();
 			if (chunkProvider instanceof ServerChunkProvider) {
-				ServerChunkProvider serverChunkProvider = (ServerChunkProvider) chunkProvider;
-//				GenerationSettings settings = serverChunkProvider.getChunkGenerator().getSettings();
-//				// interestingly, WorldGenRegion actually stores the ChunkProvider settings, but there is no getter.
-//				// looks to me like a method is being erased by the obfuscator because it's not called, making this entire code block required.
-//				filler = settings.getDefaultBlock();
-//				floor = settings.getBedrockFloorHeight();
-//				roof = settings.getBedrockRoofHeight();
+				ChunkGenerator chunkGenerator = ((ServerChunkProvider) chunkProvider).getChunkGenerator();
+				if (chunkGenerator instanceof NoiseChunkGenerator) {
+					DimensionSettings settings = ((NoiseChunkGenerator) chunkGenerator).field_236080_h_.get();
+
+					filler = settings.getDefaultBlock();
+					floor = settings.func_236118_f_();
+					roof = settings.func_236117_e_();
+				}
 			}
 		}
 		final BlockMatcher bedrockMatcher = BlockMatcher.forBlock(Blocks.BEDROCK);
@@ -310,7 +314,6 @@ public class WorldHandler {
 					for (int blockY = maxBedrockLayers; blockY --> 0; ) {
 						BlockState state = world.getBlockState(pos.setPos(offsetX + blockX, floor + blockY, offsetZ + blockZ));
 						if (bedrockMatcher.test(state)) {
-						// if (state.isReplaceableOreGen(world, pos.setPos(offsetX + blockX, floor + blockY, offsetZ + blockZ), bedrockMatcher)) {
 							if (blockY >= numBedrockLayers) {
 								world.setBlockState(pos.setPos(offsetX + blockX, floor + blockY, offsetZ + blockZ), filler, 2 | 16);
 							}
@@ -328,7 +331,6 @@ public class WorldHandler {
 					for (int blockY = maxBedrockLayers; blockY --> 0; ) {
 						BlockState state = world.getBlockState(pos.setPos(offsetX + blockX, roof - blockY, offsetZ + blockZ));
 						if (bedrockMatcher.test(state)) {
-						// if (state.isReplaceableOreGen(world, pos.setPos(offsetX + blockX, roof - blockY, offsetZ + blockZ), bedrockMatcher)) {
 							if (blockY >= numBedrockLayers) {
 								world.setBlockState(pos.setPos(offsetX + blockX, roof - blockY, offsetZ + blockZ), filler, 2 | 16);
 							}
